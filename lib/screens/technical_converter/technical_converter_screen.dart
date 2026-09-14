@@ -31,7 +31,7 @@ class _TechnicalConverterScreenState extends State<TechnicalConverterScreen>
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7F9),
       appBar: AppBar(
-        title: const Text('Quy Đổi Kỹ Thuật Máy Tách Màu'),
+        title: const Text('Quy đổi đơn vị'),
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
