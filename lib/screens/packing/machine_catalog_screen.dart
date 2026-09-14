@@ -1,0 +1,658 @@
+/// Màn hình Danh mục sản phẩm.
+/// Duyệt theo nhóm → dòng máy → model.
+/// Dữ liệu được tạo động từ database, không hard-code.
+/// Tích hợp tìm kiếm realtime theo tên model.
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../models/packing_machine.dart';
+import '../../repositories/packing_machine_repository.dart';
+import '../../widgets/packing/machine_card.dart';
+import '../../widgets/packing/packing_back_button.dart';
+
+class MachineCatalogScreen extends StatefulWidget {
+  final PackingMachineRepository? repository;
+
+  const MachineCatalogScreen({super.key, this.repository});
+
+  @override
+  State<MachineCatalogScreen> createState() => _MachineCatalogScreenState();
+}
+
+class _MachineCatalogScreenState extends State<MachineCatalogScreen> {
+  late final PackingMachineRepository _repository;
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+
+  // Dữ liệu: productGroup → (machineLine → List<machines>)
+  Map<String, Map<String, List<PackingMachine>>> _catalog = {};
+  List<PackingMachine> _allMachines = [];
+  List<PackingMachine> _searchResults = [];
+  bool _isLoading = true;
+  bool _isSearching = false;
+  String? _error;
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _repository = widget.repository ?? PackingMachineRepository();
+    _loadCatalog();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadCatalog() async {
+    try {
+      final groups = await _repository.getDistinctProductGroups();
+      final catalog = <String, Map<String, List<PackingMachine>>>{};
+      final all = <PackingMachine>[];
+
+      for (final group in groups) {
+        final machines = await _repository.getMachinesByGroup(group);
+        final byLine = <String, List<PackingMachine>>{};
+
+        for (final machine in machines) {
+          final line = machine.machineLine ?? 'Khác';
+          byLine.putIfAbsent(line, () => []).add(machine);
+          all.add(machine);
+        }
+
+        catalog[group] = byLine;
+      }
+
+      if (mounted) {
+        setState(() {
+          _catalog = catalog;
+          _allMachines = all;
+          _searchResults = all;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = 'Lỗi tải danh mục: $e';
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _onSearchChanged(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      final q = query.trim().toLowerCase();
+      setState(() {
+        _searchQuery = query.trim();
+        if (q.isEmpty) {
+          _isSearching = false;
+          _searchResults = _allMachines;
+        } else {
+          _isSearching = true;
+          _searchResults = _allMachines.where((m) {
+            return [
+              m.model,
+              m.productGroup,
+              m.machineLine,
+              m.bagMaterial,
+              m.materials,
+            ].whereType<String>().any((v) => v.toLowerCase().contains(q));
+          }).toList();
+        }
+      });
+    });
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    setState(() {
+      _searchQuery = '';
+      _isSearching = false;
+      _searchResults = _allMachines;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F7FA),
+      body: CustomScrollView(
+        slivers: [
+          // App bar với gradient
+          SliverAppBar(
+            expandedHeight: 140,
+            pinned: true,
+            elevation: 0,
+            backgroundColor: const Color(0xFF3158A5),
+            foregroundColor: Colors.white,
+            centerTitle: true,
+            leadingWidth: 64,
+            leading: PackingBackButton(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.white.withValues(alpha: 0.16),
+              tooltip: 'Về Cân đóng gói',
+            ),
+            title: const Text(
+              'Danh mục sản phẩm',
+              style: TextStyle(fontWeight: FontWeight.w800),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.parallax,
+              background: _CatalogHeader(totalCount: _allMachines.length),
+            ),
+          ),
+
+          // Thanh tìm kiếm cố định
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SearchBarDelegate(
+              searchController: _searchController,
+              onChanged: _onSearchChanged,
+              onClear: _clearSearch,
+              query: _searchQuery,
+            ),
+          ),
+
+          // Nội dung
+          if (_isLoading)
+            const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (_error != null)
+            SliverFillRemaining(child: Center(child: Text(_error!)))
+          else if (_isSearching)
+            _buildSearchResults()
+          else
+            _buildGroupedCatalog(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchResults() {
+    if (_searchResults.isEmpty) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.search_off_outlined,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Không tìm thấy model "$_searchQuery"',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+            child: Text(
+              '${_searchResults.length} kết quả',
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        }
+        final machine = _searchResults[index - 1];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: MachineCard(
+            machine: machine,
+            onTap: () => context.push(
+              '/packing_detail',
+              extra: {'model': machine.model, 'showCatalog': true},
+            ),
+          ),
+        );
+      }, childCount: _searchResults.length + 1),
+    );
+  }
+
+  Widget _buildGroupedCatalog() {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1120),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+            child: Column(
+              children: _catalog.entries.map((groupEntry) {
+                return _GroupSection(
+                  groupName: groupEntry.key,
+                  lineMap: groupEntry.value,
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Header gradient trong SliverAppBar
+class _CatalogHeader extends StatelessWidget {
+  final int totalCount;
+  const _CatalogHeader({required this.totalCount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1A3B7A), Color(0xFF3158A5), Color(0xFF4A7CC9)],
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -20,
+            bottom: -30,
+            child: Opacity(
+              opacity: 0.07,
+              child: const Icon(
+                Icons.category_rounded,
+                size: 120,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 52, 20, 16),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.category_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: totalCount > 0
+                        ? Text(
+                            '$totalCount model · Chọn dòng máy để xem chi tiết',
+                            style: const TextStyle(
+                              color: Color(0xFFD9E6FA),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Persistent header cho thanh tìm kiếm
+class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
+  final TextEditingController searchController;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onClear;
+  final String query;
+
+  const _SearchBarDelegate({
+    required this.searchController,
+    required this.onChanged,
+    required this.onClear,
+    required this.query,
+  });
+
+  @override
+  double get minExtent => 64;
+  @override
+  double get maxExtent => 64;
+
+  @override
+  bool shouldRebuild(covariant _SearchBarDelegate oldDelegate) =>
+      oldDelegate.query != query;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(
+      color: const Color(0xFFF4F7FA),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Material(
+        color: Colors.white,
+        elevation: overlapsContent ? 2 : 1,
+        shadowColor: Colors.black12,
+        borderRadius: BorderRadius.circular(14),
+        child: TextField(
+          key: const Key('catalog_search_field'),
+          controller: searchController,
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            hintText: 'Tìm theo model, nhóm máy, loại vật liệu...',
+            hintStyle: const TextStyle(fontSize: 14, color: Color(0xFF8FA3B1)),
+            prefixIcon: const Icon(
+              Icons.search_rounded,
+              color: Color(0xFF3158A5),
+            ),
+            suffixIcon: query.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.close_rounded, size: 20),
+                    onPressed: onClear,
+                    color: const Color(0xFF8FA3B1),
+                  )
+                : null,
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Section cho một nhóm sản phẩm (ví dụ: Túi PE hút chân không)
+class _GroupSection extends StatefulWidget {
+  final String groupName;
+  final Map<String, List<PackingMachine>> lineMap;
+
+  const _GroupSection({required this.groupName, required this.lineMap});
+
+  @override
+  State<_GroupSection> createState() => _GroupSectionState();
+}
+
+class _GroupSectionState extends State<_GroupSection> {
+  bool _expanded = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final totalCount = widget.lineMap.values.fold<int>(
+      0,
+      (sum, list) => sum + list.length,
+    );
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colorScheme.outlineVariant),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Group header
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: _groupHeaderColor(context, widget.groupName),
+                borderRadius: _expanded
+                    ? const BorderRadius.vertical(top: Radius.circular(16))
+                    : BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: _groupForegroundColor(widget.groupName)
+                          .withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: widget.groupName.contains('PE')
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(9),
+                            child: Image.asset(
+                              'assets/images/packing/pe_group_icon.png',
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Icon(
+                            _groupIcon(widget.groupName),
+                            color: _groupForegroundColor(widget.groupName),
+                            size: 20,
+                          ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.groupName,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: _groupForegroundColor(widget.groupName),
+                          ),
+                        ),
+                        Text(
+                          '$totalCount model · ${widget.lineMap.length} dòng máy',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _groupForegroundColor(widget.groupName)
+                                .withValues(alpha: 0.75),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  AnimatedRotation(
+                    turns: _expanded ? 0 : -0.5,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      Icons.keyboard_arrow_up_rounded,
+                      color: _groupForegroundColor(widget.groupName),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Line sections
+          if (_expanded)
+            ...widget.lineMap.entries.map((lineEntry) {
+              return _LineSection(
+                lineName: lineEntry.key,
+                machines: lineEntry.value,
+              );
+            }).toList(),
+        ],
+      ),
+    );
+  }
+
+  Color _groupHeaderColor(BuildContext context, String group) {
+    if (group.contains('PE')) return Colors.blue.shade50;
+    if (group.contains('PP') || group.contains('Bao')) {
+      return Colors.green.shade50;
+    }
+    return Colors.orange.shade50;
+  }
+
+  Color _groupForegroundColor(String group) {
+    if (group.contains('PE')) return Colors.blue.shade800;
+    if (group.contains('PP') || group.contains('Bao')) {
+      return Colors.green.shade800;
+    }
+    return Colors.orange.shade800;
+  }
+
+  IconData _groupIcon(String group) {
+    if (group.contains('PE')) return Icons.shopping_bag_outlined;
+    if (group.contains('PP') || group.contains('Bao')) {
+      return Icons.inventory_outlined;
+    }
+    return Icons.monitor_weight_outlined;
+  }
+}
+
+/// Section cho một dòng máy
+class _LineSection extends StatefulWidget {
+  final String lineName;
+  final List<PackingMachine> machines;
+
+  const _LineSection({required this.lineName, required this.machines});
+
+  @override
+  State<_LineSection> createState() => _LineSectionState();
+}
+
+class _LineSectionState extends State<_LineSection> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        const Divider(height: 1),
+        InkWell(
+          onTap: () => setState(() => _expanded = !_expanded),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  padding: EdgeInsets.all(
+                    shouldInsetPackingIcon(widget.machines.first.imageMainPath)
+                        ? 9
+                        : 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: colorScheme.outlineVariant),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(7),
+                    child: MachineImage(
+                      imagePath: widget.machines.first.imageMainPath,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    widget.lineName,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '${widget.machines.length} model',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                AnimatedRotation(
+                  turns: _expanded ? 0 : -0.5,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    Icons.keyboard_arrow_up_rounded,
+                    size: 18,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Machine list
+        AnimatedCrossFade(
+          firstChild: const SizedBox.shrink(),
+          secondChild: Column(
+            children: [
+              ...widget.machines.map((machine) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                  child: MachineCard(
+                    machine: machine,
+                    onTap: () => context.push(
+                      '/packing_detail',
+                      extra: {'model': machine.model, 'showCatalog': true},
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 8),
+            ],
+          ),
+          crossFadeState: _expanded
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          duration: const Duration(milliseconds: 200),
+        ),
+      ],
+    );
+  }
+}

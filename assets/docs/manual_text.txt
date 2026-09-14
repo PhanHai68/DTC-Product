@@ -1,0 +1,7905 @@
+ 
+HƯỚNG DẪN SỬ DỤNG  
+ 
+MÁY NÉN KHÍ TRỤC VÍT NGÂM DẦU
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+MỤC LỤC
+ 
+ 
+ 
+ 
+1
+ 
+MÔ TẢ SẢN PHẨM
+ 
+................................
+................................
+................................
+........................
+ 
+5
+ 
+1.1
+ 
+Mô tả về máy nén:
+................................
+................................
+................................
+...................
+ 
+4
+ 
+1.2
+ 
+Phạm vi sử dụng:
+ 
+................................
+................................
+................................
+....................
+ 
+4
+ 
+1.3
+ 
+Bảo trì:
+ 
+................................
+................................
+................................
+................................
+....
+ 
+4
+ 
+2
+ 
+NGUYÊN LÝ HOẠT ĐỘNG
+ 
+................................
+................................
+................................
+..........
+ 
+6
+ 
+3
+ 
+SƠ ĐỒ DÒNG CHẢY BÊN TRONG MÁY NÉN
+ 
+................................
+................................
+..........
+ 
+7
+ 
+4
+ 
+SƠ ĐỒ MẠCH ĐIỆN
+ 
+................................
+................................
+................................
+......................
+ 
+8
+ 
+5
+ 
+HOẠT ĐỘNG CƠ BẢN VÀ THÔNG SỐ C
+ÀI ĐẶT BỘ ĐIỀU KHIỂN DÒNG MÁY NÉN KHÍ 
+TỐC ĐỘ CỐ ĐỊNH
+ 
+................................
+................................
+................................
+.......................
+ 
+10
+ 
+5.1
+ 
+Mô tả nút nhấn:
+ 
+................................
+................................
+................................
+.....................
+ 
+10
+ 
+5.2
+ 
+Mô tả trạng thái đèn báo:
+ 
+................................
+................................
+................................
+.......
+ 
+11
+ 
+5.3
+ 
+Trạng thái hiển thị và hoạt động:
+ 
+................................
+................................
+...........................
+ 
+12
+ 
+5.4
+ 
+Danh mục và thông số vận hành:
+ 
+................................
+................................
+...........................
+ 
+13
+ 
+5.5
+ 
+Xe
+m và sửa đổi các tham số người dùng:
+ 
+................................
+................................
+..............
+ 
+13
+ 
+5.6
+ 
+Bảng tham số người dùng và chức năng:
+ 
+................................
+................................
+...............
+ 
+15
+ 
+6
+ 
+HOẠT ĐỘNG CƠ BẢN VÀ THÔNG SỐ CÀI ĐẶT BỘ ĐIỀ
+U KHIỂN MÁY NÉ
+N KHÍ TRỤC 
+VÍT SỬ DỤNG BIẾN TẦN
+ 
+................................
+................................
+................................
+...........
+ 
+16
+ 
+6.1
+ 
+Hoạt động cơ bản:
+ 
+................................
+................................
+................................
+.................
+ 
+16
+ 
+ 
+6.1.1
+ 
+Mô tả nút nhấn
+ 
+................................
+................................
+................................
+..........................
+ 
+16
+ 
+ 
+6.1.2
+ 
+Mô tả đèn báo
+ 
+................................
+................................
+................................
+...........................
+ 
+16
+ 
+ 
+6.1.3
+ 
+Trạng thái hiển thị và hoạt động
+ 
+................................
+................................
+................................
+ 
+17
+ 
+ 
+6.1.4
+ 
+Danh sách xem và tham số
+ 
+vận hành
+ 
+................................
+................................
+.........................
+ 
+19
+ 
+ 
+6.1.5
+ 
+Danh sách và thông số vận hành
+ 
+................................
+................................
+................................
+ 
+24
+ 
+ 
+6.1.6
+ 
+Các thông số hiệu chuẩn
+................................
+................................
+................................
+............
+ 
+27
+ 
+ 
+6.1.7
+ 
+Thông số điều khiển liên kết
+................................
+................................
+................................
+......
+ 
+29
+ 
+ 
+6.1.8
+ 
+Các thông số đầu vào
+ 
+................................
+................................
+................................
+................
+ 
+30
+ 
+ 
+6.1.9
+ 
+Các thông số tiêu hao phụ tùng
+ 
+................................
+................................
+................................
+..
+ 
+31
+ 
+ 
+6.1.10
+ 
+Hiệu chuẩn màn hình
+ 
+................................
+................................
+................................
+..............
+ 
+31
+ 
+ 
+6.1.11
+ 
+Cài đặt á
+p suất
+ 
+vận hành theo
+ 
+thời gian
+ 
+................................
+................................
+....................
+ 
+32
+ 
+ 
+6.1.12
+ 
+Cài đ
+ặt thời gian chạy dừng máy theo ngày
+ 
+................................
+................................
+.............
+ 
+32
+ 
+ 
+6.1.13
+ 
+Lịch sử lỗi
+ 
+................................
+................................
+................................
+...............................
+ 
+32
+ 
+ 
+6.1.14
+ 
+Cài đặt biến tần chính
+ 
+................................
+................................
+................................
+..............
+ 
+32
+ 
+ 
+6.1.15
+ 
+Cài đặt biến tần quạt
+ 
+................................
+................................
+................................
+................
+ 
+36
+ 
+ 
+6.1.16
+ 
+Cài đặt thời gian
+ 
+................................
+................................
+................................
+......................
+ 
+38
+ 
+6.2
+ 
+Các thông số kĩ thuật và chức năng
+ 
+của bộ điều khiển
+ 
+................................
+...........................
+ 
+38
+ 
+7
+ 
+CÁC CẢNH BÁO VÀ PHÒNG NGỪA
+ 
+................................
+................................
+........................
+ 
+39
+ 
+7.1
+ 
+Thiết bị điện nguồn cấp cho máy nén khí
+ 
+................................
+................................
+..............
+ 
+39
+ 
+7.2
+ 
+Biện pháp phòng ngừa
+ 
+................................
+................................
+................................
+...........
+ 
+40
+ 
+8
+ 
+LẮP ĐẶT MÁY NÉN KHÍ
+ 
+................................
+................................
+................................
+...........
+ 
+41
+ 
+8.1
+ 
+Lựa chọn vị trí lắp đặt và hệ thống thô
+ng gió
+ 
+................................
+................................
+.........
+ 
+41
+ 
+
+ 
+9
+ 
+VẬN HÀNH MÁY NÉN KHÍ
+ 
+................................
+................................
+................................
+.......
+ 
+43
+ 
+9.1
+ 
+Trước khi đưa vào sử dụng máy nén khí
+ 
+................................
+................................
+................
+ 
+43
+ 
+9.2
+ 
+Vận hành máy nén khí
+................................
+................................
+................................
+...........
+ 
+43
+ 
+9.3
+ 
+Bảo vệ an toàn
+ 
+................................
+................................
+................................
+......................
+ 
+43
+ 
+ 
+A)
+ 
+Bảo vệ động cơ
+ 
+................................
+................................
+................................
+.............................
+ 
+43
+ 
+ 
+B)
+ 
+Bảo vệ quá nhiệt và bảo vệ chiều quay động cơ
+ 
+................................
+................................
+.............
+ 
+44
+ 
+ 
+C)
+ 
+Bảo vệ quá áp suất khí nén
+ 
+................................
+................................
+................................
+............
+ 
+44
+ 
+ 
+D)
+ 
+Bảo vệ lỗi cảm biến
+ 
+................................
+................................
+................................
+......................
+ 
+44
+ 
+10
+ 
+SỬ DỤNG VÀ BẢO TRÌ
+ 
+................................
+................................
+................................
+.............
+ 
+44
+ 
+10.1
+ 
+Vận hành và bảo trì hằng ngày
+ 
+................................
+................................
+............................
+ 
+44
+ 
+             
+10.1.1
+ 
+Kiểm tra và bảo dưỡng trước khi khởi động
+ 
+................................
+................................
+................
+ 
+44
+ 
+10.2
+ 
+Kiểm tra khi khởi động
+ 
+................................
+................................
+................................
+........
+ 
+46
+ 
+10.4
+ 
+Xử lý khi máy nén khí ngừng sử
+ 
+dụng trong thời gian dài
+ 
+................................
+....................
+ 
+48
+ 
+             
+10.4.1
+ 
+Máy nén khí không sử dụng trong thời gian dài hãy bảo quản máy cẩn thận
+ 
+................................
+ 
+48
+ 
+             
+10.4.2
+ 
+.....
+ 
+ 
+Để khởi động lại máy nén khí không sử dụng trong thời gian dài, trước tiên hãy đo điện trở  các 
+đầu dây của động cơ (không nhỏ hơn 1 Ω), đo độ cách độ giữa cuộn dây và vỏ động cơ, sau đó làm theo hướng 
+dẫn vận hành. Đối với máy nén khí đã ho
+ạt động hơn một năm, cần thay dầu bôi trơn.
+ 
+................................
+.......
+ 
+48
+ 
+11
+ 
+LỖI 
+–
+ 
+SỰ CỐ VÀ CÁCH KHẮC PHỤC
+ 
+................................
+................................
+...........
+ 
+48
+ 
+1.1
+ 
+ 
+t
+h
+n
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+_ Trước khi lắp đặt hoặc khởi động máy nén lần đ
+ầu tiên, vui lòng đọc kỹ hướng dẫn này để 
+hiểu các kiến thức liên quan về máy nén và các biện pháp phòng ngừa khi vận hành và bảo 
+trì.
+ 
+ 
+_ Vui lòng giao hướng dẫn sử dụng này cho người dùng cùng với máy.
+ 
+ 
+_ Tài liệu kỹ thuật này chứa thông tin an toàn quan 
+trọng, cần phải luôn giữ cùng với máy 
+nén mọi lúc.
+ 
+ 
+ 
+
+4
+ 
+ 
+ 
+ 
+1
+ 
+MÔ TẢ SẢN PHẨM
+ 
+1.1
+ 
+Mô tả về máy nén:
+ 
+Máy nén khí trục vít của công ty chúng tôi là kết quả của nhiều năm nghiên cứu và phát triển. 
+Sự kết hợp giữa các điều kiện tiên quyết này với các tiêu chuẩn về chất lư
+ợng đảm bảo tuổi 
+thọ, độ tin cậy và hiệu suất vận hành của máy nén khí trục vít được tối ưu. Sản phẩm có thể 
+đáp ứng cácyêu cầu về bảo vệ môi trường.
+ 
+ 
+1.2
+ 
+Phạm vi sử dụng:
+ 
+Dòng máy móc và thiết bị này được sản xuất theo công nghệ tiên tiến và các quy tắc an to
+àn 
+đã được công nhận. Tuy nhiên, nếu xảy ra các trường hợp liệt kê như bên dưới, máy móc và 
+thiết bị vẫn có thể gây nguy hiểm đến tính mạng và chân tay của người sử dụng hoặc bên thứ 
+ba, hoặc gây hư hỏng cho máy móc và các đặc tính vật liệu khác:
+ 
+ 
+
+ 
+ 
+Phạm vi
+ 
+sử dụng không đúng
+ 
+
+ 
+ 
+Được vận hành bởi nhân viên không đủ trình độ
+ 
+
+ 
+ 
+Sửa đổi hoặc thay đổ
+i máy
+ 
+bất hợp lý
+ 
+
+ 
+ 
+Không tuân thủ các quy tắc an toàn
+ 
+Do đó, bất kỳ ai có quyền vận hành, bảo trì hoặc sửa chữa máy đều phải đọc và tuân thủ các 
+quy định an toàn
+. Ngoài 
+ra,
+ 
+cũng phải tuân thủ:
+ 
+
+ 
+ 
+Các quy tắc phòng ngừa tai nạn liên quan
+ 
+
+ 
+ 
+Các quy định an toàn được chấp nhận
+ 
+
+ 
+ 
+Các quy định quốc gia
+ 
+Dòng máy móc và thiết bị này phải được sử dụng trong điều kiện kỹ thuậ
+t     được đảm bảo
+, 
+tuân thủ phạm vi sử dụng và hướng dẫn đư
+ợc nêu trong sách hướng dẫn vận hành. Người sử 
+dụng phải có ý thức an toàn và hiểu rõ những nguy hiểm khi vận hành máy. Nếu xảy ra bất 
+kỳ sự cố chức năng nào, đặc biệt là sự cố ảnh hưởng đến an toàn, phả
+i khắc phục
+ 
+kịp thời 
+(hoặc nhờ ngườ
+i khác khắc phục
+)!
+ 
+ 
+Ý nghĩa của việc vận hành máy trong phạm vi sử dụng còn bao gồm việc tuân thủ một số 
+hướng dẫn trong sách hướng dẫn vận hành và kiểm tra, bảo dưỡng khi cần thiết.
+ 
+ 
+1.3
+ 
+Bảo trì:
+ 
+Máy nén khí trục vít hoặc cụm máy nén khí phải được bảo trì cẩn thận để đáp ứng c
+ác 
+yêu cầu khác nhau. Do đó, máy phải được bảo trì 
+theo chế độ 
+bảo trì quy định, đặc biệt 
+là 
+máy hoạt động 
+trong điều kiện môi trường làm việc kém.
+ 
+ 
+ 
+
+5
+ 
+ 
+ 
+ 
+Dịch vụ
+ 
+ 
+Trong trường hợp máy nén khí gặp sự cố hoặc cần phụ tùng thay thế, vui lòng liên hệ với đại 
+lý m
+áy nén khí của công ty. Nếu thiết bị bị hư hỏng, đội ngũ bảo trì được đào tạo bài bản của 
+chúng tôi sẽ cung cấp dịch vụ sửa chữ
+a nhanh chóng, 
+chất lượng
+ 
+với
+ 
+phụ
+ 
+tùng chính hãng
+. 
+Phụ tùng thay thế chính hãng của chúng tôi được sản xuất theo công nghệ tiên t
+iến nhất, đảm 
+bảo máy hoạt động
+ 
+ổn định
+.
+ 
+Bảo hành
+ 
+ 
+Trước khi vận hành máy, bạn phải hiểu rõ máy và các hướng dẫ
+n liên quan. 
+Nếu việc sử dụng 
+máy không phù hợp với phạm vi ứng dụng hoặc mục đích sử dụng vượt quá phạm vi được đề 
+cập trong hướng dẫn này, công
+ 
+ty sẽ không chịu trách nhiệm về sự an toàn của việc vận hành.
+ 
+C
+ông ty chúng tôi sẽ không chấp nhận yêu cầu bảo hành
+ 
+t
+rong những trường hợp sau
+:
+ 
+ 
+
+ 
+ 
+Lỗi vận hành
+ 
+
+ 
+ 
+Bảo trì không đúng cách
+ 
+
+ 
+ 
+Sử dụng sai phụ
+ 
+tùng
+ 
+
+ 
+ 
+Không sử dụng phụ
+ 
+tùng
+ 
+chính hãng của công ty.
+ 
+
+ 
+ 
+Sửa đổi hoặc cải tạo thiết bị này
+ 
+ 
+Công ty sẽ không mở rộng các điều khoản chung về bảo hành và điều kiện bồi thường do mô 
+tả ở trên.
+ 
+Bất kỳ sửa đổi trái phép nào đối với máy nén hoặc trạm máy nén, hoặc lắp đặt các bộ phận 
+không được nhà sản xuất chấp thuậ
+n đều không được chấp nhận yêu cầu khiếu nại hoặc bảo 
+hành.
+ 
+Quy định an toàn
+ 
+ 
+Các quy định an toàn trong hướng dẫn vận hành phải được tuân thủ nghiêm ngặt.
+ 
+Thay đổi kỹ thuật
+ 
+ 
+Trong quá trình phát triển công nghệ, chúng tôi có quyền sửa đổi các bộ phận mà k
+hông cần 
+thông báo trước.
+ 
+ 
+Lưu ý:
+ 
+Nếu bạn có bất k
+ỳ yêu
+ 
+cầu nào, vui lòng liên hệ với 
+đại lý uỷ quyền
+ 
+của công ty chúng 
+tôi, chúng tôi sẽ cung cấp cho bạn nhiều dịch vụ hơn
+.
+ 
+ 
+ 
+ 
+ 
+
+6
+ 
+ 
+ 
+ 
+ 
+2
+ 
+NGUYÊN LÝ HOẠT ĐỘNG
+ 
+Toàn bộ chu trình hoạt động của máy nén khí trục vít có 
+thể được chia thành ba quá 
+trình: hút, nén 
+và xả. Khi trục vít
+ 
+quay, từng cặp răng 
+vít 
+ăn khớp lần lượt hoàn thành cùng một chu trình làm việc. 
+Để đơn giản và rõ ràng hơn, chúng ta sẽ nghiên cứu toàn bộ quá trình hoạt động của một cặ
+p trục 
+vít:
+ 
+ 
+A)
+ 
+Quá trình hút
+:
+ 
+Bên trong đầu nén có 2 trục vít ăn khớp và quay ngược chiều nhau. Khi quay 
+với tốc độ cao, không khí sẽ được hút vào khe hở giữa các răng trục vít thông cửa nạp.
+ 
+B)
+ 
+Quá trình nén:
+ 
+Khi trục vít tiếp tục quay
+ 
+nhanh
+, thể tích
+ 
+khoảng
+ 
+trống giữa các răng
+ 
+ví
+t giảm 
+dần, khiến áp suất khí tăng lên.
+ 
+ 
+C)
+ 
+Quá trình xả:
+ 
+Lượng khí nén áp suất cao sẽ được đưa đến 
+cửa xả đi vào
+ 
+bình tách dầu
+,
+ 
+sau đó 
+qua 
+bộ giải nhiệt khí nén rồi đưa đến 
+bình chứa
+ 
+khí nén
+ 
+hoặc hệ thống sử dụng ngay lập tức.
+ 
+ 
+ 
+
+7
+ 
+ 
+ 
+3
+ 
+SƠ ĐỒ DÒNG CHẢY BÊN TRONG MÁY NÉN
+ 
+Sơ đồ dòng chảy bên trong máy nén khí trục vít
+ 
+ 
+1.
+ 
+Lọc gió
+ 
+ 
+7. Cảm biến nhiệt độ
+ 
+13. Lọc tách dầu
+        
+ 
+2.
+ 
+Van đầu hút
+ 
+ 
+8. Lọc dầu
+ 
+ 
+ 
+14. Nắp châm dầu
+ 
+3.
+ 
+Van điện từ điều khiển
+ 
+9. Van xả áp
+ 
+ 
+ 
+15. Đồng hồ áp suất
+ 
+4.
+ 
+Đầu nén
+ 
+ 
+10. Van áp suất tối thiểu
+ 
+16. Thước dầu
+ 
+5.
+ 
+Độn
+g cơ chính
+ 
+ 
+11. Cảm biến áp suất
+ 
+17. Bình tách dầu
+   
+19. Bộ giải nhiệt
+ 
+6.
+ 
+Đường hồi dầu
+ 
+ 
+12. Van an toàn
+ 
+ 
+18. Van xả dầu
+       
+20. Quạt giải nhiệt
+ 
+_
+ 
+Dòng chảy
+ 
+khí nén
+:
+ 
+không khí từ môi trường được hút vào máy thông qua bộ lọc gió và
+ 
+được
+ 
+nén
+ 
+đến
+ 
+áp
+ 
+suất
+ 
+quy
+ 
+đ
+ịnh
+ 
+tại
+ 
+đầu
+ 
+nén.
+ 
+Khí
+ 
+nén
+ 
+cùng
+ 
+với
+ 
+dầu
+ 
+bôi trơn
+ 
+vào
+ 
+trong
+ 
+bình
+ 
+chứa
+ 
+dầu, tại
+ 
+đây
+ 
+dầu
+ 
+sẽ được
+ 
+tách
+ 
+ra
+ 
+khỏi
+ 
+khí
+ 
+nén. Khí
+ 
+nén
+ 
+đã
+ 
+tách dầu
+ 
+được
+ 
+làm
+ 
+mát
+ 
+tại
+ 
+bộ
+ 
+giải
+ 
+nhiệt
+ 
+gió
+ 
+và
+ 
+đi ra khỏi máy
+.
+ 
+_ Dòng chảy dầu bôi trơn
+: 
+Dầu
+ 
+bôi
+ 
+trơn
+ 
+tuần
+ 
+hoàn
+ 
+trong
+ 
+máy
+ 
+do
+ 
+việc c
+hênh
+ 
+lệch
+ 
+áp
+ 
+suất
+ 
+giữa
+ 
+bình
+ 
+chứa
+ 
+dầu
+ 
+và
+ 
+áp
+ 
+suất
+ 
+tại
+ 
+cửa
+ 
+hút
+ 
+của
+ 
+máy
+ 
+nén
+ 
+khí. Hỗn
+ 
+hợp của
+ 
+khí
+ 
+nén
+ 
+và
+ 
+dầu
+ 
+đã
+ 
+bị
+ 
+nóng
+ 
+trong
+ 
+quá trình
+ 
+nén
+ 
+sẽ
+ 
+được
+ 
+tách
+ 
+ra
+ 
+trong
+ 
+bình
+ 
+chứa dầu. Dầu
+ 
+đã
+ 
+tách
+ 
+ra
+ 
+được đưa đến
+ 
+làm
+ 
+mát
+ 
+tại bộ
+ 
+giải
+ 
+nhiệt
+ 
+dầu
+ 
+trước
+ 
+khi
+ 
+bơm
+ 
+lại
+ 
+cửa
+ 
+hút 
+của
+ 
+máy
+ 
+nén
+ 
+khí
+ 
+và
+ 
+sau
+ 
+đó
+ 
+quy
+ 
+trình
+ 
+này
+ 
+được lặp lại
+.
+ 
+
+8
+ 
+ 
+ 
+4
+ 
+SƠ ĐỒ MẠCH ĐIỆN
+ 
+ 
+Sơ đồ mạch điện mát nén khí trục vít tốc độ cố định
+
+9
+ 
+ 
+ 
+ 
+ 
+ 
+Sơ đồ mạch điện máy nén khí trục vít sử dụng biến tần
+
+10
+ 
+ 
+ 
+5
+ 
+HOẠT ĐỘNG CƠ BẢN VÀ THÔNG SỐ 
+CÀI ĐẶT BỘ ĐIỀU KHIỂN DÒNG MÁY 
+NÉN KHÍ TỐC 
+ĐỘ CỐ ĐỊNH
+ 
+5.1
+ 
+Mô tả nút nhấn:
+ 
+ 
+Giao diện màn hình đều khiển
+ 
+ 
+ 
+   
+——
+  
+ 
+Nút khởi động: Khi máy nén khí ở trạng thái chờ, nhấn nút này để chạy máy nén khí; khi 
+chức năng điều khiển liên kết được thiết lập chính xác, nếu máy nén khí là số 1 và được thiết lập 
+là
+m máy chủ, nhấn nút khởi động để khởi động máy nén khí và đồng thờ
+i k
+hởi động chức năng điều 
+khiển liên kết
+ 
+ 
+——
+ 
+Nút dừng: Khi máy nén khí đang chạy, nhấn nút này để dừng máy nén khí; khi chức 
+năng điều khiển liên kết được thiết lập chính xác, nếu máy nén 
+khí là số 1 và được thiết lập làm 
+máy chủ, nhấn nút dừng để dừng máy nén khí và đồng thời dừng chức năng điều khiển liên kế
+t.
+ 
+Khi thiết bị ở trạng thái dừng, nhấn và giữ nút dừng để chuyển sang giao diện hiển thị phiên bản 
+phần mềm.
+ 
+——
+ 
+Nút tả
+i, không
+ 
+tải/
+nút xác nhận: Khi máy nén khí đang chạy, nút này được sử dụng làm nút 
+tả
+i và không
+ 
+tải để điều khiển hoạt động tải hoặ
+c không
+ 
+tải của máy nén khí; ở chế độ cài đặt dữ 
+liệu, sau khi sửa đổi dữ liệu, nhấn nút này để xác nhận 
+lưu 
+dữ liệu nhập vào; nhậ
+p
+ 
+mật kh
+ẩu, nhấn 
+nút này để xác nhận mật khẩu nhập vào và kiểm tra xem mật khẩu có đúng không.
+ 
+ 
+ 
+          
+ 
+
+11
+ 
+ 
+ 
+ 
+         
+----
+ 
+Nút xuống/Nút giảm: Khi xem thông số, nhấn nút này để di chuyển thanh cuộn 
+     
+ 
+xuống; khi sửa đổi dữ liệu, nhấn nút này để giảm dữ liệu vị
+ 
+trí nhấp nháy hiện tại.
+ 
+ 
+——
+ 
+Nút lên/Nút tăng: Khi xem các thông số, nhấn nút này để di chuyển lên thanh 
+ 
+cuộn
+,
+ 
+khi 
+ 
+sửa đổi 
+ 
+dữ liệu, nhấn nút này để tăng dữ liệu vị trí nhấp nháy hiện tại.
+ 
+——
+ 
+Nút phải/Nút Enter: Khi sửa đổi dữ liệu, nút này được sử dụn
+g như một nút dịch 
+chuyển để di chuyển con trỏ nhấp nháy đến bit dữ liệu tiếp theo; nhấn nút này khi chọn 
+menu để vào cấp độ tiếp theo của menu hiện tại, nếu menu hiện tại không có Menu cấp độ 
+tiếp theo, hãy vào chế độ cài đặt của menu hiện tại và con trỏ 
+nhấp nháy sẽ xuất hiện trên 
+dữ liệu menu hiện tại.
+ 
+ 
+----
+ 
+Nút Thoát
+/
+ 
+Nút Reset: Ở chế độ cài đặt, nhấn nút này để thoát khỏi chế độ cài 
+ 
+đặt; ở chế 
+độ xem thông số, nhấn nút này để trở về menu trước đó; khi lỗi dừng, nhấ
+n 
+và giữ nút này để 
+đặt lại lỗi.
+ 
+ 
+5.2
+ 
+Mô
+ 
+tả trạng thái đèn báo:
+ 
+ 
+ 
+_ 
+Power supply
+-
+ 
+Đèn báo nguồn
+: Đèn sán
+g sau khi bộ điều khiển được cấp nguồn
+.
+ 
+_ 
+Running
+-
+ 
+Đ
+èn báo máy đ
+ang chạy: Đèn sáng khi động cơ máy nén khí đang chạy.
+ 
+_ 
+Fault
+-
+ 
+Đèn báo l
+ỗi: Đèn báo lỗi nhấp nháy khi đạt đến tuổi thọ; đèn báo
+ 
+lỗi luôn sáng khi lỗi 
+dừng và đèn báo lỗi tắt sau khi lỗi được khắc phục.
+ 
+_ 
+Air filter indicator light
+-
+ 
+Đèn báo lọc gió: Khi thời gian sử dụng lọc gió gần đến giới hạn sử 
+dụng đèn sánh nhấp nháy cảnh báo trước và sáng hẳn khi đạt giới hạn thời gian sử dụn
+g tối đa, 
+máy nén sẽ tắt.
+ 
+_ 
+Oil filter indicator light
+-
+ 
+Đèn báo lọc dầu: : Khi thời gian sử dụng lọc dầu gần đến giới hạn 
+sử dụng đèn sánh nhấp nháy cảnh báo trước và sáng hẳn khi đạt giới hạn thời gian sử dụng tối 
+đa, máy nén sẽ tắt.
+ 
+_ 
+Main motor indicato
+r light
+-
+ 
+Đèn báo lỗi động cơ chính: Đèn sáng khi động cơ chính bị lỗi.
+ 
+_ 
+Oil separation indicator light
+-
+ 
+Đèn báo lỗi lọc tách dầu: Khi thời gian sử dụng lọc tách dầu 
+gần đến giới hạn sử dụng đèn sánh nhấp nháy cảnh báo trước và sáng hẳn khi đạt giới hạn th
+ời 
+gian sử dụng tối đa, máy nén sẽ tắt.
+ 
+_ 
+Air exhaust temperature indicator light
+-
+ 
+Đèn báo nhiệt độ khí ra cao: Đèn sáng nhấp nháy 
+khi nhiệt độ khí ra đạt đến nhiệt độ cảnh báo và khi nhiệt độ vượt quá nhiệt độ giới hạn đèn sẽ 
+sáng hẳn, máy nén sẽ tắt.
+ 
+
+12
+ 
+ 
+ 
+ 
+5.3
+ 
+T
+rạng thái hiển thị và hoạt động:
+ 
+ 
+Sau khi bật nguồn, giao diện hiển thị như sau:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Sau 5 giây, giao diện chính sẽ hiển thị
+, 
+n
+hấn nút Shift để vào giao diện lựa chọn menu 
+như sau:
+ 
+ 
+ 
+ 
+ 
+                 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Operating parameters 
+User parameters 
+Manufacturer
+ 
+parameters 
+Adjustment parameters
+ 
+Exhaust
+ 
+temperature:
+ 
+78
+℃
+ 
+Air
+ 
+supply 
+pressure:
+ 
+Device
+ 
+stopped: 
+C16:
+ 
+0.53MPa
+ 
+0
+ 
+Rem
+otely
+ 
+Welcome to use 
+screw
+ 
+compressor
+ 
+
+13
+ 
+ 
+ 
+ 
+ 
+ 
+5.4
+ 
+Danh mục và thông số vận hành:
+ 
+ 
+Nhấn 
+nút xuống để di chuyển thanh cuộn màu đen đến menu "Tham số hoạt động" và nhấn nút 
+bên phải để chuyển sang menu tiếp theo:
+ 
+ 
+ 
+Di chuyển thanh cuộn đến mục menu tương ứng và nhấn nút enter để xem các thông số cụ thể, 
+chẳng hạn như xem "Dòng điện của động c
+ơ và quạt". Di chuyển thanh cuộn đến mục menu 
+"Dòng điện của động cơ và quạt", nhấn nút enter để chuyển sang giao diện giá trị dòng điện 
+chính và quạt.
+ 
+ 
+ 
+ 
+Nhấn nút ESC để trở về menu hoặc giao diện chính trước đó. Nếu bạn dừng thao tác trên một 
+giao diện,
+ 
+giao diện đó sẽ tự động trở về giao diện chính sau 60 giây.
+ 
+ 
+ 
+5.5
+ 
+Xem và sửa đổi các tham số người dùng:
+ 
+ 
+Trong menu cấp độ đầu tiên, nhấn nút lên hoặc nút xuống để di chuyển thanh cuộn màu đen đến 
+menu "Tham số người dùng" và nhấn nút enter để chuyển sang me
+nu như sau:
+ 
+ 
+Current
+ 
+of
+ 
+motor
+ 
+and
+ 
+fan 
+Total running time 
+Running time
+ 
+Maintenance
+ 
+parameters
+ 
+Historical
+ 
+fault
+ 
+Factory
+ 
+date,
+ 
+number
+ 
+field
+ 
+failure 
+Communication status
+ 
+motor
+ 
+（
+
+）
+
+
+
+（
+
+）
+
+
+
+
+
+
+
+B
+ 
+50.1
+ 
+2.1
+ 
+C
+ 
+50.1
+ 
+2.1
+ 
+ressure
+ 
+and
+ 
+temperature
+ 
+preset 
+Start
+-
+stop delay preset 
+Operation mode preset
+ 
+Linkage
+ 
+parameter
+ 
+preset
+ 
+Maintenance parameter 
+reset
+ 
+Maximum
+ 
+use
+ 
+time 
+preset
+ 
+Language
+ 
+selection:
+ 
+Chinese/English
+ 
+
+14
+ 
+ 
+ 
+Di chuyển con trỏ đến "áp suất, nhiệt độ cài đặt trước", sau đó nhấn nút enter để chuyển sang:
+ 
+ 
+ 
+Di chuyển con trỏ đến menu áp suất tải, sau đó nhấn nút enter để chuyển sang giao diện sau để 
+yêu cầu mật khẩu ngườ
+i dùng:
+ 
+ 
+ 
+ 
+ 
+Sau khi hiển 
+thị giao diện này, một bit nhấp nháy sẽ xuất hiện. Nhấn nút tăng hoặc giảm để điều 
+chỉnh dữ liệu vị trí nhấp nháy hiện tại, bằng với dữ liệu đầu tiên của mật khẩu. Nhấn nút bên 
+phải để di chuyển con trỏ nhấp nháy đến bit dữ liệu tiếp theo để điều chỉnh dữ 
+liệu nhấp nháy 
+hiện tại. Dữ liệu thứ hai bằng với mật khẩu. Điều chỉnh dữ liệu thứ ba và thứ tư theo phương 
+pháp trên, cuối cùng nhấn nút nhập để xác nhận nhập. Sau khi hệ thống xác minh mật khẩu 
+chính xác, nó sẽ chuyển sang giao diệ
+n sau:
+ 
+Có dấu nhắc "*" 
+ở góc trên bên phải, cho biết hệ thống đã vượt qua bước xác minh mật khẩu.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Trong giao diện hiển thị ở trên, nhấn nút phải, bit dữ liệu đầu tiên của áp suất tải bắt đầu nhấp 
+nháy, người dùng có thể nhấn nút tăng hoặc giảm để điều chỉnh dữ liệu bit n
+hấp nháy hiện tại 
+cho bằng với giá trị mục tiêu. Nhấn nút phải, chuyển động nhấp nháy sẽ di chuyển con trỏ đến 
+bit dữ liệu tiếp theo, tiếp tục điều chỉnh dữ liệu cho bằng với giá trị mục tiêu theo phương pháp 
+trên. Sau khi điều chỉnh tất cả các bit dữ liệu
+, nhấn nút nhập để lưu dữ liệu cài đặt của người 
+dùng. Sau khi cài đặt thành công, còi điều khiển sẽ phát ra một tiếng bíp ngắn.
+ 
+Loading pressure: 00.62Mpa
+ 
+* 
+Unloading pressure: 00.78MPa 
+Fan start temperature: 0080
+℃
+ 
+Fan
+ 
+stop
+ 
+temperature:
+ 
+0075
+℃
+ 
+Loading pressur
+e: 00.62 MPa 
+Unloading
+ 
+pressure:
+ 
+00.78MPa 
+Fan start temperature: 0080
+℃
+ 
+Fan
+ 
+stop
+ 
+temperature:
+ 
+0075
+℃
+
+Enter
+ 
+password
+ 
+ 
+****
+ 
+ 
+
+15
+ 
+ 
+ 
+5.6
+ 
+Bảng tham số người dùng và chức năng:
+ 
+ 
+Danh 
+mục
+ 
+          
+Mô tả
+ 
+Giá trị cài 
+ban đầu
+ 
+                    
+Mô tả chức năng
+ 
+ 
+Cài 
+đặt 
+trước áp 
+suất và 
+nhiệt độ
+ 
+Áp suất tải
+ 
+**.**Mpa
+ 
+Áp suất máy nén chạy có tải 
+–
+ 
+cut in
+ 
+Áp suất không tải
+ 
+**.**Mpa
+ 
+Áp suất máy nén chạy không tải 
+–
+ 
+cut out
+ 
+Nhiệt độ quạt 
+chạy
+ 
+0080℃
+ 
+Nhiệt độ khí cao hơn giá trị này quạt 
+chạy
+ 
+Nhiệt độ quạt 
+dừng
+ 
+0070
+℃
+ 
+N
+hiệt độ khí thấp hơn giá trị này quạt 
+dừng
+ 
+ 
+ 
+ 
+ 
+Cài đặt 
+thời gian 
+trễ
+ 
+Delay động cơ 
+chính
+ 
+0008 giây
+ 
+Thời gian động cơ chính khởi động
+ 
+Delay động cơ 
+quạt
+ 
+0006 giây
+ 
+Thời gian động cơ quạt khởi động
+ 
+Khởi động sao 
+–
+ 
+tam giác
+ 
+0006 giây
+ 
+Thời gian chuyển khởi
+ 
+dộng sao 
+–
+ 
+tam 
+giác
+ 
+Trễ tải
+ 
+0002 giây
+ 
+Thời gian chuyển chạy có tải
+ 
+Trễ không tải tối 
+đa
+ 
+0600 giây
+ 
+Sau khi chạy không tải quá thời gian này, 
+máy nén sẽ tự dừng động cơ.
+ 
+Dừng
+ 
+0010 giây
+ 
+Sau thời sian này máy sẽ chuyển sang 
+thời gian chạy không tải tối 
+đa
+ 
+ 
+Tái khởi động
+ 
+ 
+0100 giây
+ 
+Khi máy dừng sau thời gian chạy không 
+tải tối đa hoặc sau khi tự tắt máy, sau 
+thời gian này mới tái khởi động lại máy 
+nén được.
+ 
+ 
+ 
+Cài đặt 
+chế độ 
+hoạt 
+động
+ 
+Cách thức chạy
+-
+dừng
+ 
+Nội bộ/ Từ 
+xa
+ 
+Khởi động máy nén thao tác trực tiế
+p 
+hoặc thông qua điều khiển từ xa.
+ 
+Cách thức chạy tải
+ 
+Tự 
+động/Tay
+ 
+Chạy tự động hoặc chạy chế độ tay.
+ 
+ 
+Cách thức kết nối
+ 
+Không/Máy 
+tính/ Liên 
+kết
+ 
+Không liên kết hoặc điều khiển qua giao 
+thức Modbus RTU hoặc liên kết nhiều 
+máy chạy trong mạng lưới điều k
+hiển.
+ 
+Mã kết nối
+ 
+0001
+ 
+ 
+ 
+ 
+ 
+ 
+Cài đặt 
+tham số 
+liên kết
+ 
+Trạng thái liên kết
+ 
+Máy chủ/ 
+Máy con
+ 
+Máy chủ điều khiển trạng thái các máy 
+con liên kết dựa trên áp suất điều khiển
+.
+ 
+Thời gian 
+chạy
+ 
+0099 giờ
+ 
+Thời gian chạy chu kì trong liên kết
+ 
+nhiều máy nén .
+ 
+Số 
+lượng liên kết
+ 
+0000
+ 
+Số lượng máy nén khí liên kết điều khiển
+ 
+Giới hạn áp suất 
+dưới
+ 
+ 
+**** MPa
+ 
+Khi áp suất máy chủ thấp hơn áp suất 
+này bộ điều khiển sẽ gọi một máy nén 
+trong mạng lưới liên kết chạy.
+ 
+Giới hạn áp suất 
+trên 
+ 
+ 
+**** MPa
+ 
+Khi áp suất máy chủ c
+ao hơn áp suất này 
+bộ điều khiển sẽ gọi gửi lệnh dừng máy 
+nén trong mạng lưới liên kết đang chạy.
+ 
+Độ trễ liên kết
+ 
+0050 giây
+ 
+Thời gian máy chủ gửi lệnh điều khiển 
+đến khi được thực hiện.
+ 
+
+16
+ 
+ 
+ 
+ 
+ 
+Cài đặt 
+tham số 
+bảo trì 
+thay mới 
+phụ tùng
+ 
+Lọc dầu
+ 
+0000 giờ
+ 
+Khi th
+ời gia
+n đến
+ 
+giá trị này, thay mới 
+phụ tùng và cài đặt lại thời gian sử dụng.
+ 
+Lọc tách dầu
+ 
+0000 giờ
+ 
+Khi thời gian đến
+ 
+giá trị này, thay mới 
+phụ tùng 
+và cài đặt lại thời gian sử dụng.
+ 
+Lọc gió
+ 
+0000 giờ
+ 
+Khi thời gian đến
+ 
+giá trị này, thay mới 
+phụ tùng 
+và c
+ài đặt lại thời gian sử dụng.
+ 
+Dầu máy nén
+ 
+0000 giờ
+ 
+Khi thời gian đến
+ 
+giá trị này, thay mới 
+phụ tùng 
+và cài đặt lại thời gian sử dụng.
+ 
+Mỡ động cơ
+ 
+0000 giờ
+ 
+Khi thời gian đến
+ 
+giá trị này, thay mới 
+phụ tùng 
+và cài đặt lại thời gian sử dụng.
+ 
+Cài đặt 
+thời g
+ian 
+sử dụng 
+phụ tùng 
+tố đa
+ 
+Lọc dầu
+ 
+3000 giờ
+ 
+Giới hạn thời gian sử dụng của lọc dầu. 
+ 
+Lọc tách dầu
+ 
+3000 giờ
+ 
+Giới hạn thời gian sử dụng của lọc tách 
+dầu.
+ 
+Lọc gió
+ 
+3000 giờ
+ 
+Giới hạn thời gian sử dụng của lọc gió.
+ 
+Dầu máy nén
+ 
+3000 giờ
+ 
+Giới hạn thời gian s
+ử dụng của dầu.
+ 
+Mỡ động cơ
+ 
+3000 giờ
+ 
+Giới hạn thời gian sử dụng của mỡ.
+ 
+Chọn 
+ngôn 
+ngữ
+ 
+Tiếng Trung/ 
+Tiếng Anh
+ 
+ 
+Tiếng Anh
+ 
+Ngôn ngữ hiển thị trên giao diện màn 
+hình điều khiển.
+ 
+6
+ 
+HOẠT ĐỘNG CƠ BẢN VÀ THÔNG SỐ 
+CÀI ĐẶT BỘ ĐIỀU KHIỂN MÁY NÉN 
+KHÍ TRỤC VÍT SỬ DỤNG
+ 
+BIẾN TẦN:
+ 
+6.1
+ 
+Hoạt động cơ bản:
+ 
+ 
+6.1.1
+ 
+Mô tả nút nhấn
+ 
+6.1.2
+ 
+Mô tả đèn báo
+ 
+ 
+ 
+---
+Powe
+r:
+ 
+Đèn sẽ sáng sau khi bộ điều khiển được bật.
+ 
+ 
+                       
+---
+Run:
+ 
+Đèn báo chạy sáng khi động cơ máy nén khí đang chạy
+.
+ 
+ 
+         
+ 
+---
+Alarm:
+ 
+Đèn báo lỗi sẽ nhấ
+p nháy khi gần
+ 
+đế
+n giới hạn thời gian sử dụng phụ 
+tùng
+; đèn báo lỗi luôn sáng khi 
+có 
+lỗi dừ
+ng máy nén
+ 
+và đèn báo lỗi sẽ tắt sau khi lỗi 
+được khắc phục.
+ 
+.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+17
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+6.1.3
+ 
+Trạng thái hiển thị và hoạt động
+ 
+ 
+ 
+Sau khi bật nguồn, màn hình sẽ hiển thị logo bộ điều khiển “MAM
+-
+6080”
+. Sau một 
+khoảng thời gian chờ, giao diện hiển thị sẽ
+ 
+như sau:
+ 
+ 
+ 
+
+18
+ 
+ 
+ 
+ 
+ 
+ 
+Sau
+ 
+5 giây, giao diện 
+màn hình điều khiển sẽ 
+hiển thị như sau:
+ 
+ 
+ 
+ 
+ 
+ 
+---
+ 
+Biểu tượn
+g này cho biết chức năng chạy
+-
+ 
+dừng 
+theo 
+thời gian đang được bật.
+ 
+ 
+ 
+ 
+---
+ 
+Biểu tượng này cho biết chức 
+năng phân đoạn áp suất thời gian đang bật.
+ 
+ 
+ 
+ 
+        
+---
+ 
+Biểu tượng này cho biết chức năng khởi động lại khi tắt nguồn đã được bật.
+ 
+ 
+ 
+ 
+      
+ 
+---
+ 
+Biểu tượng này cho biết chức năng điều khiển từ xa đang được bật.
+ 
+ 
+ 
+ 
+      
+ 
+---
+ 
+Biểu tượng này cho biết ch
+ức năng giám sát 
+qua 
+máy tính đang được bật.
+ 
+ 
+                               
+---
+ 
+Biểu tượng này ch
+o biết chức năng điều khiển liên kết máy
+ 
+đang được bật.
+ 
+ 
+ 
+ 
+ 
+Người dùng vào giao diện lựa chọn menu sau bằng cách nhấp vào nút “menu” trên giao diện 
+hiển thị 
+hoặc nhấn
+ 
+nút
+ 
+“
+ 
+”,
+ 
+người dùng vào giao diện xem và cài đặt tham số tương ứng 
+thông qua giao diện này
+:
+ 
+ 
+Focus on the curr
+ent 
+interface, press the left or 
+right
+ 
+button
+ 
+to
+ 
+execute
+ 
+the 
+corresponding function.
+ 
+In order to prevent 
+jamming,
+ 
+the
+ 
+start
+ 
+and
+ 
+stop 
+buttons
+ 
+must
+ 
+be
+ 
+pressed
+ 
+for
+ 
+0.2
+ 
+seconds
+ 
+to
+ 
+execute
+ 
+the 
+corresponding
+ 
+function.
+ 
+
+19
+ 
+ 
+ 
+ 
+ 
+ 
+6.1.4
+ 
+Danh sách xem và tham số vận hành
+ 
+ 
+Nhấp vào "Tham số vận hành" để xem dữ liệu và cài đặt liên quan của các tham số vận hành 
+sau:
+ 
+ 
+ 
+        
+Danh mục
+ 
+Cài đặt ban đầu
+ 
+                      
+Chức năng
+ 
+Thời gian sử dụng lọc 
+dầu
+ 
+0020H
+ 
+Thời gian sử dụng tích lũy của lọc dầu.
+ 
+Thời gian sử dụng lọc 
+tách dầu
+ 
+0020H
+ 
+Thời gian sử dụng tích lũy của lọc tách dầu.
+ 
+Thời gian sử dụng lọc 
+gió
+ 
+0020H
+ 
+Thời gian sử dụng t
+ích lũy của lọc gió.
+ 
+Thời gian sử dụng dầu 
+ 
+0020H
+ 
+Thời gian sử dụng tích lũy của dầu máy nén 
+khí.
+ 
+Thời gian sử dụng mỡ bò
+ 
+0020H
+ 
+Thời gian sử dụng tích lũy của mỡ bò động 
+cơ.
+ 
+ 
+ 
+ 
+ 
+ 
+             
+Danh mục
+ 
+Giá trị 
+cài  ban 
+đầu
+ 
+ 
+ 
+ 
+                            
+  
+Chức năng
+ 
+ 
+ 
+ 
+Áp suất tải (MPa)
+ 
+ 
+00.65
+ 
+1.
+Ở chế độ tự động: Khi áp suất khí nén thấp 
+hơn giá trị cài đặt này, bộ điều khiển sẽ tự 
+động khởi chạy có tải cho máy nén.
+ 
+2.
+Khi máy nén chạy không tải trong thời gian 
+dài, áp suất khí nén dưới giá trị cài đặt này 
+và 
+điều kiện vận hành đạt, bộ điều khiển 
+sẽ tự khởi động chạy lại máy nén.
+ 
+
+20
+ 
+ 
+ 
+ 
+ 
+ 
+Áp suất không tải (MPa)
+ 
+ 
+    
+00.80
+ 
+1. Khi áp suất khí nén đạt tới giá trị cài đặt 
+này, bộ điều khiển sẽ chuyển máy nén chạy ở 
+chế độ không tải.
+ 
+2. Không được cài đặt giá trị áp suấ
+t tải gần 
+bằng áp suất không tải hoặc cài áp suất không 
+tải vượt quá giới hạn áp suất cho phép của 
+máy nén.
+ 
+Nhiệt độ chạy quạt (℃)
+ 
+0080
+ 
+Khi máy nén đang chạy, nhiệt độ khí nén cao 
+hơn giá trị cài đặt này bộ điều khiển sẽ khởi 
+động chạy quạt.
+ 
+Nhiệt độ quạ
+t dừng (℃)
+ 
+0070
+ 
+Khi máy nén đang chạy, nhiệt độ khí nén thấp 
+hơn giá trị cài đặt này bộ điều khiển sẽ dừng 
+quạt.
+ 
+Thời gian trễ khởi động 
+động cơ chính (giây)
+ 
+0008
+ 
+Cài đặt thời gian khởi động của động cơ chính 
+và bắt đầu tính thời gian khi động cơ chính 
+kh
+ởi động. Trong thời gian này, động cơ 
+chính không được bảo vệ chống quá tải dòng 
+điện..
+ 
+Thời gian trễ khởi động 
+động cơ quạt (giây)
+ 
+0003
+ 
+Cài đặt thời gian khởi động quạt và thời gian 
+bắt đầu khởi động quạt. Trong thời gian này, 
+quạt sẽ không được bảo vệ c
+hống quá tải 
+dòng điện.
+ 
+ 
+Thời gian khởi động sao 
+(giây)
+ 
+    
+0006
+ 
+ 
+Thời giam chuyển khởi động sao 
+–
+ 
+tam giác
+ 
+ 
+Thời gian tải (giây)
+ 
+    
+0002
+ 
+ 
+Thời gian trễ để máy nén chuyển chạy có tải.
+ 
+ 
+Thời gian chạy không tải 
+tối đa (giây)
+ 
+    
+0600
+ 
+ 
+Thời gian máy nén 
+chạy không tải tối đa, sau 
+thời gian này máy nén sẽ tự động dừng.
+ 
+Thời gian trễ dừng máy 
+nén (giây
+)
+ 
+    
+0010
+ 
+Máy nén sẽ chạy không tải và dừng sau thời 
+gian này.
+ 
+Thời gian tái khởi động 
+lại máy nén (giây)
+ 
+0100
+ 
+Sau khi tắt máy bình thường, tự tắt máy do l
+ỗi 
+hoặc máy nén chạy không tải trong thời gian 
+tối đa cho phép và dừng hẳn thì sau thời gian 
+này mới tái khởi động máy lại được.
+ 
+ 
+Thời gian trễ mở van 
+(giây)
+ 
+    
+0002
+ 
+ 
+Sau thời gian này mới có thể tái khởi động lại 
+máy nén.
+ 
+Thời gian chờ xả tiếp 
+theo (ph
+út)
+ 
+0060
+ 
+Sau thời gian này, van xả sẽ  mở.
+ 
+ 
+ 
+Cách thức tải
+ 
+Tự 
+động/ 
+_ Tự động: Máy nén sẽ tự động chạy có tải 
+khi áp suất thấp hơn giá trị áp suất tải khi 
+chọn chế độ tự động.
+ 
+_ Chế độ tay: Tự chạy/ dừng máy bằng thao 
+
+21
+ 
+ 
+ 
+Thủ 
+công
+ 
+tác nhấn phím trên màn hình 
+điều khiển.
+ 
+ 
+Cách thức Chạy 
+–
+ 
+Dừng
+ 
+Thủ công
+–
+ 
+Điề
+u khiển 
+từ xa
+ 
+_ Thủ công: Chạy 
+–
+ 
+Dừng máy theo chế độ tự 
+động hoặc chế độ tay.
+ 
+_ Điều khiển từ xa: Chạy 
+–
+ 
+Dừng máy nén 
+thông qua tín hiệu điều khiển dựa trên trạng 
+thái ngõ ra điều khiển từ xa đóng.
+=
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Chế độ vận hành
+ 
+Khởi động 
+trực tiếp/ 
+Khởi động 
+mềm/ 
+Biến 
+tần
+,..
+ 
+ 
+ 
+ 
+Người dùng có thể lựa chọn chế độ vận hành 
+máy nén khí theo nhu cầu. Tham khảo sơ đồ 
+đấu
+ 
+điện tương ứng với chế độ đã chọn.
+ 
+Điều chỉnh độ sáng màn 
+hình
+ 
+0001
+ 
+Điều chỉnh độ sáng màn hình tăn
+g dần theo 
+mứ
+c
+ 
+từ 1 đến 4
+ 
+ 
+ 
+Phương thức giao tiếp
+ 
+Không/ 
+Máy Tính/ 
+Liên kết
+ 
+ 
+Không liên kết hoặc điều khiển qua giao thức 
+Modbus RTU hoặc liên kết nhiều máy chạy 
+trong mạng lưới điều khiển.
+=
+Địa chỉ giao tiếp
+ 
+0001
+ 
+Khi phương thức giao tiếp là máy tính hoặ
+c 
+liên kết, địa chỉ giao tiếp của bộ điều khiển.
+ 
+ 
+Đơn vị áp suất
+ 
+MPa/ PSI/    
+BAR
+ 
+ 
+Đơn vị áp suất được chọn sẽ hiển thị trên giao 
+diện màn hình điều khiển. 
+ 
+ 
+Đơn vị nhiệt độ
+ 
+℃/℉
+ 
+Đơn vị nhiệt độ được chọ sẽ hiển thị trên giao 
+diện màn hình điều khiển.
+ 
+ 
+M
+ật khẩu người dùng
+ 
+****
+ 
+Mật khẩu người dùng có thể thay đổi; có thể 
+đặt lại bằng mật khẩu người dùng cũ hoặc
+ 
+ 
+mật khẩu gốc.
+ 
+ 
+ 
+Dòng động cơ chính
+ 
+A
+:
+ 
+000.0A
+ 
+B
+: 
+000.0A
+ 
+C
+:
+ 
+000.0A
+ 
+ 
+ 
+Hiển thị dòng điện của động cơ chính.
+ 
+
+2
+2
+ 
+ 
+ 
+ 
+ 
+Dòng động cơ quạt 
+ 
+A
+:
+ 
+000.0A
+ 
+B
+: 
+000.0
+A
+ 
+C
+:
+ 
+000.0A
+ 
+ 
+ 
+Hiển thị dòng điện của động cơ quạt giàn giải 
+nhiệt.
+ 
+Thời gian chạy
+ 
+0000
+：
+00
+：
+00
+ 
+Tổng thời gian chạy của máy nén khí.
+ 
+Thời gian chạy có tải
+ 
+0000
+：
+00
+：
+00
+ 
+Tổng thời gian chạy có tải của máy nén khí.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Trạng thái ngõ vào
+ 
+1
+ 
+2
+ 
+  
+3
+  
+  
+4
+ 
+     
+5
+     
+6
+   
+7
+ 
+8
+    
+9    
+10
+ 
+●
+ 
+ 
+●   
+ 
+●
+    
+●
+    
+●
+     
+●
+    
+●
+    
+●
+    
+●
+   
+●
+ 
+1:Tương ứng với trạng thái đầu vào công 
+tắc số 5; 
+                                               
+ 
+2:Tương ứng với 
+trạng thái đầu vào công 
+tắc số 6;
+ 
+3:Tương ứng với trạng thái đầu và
+o công 
+tắc số 7
+  
+ 
+ 
+4:Tương ứng với trạng thái đầu vào công 
+tắc số 8 
+ 
+ 
+5:Tương ứng với trạng thái đầu vào công 
+tắc số 9
+ 
+6: Tương ứng với trạng thái đầu vào công tắc số 10
+ 
+ 
+Khi thiết bị đầu cuối đóng, màu của đèn báo trạng thái cổng đầu 
+vào là màu đỏ, khi th
+iết bị đầu cuối ngắt kết nối, màu của đèn 
+báo trạng thái cổng đầu vào là màu cam.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Trạng thái ngõ ra 
+ 
+1
+ 
+2
+ 
+  
+3
+  
+  
+4
+ 
+    
+5
+  
+    
+6
+  
+ 
+7
+  
+ 
+8
+ 
+9
+    
+10
+ 
+●
+ 
+ 
+●
+    
+●
+    
+●
+    
+●    
+ 
+●
+    
+●
+    
+●   
+ 
+●
+   
+●
+ 
+1: Tương ứng với trạng thái ngõ ra số 17;                
+          
+2: Tương ứng với trạng thái ngõ ra số 16;                   
+3: Tương ứng với trạng thái ngõ ra số 15;                
+4: Tương ứng với trạng thái ngõ ra số 14;                    
+5: Tương ứng với trạng thái ngõ ra số 13;                       
+6 Tư
+ơng ứng với trạng thái ngõ ra số 12:
+ 
+
+23
+ 
+ 
+ 
+Khi thiết bị đầu cuối đóng, màu của đèn báo trạng thái ngõ đầu ra 
+là màu đỏ , khi thiết bị đầu cuối ngắt kết nối, màu của đèn báo 
+trạng thái ngõ đầu ra là màu cam.
+ 
+ 
+ 
+ 
+        
+ 
+ 
+Tốc độ động cơ 
+chính
+ 
+ 
+0000
+ 
+RPM
+ 
+Hiển thị t
+ốc độ thực của động cơ chính dựa trên  tần số 
+đọc của biến tần
+ 
+Tần số 
+ra của 
+máy chủ
+ 
+ 
+000.0
+ 
+Hz
+ 
+ 
+Hiển thị tần số của biến tần.
+ 
+Dòng điện ra
+ 
+000.0
+ 
+A
+ 
+Hiển thị giá trị cường độ dòng điện ngõ ra của biến tần.
+ 
+Điện áp ra 
+ 
+000.0
+ 
+V
+ 
+Hiển thị điện áp đầu ra của b
+iến tần.
+ 
+Công suất đầu 
+ra
+ 
+000.0
+ 
+Kw
+ 
+Hiển thị công suất đầu ra thực của biến tần.
+ 
+Công suất điện 
+năng tiêu thụ 
+đầu ra
+ 
+ 
+0000000.0Kw.H
+ 
+Bộ điều khiển hiển thị mức tiêu thụ điện năng hiện tại dựa 
+trên công suất đầu ra theo thời gian thực của biến tần.
+ 
+ 
+Điện n
+ăng tiêu 
+thụ tích luỹ
+ 
+ 
+0000000.0Kw.H
+ 
+ 
+Dựa trên công suất đầu ra theo thời gian thực của biến tần, 
+bộ điều khiển sẽ hiển thị mức tiêu thụ điện năng tích luỹ 
+khi chạy.
+ 
+ 
+Trạng thái biến 
+tần
+ 
+ 
+0000
+ 
+Bộ điều khiển sẽ hiển thị trạng thái đọc được từ bộ biến 
+tần.
+ 
+ 
+Hiển thị lỗi
+ 
+ 
+0000
+ 
+Bộ điều khiển sẽ hiển trạng thái
+ 
+lỗi đọc được từ bộ biến 
+tần chính
+ 
+đến vùng hiển thị lỗi.
+ 
+Giá trị tần số
+ 
+000.0
+ 
+Bộ điều khiển sẽ hiển thị giá trị tần số thu được bằng phép 
+tính PID tại đây.
+ 
+Tốc độ quạt
+ 
+0000
+ 
+RPM
+ 
+Dựa trên tần số quạt đọ
+c được, hiển thị tốc độ thực của 
+quạt.
+ 
+Tần số ra của 
+biến tần
+ 
+000.0
+ 
+Hz
+ 
+Hiển thị tần số đầu ra hiện tại của bộ biến tần quạt.
+ 
+Dòng điện quạt
+ 
+000.0
+ 
+A
+ 
+Hiển thị dòng điện đầu ra hiện tại của bộ biến tần quạt.
+ 
+Điện áp ra của 
+quạt
+ 
+000.0
+ 
+V
+ 
+Hiển thị điện áp đầu
+ 
+ra hiện tại của bộ biến tần quạt.
+ 
+Công suất biến 
+tần quạt
+ 
+000.0
+ 
+Kw
+ 
+Hiển thị công suất đầu ra theo thời gian thực của bộ biến 
+tần quạt.
+ 
+Điện năng quạt 
+sử dụng
+ 
+ 
+000000.00Kw.H
+ 
+Theo công suất đầu ra thực của biến tần quạt, bộ điều 
+khiển sẽ hiển thị mức tiêu
+ 
+thụ điện năng tích luỹ hiện tại.
+ 
+
+24
+ 
+ 
+ 
+Công suất điện 
+tiêu thụ tích luỹ 
+của quạt
+ 
+ 
+000000.00Kw.H
+ 
+Bộ điều khiển sẽ hiển thị mức tiêu thụ điện năng dựa trên 
+công suất đầu ra theo thời gian thực của bộ biến tần quạt.
+ 
+Trạng thái quạt
+ 
+0000
+ 
+Bộ điều khiển sẽ hiển thị
+ 
+trạng thái quạt đọc được.
+ 
+Hiển thị lỗi
+ 
+0000
+ 
+Bộ điều khiển sẽ hiển trạng thái lỗi đọc được từ bộ biến 
+tần quạt đến vùng hiển thị lỗi.
+ 
+ 
+ 
+ 
+ 
+6.1.5
+ 
+Danh sách và thông số vận hành
+ 
+ 
+Tham số người dùng được sử dụng để lưu trữ dữ liệu liên quan do người dùng máy nén k
+hí thiết 
+lập. Để sửa đổi tham số người dùng, người dùng cần xác minh mật khẩu người dùng.
+ 
+ 
+ 
+ 
+ 
+Touch
+ 
+o
+p
+e
+r
+a
+ti
+o
+n
+：
+（
+b
+a
+s
+e
+ 
+is
+ 
+yellow
+）
+ 
+1, When t
+he cursor is fixed here 
+,you
+ 
+can revise the parameter by 
+clicking the data box directly if the 
+password has been verified 
+already
+ 
+2, If the password is not verified 
+yet, a password verification box 
+will prompt. Button operation 
+shows as below:
+ 
+1, In data c
+hecking mode, press 
+left or right button to enter data 
+modification 
+mode;
+ 
+When
+ 
+the
+ 
+cursor
+ 
+is
+ 
+in
+ 
+page
+ 
+icon,
+ 
+press
+ 
+“S”
+=
+í
+=
+ìí
+=
+êêéá
+=
+ìíá
+=
+
+25
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Danh Mục Cài Đặt
+ 
+ 
+Giá Trị Cài
+ 
+        
+                              
+Mô Tả Chức Năng
+ 
+ 
+Áp suất tải 
+(MPa)
+ 
+ 
+ 
+00.65
+ 
+1.
+ 
+1. Chế độ tải được đặt thành tự động. Khi 
+máy nén khí ở 
+chế độ xả tải tự động, áp suất thấp hơn giá trị này sẽ điều 
+khiển máy nén khí tự động tải
+ 
+lại
+.
+ 
+2.
+ 
+2. Khi máy nén khí không hoạt động trong thời gian dài, áp 
+suất thấp hơn giá trị này và các điều kiện vận hành được 
+đáp ứng, bộ điều khiển sẽ tự độ
+ng khởi động máy nén khí 
+để chạy
+ 
+ở chế độ tải
+.
+ 
+Áp suất 
+ 
+không tải 
+(MPa)
+ 
+ 
+ 
+00.80
+ 
+_ 
+Áp suất cao hơn giá trị này và 
+máy 
+đang ở trạng thái
+ 
+tải
+, 
+điều khiển hoạt động xả tải của máy nén khí
+ 
+được thực 
+hiện
+.
+ 
+_ 
+Giá trị cài đặt của "áp suất 
+không tải
+" không được lớ
+n 
+hơn giá trị này, và "áp suất 
+không tải
+" bị giới hạn bởi "giớ
+i 
+hạn 
+ 
+áp suất 
+ 
+cao
+" trong thông số 
+cài đặt của 
+máy.
+ 
+Nhiệt độ khởi động 
+của quạt 
+(℃)
+ 
+0080
+ 
+Khi máy nén khí đang chạy, khi nhiệt độ khí thải cao hơn 
+giá trị được cài đặt ở đây, quạt sẽ được điều 
+khiển để chạy.
+ 
+Nhiệt độ dừng 
+của 
+quạt 
+(℃)
+ 
+0070
+ 
+Khi máy nén khí đang chạy, khi nhiệt độ khí thải thấp hơn 
+giá trị được cài đặt ở đây, quạt sẽ ngừng chạy.
+ 
+Sự chậm trễ khởi 
+động máy chủ 
+(
+giây
+)
+ 
+0008
+ 
+Cài đặt thời gian khởi động của động cơ chính và bắt đầu 
+tí
+nh thời gian khi động cơ chính khởi động. Trong thời 
+gian này, động cơ chính không được bảo vệ chống quá tải 
+dòng điện.
+ 
+Độ trễ khởi động của 
+quạt 
+(
+giây
+)
+ 
+0008
+ 
+Cài đặt thời gian khởi động quạt và thời gian bắt đầu khởi 
+động quạt. Trong thời gian này, quạt s
+ẽ không được bảo vệ 
+chống quá tải dòng điện.
+ 
+Độ trễ khởi động
+ 
+sao 
+(
+giây
+)
+ 
+0006
+ 
+ 
+Thời gian 
+chuyển 
+khởi động sao
+ 
+tam giác
+.
+ 
+Thời gian trễ chạy 
+có tải
+ 
+(
+giây
+)
+ 
+0002
+ 
+ 
+Sau khi máy chủ chạy, thời gian tải bị trì hoãn
+.
+ 
+Thời gian không 
+tải tối đa 
+ 
+(
+giây
+)
+ 
+0600
+ 
+Thời 
+gian chạy không tải liên tục dài nhất mà máy nén khí 
+cho phép, sau thời gian này, máy sẽ tự động dừng chạy và 
+chuyển sang trạng thái không tải trong thời gian quá dài.
+ 
+Thời gian trễ 
+dừng máy
+ 
+(giây
+)
+ 
+ 
+0010
+ 
+Trong quá trình tắt máy bình thường, máy nén khí sẽ
+ 
+ngay 
+lập tức chạy không tải và dừng lại sau thời gian hoạt động 
+không tải đã cài đặt.
+ 
+Thời gian
+ 
+tái 
+khởi động
+ 
+(
+giây
+)
+ 
+ 
+0100
+ 
+Sau khi tắt máy bình thường, tắt máy khi xe không có 
+người lái quá lâu hoặc tắt máy do lỗi, thời gian cài đặt ở 
+đây cần phải được t
+rì hoãn
+ 
+Thời gian mở xả
+ 
+(
+giây
+)
+ 
+0002
+ 
+Chỉ khi đó máy nén khí mới có thể khởi động lại
+K
+=
+
+26
+ 
+ 
+ 
+ 
+Thời gian chờ 
+xả tiếp theo 
+(phút)
+ 
+ 
+0060
+ 
+ 
+Sau thời gian này, van xả sẽ mở
+ 
+xả.
+ 
+Soft
+ 
+start
+ 
+delay 
+(giây)
+ 
+ 
+0006
+ 
+ 
+Trong quá trình kiểm
+ 
+soát thoát nước tự động, thời gian 
+ng
+ắt quãng thoát nước (chờ)
+ 
+ 
+Cách thức tải
+ 
+ 
+Tự động
+ 
+/
+ 
+Thủ công
+ 
+Chế độ thủ công: tự động xả tải khi áp suất cao hơn "áp 
+suất xả tải"; các điều kiện khác được điều khiển bằng 
+các nút nạp và xả tải;
+ 
+Chế độ tự động: Bộ điều khiển tự động điều khiển việc nạp 
+và 
+xả tải của máy nén khí theo áp suất và áp suất nạp và xả 
+tải đã cài đặt.
+ 
+ 
+Cách thức 
+chạy 
+–
+ 
+dừng
+ 
+ 
+Thủ công
+–
+ 
+Điề
+u 
+khiển 
+từ xa
+ 
+_ Thủ công: Chạy 
+–
+ 
+Dừng máy theo chế độ tự động hoặc 
+chế độ tay.
+ 
+_ Điều khiển từ xa: Chạy 
+–
+ 
+Dừng máy nén thông qua tín 
+hiệu điều kh
+iển dựa trên trạng thái ngõ ra điều khiển từ xa 
+đóng.
+.
+ 
+ 
+Chế độ vận 
+vận
+ 
+Khởi động 
+trực tiếp/ 
+Khởi động 
+mềm/ Biến 
+tần
+ 
+Người dùng có thể lựa chọn chế độ vận hành máy nén khí 
+theo nhu cầu. Tham khảo sơ đồ 
+đấu
+ 
+điện tương ứng với 
+chế độ đã chọn.
+ 
+ 
+Địa chỉ 
+ 
+ 
+000
+1
+ 
+Khi phương thức giao tiếp là máy tính hoặc liên kết, địa 
+chỉ giao tiếp của bộ điều khiển.
+ 
+Điều 
+chỉnh độ 
+sáng
+ 
+ 
+0001
+ 
+Điều chỉnh độ sáng đèn nền, giá trị càng cao thì độ sáng 
+càng mạnh. (Có thể điều chỉnh 1~4 mức độ sáng)
+ 
+ 
+Phương thức 
+kết nối
+ 
+ 
+Không/ Máy 
+Tính/ 
+Liên kết
+ 
+Khi được đặt thành cấm, giao tiếp không hoạt động;
+ 
+Khi được đặt thành giao tiếp, với tư cách là một slave, nó 
+giao tiếp với các thiết bị bên ngoài theo giao thức 
+MODBUS RTU, tốc độ truyền: 9600; định dạng dữ liệu: 
+8N1; tính chẵn lẻ: chẵn lẻ
+ 
+Khi được đặt thành liên kết, nhiều máy nén khí có thể được 
+kết nối mạng và vận hành.
+ 
+ 
+Đơn vị áp suất
+ 
+ 
+  
+MPa/PSI/BAR
+ 
+Nếu đặt thành MPa, đơn vị tham số liên quan đến áp suất 
+sẽ được hiển thị là MPa. Nếu đặt thành PSI, đơn vị tham số 
+liên quan đến áp suất sẽ
+ 
+được hiển thị là PSI. (dự phòng)
+ 
+Ví dụ: khi đặt thành BAR, đơn vị tham số liên quan đến áp 
+suất sẽ được hiển thị là BAR. (dự phòng)
+ 
+Đơn vị nhiệt 
+độ
+ 
+ 
+℃/℉
+ 
+Nếu đặt thành °C, đơn vị tham số liên quan đến nhiệt 
+độ sẽ được hiển thị là °C. Nếu đặt thành ℉, đơn 
+vị 
+tham số liên quan đến nhiệt độ sẽ được hiển thị là ℉. 
+(dự phòng)
+ 
+Chọn 
+ngôn 
+ngữ
+ 
+ 
+ 
+Tiếng Trung/   
+ 
+Tiếng Anh
+ 
+Khi đặt thành tiếng Trung, giao diện hiển thị sẽ được hiển 
+thị bằng tiếng Trung;
+ 
+Khi đặt thành tiếng Anh, giao diện hiển thị sẽ được hiển thị 
+bằn
+g tiếng Anh; (dự phòng)
+ 
+Mật khẩu 
+người dùng
+ 
+ 
+****
+ 
+Mật khẩu người dùng có thể thay đổi; có thể đặt lại bằng 
+mật khẩu người dùng cũ hoặc mật khẩu gốc.
+ 
+ 
+
+27
+ 
+ 
+ 
+ 
+ 
+ 
+6.1.6
+ 
+Các thông số hiệu chuẩn
+ 
+ 
+Các thông số hiệu chuẩn được sử dụng để thiết lập dữ liệu liên quan đến bộ đ
+iều khiển. 
+Người dùng cần xác minh mật khẩu hiệu chuẩn trước khi xem hoặc sửa đổi các thông số hiệu 
+chuẩn. Các chức năng chính được hiển thị trong bảng sau:
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+              
+Danh Mục
+ 
+Giá trị cài 
+ban đầu
+ 
+                                   
+Chức năng
+ 
+Hệ s
+ố dòng động cơ 
+chính A
+ 
+1.000
+ 
+ 
+Dùng để hiệu chuẩn dòng điện. Dãy cài đặt hệ số 
+dòng điện: 0.800
+ 
+-
+ 
+2.
+000
+ 
+ 
+ 
+Giá trị dòng điện hiển thị = giá trị đo 
+được 
+× hệ số 
+dòng điện
+ 
+Hệ số dòng động cơ 
+chính B
+ 
+1.000
+ 
+Hệ số dòng động cơ 
+chính C
+ 
+1.000
+ 
+Hệ số dòng động c
+ơ quạt 
+A
+ 
+1.000
+ 
+Hệ số dòng động cơ quạt 
+B
+ 
+1.000
+ 
+Hệ số dòng động cơ quạt 
+C
+ 
+1.000
+ 
+Hệ số nhiệt độ 1
+ 
+1.000
+ 
+Dùng để hiệu chuẩn nhiệt độ khí nén đầu ra. 
+Phạm vi cài đặt hệ số nhiệt độ:0.800
+ 
+-
+ 
+2.000
+ 
+ 
+Giá trị nhiệt độ
+ 
+hiển thị = giá trị đo 
+được × hệ số 
+nhiệt 
+độ
+ 
+Hệ số nhiệt độ 2
+ 
+1.000
+ 
+Lưu ý: Đối với bộ điều khiển MAM6080, tham số 
+này được dành riêng.
+ 
+Hệ số nhiệt độ 3
+ 
+1.000
+ 
+Lưu ý: Đối với bộ điều khiển MAM6080, tham số 
+này được dành riêng.
+ 
+ 
+Hệ số nhiệt độ 4
+ 
+1.000
+ 
+Hệ số nhiệt độ 5
+ 
+1.000
+ 
+Hệ số nhiệt độ 6
+ 
+1.
+000
+ 
+Hệ số áp suất 1
+ 
+1.000
+ 
+_ 
+Dùng để hiệu chuẩn áp suất khí nén đầu ra. 
+Phạm vi cài đặt hệ số áp suất
+:0.800
+ 
+-
+ 
+2.000
+ 
+ 
+Giá trị áp suất
+ 
+hiển thị = giá trị đo 
+được × hệ số áp 
+suất
+ 
+ 
+Hệ số áp suất 2
+ 
+ 
+1.000
+ 
+Lưu ý: Đối với bộ điều khiển MAM6080, tham số 
+này được
+ 
+dành riêng.
+ 
+ 
+
+28
+ 
+ 
+ 
+Hệ số điện áp
+ 
+1.000
+ 
+_ 
+Dùng để hiệu chuẩn giá trị điện áp hiển thị. 
+Phạm vi cài đặt hệ sốđiện áp
+:
+ 
+0.800
+ 
+-
+ 
+2.000
+ 
+ 
+Giá trị điện áp 
+hiển thị = giá trị đo 
+được × hệ số 
+điện áp 
+ 
+Hệ số điều chỉnh xung 
+PWM1
+ 
+1.000
+ 
+Lưu ý: Đối với bộ điều khiển MAM608
+0, tham số 
+này được dành riêng.
+ 
+ 
+Hệ số điều chỉnh xung 
+PWM2
+ 
+1.000
+ 
+ 
+Hiệu chỉnh điểm 0 nhiệt 
+độ 1
+ 
+ 
+0002
+ 
+ 
+Dùng để điều chỉnh điểm không nhiệt độ của 
+bộ điều khiển. Khi đầu nối dây cảm biến nhiệt 
+độ của bộ điều khiển được kết nối với điện trở 
+tương ứng với 
+-
+20℃, hã
+y điều chỉnh giá trị 
+này để
+ 
+nhiệt độ về 
+-
+20℃. Hiệu chuẩn nhiệt 
+độ.
+ 
+Hiệu chỉnh điểm 0 nhiệt 
+độ 2
+ 
+0002
+ 
+ 
+Lưu ý: Đối với bộ điều khiển MAM6080, tham số 
+này được dành riêng.
+ 
+ 
+Hiệu chỉnh điểm 0 nhiệt 
+độ 3
+ 
+0002
+ 
+Hiệu chỉnh điểm 0 nhiệt 
+độ 4
+ 
+0002
+ 
+Hiệu
+ 
+chỉnh điểm 0 nhiệt 
+độ 5
+ 
+0002
+ 
+Hiệu chỉnh điểm 0 nhiệt 
+độ 6
+ 
+0002
+ 
+Hiệu chỉnh điểm 0 áp 
+suất 1
+ 
+0002
+ 
+ 
+Khi giá trị áp suất khí cấp
+ 
+thấp hơn giá trị cài đặt
+, 
+giá trị áp suất hiển thị là 0.
+00, được sử dụng để 
+ngăn cảm b
+iến áp suất khí cấp tăng
+ 
+lên.
+ 
+Hiệu chỉn
+h điểm 0 áp 
+suất 2
+ 
+0002
+ 
+ 
+Khi giá trị áp suất 2 nhỏ hơn giá trị cài đặt, giá trị 
+áp suất hiển thị là 0,00, được sử 
+dụng để ngăn cảm 
+biến áp suất
+ 
+khí
+ 
+cấp
+ 
+bị trôi lên.
+(dự phòng)
+ 
+Điểm 0 PWM1
+ 
+0002
+ 
+Dự phòng
+ 
+Điểm 0 PWM2
+ 
+0002
+ 
+Dự phòng
+ 
+Bảo vệ điện áp, trình tự 
+p
+ha
+ 
+(V)
+ 
+000.9
+ 
+ 
+Khi giá trị điện áp được phát hi
+ện bởi mạch phát 
+hiện thứ tự điện áp
+ 
+ba pha thấp hơn giá trị được 
+thiết lập ở đây
+, lỗi thứ tự pha sẽ được báo
+. Khi giá 
+trị này được đặt thành 0, chức năng bảo
+ 
+vệ thứ tự 
+pha sẽ không hoạt động
+.
+ 
+Bảo vệ mất pha, 
+hở pha
+ 
+(V)
+ 
+ 
+000.0
+ 
+ 
+Khi giá trị điện áp pha hở được phát hiện thấp h
+ơn 
+giá trị được thiết lập ở đây sẽ báo lỗi mất pha
+. Khi 
+giá trị này được thiết lập thành 0, chức năng bảo 
+vệ 
+pha không hoạt động
+.
+ 
+ 
+Tỷ lệ dòng động cơ 
+chính
+ 
+ 
+ 
+020
+ 
+Dòng động cơ/5
+ 
+Tỷ lệ dòng động cơ quạt
+ 
+001
+ 
+Dòng động cơ quạt/2.5
+ 
+
+29
+ 
+ 
+ 
+6.1.7
+ 
+Thông số điều khiển liên kết
+ 
+ 
+Các tham số điều khiển liên kết được sử dụng để thiết lập các chức năng liên quan đến điều 
+khiển
+ 
+liên kết
+ 
+máy nén khí với nhau
+. Trước khi sửa đổi các tham số điều khiển, ngườ
+i dùng cần 
+xác minh mật khẩu tham số điều khiển liên kết. Các chức năng chính và chức năng
+ 
+điều khiển 
+liên kết máy
+ 
+được hiển thị trong bảng sau:
+ 
+ 
+           
+Danh mục
+ 
+Giá trị cài 
+ban đầu
+ 
+                              
+Chức năng
+ 
+Số máy nén liên kết
+=
+MMMO
+=
+=
+Số 
+lượng máy né
+n khí trong mạng lưới điều khiển
+=
+ìK
+=
+=
+Áp suất tải hệ 
+thống 
+liên kết 
+ãó=
+=
+yEm~y
+=
+=
+MMKSP
+=
+=
+Khi áp suất bộ điều khiển liên kết máy nén
+=
+thấp 
+hơn 
+giá trị 
+áp suất được cài đặt ở đây,
+=
+bộ điều 
+khiển liên kết sẽ
+=
+tìm một máy
+=
+nén trong mạng lưới 
+áý
+=
+kết
+=
+để 
+chạy 
+tải hoặc khởi động
+=
+chạy tải
+K
+=
+=
+Áp suất không tải hệ liên 
+kết máy nén
+=
+yEm~y
+=
+=
+=
+MMKTU
+=
+=
+Khi áp suất bộ điều khiển liên kết máy nén cao 
+hơn giá trị
+=
+áp suất được cài đặt ở đây,
+=
+bộ điều 
+khiển liên kết sẽ tìm
+=
+ãó
+=
+nén trong mạng lưới liên 
+kết đang
+=
+chạy
+=
+để chuyển chạy không tải hoặc dừng 
+ãó==
+K
+=
+=
+Thời gian trễ
+=
+thực hiện 
+lệnh điều khiển 
+yEáó
+y
+=
+=
+MMOM
+=
+=
+Thời gian thực hiện lệnh từ bộ điều khiển liên kết 
+đến máy nén trong mạng lưới liên kết.
+=
+=
+Thời gian chạy
+=
+yEéí
+y
+=
+=
+MMSM
+=
+=
+Thời gian máy nén chạy tối đa tron
+g hệ thống liên 
+kết máy nén. Nếu áp suất hệ thống vẫn nằm giữa 
+giá trị áp suất tải và áp suất không tải; lúc này hệ 
+thống điều khiển liển kết gọi máy nén khác trong 
+hệ thống liên kết chạy, sau đó dừng máy đang chạy 
+quá 60 phút lại.
+=
+=
+=
+Kết nối liên kết
+=
+Tốc 
+độ cố 
+định
+
+=
+Tốc 
+độ cố định/ 
+Tốc độ cố 
+định
+
+=
+ó=
+biến tần/ 
+Máy biến 
+tần
+
+ó=
+biến tần
+=
+=
+_ Có thể liên kết máy nén tốc độ cố định với 
+~ìK
+=
+_ Liên kết máy nén tốc độ cố định với máy nén 
+biến tần
+=
+_ Liên kết giữa máy nén biến tần với máy nén 
+biến tần.
+=
+=
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+30
+ 
+ 
+ 
+ 
+ 
+6.1.8
+ 
+Các thông số đầu vào
+ 
+ 
+Các thông số
+ 
+đầu vào
+ 
+được sử dụng để thiết lập chức năng của các 
+ngõ vào
+ 
+từ 5 đến 
+10. Các 
+chức năng chính được thể hiện trong bả
+ng bên dưới
+:
+ 
+ 
+ 
+ 
+      
+Danh Mục
+ 
+Giá trị cài 
+ban đầu
+ 
+           
+                       
+  
+Chức năng
+ 
+Ng
+õ vào 10
+ 
+Nút dừng 
+khẩn cấp
+=
+Không có chức năng/Dừng khẩn cấp/Mở từ xa/Đóng từ 
+xa/Chạy từ xa/Giữ từ xa/T
+hiếu nước 
+yE
+thường đóng
+)/Tải từ 
+xa/Kích hoạt khởi động từ xa/Tải 
+–
+=
+Không tải từ xa
+L
+=
+Tiếp 
+điểm thường đóng dử dụng cho các chức năng: Nhiệt độ xi 
+~=~I=
+Nhiệt độ đầu nén cao, Quá nhiệt động cợ, Quá tải 
+động cơ,…
+=
+=
+k==V
+=
+=
+Thiếu nước
+=
+k==U
+=
+Lọc dầu
+=
+_ Tiếp điểm thường đóng sử dụng cho các chức năng: Quá 
+tải động cơ quạt, Nghẹt lọc dầu, Nghẹt lọc tách dầu, Nghẹt 
+lọc gió, Lỗi máy sấy khí.
+=
+_ Tiếp điểm 
+thường mở sử dụng cho các chức năng:, Lỗi 
+biến tần.
+=
+k==T
+=
+Dầu máy nén
+=
+k==S
+=
+Lọc gió
+=
+=
+_ Tiếp điểm thường mở cho chức năng điều khiển từ xa, 
+thường đóng cho lỗi biến tần chính/ lỗi biến tần quạt
+=
+_ Lưu ý: người dùng có thể cài chức năng khác tuỳ t
+=
+yêu cầu.
+=
+k==R
+=
+Điều khiển 
+=
+từ xa
+=
+=
+ 
+
+31
+ 
+ 
+ 
+ 
+6.1.9
+ 
+C
+ác thông số tiêu hao phụ tùng
+ 
+ 
+Các thông số phụ tùng tiêu hao được sử dụng để cài đặt thời gian tiêu hao. Người dùng cần xác 
+minh mật khẩu trước khi xem hoặc sửa đổi các thông số của phụ tùng tiêu hao. Các chứ
+c năng 
+chính được hiển thị trong bảng sau:
+ 
+ 
+   
+Tên phụ tùng
+=
+Giá trị
+=
+====================
+Mô tả chức năng
+=
+Lọc dầu (giờ)
+=
+MOMM
+=
+Thời gian sử dụng tích luỹ của lọc dầu.
+=
+Lọc tách dầu (giờ)
+=
+MOMM
+ 
+Thời gian sử dụng tích luỹ của lọc 
+íK
+ 
+Lọc gió
+=
+MOMM
+ 
+Thời gian sử
+=
+dụng tích luỹ của lọc 
+áK
+ 
+Dầu máy nén (giờ)
+=
+MOMM
+ 
+Thời gian sử dụng tích luỹ củ
+a dầu máy.
+ 
+Mỡ động cơ (giờ)
+=
+MOMM
+ 
+Thời gian sử dụng tích luỹ củ
+a mỡ bò.
+=
+ 
+Giới hạn lọc dầu 
+(giờ)
+=
+PMMM
+=
+Thời gian sử dụng cao nhất của lọc dầu. 
+Gần đến giá trị này máy nén sẽ cả
+=K
+=
+Giới hạn lọc tách 
+dầu (giờ)
+=
+PMMM
+ 
+Thời gian sử dụng cao nhất của lọ
+=í
+K=
+Gần đến giá trị này máy nén sẽ cảnh báo
+ 
+Giới hạn lọc gió 
+(giờ)
+=
+PMMM
+ 
+Thời gian sử dụng cao nhất của lọ
+=á
+K=
+Gần đến giá trị này máy nén sẽ cảnh báo
+ 
+Giới hạn dầu máy 
+=yE
+iờ)
+=
+PMMM
+ 
+Thời gian sử dụng cao nhất củ
+~
+=
+dầu
+=
+ãó
+K=
+Gần đến giá trị này máy nén sẽ cảnh báo
+ 
+Giới hạn mỡ động 
+cơ (giờ)
+=
+PMMM
+ 
+Thời gian sử dụng cao nhất củ
+a mỡ bò
+K=
+Gần đến giá trị này máy nén sẽ cảnh báo
+ 
+ 
+6.1.10
+ 
+Hiệu chuẩn màn hình
+ 
+Hiệu chuẩn màn hình được sử dụng để
+ 
+hiệu chuẩn độ chính xác của thao tác màn hình. 
+Người dùng cần xác minh mật khẩu hiệu chuẩn màn hình trước khi vào hiệu chuẩn màn 
+hình. Sau khi vào giao diện hiệu chuẩn màn hình, hãy dùng đầu ngón tay hoặc các công 
+cụ có đầu nhọn khác để lần lượt nhấp vào 
+các phím A, B, C, D, E. Nếu đạt được hiệu 
+ứng mong muốn, hãy nhấp vào OK, bộ điều khiển sẽ khởi động lại để lưu cài đặt; nếu 
+không đạt được hiệu ứng mong muốn, hãy nhấp vào "Hiệu chuẩn lại" và hiệu chuẩn lại 
+theo phương pháp trước đó cho đến khi đạt được h
+iệu ứng mong muốn.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+32
+ 
+ 
+ 
+ 
+6.1.11
+ 
+Cài đặt áp suất vận hành theo thời gian
+ 
+ 
+Áp suất
+ 
+vận hành theo
+ 
+thời gian được sử dụng để thiết lập giá trị áp suất
+ 
+máy chạy theo thời 
+gian cài đặt
+. Trước khi người dùng sửa đổi các
+ 
+thông số áp suất thời gian,
+ 
+cần xác minh mật 
+khẩ
+u áp suất thời gian. Các chức năng chính được hiển thị trong bảng sau:
+ 
+ 
+      
+Danh Mục
+ 
+Cài 
+Đặt
+ 
+           
+Mô Tả Chức Năng
+ 
+Áp suất tải (MPa)
+=
+MMKSR
+=
+Áp suất thấp hơn giá trị này máy nén 
+sẽ chuyển sang chạy có tải.
+=
+Áp suất
+=
+â
+=
+tải 
+yEm~y
+ 
+00.80
+ 
+Áp suất cao h
+ơn giá trị này máy nén 
+sẽ chuyển sang chạy không tải.
+=
+=
+Áp suấ
+í=ìó=íê
+=
+yEm~y
+ 
+ 
+00.70
+ 
+Áp suất duy trì hệ thống dao động ở 
+giá trị này, máy nén chạy ở tốc độ 
+giảm tải theo giá trị tần số cài đặt để 
+tiết kiện năng lượng
+=
+(Dòng biến tần)
+K
+=
+=
+Thời gian bắt đầu
+=
+=
+M
+MWMM
+=
+Khi thời gian này không phải là 
+"00:00", chức năng cài đặt ở trên sẽ 
+được
+=
+kích hoạt, nếu không thì sẽ 
+không được thực hiện
+K
+=
+=
+Thời gian kết thúc
+=
+=
+MMWMM
+=
+Khi thời gian này không phải là 
+“00:00”, chức năng kết thúc áp suất 
+sẽ được kích hoạt khi cài đặt ở
+=
+íêý=
+được thiết lập, nếu k
+hông thì chức 
+năng này sẽ không được thực hiện
+K
+=
+ 
+6.1.12
+ 
+Cài đặt thời gian chạy dừng máy theo ngày
+ 
+ 
+Chức năng hẹn giờ bắt đầu và kết thúc được sử dụng để cài đặt thời gian bật và tắt trong một 
+tuần, có thể cài đặt bốn khung giờ bật và t
+ắt mỗi ngày. Người dùng cần xác minh mật khẩu bắt 
+đầu và kết thúc hẹn giờ trước khi sửa đổi thời gian bắt đầu và kết thúc hẹn giờ. Khi dữ liệu được 
+đặt thành 00:00, chức năng tương ứng sẽ không hoạt động.
+ 
+6.1.13
+ 
+Lịch sử lỗi
+ 
+ 
+Ghi lại thông tin lỗi lịch sử để giúp 
+người dùng tìm ra nguyên nhân lỗi và
+ 
+kiểm tra khắc phục. 
+Bộ điều khiển có thể lưu trữ
+ 
+lại tới 100 lỗi
+ 
+máy nén
+.
+ 
+6.1.14
+ 
+Cài đặt biến tần chính
+ 
+ 
+Chuy
+ể
+n đ
+ổ
+i t
+ầ
+n s
+ố
+ 
+bi
+ế
+n t
+ầ
+n chính 
+đư
+ợ
+c s
+ử
+ 
+d
+ụ
+ng đ
+ể
+ 
+thi
+ế
+t l
+ậ
+p các thông s
+ố
+ 
+chuy
+ể
+n đ
+ổ
+i t
+ầ
+n s
+ố
+ 
+c
+ủ
+a bi
+ế
+n t
+ầ
+n
+. Ngư
+ờ
+i dùng c
+ầ
+n xá
+c minh m
+ậ
+t kh
+ẩ
+u trư
+ớ
+c khi s
+ử
+a đ
+ổ
+i các thông s
+ố
+ 
+bi
+ế
+n 
+t
+ầ
+n 
+chính
+. Các ch
+ứ
+c năng chính đư
+ợ
+c hi
+ể
+n th
+ị
+ 
+trong b
+ả
+ng sau:
+ 
+ 
+
+33
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Danh Mục
+ 
+Giá trị cài 
+đặt ban 
+đầu
+ 
+ 
+                       
+Chức năng
+ 
+ 
+ 
+Áp suất chuyển đổi tần 
+số 
+biến tần chính 
+(MPa)
+ 
+ 
+ 
+00.70
+ 
+Cài đặt áp s
+uất khí cấp khi máy nén khí 
+biến tần đang hoạt động ổn định. Khi áp 
+suất dao động gần mức này, bộ điều 
+khiển sẽ điều chỉnh tần số của biến tần 
+để đưa áp suất khí cấp gần với giá trị 
+được cài đặt. (Thông số này chỉ hoạt 
+động khi model được cài đặt ở 
+chế độ 
+chuyển đổi tần số biến tần chính
+ 
+hoặc 
+chuyển đổi tần số quạt chính)
+ 
+ 
+Tốc độ quá độ khi tăng 
+tốc (RPM
+-
+ 
+vòng/phút)
+ 
+ 
+1000
+ 
+Trong quá trình điều chỉnh PID, nó được 
+sử dụng để giới hạn mức tăng
+ 
+tốc
+ 
+của 
+mỗi kết quả hoạt động PID. Nhằm ngăn 
+ngừa việc tăng tần số 
+quá mức trong quá 
+trình vận hành máy nén khí, dẫn đến 
+tăng tốc độ động cơ quá mức.
+ 
+ 
+Tốc độ quá độ khi giảm 
+tốc (RPM
+-
+ 
+vòng/phút)
+ 
+ 
+1000
+ 
+Trong quá trình điều chỉnh PID, nó được
+ 
+sử dụng để giới hạn sự giảm tốc
+ 
+của mỗi 
+kết quả hoạt động PID. Nhằm ngăn ngừa 
+việ
+c giảm tần số quá mức khi máy nén 
+khí đang chạy, khiến tốc độ động cơ 
+giảm quá nhanh.
+ 
+ 
+Công suất động cơ 
+chính (KW)
+ 
+ 
+ 
+022.0
+ 
+Đặt công suất định mức của động cơ, 
+được sử dụng để tính toán công suất 
+thực tế của động cơ khi động cơ hoạt 
+động với bộ chuyển đổi
+ 
+tần số (tham số 
+này chỉ hoạt động khi mô hình được đặt 
+thành bộ chuyển đổi tần số 
+động cơ 
+chính 
+hoặc bộ chuyển đổi tần số quạt 
+chính)
+.
+ 
+ 
+ 
+Tốc độ động cơ chính 
+(RPM
+-
+ 
+vòng/phút)
+ 
+ 
+ 
+ 
+1500
+ 
+Cài đặt tốc độ quay khi động cơ hoạt 
+động ở tần số cao nhất, được sử dụ
+ng để 
+tính toán tốc độ quay thực tế của động 
+cơ khi động cơ hoạt động ở tần số thay 
+đổi. (Tham số này chỉ hoạt động khi mô 
+hình được cài đặt để chuyển đổi tần số 
+máy chủ hoặc chuyển đổi tần số quạt 
+chính)
+ 
+G
+iá trị ban đầu của khâu 
+tích phân
+ 
+ 
+0080
+ 
+Khi áp su
+ất phát hiện <(áp suất làm 
+việc 
+cài đặt 
+-
+ 
+phạm vi sai lệch
+), tích phân 
+được tính bằng giá trị cài đặt.
+ 
+Phạm vi sai lệch 
+-
+ 
+độ 
+chênh áp
+ 
+(Mpa)
+ 
+ 
+00.05
+ 
+Khi áp suất phát hiện > (áp
+ 
+suất làm việc 
+cài đặt + phạm vi sai lệch
+), tích phân 
+được tính toán dựa trên giá
+ 
+trị cài đặt.
+ 
+
+34
+ 
+ 
+ 
+Độ lợi tỷ lệ của biến tần 
+chính
+ 
+0025
+ 
+Trong hoạt động tần số thay đổi, 
+(khi 
+áp 
+suất làm việc được đặt 
+–
+ 
+phạm vi sai 
+lệch
+) <áp suất phát hiện<(áp suất làm 
+việc được đặt +
+ 
+phạm vi sai lệch
+), 
+độ lợi 
+tích phân sẽ có hiệu lực.
+ 
+ 
+Độ lợi tích phân c
+ủa 
+biến tần chính
+ 
+ 
+0030
+ 
+Theo dõi
+ 
+tốc độ theo áp suất làm việc
+, 
+giá trị càng lớn thì theo dõi càng nhanh, 
+dao động dễ dàng; giá trị càng nhỏ thì 
+theo dõi càng chậm, điều chỉnh càng 
+chậm.
+ 
+ 
+Độ lợi 
+vi phân
+ 
+của 
+biến 
+tần chính
+ 
+ 
+0000
+ 
+Theo dõi tốc độ 
+theo 
+áp suất
+ 
+làm việc cài 
+đặt và xác định sai số trạng thái ổn định, 
+giá trị càng lớn, theo dõi càng nhanh, sai 
+số càng nhỏ; giá trị càng nhỏ, theo dõi 
+càng chậm, sai số càng lớn.
+ 
+Tần số 
+giới hạn trên
+ 
+(Hz)
+ 
+050.0
+ 
+Tần số hoạt động tối đa mà máy nén khí 
+được phép khi tả
+i.
+ 
+ 
+Tần số
+ 
+giới hạn dưới
+ 
+(Hz)
+ 
+ 
+030.0
+ 
+Trong quá trình điều chỉnh, khi áp suất 
+vượt quá áp suất làm việc cài đặt
+ 
+nhưng 
+chưa đạt đến áp suất xả, 
+biến tần sẽ 
+chuyển sang tần số giới hạn dưới để duy 
+trì áp suất và tiết kiện năng lượng
+.
+ 
+Tần số không tải (Hz)
+ 
+0
+25.0
+ 
+Tần số hoạt động đầu ra của máy nén 
+khí khi
+ 
+chạy
+ 
+không tải.
+ 
+ 
+Mã số biến tần liên kết
+ 
+ 
+0001
+ 
+Đặt 
+mã số liên kết cho biến tần
+. Giá trị 
+này phải phù hợp với số trạm giao tiếp 
+của biến tần.
+ 
+ 
+Chu kỳ PID (giây)
+ 
+ 
+000.8
+ 
+Bộ điều khiển thực hiện tính toán PID 
+theo thời gian đã thiết 
+lập để điều chỉnh 
+tốc độ
+.
+ 
+ 
+ 
+Mã biến tần chính
+ 
+ 
+ 
+ATV61
+ 
+Bộ điều khiển có thể lưu trữ tới 10 loại 
+địa chỉ giao tiếp biến tần khác nhau (để 
+giao tiếp đọc các thông số biến tần, biến 
+tần cần hỗ trợ giao thức 
+kết nối 
+MODBUS RTU)
+.
+ 
+ 
+Chế đ
+ộ dừng biến tần
+ 
+Giảm tốc/ 
+Dừng tự 
+do
+ 
+_ Giảm tốc: giảm tốc trước khi dừng hẳn
+ 
+_ Dừng máy tự do
+ 
+không qua giảm tốc
+ 
+ 
+Chế độ chạy biến tần 
+chính
+ 
+ 
+Giao tiếp/ 
+Tiếp điểm 
+chạy
+-
+dừng
+ 
+_ 
+Khởi động và dừng giao tiếp: Khởi 
+động biến tần thông qua giao tiếp 
+RS485. Khởi 
+động và dừng đầu cuối: 
+_ 
+Khởi động và dừng biến tần thông qua 
+giá trị chuyển mạch
+ 
+đầu 
+–
+ 
+cuối
+.
+ 
+Lưu ý:
+ 
+1: Các thông số cài đặt của bộ 
+điều khiển
+ 
+phải phù hợp với chế độ 
+chạy
+-
+ 
+dừng 
+ 
+của biến tần.
+ 
+            
+2: Khi người dùng cần chuyển 
+đổi giữa biến tần và b
+iến tần, 
+ngõ ra 
+12 
+
+35
+ 
+ 
+ 
+được sử dụng 
+để điều khiển
+ 
+biến tần. Bộ 
+điều khiển chỉ có thể khởi động và dừng 
+biến tần thông qua giao tiếp.
+ 
+Thời gian chạy biến tần
+ 
+(giây)
+ 
+0006
+ 
+Thời gian tối đa nhận lệnh 
+và 
+chạy biến 
+tần.
+ 
+Thời gian dừng biến tần
+ 
+(giây)
+ 
+0006
+ 
+Thời gia
+n tối đa nhận lệnh và dừng
+ 
+biến 
+tần.
+ 
+Công suất điện năng của 
+biến tần (KWh)
+ 
+0000000.0
+ 
+Đặt mức tiêu thụ điện năng tích lũy của 
+biến tần chính
+ 
+ở chế độ hoạt động tần số 
+thay đổi.
+ 
+Thời gian trễ mở biến 
+tần (giây)
+ 
+1.0
+ 
+Khi 
+nhấn nút khởi động,
+ 
+sau
+ 
+thời gian 
+cà
+i đặt 
+này 
+lệnh khởi động được gửi đến 
+bộ biến tần
+ 
+và thực hiện
+.
+ 
+Áp suất cố định 
+1 (MPa)
+ 
+0.60
+ 
+Áp suất cố định 1 =< Áp suất cố định 2
+ 
+Áp suất cố định 2=< Áp suất cố định 3
+ 
+Áp suất cố định 3 =< Áp suất cố định 4
+ 
+Áp suất cố định 4 =< Áp suất cố định 5
+ 
+Áp suất
+ 
+cố định 5 =< Áp suất cố định 6
+ 
+Áp suất cố định 6 =< Áp suất cố định 7
+ 
+Áp suất cố định 
+2 (MPa)
+ 
+0.70
+ 
+Áp suất cố định 
+3 (MPa)
+ 
+0.80
+ 
+Áp suất cố định 
+4 (MPa)
+ 
+0.90
+ 
+Áp suất cố định 
+5 (MPa) 
+ 
+1.00
+ 
+Áp suất cố định 
+6 (MPa)
+ 
+1.10
+ 
+Áp suất cố định 7 (MPa)
+ 
+1.20
+ 
+Tần số cố định 
+1
+ 
+(Hz)
+ 
+180.0
+ 
+Tần số cố định 
+1 >= 
+Tần số cố định 
+2
+ 
+Tần số cố định 
+2 >= 
+Tần số cố định 
+1
+ 
+Tần số cố định 
+2
+ 
+(Hz)
+ 
+160.0
+ 
+Tần số cố định 
+3
+ 
+(Hz)
+ 
+140.0
+ 
+Tần số cố định 
+3 >= 
+Tần số cố định 
+4
+ 
+Tần số cố định 
+4 >= 
+Tần số cố định 
+5
+ 
+Tần số cố định 
+5 >
+= 
+Tần số cố định 
+6
+ 
+Tần số cố định 
+6 >= 
+Tần số cố định 
+7
+ 
+Tần số cố định 
+4
+ 
+(Hz)
+ 
+120.0
+ 
+Tần số cố định 
+5
+ 
+(Hz)
+ 
+100.0
+ 
+Tần số cố định 
+6
+ 
+(Hz)
+ 
+80.0
+ 
+Tần số cố định 7
+ 
+(Hz)
+ 
+60.0
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+36
+ 
+ 
+ 
+6.1.15
+ 
+Cài đặt biến tần quạt
+ 
+ 
+Chuy
+ể
+n đ
+ổ
+i t
+ầ
+n s
+ố
+ 
+bi
+ế
+n t
+ầ
+n qu
+ạ
+t 
+đ
+ư
+ợ
+c s
+ử
+ 
+d
+ụ
+ng đ
+ể
+ 
+thi
+ế
+t l
+ậ
+p các thông s
+ố
+ 
+bi
+ế
+n t
+ầ
+n qu
+ạ
+t
+. Ngư
+ờ
+i 
+dùng c
+ầ
+n xác minh m
+ậ
+t kh
+ẩ
+u trư
+ớ
+c khi s
+ử
+a đ
+ổ
+i các thông s
+ố
+ 
+bi
+ế
+n t
+ầ
+n qu
+ạ
+t
+. Các ch
+ứ
+c năng 
+chính đư
+ợ
+c hi
+ể
+n th
+ị
+ 
+trong b
+ả
+ng sau:
+ 
+ 
+ 
+     
+Danh Mục
+ 
+Cài Đặt Ban 
+Đầu
+ 
+       
+                             
+  
+Mô T
+ả Chức Năng
+ 
+Nhiệt độ chuyển đổi 
+tần số quạt
+ 
+(℃)
+ 
+0078℃
+ 
+Cài đặt nhiệt độ khí thải khi máy nén khí đang hoạt động 
+ổn định. Khi nhiệt độ khí thải dao động gần giá trị này, bộ 
+điều khiển sẽ điều chỉnh tần số hoạt động của biến tần quạt 
+sao cho nhiệt độ khí thả
+i gần với giá trị được cài đặt tại 
+đây. (Thông số này chỉ hoạt động khi model được cài đặt ở 
+chế độ chuyển đổi tần số quạt hoặc chuyển đổi tần số quạt 
+chính)
+ 
+ 
+Nhiệt độ chuyển 
+đổi tần số tối đa
+ 
+(℃)
+ 
+ 
+0085℃
+ 
+Khi nhiệt độ khí thải lớn hơn hoặc bằng giá trị này
+, hãy 
+kiểm soát tần số đầu ra của bộ biến tần quạt, đây là giới hạn 
+trên của tần số được thiết lập trong thông số của nhà sản 
+xuất. (Thông số này chỉ hoạt động khi model được thiết lập 
+ở chế độ chuyển đổi tần số quạt hoặc chuyển đổi tần số 
+quạt chính.)
+ 
+Tố
+c độ tăng tốc của 
+quạt
+ 
+ 
+1000
+ 
+Trong quá trình điều chỉnh PID, nó được sử dụng để giới 
+hạn mức tăng của mỗi kết quả hoạt động PID. Ngăn quạt 
+tăng tần số quá mức trong quá trình vận hành, khiến tốc độ 
+quạt tăng quá nhanh.
+ 
+Tốc độ giảm tốc của 
+quạt
+ 
+ 
+1000
+ 
+Trong
+ 
+quá trình điều chỉnh PID, nó được sử dụng để giới 
+hạn sự giảm dần của mỗi kết quả hoạt động PID. Ngăn 
+chặn áp suất không khí
+ 
+Công suất quạt định 
+mức
+ 
+001.5KW
+ 
+Khi máy đang chạy, tần số giảm quá nhiều khiến tốc độ 
+quạt giảm quá nhanh.
+ 
+Tốc độ quạt định 
+mức
+ 
+1500RPM
+ 
+Cài đặt tốc độ tương ứng khi quạt chạy ở tần số cao nhất. 
+Khi động cơ hoạt động với tần số thay đổi,
+ 
+Nhiệt độ chuyển đổi 
+chạy quạt
+ 
+(℃)
+ 
+ 
+0070℃
+ 
+Tính toán tốc độ thực tế của động cơ. (Tham số này chỉ 
+hoạt động khi mô hình được thiết lập để chuyển đổi
+ 
+tần số 
+quạt hoặc chuyển đổi tần số quạt chính)
+ 
+Nhiệt độ chuyển đổi 
+dừng quạt
+ 
+(℃)
+ 
+ 
+0065℃
+ 
+Khi nhiệt độ khí thải lớn hơn giá trị cài đặt này, quạt 
+chuyển đổi tần số sẽ khởi động. (Thông số này chỉ hoạt 
+động khi model được cài đặt ở chế độ chuyển đổi tần số 
+quạt hoặc chuyển đổi tần số quạt chính)
+ 
+Giá trị ban đầu 
+của tích phân 
+quạt
+ 
+ 
+0020
+ 
+Khi nhiệt độ khí thải thấp hơn giá trị cài đặt này, quạt 
+chuyển đổi tần số sẽ dừng. (Thông số này chỉ hoạt động khi 
+model được cài đặt ở chế độ chuyển đổi tần số quạt hoặc 
+ch
+uyển đổi tần số quạt chính)
+ 
+Phạm vi tích hợp 
+quạt 
+(℃)
+ 
+ 
+0005℃
+ 
+Khi nhiệt độ phát hiện <(nhiệt độ làm việc chuyển đổi tần 
+số cài đặt 
+-
+ 
+phạm vi tích phân), tích phân được tính theo giá 
+trị cài đặt;
+ 
+khi nhiệt độ phát hiện> (nhiệt độ làm việc chuyển đổi tần 
+số 
+cài đặt + phạm vi tích phân), tích phân được tính theo 
+giá trị cài đặt.
+ 
+
+37
+ 
+ 
+ 
+Độ lợi tỷ lệ quạt
+ 
+0100
+ 
+Theo dõi tốc độ cài đặt nhiệt độ làm việc, giá trị càng lớn 
+thì theo dõi càng nhanh, dễ dao động; giá trị càng nhỏ thì 
+theo dõi càng chậm và điều chỉnh càng chậ
+m.
+ 
+Độ lợi tích phân 
+quạt
+ 
+0020
+ 
+Theo dõi tốc độ cài đặt nhiệt độ vận hành và xác định sai 
+số trạng thái ổn định. Giá trị càng lớn, tốc độ theo dõi càng 
+nhanh và sai số trạng thái ổn định càng nhỏ; giá trị càng 
+nhỏ, tốc độ theo dõi càng chậm và sai số trạng 
+thái ổn định 
+càng lớn.
+ 
+Độ lợi vi phân
+ 
+quạt
+ 
+0000
+ 
+Thông thường không sử dụng, đặt thành "0000".
+ 
+Tần số giới hạn trên
+ 
+(HZ)
+ 
+050.0HZ
+ 
+Trong quá trình điều chỉnh, khi nhiệt độ vượt quá nhiệt độ 
+hoạt động của tần số thay đổi, tần số hoạt động tối đa được 
+phép sẽ
+ 
+được đưa ra.
+ 
+Tần số giới hạn 
+dưới
+ 
+(HZ)
+ 
+010.0HZ
+ 
+Trong quá trình điều chỉnh, nhiệt độ thấp hơn tần số hoạt 
+động tối thiểu được phép đưa ra khi cài đặt nhiệt độ hoạt 
+động tần số thay đổi.
+ 
+Hệ số công suất 
+quạt 
+ 
+0.900
+ 
+Tính hệ số công suất của quạt tần số tha
+y đổi và thiết lập số 
+trạm giao tiếp tương ứng của biến tần quạt.
+ 
+ 
+Số biến tần 
+ 
+2
+ 
+Bộ điều khiển thực hiện tính toán PID theo khoảng thời 
+gian do bộ điều khiển thiết lập để điều chỉnh tốc độ quạt.
+ 
+Chu kỳ PID (giây)
+ 
+001.5
+ 
+Chọn giao thức biến tần tích hợp.
+ 
+Mã biến tần quạt
+ 
+ATV31
+ 
+Cài đặt chế độ khởi động của quạt biến tần.
+ 
+Chế độ khởi động 
+biến tần quạt
+ 
+Bắt đầu và 
+dừng giao 
+tiếp / Bắt đầu 
+và dừng thiết 
+bị đầu cuối
+ 
+Quạt
+ 
+biến tần.
+ 
+Điện năng quạt biến 
+tần (Kw.H)
+ 
+000000.00
+ 
+Theo dõi tốc độ cài đặt nhiệt độ làm 
+việc, giá trị càng lớn thì 
+theo dõi càng nhanh, dễ dao động; giá trị càng nhỏ thì theo 
+dõi càng chậm và điều chỉnh càng chậm.
+ 
+ 
+ 
+
+38
+ 
+ 
+ 
+ 
+ 
+ 
+6.1.16
+ 
+Cài đặt thời gian
+ 
+ 
+Sử dụng để xem và cài đặt thời gian cho bộ điều khiển.
+ 
+ 
+6.2
+ 
+Các thông số kĩ thuật và chức năng của bộ điều k
+hiển
+ 
+6.2.1
+ 
+Môi trường làm việc
+:
+ 
+Nhiệt độ từ 
+-
+20℃
+～
++60℃;
+ 
+Độ ẩm
+:
+ 
+≤98%;
+ 
+6.2.2
+ 
+Số lượng ngõ vào 
+–
+ 
+ngõ ra: 6 ngõ vào 
+(
+chức năng tuỳ chọn
+), 6
+ 
+ngõ ra rơ
+-
+le
+ 
+6.2.3
+ 
+ 
+Đại lượng tương tự
+:
+ 
+1
+ 
+cảm biến nhiệt độ
+ 
+PT100.
+ 
+2
+ 
+CT đo dòng 
+điện
+.
+ 
+6.2.4
+ 
+Điện áp đầu vào thứ tự pha:
+:
+ 
+điện áp 3 pha
+ 
+380V/220V.
+ 
+6.2.5
+ 
+Bảo vệ điện áp thấp và bảo vệ điện áp cao cho hoạt động của máy nén khí.
+ 
+6.2.6
+ 
+Nguồn điện làm việc của bộ điều khiển
+:
+ 
+AC16
+-
+28V, 
+15VA
+ 
+6.2.7
+ 
+Phạm vi hiển thị:
+ 
+ 
+_  Nhiệt độ khí thải: 
+-
+50
+～
+350oC, độ chính xác: ±1oC. Thời gian chạy: 0
+～
+999999 giờ
+ 
+ 
+_ Thời gian chạy: 0
+～
+999999
+ 
+giờ
+ 
+ 
+_  Phạm vi hiển thị dòng điện: 0
+～
+999,9A.
+ 
+ 
+_ Áp suất: 0
+～
+1.60MPa. Độ chính xác: 0.01Mpa.
+ 
+6.2.8
+ 
+Bảo vệ trình tự pha: Khi máy nén khí dừng lại và phát hiện trình tự pha bị đảo 
+ngược, thời gian tác động sẽ nhỏ hơn 1 giây.
+ 
+6.2.9
+ 
+Bảo vệ động cơ: Bộ điều khiển có chức n
+ăng bảo vệ mất pha, mất cân bằng và quá tải 
+cho động cơ chính và bảo vệ quá tải cho động cơ quạt:
+ 
+_ Bảo vệ mất pha: Khi bất kỳ dòng điện một pha nào bị mất pha, thời gian tác động 
+bằng thời gian cài đặt; khi thời gian bảo vệ mất pha được cài đặt lớn hơ
+n 20
+ 
+giây, bảo 
+ 
+  
+vệ mất pha không hoạt động.
+ 
+    
+_ Bảo vệ mất cân bằng: Giá trị dòng điện tối đa trừ đi giá trị dòng điện tối thiểu lớn 
+hơn hoặc bằng giá trị cài đặt, nhân với giá trị dòng điện tối thiểu và chia cho 10 giờ. Thời 
+gian tác động là 5 giây.
+
+39
+ 
+ 
+ 
+Đặc t
+ính bảo vệ quá tải ngược thời g
+ian (đơn vị thời gian là giây). 
+Hệ số quá tải = I thực / I cài 
+đặt, khi dòng điện
+ 
+chạy động cơ lớn hơn hoặc bằng 
+1,2 lần đến 3,0 lần dòng điện cài đặt, hệ số 
+quá tải và thời gian tác động
+ 
+bảo vệ được thể hiện
+ 
+tron
+g bảng sau:
+ 
+ 
+Hệ số quá 
+tải
+ 
+(=I thực/ I 
+cài )
+ 
+≥1.2
+ 
+≥1.3
+ 
+≥1.5
+ 
+≥1.6
+ 
+≥2.0
+ 
+≥3.0
+ 
+Th
+ờ
+i gian 
+tác đ
+ộ
+ng b
+ả
+o 
+v
+ệ
+ 
+(giây)
+ 
+60
+ 
+48
+ 
+24
+ 
+8
+ 
+5
+ 
+1
+ 
+ 
+6.2.10
+ 
+ 
+Bảo vệ nhiệt độ: Khi nhiệt độ thực tế được phát hiện lớn hơn nhiệt độ cài đặt, thời gian 
+tác động là ≤2 giây
+ 
+6.2.11
+ 
+ 
+Công suất tiếp điểm của rơle đầ
+u ra: 250V, 5A; tuổi thọ tiếp điểm là 500000 lần.
+ 
+6.2.12
+ 
+ 
+Lỗi hiển thị hiện tại nhỏ hơn 1,0%.
+ 
+6.2.13
+ 
+ 
+Hai giao diện truyền thông RS485. Một kênh được sử dụng để điều khiển chung hoặc 
+giao tiếp với máy tính. Kênh còn lại giao tiếp với biến tần, điều khiển hoạt động của 
+b
+iến tần và đọc các thông số vận hành của biến tần.
+ 
+6.2.14
+ 
+ 
+Khởi động và dừng máy nén khí từ xa: Khi chế độ khởi động và dừng được thiết lập 
+ở chế độ từ xa, người dùng có thể khởi động hoặc dừng máy nén khí thông qua thiết 
+bị đầu cuối từ xa
+.
+ 
+ 
+ 
+7
+ 
+CÁC CẢNH BÁO VÀ PHÒN
+G NGỪA
+ 
+7.1
+ 
+Thiết bị điện nguồn cấp cho máy nén khí
+ 
+A)
+ 
+Theo đặc tính công suất, điện áp và tần số của máy nén k
+hí, chọn nguồn điện
+ 
+và dây nguồn phù 
+hợp (nếu điều kiện cho phép
+, nên trang bị cáp có hiệu suất,
+ 
+chịu nhiệt độ cao để gây 
+ảnh hưởng 
+đến 
+máy nén
+)
+ 
+B)
+ 
+Tiết diệ
+n
+ 
+của dây nguồn không được nhỏ hơn d
+ữ liệu được liệt kê trong bảng sau:
+ 
+ 
+Cường độ 
+dòng điện
+ 
+C
+ông su
+ấ
+t 
+đ
+ộ
+ng cơ
+    
+（
+KW
+）
+ 
+T
+i
+ế
+t di
+ệ
+n dây 
+d
+ẫ
+n
+（
+mm
+²
+ 
+）
+ 
+Cường độ 
+dòng điện
+ 
+C
+ông su
+ấ
+t 
+đ
+ộ
+ng cơ
+      
+（
+KW
+）
+ 
+T
+i
+ế
+t di
+ệ
+n dây 
+d
+ẫ
+n
+（
+mm
+²
+ 
+）
+ 
+10A
+ 
+7.5
+ 
+6
+ 
+100A
+ 
+75
+ 
+50
+ 
+15A
+ 
+11
+ 
+10
+ 
+120A
+ 
+90
+ 
+70
+ 
+20A
+ 
+15
+ 
+10
+ 
+150A
+ 
+110
+ 
+95
+ 
+25A
+ 
+18.5
+ 
+16
+ 
+175A
+ 
+132
+ 
+95
+ 
+30A
+ 
+22
+ 
+16
+ 
+215A
+ 
+160
+ 
+120
+ 
+40A
+ 
+30
+ 
+25
+ 
+250A
+ 
+185
+ 
+150
+ 
+50A
+ 
+37
+ 
+35
+ 
+270A
+ 
+200
+ 
+185
+ 
+60A
+ 
+45
+ 
+35
+ 
+220A
+ 
+220
+ 
+185
+ 
+75A
+ 
+55
+ 
+50
+ 
+350A
+ 
+250
+ 
+185
+ 
+
+40
+ 
+ 
+ 
+ 
+C
+）
+Tùy theo công suất và điện
+ 
+áp của máy nén khí, thợ điện chọn loại 
+Aptomat cho 
+máy
+ 
+nén khí
+ 
+phù hợp để bảo vệ hệ thống điện và nguồn điện, đảm bảo an toàn.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Picture
+ 
+7.1
+ 
+Air
+ 
+switch
+ 
+D)
+ 
+Máy nén khí phải được nối đất chắc chắn để tránh rò rỉ điện gây nguy hiểm.
+ 
+E)
+ 
+Máy nén khí có lưu lượng lớn nên sử dụng bộ cấp nguồn riêng để không ảnh hưởng
+ 
+đến 
+hoạt động
+ 
+của các thiết bị khác.
+ 
+ 
+7.2
+ 
+Biện pháp phòng ngừa
+ 
+A)
+ 
+Để tránh cho máy nén khí bị hư hỏng do va đập trong quá trình lưu kho và vận chuyển, nhà sản 
+xuất sử dụng các ốc vít cố định máy trước khi xuất xưởng. Người dùng phải nới lỏng hoặc tháo 
+các ốc vít
+ 
+này ra trước khi sử dụng máy.
+ 
+B)
+ 
+Việc đưa máy mới vào vận hành phải được thực hiện bởi nhân viên vận hành được công ty 
+chúng tôi chỉ định hoặc phê duyệt.
+ 
+Người vận hành phải đọc, hiểu và tuân theo các quy trình 
+vận hành, biện pháp phòng ngừa và thông số kỹ t
+huật bảo trì có liên quan trong sách hướng 
+dẫn sử dụng máy.
+ 
+C)
+ 
+Máy 
+nén khí không có bình chứa khí 
+nén 
+phải được trang bị bình chứa khí 
+nén 
+trước khi 
+đưa vào 
+sử 
+dụng.
+ 
+D)
+ 
+ 
+Không
+ 
+được tuỳ ý 
+th
+ay đổi các thông số máy nén khí 
+và phải cài đặt áp suất làm việc
+ 
+trong 
+đị
+nh mức để tránh làm hỏng động cơ do quá tải.
+ 
+E)
+ 
+Máy nén khí phải hoạt động trong môi trường thông gió tốt và nhiệt độ dưới 45°C.
+ 
+F)
+ 
+Các đầu nối
+ 
+dây
+ 
+điện 
+phải 
+đảm bảo
+ 
+chắc chắn và được 
+si
+ết chặt
+. Dây điện phải được lắp đặt bởi 
+người có chuyên môn về điện
+.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Bộ đấu dây điện
+ 
+ 
+
+41
+ 
+ 
+ 
+ 
+G)
+ 
+Nghiêm cấm vận hành máy nén khí trong thời gian dài ở áp suất thấp hơn 0,4Mpa.
+ 
+H)
+ 
+Đảm bảo mức dầu bôi trơn nằm trong giới hạn trên và dưới của thước dầu. Sử dụng dầu 
+bôi trơn chuyên dụng (độ nhớt 46) cho máy nén khí trục vít ngâm dầu.
+ 
+Cấm sử dụng hai 
+loại dầu khác nhau để tránh sự cố keo dầu trong hệ thống đường ống ảnh hưởng đến hoạt 
+động của máy nén khí.
+ 
+I)
+ 
+Nghiêm cấm việc kiểm tra, sửa chữa các thiết bị điện, mạch điện khi chưa ngắt nguồn 
+điện.
+ 
+J)
+ 
+Nghiêm cấm việc kiểm tra, sửa chữa bình c
+hứa và đường ống khí nén khi chưa xả hết 
+áp.
+ 
+K)
+ 
+Xả hết nước trong bình dầu và bình khí trong thời gian vận hành.
+ 
+L)
+ 
+Nhiệt độ khí thải phải nằm trong khoảng từ 70 đến 105°C
+ 
+M)
+ 
+Khi bảo dưỡng và vệ sinh các bộ phận, không sử dụng chất tẩy rửa dễ cháy, nổ và dễ 
+bay hơi
+, đồng thời sử dụng dung môi không ăn mòn và an toàn.
+ 
+N)
+ 
+Khi máy nén báo lỗi, không được cố khởi động lại mà hãy tìm hiểu nguyên nhân khắc 
+phục và xử lý kịp thời rồi mới khởi động lại.
+ 
+8
+ 
+LẮP ĐẶT MÁY NÉN KHÍ
+ 
+8.1
+ 
+Lựa chọn vị trí lắp đặt và hệ thống thông gió
+ 
+Để máy n
+én khí hoạt động ổn định, cần phải quy hoạch vị trí lắp đặt hợp lý, môi trường thông 
+thoáng, đảm bảo không gian trong quá trình sử dụng và bảo trì, bảo dưỡng máy nén khí. Một vị trí 
+lắp đặt hợp lý cần có những điều kiện cơ bản sau:
+ 
+A)
+ 
+Máy nén khí phải được lắ
+p đặt ở nơi sạch sẽ, khô ráo, thông thoáng, không có bụi và khí độc hại.
+ 
+B)
+ 
+Nhiệt độ môi trường làm việc không được cao hơn 45℃. Độ ẩm tương đối của không 
+khí xung quanh phải nhỏ hơn 80%.
+ 
+C)
+ 
+Nền lắp đặt
+ 
+máy phải chắc chắn và bằng phẳng
+.
+ 
+D)
+ 
+Nếu địa điểm bạn dự định 
+xây dựng là một trạm nén khí, bạn nên 
+thiết kế, bố trí 
+thiết bị xử 
+lý khí nén, van, đường ống và bình chịu áp suất phù hợp theo các quy định có liên quan.
+ 
+ 
+ 
+Để đảm bảo máy nén khí có khả năng tản nhiệt tốt và không gian bảo trì thuận tiện, khoảng cách 
+giữa
+ 
+máy nén khí và tường không được nhỏ hơn 1 mét, và khoảng cách trên cùng phải lớn hơn 1,5 
+mét để tránh tạo thành vòng gió
+ 
+lẩn quẩn
+ 
+giữa khí nóng thải ra 
+và khí lạnh hút vào. Thiết bị thông 
+gió
+ 
+cũng nên
+ 
+được lắp đặt cho phòng máy nén
+ 
+thông gió kém.
+ 
+
+42
+ 
+ 
+ 
+ 
+
+43
+ 
+ 
+ 
+9
+ 
+VẬN H
+ÀNH MÁY NÉN KHÍ
+ 
+9.1
+ 
+Trước khi đưa vào sử dụng máy nén khí
+ 
+Trước khi sử dụng
+ 
+máy nén khí
+, hãy nới lỏng các bu lông
+, ốc vít
+ 
+cố định 
+máy trong quá trình 
+vận chuyển. 
+Máy nén khí phải được trang bị bình chứa khí 
+nén 
+phù hợp trước khi đưa vào sử 
+dụng.
+ 
+ 
+9.2
+ 
+Vận hành máy 
+nén khí
+ 
+A)
+ 
+Điện áp đầu vào phải đáp ứng các điều kiện liên quan, dây nối đất phải được kết nối theo yêu cầu; 
+tiết diện và chiều dài của dây nguồn phải đáp ứng các yêu cầu của 
+Bảng tra dây ở mục 7.1
+-
+B
+.
+ 
+B)
+ 
+Kiểm tra xem mức dầu trong bình dầu có nằm giữa vạch giới 
+hạn trên và dưới
+ 
+của thước dầu
+ 
+không.
+ 
+C)
+ 
+Để đảm bảo an toàn khi khởi động, trước tiên hãy xác nhận rằng không có người, vật lạ, dụng 
+cụ hoặc các vật liệu dễ cháy nổ khác
+ 
+bên
+ 
+trong thiết bị
+ 
+D)
+ 
+Trước tiên bổ sung
+ 
+khoảng 0,2 lít dầu bôi trơn đặc biệt vào máy nén kh
+í 
+qua
+ 
+van nạp, và 
+quay đầu
+ 
+nén
+ 
+của 
+máy vài vòng 
+trước 
+khi khởi động
+ 
+máy nén
+ 
+(
+máy nén 
+sử
+ 
+dụng dây curoa 
+truyền động
+).
+ 
+E)
+ 
+Cấp điện cho bảng điều khiển máy nén
+ 
+khí
+.
+ 
+F)
+ 
+Kiểm tra chạy rà: trước khi sử dụng chính thức, máy nén khí phải được chạy rà 2 đến 3 lần, 
+tức là
+ 
+khởi động và dừng ngay lập tức để quan sát xe
+m máy nén khí có quay đúng chiều
+ 
+hoặc 
+có bất kỳ tiếng động, rung động bất thường nào không.
+ 
+G)
+ 
+Vận hành chính thức: nhấn nút khởi động một lần nữa để bắt đầu vận hành máy nén khí.
+ 
+H)
+ 
+Sau khi khởi động thiết bị, động 
+cơ được t
+hiết lập khởi động 
+trực tiếp ở chế độ sao 
+–
+ 
+tam 
+giác
+ 
+(
+Y
+-
+△
+)
+, và bắt đầu chạ
+y
+ 
+tăng tốc chậ
+m ở
+ 
+chế độ
+ 
+sao
+. Sau vài giây, động cơ sẽ tự động 
+chuyển sang chế độ
+ 
+tam giác 
+để tăng tốc nhanh cho đến khi đạt
+ 
+tới tốc độ định mức của động 
+cơ
+. Nếu có bất thườ
+ng
+ 
+xảy ra
+, hãy nhấn nút dừng để dừng hoạt động
+ 
+máy nén và kiểm tra lại
+.
+ 
+I)
+ 
+Dừng
+ 
+máy nén: n
+hấn nút dừng để dừng máy nén khí. Khí nén trong đường ống áp suất sẽ 
+được xả qua van xả khi máy dừng, sẵn sàng cho lần khởi động không tải tiếp theo của thiết 
+bị. Lúc nà
+y, có thể nghe thấy tiếng xì hơi nh
+ẹ, đây là hiện tượng xả khí bình thường ở cụm 
+van đầu hút.
+.
+ 
+9.3
+ 
+Bảo vệ an toàn
+ 
+A)
+ 
+ 
+Bảo vệ động cơ
+ 
+ 
+STT
+ 
+CÁC BẢO VỆ
+ 
+NGUYÊN NHÂN
+ 
+1
+ 
+Bảo vệ mất pha
+ 
+Lỗi nguồn cấp, lỗi khởi động từ, lỗi mạch điều khiển
+ 
+2
+ 
+Bảo vệ quá tải
+ 
+Dòng điện tải
+ 
+tăng cao, lỗi về các bộ phận cơ khí.
+ 
+3
+ 
+Bảo vệ mất pha
+ 
+ 
+4
+ 
+B
+ảo vệ mất cân 
+bằng pha
+ 
+Điện áp nguồn không ổn định, lỗi mạch động cơ.
+ 
+5
+ 
+Bảo vệ 
+ngắn 
+mạch
+ 
+Rò điện, động cơ cháy hoặc cài đặt dòng điện không đúng
+ 
+ 
+ 
+ 
+
+44
+ 
+ 
+ 
+B)
+ 
+ 
+Bảo vệ quá nhiệt và bảo vệ chiều quay động 
+cơ
+ 
+Khi nhiệt độ khí nén ra
+ 
+(
+hoặc nhiệt độ 
+dầu) đạt đến nhiệt độ cảnh báo đã cài đặt, bộ điều 
+khiển sẽ hiể
+n thị thông báo nhắc nhở và
+ 
+cảnh báo. Khi nhiệt độ đạt đến nhiệt độ dừng 
+máy 
+đã 
+cài đặt, bộ điều khiển sẽ thực hiện lệnh 
+điều khiển 
+và dừng
+ 
+máy nén
+ 
+lại
+. Khi thứ tự pha của 
+nguồn điện ba ph
+a cấp cho
+ 
+máy nén khí khác với thứ tự pha do bộ điều khiển cài đặt, bộ điều 
+khiển không thể phát tín hiệu khởi động và động cơ không thể khởi động. Lúc này, 
+chỉ cần 
+đổi dây nguồn 2
+ 
+pha 
+bất kỳ trong 3 pha 
+và quan sát chi
+ều quay của động cơ.
+ 
+C)
+ 
+ 
+Bảo vệ quá áp suất khí nén
+ 
+Khi áp suất
+ 
+khí nén
+ 
+xả cao hơ
+n giới hạn áp suất
+ 
+đã cài đặt, bộ điều khiển sẽ thực hiện 
+lệnh và dừng 
+máy nén 
+lại.
+ 
+D)
+ 
+ 
+Bảo vệ lỗi cảm biến
+ 
+Khi cảm biến áp suất hoặc cảm biến nhiệt độ bị ngắt kết nối, bộ điều khiể
+n sẽ thực hiện 
+lệnh và dừng lại.
+ 
+ 
+ 
+10
+ 
+SỬ DỤNG VÀ BẢO TRÌ
+ 
+10.1
+ 
+Vận hành và bảo trì hằng ngày
+ 
+10.1.1
+ 
+Kiểm tra và bảo dưỡng trước khi khởi động
+ 
+a)
+ 
+ 
+Kiểm tra và giữ thiết bị sạch sẽ
+, đảm bảo đầy đủ
+.
+ 
+b)
+ 
+ 
+Kiểm tra và giữ cho các thiết bị điện ở tình trạng tốt và các kết nối chắc chắ
+n.
+ 
+c)
+ 
+ 
+Kiểm tra và giữ cho các chốt khóa chắc chắn.
+ 
+d)
+ 
+ 
+Kiểm tra và điều chỉnh độ căng của dây đai, thay thế nếu cần thiết
+ 
+e)
+ 
+ 
+Kiểm tra, điều chỉnh và thay thế khớp nối hoặc đệm cao su 
+nếu cần
+ 
+f)
+ 
+ 
+Kiểm tra, bổ sung và thay dầu bôi trơn nếu cần thiết.
+ 
+ 
+Thước dầu
+ 
+
+45
+ 
+ 
+ 
+ 
+ 
+Dầu bôi trơ
+n chuyên dụng cho máy nén khí trục vít
+ 
+ 
+Việc 
+bổ sung thêm dầu máy nén 
+phải được lọc qua phễu sạch (độ chính xác của bộ lọc là 12um)
+ 
+ 
+Nếu dầu máy nén  được thay đổi, dầu cũ phải được xả sạch hết 
+ 
+ 
+Kiểm tra, nếu cần thiết, xả hết nước ngưng tụ trong bình dầ
+u khí (mở nhẹ van xả ở đáy bình 
+tách dầu 
+để xả bớt nước ngưng tụ cho đến khi dầu bôi trơn chảy ra ngoài).
+ 
+g)
+ 
+ 
+Kiểm tra, vệ sinh và thay thế
+ 
+lọc
+ 
+gió
+ 
+của bộ lọc không khí nếu cần thiết
+ 
+ 
+ 
+ 
+ 
+Picture
+ 
+10.4
+ 
+ 
+ 
+ 
+ 
+h)
+ 
+K
+iểm
+ 
+tra, vệ sinh và thay thế bộ tách dầu nếu cần thi
+ết
+ 
+ 
+ 
+ 
+Picture
+ 
+10.5
+ 
+ 
+ 
+ 
+ 
+ 
+i)
+ 
+Kiểm 
+tra, vệ sinh và thay thế
+ 
+lọc dầu
+ 
+nếu cần thiết
+ 
+ 
+ 
+Picture
+ 
+10.6
+ 
+oil
+ 
+line
+ 
+filter
+ 
+oil
+ 
+separator
+ 
+Air
+ 
+filter
+ 
+Special
+ 
+lubri
+cant
+ 
+Drain
+ 
+(oil)
+ 
+valve
+ 
+
+46
+ 
+ 
+ 
+ 
+ 
+ 
+j)
+ 
+Kiểm tra và vệ sinh bộ làm mát nếu cần thiết
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+10.2
+ 
+Kiểm tra khi khởi động
+ 
+a)
+ 
+ 
+Kiểm tra xem nút thao tác có bình thường không
+ 
+b)
+ 
+Kiểm tra tiếng ồn, độ rung, rò rỉ k
+hí và rò rỉ dầu bất thường
+ 
+c)
+ 
+Kiểm tra đồng hồ đo áp suất, nhiệt kế dầu, ampe kế và đèn báo có bình thường không
+ 
+d)
+ 
+ 
+Đường ống hồi dầu có bình thường không
+ 
+e)
+ 
+Kiểm tra xem áp suất dừng tự động và áp suất khởi động tự động có bình 
+thường không (có sự khác biệt giữa 
+cảm biến áp suất và đồng hồ đo áp suất)
+ 
+f)
+ 
+ 
+Kiểm tra xem van xả có bị xì hơi trong quá trình tắt máy không
+ 
+g)
+ 
+Kiểm tra xem nhiệt độ khí xả
+ 
+có bình thường không
+.
+ 
+h)
+ 
+Kiểm t
+tra xem điện áp và dòng điện có bình thường không
+.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+i)
+ 
+Kiểm tra, vệ sinh và thay thế van a
+n toàn nếu cần thiết
+ 
+j)
+ 
+ 
+Kiểm tra điện trở cách điện của động cơ
+ 
+k)
+ 
+Ghi nhận lại các giá trị điện áp, cường độ dòng điện, áp suất khí nén, nhiệt độ khí 
+nén, mức dầu hàng ngày, số giờ làm việc, c
+ác hoạt động 
+bảo trì
+ 
+và bất thường của 
+máy trong mỗi ca làm việc.
+Clamp
+ 
+
+47
+ 
+ 
+ 
+ 
+10.3
+ 
+B
+ả
+ng k
+ế
+ 
+ho
+ạ
+ch b
+ả
+o dư
+ỡ
+ng máy nén khí
+ 
+Máy nén khí có th
+ờ
+i gian ho
+ạ
+t đ
+ộ
+ng kho
+ả
+ng 6,000 gi
+ờ
+/năm và dư
+ớ
+i đây là k
+ế
+ 
+ho
+ạ
+ch b
+ả
+o trì
+ 
+ 
+ 
+ 
+STT
+ 
+ 
+MỤC KIỂM 
+TRA
+ 
+ 
+ 
+NỘI DUNG
+ 
+               
+CHU KÌ KIỂM TRA 
+–
+ 
+THỰC HIỆN
+ 
+ 
+Lưu ý
+ 
+Hàng 
+ngày
+ 
+Hàng 
+tuần
+ 
+Hàng 
+tháng
+ 
+Hàng 6 
+tháng
+ 
+Sửa
+ 
+chữa 
+nhỏ hàng 
+năm
+ 
+Sửa chữa vừa 
+hàng 2 năm
+ 
+1
+ 
+Bu lông, đai 
+ốc
+ 
+Kiểm tra bu lông 
+và bộ truyền động
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Bu lông và bộ phận truyền động 
+không bị rơi hoặc lỏng
+ 
+2
+ 
+Khớp nối
+ 
+Kiểm tra khớp nối
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Đồng tâm bình thường, Thay mới nếu 
+hư hỏng
+ 
+3
+ 
+Lọc 
+đường 
+ống 
+hồi
+ 
+Kiểm tra lọc đường 
+ống hồi
+ 
+ 
+ 
+★
+ 
+ 
+ 
+ 
+Không có mảnh vụn
+ 
+4
+ 
+Đường ống 
+hồi dầu
+ 
+Đảm bảo đường 
+ống hồi dầu bình 
+thường
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Dầu hồi lưu thông tốt
+ 
+5
+ 
+Van xả tải
+ 
+Xác nhận dừng máy và 
+xả khí
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Xả và giảm áp bình thường khi dừng 
+máy
+ 
+6
+ 
+Dầu máy nén
+ 
+Kiểm tra
+ 
+chất lượng và 
+mức dầu
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Mức dầu trong vạch cảnh báo, không bị 
+oxy hóa hay đổi màu
+ 
+7
+ 
+Nhiệt độ 
+khí nén 
+(dầu)
+ 
+Xác định nhiệt độ 
+khí nén (dầu)
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Nhiệt độ 70
+-
+105°C là bình thường
+ 
+8
+ 
+Điện áp 
+và dòng 
+điện
+ 
+Kiểm tra điện áp và 
+cường độ dòng điện
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Trong phạm vi 1.2 lần dòng điện định 
+mức
+ 
+9
+ 
+Lọc gió
+ 
+Kiểm tra và làm sạch
+ 
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+Chỉ thay lọc gió
+ 
+10
+ 
+Bình tách 
+dầu và khí 
+nén
+ 
+Xả nước trong bình 
+tách dầu và khí
+ 
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Xả từ van xả
+ 
+11
+ 
+Lưới bụi, lớp 
+cách âm
+ 
+Vệ sinh và 
+bảo dưỡng
+ 
+ 
+ 
+☆
+ 
+ 
+ 
+ 
+Tháo ra và vệ sinh
+ 
+12
+ 
+Hệ thống 
+đường ống
+ 
+Kiểm tra rò rỉ dầu
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Không có rò rỉ dầu
+ 
+13
+ 
+Hệ thống 
+điện
+ 
+Kiểm tra đấu nối 
+và thông báo
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Không có thông báo lỗi hoặc lỏng dây, 
+tuột dây
+ 
+14
+ 
+Lọc dầu
+ 
+Check
+ 
+cleaning
+ 
+ 
+ 
+☆
+ 
+ 
+ 
+ 
+Thay lọc dầu
+ 
+15
+ 
+ 
+Lọc tách dầu
+ 
+Làm sạch 
+hoặc thay 
+mới
+ 
+ 
+ 
+★
+ 
+ 
+ 
+ 
+ 
+Thay lọc tách dầu
+ 
+16
+ 
+Phốt chặn 
+dầu 
+ 
+Kiểm tra rò rỉ
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Rò rỉ dầu dưới 1.5g/h, Thay mới nếu hư 
+hỏng
+ 
+17
+ 
+Độ cách điện 
+động cơ
+ 
+Kiểm tra độ 
+cách điện cuộn 
+dây
+ 
+ 
+ 
+ 
+ 
+★
+ 
+ 
+ 
+Trên 2MΩ ở 500V
+ 
+ 
+18
+ 
+ 
+Van an toàn
+ 
+ 
+Check
+ 
+action 
+sensitivity
+ 
+ 
+ 
+ 
+☆
+ 
+ 
+ 
+ 
+Dưới áp suất
+ 
+định mức, lực kéo vòng 
+xả dưới 1Kg để xả và loại bỏ vật lạ
+ 
+19
+ 
+Áp suất tải
+-
+ 
+không tải tự 
+động
+ 
+ 
+Kiểm tra độ 
+nhạy 
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Áp suất dừng 
+–
+ 
+khởi động bình thường
+ 
+20
+ 
+Bộ giải nhiệt 
+gió 
+–
+ 
+dầu
+ 
+Bảo trì và làm sạch
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Vệ sinh bằng khí nén hoặc vệ sinh bằng 
+nướ
+c áp lực
+ 
+21
+ 
+Thước thăm 
+dầu
+ 
+Kiểm tra độ rõ
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Thay mới nếu quan sát không rõ hoặc 
+bị hỏng.
+ 
+22
+ 
+Puli, dây đai
+ 
+Kiểm tra độ căng của 
+dây đai
+ 
+☆
+ 
+ 
+ 
+ 
+ 
+ 
+Ấn nhẹ vào giữa dây đai, độ lún 10
+-
+15mm và không hư hỏng; Thay mới 
+nếu hư
+ 
+hỏng.
+ 
+Lưu ý
+:
+ 
+"
+☆
+"
+-
+ 
+mục bảo trì, b
+ảo dưỡng của người sử dụng
+,
+ 
+and
+ 
+"
+★
+"
+-
+ 
+mục bảo trì của đơn vị dịch vụ uỷ quyền . Lọc 
+gió cần được vệ sinh sau 500 giờ hoạt động và thay mới khi đạt thời gian sử dụng 3,000 giờ  
+.
+
+ 
+10.4
+ 
+Chú ý khi máy nén khí không
+ 
+sử dụng trong thời gian dài
+ 
+10.4.1
+ 
+Máy nén khí không sử dụ
+ng trong th
+ời gian dài hãy bảo quản máy cẩn thận
+ 
+a.
+ 
+Vệ sinh thiết bị và tra một lượng dầu chống gỉ thích hợp vào các bộ phận dễ bị gỉ sét
+.
+ 
+b.
+ 
+Các thiết bị điện như bảng điều khiển động cơ
+,
+ 
+các van, đồng hồ đo
+ 
+được bọc trong giấy nhựa 
+hoặc giấy dầu
+.
+ 
+c.
+ 
+Xả sạch nước
+ 
+trong bộ làm mát dầu, bộ làm mát khí nén và bình chứa khí nén.
+ 
+d.
+ 
+Bọc
+ 
+toàn bộ thiết bị bằng giấy và quấn màng co quanh máy đảm bảo kín và chắc chắn.
+ 
+e.
+ 
+Nếu 
+máy nén 
+được chuyển đi, các 
+bu lông, ốc 
+vít cố định
+ 
+máy nén phải được siết chặt trước khi vận 
+chuyển
+.
+ 
+10.4.2
+ 
+Để k
+hởi động lại máy nén khí không sử dụng trong thời gian dài
+ 
+T
+rước tiên hãy đo điện trở 
+ 
+các đầu dây 
+củ
+a động cơ (không nhỏ hơn 1 Ω), đo độ cách độ giữa 
+cuộn dây và vỏ động cơ
+,
+ 
+sau đó làm theo hướng dẫn v
+ận hành. Đối với máy nén khí
+ 
+đã hoạt 
+động hơn một năm,
+ 
+cần thay dầu bôi trơn.
+ 
+ 
+11 
+LỖI 
+–
+ 
+SỰ CỐ VÀ CÁCH
+ 
+KHẮC
+ 
+KHẮC PHỤC
+ 
+ 
+  
+ 
+  
+STT
+ 
+ 
+   
+Các Lỗi
+ 
+                                       
+ 
+                                            
+MÔ TẢ LỖI
+ 
+                       
+ 
+                        
+Cách kiểm tra 
+-
+ 
+khắc phục
+ 
+ 
+ 
+ 
+ 
+1
+ 
+ 
+ 
+ 
+ 
+Động cơ 
+không 
+khởi 
+động 
+được
+ 
+Không có điện áp đầu vào hoặc điện áp bất thường
+ 
+Kiểm tra nguồn điện cấp
+ 
+Mất pha (động cơ phát ra tiếng "ù");
+ 
+Kiểm tra đầu dây nguồn, bộ điều khiển điện 
+và bộ đấu nối dây
+ 
+Pha nguồn điện được kết nối không đúng  
+hoặc bộ 
+điều khiển chính bị lỗi;
+ 
+Thay đổi thứ tự  pha, kiểm tra hoặc thay thế 
+bộ điều khiển chính
+ 
+Cầu chì bị đứt;
+ 
+Sau khi kiểm tra mạch điện không phát hiện 
+bất thường mới thay thế cầu chì
+ 
+Các tiếp điểm của khởi động từ bị cháy hoặc trục 
+trặc.
+ 
+Sửa ch
+ữa hoặc thay mới
+ 
+Công tắc áp suất (cảm biến áp suất) bị hỏng
+ 
+Sửa chữa hoặc thay mới
+ 
+Động cơ bị cháy, bạc đạn bị hỏng
+ 
+Đại tu hoặc thay mới
+ 
+Bộ phận quay bị kẹt hoặc bạc đạn bị hỏng
+ 
+Đại tu hoặc thay mới
+ 
+Bảo vệ  nhiệt độ bị kích hoạt
+ 
+Tìm hiểu nguyê
+n nhân và khắc phục sự cố
+ 
+Bảo vệ dòng điện bị kích hoạt
+ 
+Tìm hiểu nguyên nhân và khắc phục sự cố
+ 
+2
+ 
+Động cơ 
+khởi 
+động 
+thường 
+xuyên
+ 
+Thời gian trễ khởi động vượt quá thời gian cài đặt 
+trong bộ điều khiển
+ 
+Kiểm tra cài đặt lại thời gian trễ trong bộ 
+điều khi
+ển chính hoặc thay thế
+ 
+Đường ống rò rỉ nghiêm trọng
+ 
+Kiểm tra rò rỉ và khắc phục
+ 
+Thể tích bình chứa không đủ lớn
+ 
+Tăng dung tích bình chứa khí hoặc thay thế 
+bình chứa khí lớn hơn
+ 
+ 
+3
+ 
+Nhiệt độ 
+khí nén 
+(dầu) quá 
+cao
+ 
+Nhiệt độ môi trường quá cao
+ 
+Tăng cường
+ 
+thông gió phòng máy
+ 
+Bộ làm mát quá bẩn và tản nhiệt kém
+ 
+Vệ sinh bộ giải nhiệt
+ 
+Mạch dầu bị tắc
+ 
+Kiểm tra và làm sạch
+ 
+Cảm biến nhiệt độ bị lỗi
+ 
+Đại tu và thay mới
+ 
+Không đủ dầu máy nén
+ 
+Bổ sung thêm dầu máy nén
+ 
+Quạt giải nhiệt hỏng
+ 
+Kiểm tra hoặc 
+thay mới
+ 
+ 
+ 
+4
+ 
+ 
+ 
+Áp suất 
+khí ra 
+thấp
+ 
+Công tắc áp suất, cảm biến lực, bộ điều khiển chính 
+bị lỗi
+ 
+Đại tu, điều chỉnh hoặc thay mới
+ 
+Lượng khí nén tiêu thụ quá nhiều
+ 
+Kiểm tra đường ống, lắp thêm máy nén khí 
+hoặc kiểm soát mức tiêu thụ khí nén
+ 
+Đường ống bị
+ 
+rò rỉ nghiêm trọng
+ 
+Đại tu, thay thế nếu cần thiết
+ 
+Lọc gió bị nghẽn
+ 
+Vệ sinh hoặc thay mới nếu cần
+ 
+
+ 
+ 
+ 
+Van đầu hút lỗi
+ 
+Đại tu hoặc thay mới
+ 
+Lọc tách dầu bị nghẽn
+ 
+Vệ sinh hoặc thay mới
+ 
+Rò rỉ van không tải (van xả khí)
+ 
+Sửa chữa hoặc thay mới
+ 
+Dây b
+elt bị trượt
+ 
+Kiểm tra, điều chỉnh hoặc thay mới nếu hư 
+hỏng.
+ 
+ 
+5
+ 
+Lượng tiêu 
+hao dầu 
+lớn (Mất 
+dầu)
+ 
+Đường ống hồi dầu nghẹt
+ 
+Làm sạch hoặc thay mới.
+ 
+Lọc tách dầu khí quá hạn bảo dưỡng
+ 
+Làm sạch hoặc thay mới.
+ 
+Mức dầu quá cao
+ 
+Xả bớt lượng dầu dư
+ 
+Van gi
+ới hạn áp suất tối thiểu hỏng
+ 
+Kiểm tra, sửa chữa hoặc thay mới.
+ 
+Không sử dụng dầu chính hãng
+ 
+Thay lahi dầu chính hãng
+ 
+ 
+6
+ 
+ 
+Â
+m 
+thanh và 
+rung 
+động 
+bất 
+thường
+ 
+Lỏng các bu lông cố định, động cơ hoặc bạn đạn 
+chính mòn hoặc hư hỏng
+ 
+Đại tu hoặc thay mới
+ 
+Dây
+ 
+belt mòn
+ 
+Thay mới
+ 
+Khớp nổi lỏng, mòn hoặc hỏng
+ 
+Kiểm tra, siểt lại hoặc thay mới
+ 
+Các bộ phận quay như đầu máy, động cơ hoặc quạt bị 
+vật lạ chèn gây kẹt
+ 
+Kiểm tra sửa chữa hoặc thay mới
+ 
+ 
+7
+ 
+ 
+Dầu mau 
+suy thoái
+ 
+Chưa xả hết dầu bôi trơn cũ
+ 
+Xả hết dầu cũ v
+à thay dầu chính hãng.
+ 
+Không sử dụng dầu chính hãng
+ 
+Thay lại dầu chính hãng
+ 
+Nhiệt độ khí ra quá cao
+ 
+Tăng thông gió, giảm nhiệt độ môi trường 
+hoặc sửa chữa van điều khiển nhiệt độ và hệ 
+thống làm mát
+ 
+ 
+8
+ 
+ 
+Khi tắt 
+máy nén, 
+bị ộc dầu 
+đầu hút
+ 
+Van đầu hút
+ 
+hỏng
+ 
+Đại tu hoặc thay mới
+ 
+Van áp suất tối thiểu hỏng
+ 
+Đại tu hoặc thay mới
+ 
+Van điện từ xả khí không xả 
+ 
+Đại tu hoặc thay mới
+ 
+ 
+ 
+ 
+9
+ 
+ 
+Động cơ 
+quay 
+chậm, 
+dòng điện 
+cao hoặc 
+ngắn 
+mạch
+ 
+Đầu nén, động cơ, bạc đạn bị hỏng
+ 
+Đại tu hoặc thay mới
+ 
+Dây đai quá 
+căng
+ 
+Kiểm tra và điều chỉnh
+ 
+Điện áp đầu vào thấp (dây quá dài và đường kính dây 
+quá nhỏ)
+ 
+Điều chỉnh dây, điện áp nguồn
+ 
+Kết nối mạch kém
+ 
+Kiểm tra khắc phục hoặc thay mới
+ 
+Chênh lệch áp suất đường ống quá lớn (lõi lọc bị tắc)
+ 
+Đại tu hoặc thay mới
+ 
+Điện áp 3 pha mất cân bằng
+ 
+Kiểm tra và khắc phục
+ 
+Tiếp xúc kém hoặc công suất đóng cắt dòng điện 
+không đủ
+ 
+Đại tu hoặc thay mới
+ 
+Không sử dụng dầu chính hãng
+ 
+Thay lại dầu máy nén chính hãng
+ 
+ 
+10
+ 
+Quạt giải 
+nhiệt 
+không 
+hoạt động
+ 
+Nhiệt độ quá cao, dòng điệ
+n quá lớn, bộ bảo vệ quá 
+tải tác động
+ 
+Kiểm tra khắc phục hoặc thay mới.
+ 
+Thiếu pha/ mất pha
+ 
+Kiểm tra mạch điện và khởi động từ quạt 
+giải nhiệt
+ 
+Lỗi cảm biến nhiệt độ hoặc bộ điều khiển chính
+ 
+Đại tu hoặc thay mới
+ 
+Giá trị điện trở 3 cặp dây động cơ kh
+ông bằng nhau 
+(động cơ bị cháy)
+ 
+Đại tu hoặc thay mới
+ 
+Bạc đạn quạt hỏng
+ 
+Đại tu hoặc thay mới
+ 
+
+ 
+ 
