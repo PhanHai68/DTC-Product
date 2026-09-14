@@ -250,14 +250,24 @@ class _ActionVisual extends StatelessWidget {
       );
     }
     return Padding(
-      padding: EdgeInsets.all(compact ? 12.0 : 16.0),
+      padding: EdgeInsets.all(compact ? 4.0 : 8.0),
       child: Center(
-        child: FittedBox(
-          fit: BoxFit.contain,
-          child: Icon(
-            action.icon ?? Icons.extension_outlined,
-            color: const Color(0xFF168052),
-          ),
+        child: Icon(
+          action.icon ?? Icons.extension_outlined,
+          size: compact ? 72.0 : 96.0,
+          color: const Color(0xFF168052),
+          shadows: const [
+            Shadow(
+              color: Color(0x55000000),
+              blurRadius: 12.0,
+              offset: Offset(4.0, 5.0),
+            ),
+            Shadow(
+              color: Color(0x33168052),
+              blurRadius: 15.0,
+              offset: Offset(-2.0, -2.0),
+            ),
+          ],
         ),
       ),
     );

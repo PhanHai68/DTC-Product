@@ -32,14 +32,12 @@ class _TechnicalConverterScreenState extends State<TechnicalConverterScreen>
       backgroundColor: const Color(0xFFF4F7F9),
       appBar: AppBar(
         title: const Text('Quy Đổi Kỹ Thuật Máy Tách Màu'),
-        backgroundColor: const Color(0xFF0A2740),
-        foregroundColor: Colors.white,
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white60,
+          labelColor: const Color(0xFF148147),
+          unselectedLabelColor: Colors.grey.shade600,
           indicatorColor: const Color(0xFF148147),
           indicatorWeight: 3.5,
           tabs: const [
@@ -142,13 +140,13 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        color: const Color(0xFF0A2740),
+                        color: const Color(0xFF148147).withValues(alpha: 0.1),
                         child: const Row(
                           children: [
-                            Expanded(flex: 2, child: Text('Mesh (US)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('Micron (μm)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('Milimet (mm)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('Inch', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(flex: 2, child: Text('Mesh (US)', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(flex: 3, child: Text('Micron (μm)', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(flex: 3, child: Text('Milimet (mm)', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(flex: 3, child: Text('Inch', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
                           ],
                         ),
                       ),
@@ -202,7 +200,7 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
   Widget _buildSelectedCard(MeshConversionItem item) {
     return Card(
       elevation: 2,
-      color: const Color(0xFF0A2740),
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -213,49 +211,49 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.check_circle_rounded, color: Color(0xFF5CD29A), size: 20),
+                    Icon(Icons.check_circle_rounded, color: Color(0xFF148147), size: 20),
                     SizedBox(width: 8),
                     Text(
                       'KÍCH THƯỚC ĐANG TRA CỨU',
-                      style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Color(0xFF148147), fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF148147),
+                    color: const Color(0xFFE8F5E9),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     'Mesh ${item.mesh}',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                    style: const TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                 ),
               ],
             ),
-            const Divider(color: Colors.white24, height: 24),
+            const Divider(color: Colors.black12, height: 24),
             Row(
               children: [
                 Expanded(
                   child: _buildInfoSub(
                     'MICRON (μm)',
                     '${item.micron} μm',
-                    const Color(0xFF5CD29A),
+                    const Color(0xFF148147),
                   ),
                 ),
                 Expanded(
                   child: _buildInfoSub(
                     'MILIMET (mm)',
                     '${item.mm} mm',
-                    const Color(0xFFFFD54F),
+                    const Color(0xFFF57F17),
                   ),
                 ),
                 Expanded(
                   child: _buildInfoSub(
                     'INCH (in)',
                     '${item.inch}"',
-                    const Color(0xFF81D4FA),
+                    const Color(0xFF0288D1),
                   ),
                 ),
               ],
@@ -269,7 +267,7 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
   Widget _buildInfoSub(String title, String value, Color color) {
     return Column(
       children: [
-        Text(title, style: const TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w600)),
+        Text(title, style: TextStyle(color: Colors.grey.shade700, fontSize: 11, fontWeight: FontWeight.w600)),
         const SizedBox(height: 4),
         Text(
           value,
@@ -306,7 +304,7 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
               // Thẻ hiển thị ống đang chọn
               Card(
                 elevation: 2,
-                color: const Color(0xFF0A2740),
+                color: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 child: Padding(
                   padding: const EdgeInsets.all(18),
@@ -317,45 +315,45 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.radio_button_checked_rounded, color: Color(0xFF5CD29A), size: 20),
+                              const Icon(Icons.radio_button_checked_rounded, color: Color(0xFF148147), size: 20),
                               const SizedBox(width: 8),
                               Text(
                                 '${_selectedPipe.dn} (${_selectedPipe.inch})',
-                                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF148147),
+                              color: const Color(0xFFE8F5E9),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Text('Tiêu Chuẩn Công Nghiệp', style: TextStyle(color: Colors.white, fontSize: 11)),
+                            child: const Text('Tiêu Chuẩn Công Nghiệp', style: TextStyle(color: Color(0xFF2E7D32), fontSize: 11)),
                           ),
                         ],
                       ),
-                      const Divider(color: Colors.white24, height: 24),
+                      const Divider(color: Colors.black12, height: 24),
                       Row(
                         children: [
                           Expanded(
                             child: Column(
                               children: [
-                                const Text('ĐƯỜNG KÍNH NGOÀI OD', style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w600)),
+                                Text('ĐƯỜNG KÍNH NGOÀI OD', style: TextStyle(color: Colors.grey.shade700, fontSize: 11, fontWeight: FontWeight.w600)),
                                 const SizedBox(height: 4),
-                                Text('Ø ${_selectedPipe.odMm} mm', style: const TextStyle(color: Color(0xFF5CD29A), fontSize: 22, fontWeight: FontWeight.bold)),
-                                const Text('Phi tiêu chuẩn', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                                Text('Ø ${_selectedPipe.odMm} mm', style: const TextStyle(color: Color(0xFF148147), fontSize: 22, fontWeight: FontWeight.bold)),
+                                Text('Phi tiêu chuẩn', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
                               ],
                             ),
                           ),
-                          Container(width: 1, height: 50, color: Colors.white24),
+                          Container(width: 1, height: 50, color: Colors.black12),
                           Expanded(
                             child: Column(
                               children: [
-                                const Text('ĐƯỜNG KÍNH TRONG ID', style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w600)),
+                                Text('ĐƯỜNG KÍNH TRONG ID', style: TextStyle(color: Colors.grey.shade700, fontSize: 11, fontWeight: FontWeight.w600)),
                                 const SizedBox(height: 4),
-                                Text('${_selectedPipe.idMm} mm', style: const TextStyle(color: Color(0xFFFFD54F), fontSize: 22, fontWeight: FontWeight.bold)),
-                                const Text('Ống SCH40', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                                Text('${_selectedPipe.idMm} mm', style: const TextStyle(color: Color(0xFFF57F17), fontSize: 22, fontWeight: FontWeight.bold)),
+                                Text('Ống SCH40', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
                               ],
                             ),
                           ),
@@ -378,13 +376,13 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        color: const Color(0xFF0A2740),
+                        color: const Color(0xFF148147).withValues(alpha: 0.1),
                         child: const Row(
                           children: [
-                            Expanded(flex: 2, child: Text('DN', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('Hệ Inch', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('OD (mm) - Phi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('ID (mm) - SCH40', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(flex: 2, child: Text('DN', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(flex: 3, child: Text('Hệ Inch', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(flex: 3, child: Text('OD (mm) - Phi', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(flex: 3, child: Text('ID (mm) - SCH40', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
                           ],
                         ),
                       ),
@@ -637,14 +635,14 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              color: const Color(0xFF0A2740),
+              color: const Color(0xFF148147).withValues(alpha: 0.1),
               child: const Row(
                 children: [
-                  Expanded(child: Text('Bar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('PSI', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('MPa', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('kgf/cm²', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('kPa', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12.5))),
+                  Expanded(child: Text('Bar', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
+                  Expanded(child: Text('PSI', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
+                  Expanded(child: Text('MPa', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
+                  Expanded(child: Text('kgf/cm²', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
+                  Expanded(child: Text('kPa', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
                 ],
               ),
             ),

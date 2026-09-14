@@ -24,7 +24,7 @@ class SampleRecordScreen extends StatefulWidget {
 class _SampleRecordScreenState extends State<SampleRecordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _factoryController = TextEditingController();
-  final _materialController = TextEditingController(text: 'Gạo');
+  final _materialController = TextEditingController();
   final _tagController = TextEditingController();
   final _operatorController = TextEditingController();
   final _preparedByController = TextEditingController();
@@ -202,7 +202,7 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   }
 
 
-  Future<(Uint8List, String)> _generatePdfBytesAndName() async {
+  Future<(Uint8List, String)> _generatePdfBytesAndName({bool isDraft = false}) async {
     final record = _record();
     await _repository.saveDraft(record);
     final photos = <SampleStreamType, Uint8List>{};
@@ -233,6 +233,7 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
       record: record,
       photos: photos,
       categoryPhotos: categoryPhotos,
+      isDraft: isDraft,
     );
     final date = DateFormat('ddMMyyyy').format(record.createdAt);
     final fileName =
@@ -244,24 +245,15 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   /// 1. "Lưu Form về máy": tự động lưu vào thiết bị, không mở trình chia sẻ
   Future<void> _savePdfToDevice() async {
     final form = _formKey.currentState;
-    if (form == null || !form.validate()) {
-      _showMessage('Vui lòng kiểm tra lại các trường bắt buộc.');
-      return;
-    }
     final record = _record();
-    if (!record.hasAllPhotos) {
-      _showMessage(
-        'Cần chụp đủ ảnh tổng quan và ảnh các thông số phân tích trước khi xuất PDF.',
-      );
-      return;
-    }
+    final isDraft = form == null || !form.validate() || !record.hasAllPhotos;
 
     setState(() => _savingToDevice = true);
     try {
-      final (bytes, fileName) = await _generatePdfBytesAndName();
+      final (bytes, fileName) = await _generatePdfBytesAndName(isDraft: isDraft);
       await _repository.savePdf(bytes, fileName);
       if (mounted) {
-        _showMessage('Đã lưu file PDF về máy: $fileName');
+        _showMessage(isDraft ? 'Đã lưu bản nháp PDF về máy: $fileName' : 'Đã lưu file PDF về máy: $fileName');
       }
     } catch (error) {
       _showMessage('Chưa thể lưu PDF: $error');
@@ -273,21 +265,12 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   /// 2. "Chia sẻ Form PDF": chỉ chia sẻ, không tự động lưu vào thư mục cố định
   Future<void> _sharePdfOnly() async {
     final form = _formKey.currentState;
-    if (form == null || !form.validate()) {
-      _showMessage('Vui lòng kiểm tra lại các trường bắt buộc.');
-      return;
-    }
     final record = _record();
-    if (!record.hasAllPhotos) {
-      _showMessage(
-        'Cần chụp đủ ảnh tổng quan và ảnh các thông số phân tích trước khi xuất PDF.',
-      );
-      return;
-    }
+    final isDraft = form == null || !form.validate() || !record.hasAllPhotos;
 
     setState(() => _sharingPdf = true);
     try {
-      final (bytes, fileName) = await _generatePdfBytesAndName();
+      final (bytes, fileName) = await _generatePdfBytesAndName(isDraft: isDraft);
       if (!mounted) return;
       final renderBox = context.findRenderObject() as RenderBox?;
       final origin = renderBox == null
@@ -296,9 +279,9 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName)],
-          title: 'Form lưu mẫu ${record.materialName} - ${record.tagName}',
+          title: 'Form lưu mẫu - ${record.tagName}',
           text:
-              'Form lưu mẫu ${record.materialName} ${record.tagName} - '
+              'Form lưu mẫu ${record.tagName} - '
               '${record.factoryName}',
           sharePositionOrigin: origin,
           fileNameOverrides: [fileName],
@@ -342,7 +325,6 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
     for (final controller in _allControllers) {
       controller.clear();
     }
-    _materialController.text = 'Gạo';
     for (final stream in _streams.values) {
       stream.resetLabelsAndPhotos();
     }
@@ -470,11 +452,13 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
+                SizedBox(
+                  width: 170,
                   child: OutlinedButton.icon(
                     key: const Key('sample_record_save_device'),
-                    onPressed: (_savingToDevice || _sharingPdf || !_record().hasAllPhotos)
+                    onPressed: (_savingToDevice || _sharingPdf)
                         ? null
                         : _savePdfToDevice,
                     style: OutlinedButton.styleFrom(
@@ -495,7 +479,7 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
                           )
                         : const Icon(Icons.download_rounded, size: 20),
                     label: Text(
-                      _savingToDevice ? 'Đang lưu...' : 'Lưu Form về máy',
+                      _savingToDevice ? 'Đang lưu...' : 'Lưu bản PDF',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
@@ -503,11 +487,12 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
+                const SizedBox(width: 12),
+                SizedBox(
+                  width: 170,
                   child: FilledButton.icon(
                     key: const Key('sample_record_share_pdf'),
-                    onPressed: (_savingToDevice || _sharingPdf || !_record().hasAllPhotos)
+                    onPressed: (_savingToDevice || _sharingPdf)
                         ? null
                         : _sharePdfOnly,
                     style: FilledButton.styleFrom(
@@ -527,7 +512,7 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
                           )
                         : const Icon(Icons.share_rounded, size: 20),
                     label: Text(
-                      _sharingPdf ? 'Đang chia sẻ...' : 'Chia sẻ Form PDF',
+                      _sharingPdf ? 'Đang chia sẻ...' : 'Chia sẻ PDF',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w800,

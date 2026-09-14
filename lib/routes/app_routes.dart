@@ -37,6 +37,9 @@ import '../screens/packing/machine_detail_screen.dart';
 import '../screens/packing/machine_selector_screen.dart';
 import '../screens/packing/machine_catalog_screen.dart';
 import '../screens/packing/compare_screen.dart';
+import '../screens/extensions/maintenance_list_screen.dart';
+import '../screens/extensions/maintenance_form_screen.dart';
+import '../models/maintenance_record.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -212,6 +215,17 @@ final GoRouter appRouter = GoRouter(
           initialPage: extra['page'] as int? ?? 1,
           modelName: extra['model'] as String? ?? '',
         );
+      },
+    ),
+    GoRoute(
+      path: '/maintenance',
+      builder: (context, state) => const MaintenanceListScreen(),
+    ),
+    GoRoute(
+      path: '/maintenance_form',
+      builder: (context, state) {
+        final record = state.extra as MaintenanceRecord?;
+        return MaintenanceFormScreen(record: record);
       },
     ),
   ],

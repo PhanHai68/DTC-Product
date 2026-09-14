@@ -13,6 +13,7 @@ import 'providers/acomp_tank_provider.dart';
 import 'providers/packing_provider.dart';
 import 'providers/machine_selector_provider.dart';
 import 'providers/compare_provider.dart';
+import 'providers/maintenance_provider.dart';
 
 void main() {
   ErrorWidget.builder = (FlutterErrorDetails details) {
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PackingProvider()),
         ChangeNotifierProvider(create: (_) => MachineSelectorProvider()),
         ChangeNotifierProvider(create: (_) => CompareProvider()),
+        ChangeNotifierProvider(create: (_) => MaintenanceProvider()..loadRecords()),
       ],
       child: MaterialApp.router(
         title: 'DTC Product',

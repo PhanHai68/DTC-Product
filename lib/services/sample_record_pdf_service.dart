@@ -18,6 +18,7 @@ abstract final class SampleRecordPdfService {
     required SampleRecordData record,
     required Map<SampleStreamType, Uint8List> photos,
     Map<SampleStreamType, List<Uint8List?>> categoryPhotos = const {},
+    bool isDraft = false,
   }) async {
     final fonts = await _SamplePdfFonts.load();
     final logoData = await rootBundle.load('assets/images/DTCGroup-Slogan.png');
@@ -38,6 +39,7 @@ abstract final class SampleRecordPdfService {
       Uint8List.sublistView(verifiedData),
       fonts,
       totalPages,
+      isDraft,
     );
     _drawAnalysisPages(
       document,
@@ -46,6 +48,7 @@ abstract final class SampleRecordPdfService {
       Uint8List.sublistView(verifiedData),
       fonts,
       totalPages,
+      isDraft,
     );
 
     final bytes = Uint8List.fromList(await document.save());
@@ -61,6 +64,7 @@ abstract final class SampleRecordPdfService {
     Uint8List verifiedLogo,
     _SamplePdfFonts fonts,
     int totalPages,
+    bool isDraft,
   ) {
     final graphics = page.graphics;
     final size = page.getClientSize();
@@ -78,7 +82,7 @@ abstract final class SampleRecordPdfService {
     );
     _text(
       graphics,
-      'FORM LƯU MẪU ${record.materialName.toUpperCase()}',
+      'FORM LƯU MẪU',
       fonts.bold(15.5),
       ui.Rect.fromLTWH(190, 22, size.width - 218, 24),
       color: _navy,
@@ -86,7 +90,7 @@ abstract final class SampleRecordPdfService {
     );
     _text(
       graphics,
-      'RICE COMMISSIONING SAMPLE',
+      'COMMISSIONING SAMPLE',
       fonts.regular(8.5),
       ui.Rect.fromLTWH(190, 47, size.width - 218, 14),
       color: _muted,
@@ -149,8 +153,9 @@ abstract final class SampleRecordPdfService {
         graphics,
         fonts,
         stream,
+        record,
         photos[stream.type],
-        ui.Rect.fromLTWH(x, 211, cardWidth, 188),
+        ui.Rect.fromLTWH(x, 211, cardWidth, 264),
       );
     }
 
@@ -158,37 +163,37 @@ abstract final class SampleRecordPdfService {
       graphics,
       fonts,
       'TỔNG HỢP / SUMMARY',
-      416,
+      490,
       margin,
       contentWidth,
     );
-    _drawSummaryTable(page, fonts, record.streams, margin, 439, contentWidth);
+    _drawSummaryTable(page, fonts, record.streams, margin, 513, contentWidth);
 
     _sectionTitle(
       graphics,
       fonts,
       'KẾT LUẬN / CONCLUSION',
-      568,
+      642,
       margin,
       contentWidth,
     );
     graphics.drawRectangle(
       brush: PdfSolidBrush(_paleGreen),
       pen: PdfPen(_border, width: 0.7),
-      bounds: ui.Rect.fromLTWH(margin, 592, contentWidth, 145),
+      bounds: ui.Rect.fromLTWH(margin, 666, contentWidth, 135),
     );
     _text(
       graphics,
       'Nội dung kỹ sư / Engineer statement',
       fonts.bold(7.5),
-      ui.Rect.fromLTWH(margin + 16, 600, contentWidth - 140, 15),
+      ui.Rect.fromLTWH(margin + 16, 674, contentWidth - 140, 15),
       color: _muted,
     );
     _text(
       graphics,
       record.conclusion.trim().isEmpty ? '—' : record.conclusion,
       fonts.bold(10.5),
-      ui.Rect.fromLTWH(margin + 16, 618, contentWidth - 145, 43),
+      ui.Rect.fromLTWH(margin + 16, 692, contentWidth - 145, 43),
       color: _navy,
     );
     _text(
@@ -197,17 +202,18 @@ abstract final class SampleRecordPdfService {
           ? 'Không có ghi chú / No additional notes'
           : 'Ghi chú / Notes: ${record.note}',
       fonts.regular(8),
-      ui.Rect.fromLTWH(margin + 16, 672, contentWidth - 145, 27),
+      ui.Rect.fromLTWH(margin + 16, 746, contentWidth - 145, 27),
       color: _muted,
     );
     final stampBounds = ui.Rect.fromLTWH(
-      size.width - margin - 60,
-      680,
-      31,
-      31,
+      size.width - margin - 80,
+      720,
+      60,
+      60,
     );
     _drawVerifiedStamp(graphics, verifiedLogo, stampBounds);
     _footer(graphics, fonts, size, 1, totalPages);
+    if (isDraft) _drawWatermark(graphics, fonts, size);
   }
 
   static void _drawAnalysisPages(
@@ -217,6 +223,7 @@ abstract final class SampleRecordPdfService {
     Uint8List verifiedLogo,
     _SamplePdfFonts fonts,
     int totalPages,
+    bool isDraft,
   ) {
     const margin = 28.0;
     
@@ -250,50 +257,23 @@ abstract final class SampleRecordPdfService {
         graphics,
         fonts,
         stream,
+        record,
         categoryPhotos[stream.type] ?? const [],
         margin,
         76.0,
         width,
       );
 
-      final signBounds = ui.Rect.fromLTWH(margin, 592, width, 145);
-      graphics.drawRectangle(
-        brush: PdfSolidBrush(_paleGreen),
-        pen: PdfPen(_border, width: 0.7),
-        bounds: signBounds,
-      );
-      _text(
-        graphics,
-        'XÁC NHẬN KIỂM ĐỊNH MẪU / SAMPLE VERIFICATION',
-        fonts.bold(9.5),
-        ui.Rect.fromLTWH(margin + 16, 606, width - 140, 16),
-        color: _green,
-      );
-      _text(
-        graphics,
-        'Kết quả phân tích chi tiết được lập và xác thực tự động bởi DTC Group.\n'
-        'Mọi thông số hạt tốt, hạt lỗi và năng suất đã được kiểm tra tính toán theo quy chuẩn.',
-        fonts.regular(8.5),
-        ui.Rect.fromLTWH(margin + 16, 630, width - 140, 36),
-        color: _navy,
-      );
-      _text(
-        graphics,
-        'Thời gian phân tích / Analysis timestamp: ${DateFormat('dd/MM/yyyy HH:mm:ss').format(record.createdAt)}',
-        fonts.regular(8),
-        ui.Rect.fromLTWH(margin + 16, 676, width - 140, 16),
-        color: _muted,
-      );
-
       final stampBounds = ui.Rect.fromLTWH(
-        size.width - margin - 60,
-        680,
-        31,
-        31,
+        size.width - margin - 80,
+        size.height - margin - 80,
+        60,
+        60,
       );
       _drawVerifiedStamp(graphics, verifiedLogo, stampBounds);
 
       _footer(graphics, fonts, size, i + 2, totalPages);
+      if (isDraft) _drawWatermark(graphics, fonts, size);
     }
   }
 
@@ -301,6 +281,7 @@ abstract final class SampleRecordPdfService {
     PdfGraphics graphics,
     _SamplePdfFonts fonts,
     SampleStreamData stream,
+    SampleRecordData record,
     Uint8List? photo,
     ui.Rect rect,
   ) {
@@ -326,7 +307,7 @@ abstract final class SampleRecordPdfService {
       _drawImageContain(
         graphics,
         bitmap,
-        ui.Rect.fromLTWH(rect.left + 7, rect.top + 34, rect.width - 14, 91),
+        ui.Rect.fromLTWH(rect.left + 7, rect.top + 34, rect.width - 14, 167),
         bitmap.width / bitmap.height,
       );
     }
@@ -335,13 +316,14 @@ abstract final class SampleRecordPdfService {
       'Hạt tốt / Good',
       'Hạt lỗi / Defect',
     ];
+    final capacity = _getAdjustedCapacity(stream, record);
     final values = [
-      '${stream.capacityTonPerHour.toStringAsFixed(1)} t/h',
+      '${capacity.toStringAsFixed(1)} t/h',
       '${stream.goodPercentage.toStringAsFixed(1)}%',
       '${stream.defectPercentage.toStringAsFixed(1)}%',
     ];
     for (var i = 0; i < 3; i++) {
-      final y = rect.top + 132 + i * 16;
+      final y = rect.top + 208 + i * 16;
       _text(
         graphics,
         labels[i],
@@ -383,11 +365,12 @@ abstract final class SampleRecordPdfService {
     grid.headers[0].cells[4].value = 'Mẫu tốt / Good';
     for (final stream in streams) {
       final row = grid.rows.add();
+      final capacity = _getAdjustedCapacity(stream, streams);
       row.cells[0].value = stream.type.title;
       row.cells[1].value = '${stream.measuredWeightKg.toStringAsFixed(1)} kg';
       row.cells[2].value = '${stream.minutes}p ${stream.seconds}g';
       row.cells[3].value =
-          '${stream.capacityTonPerHour.toStringAsFixed(1)} t/h';
+          '${capacity.toStringAsFixed(1)} t/h';
       row.cells[4].value = '${stream.goodPercentage.toStringAsFixed(1)}%';
     }
     grid.style = PdfGridStyle(
@@ -429,6 +412,7 @@ abstract final class SampleRecordPdfService {
     PdfGraphics graphics,
     _SamplePdfFonts fonts,
     SampleStreamData stream,
+    SampleRecordData record,
     List<Uint8List?> categoryPhotos,
     double x,
     double y,
@@ -452,9 +436,10 @@ abstract final class SampleRecordPdfService {
     );
     
     final informationWidth = width * .40;
+    final capacity = _getAdjustedCapacity(stream, record);
     _text(
       graphics,
-      'Năng suất / Capacity: ${stream.capacityTonPerHour.toStringAsFixed(1)} t/h',
+      'Năng suất / Capacity: ${capacity.toStringAsFixed(1)} t/h',
       fonts.bold(9),
       ui.Rect.fromLTWH(x + 10, y + 42, informationWidth - 14, 16),
       color: _navy,
@@ -764,6 +749,47 @@ abstract final class SampleRecordPdfService {
         height,
       ),
     );
+  }
+
+  static void _drawWatermark(PdfGraphics graphics, _SamplePdfFonts fonts, ui.Size size) {
+    final state = graphics.save();
+    graphics.setTransparency(0.25);
+    graphics.translateTransform(size.width / 2, size.height / 2);
+    graphics.rotateTransform(-45);
+    final font = fonts.bold(60);
+    final watermarkSize = font.measureString('BẢN NHÁP');
+    graphics.drawString(
+      'BẢN NHÁP',
+      font,
+      brush: PdfSolidBrush(PdfColor(255, 0, 0)),
+      bounds: ui.Rect.fromLTWH(
+        -watermarkSize.width / 2,
+        -watermarkSize.height / 2,
+        watermarkSize.width,
+        watermarkSize.height,
+      ),
+    );
+    graphics.restore(state);
+  }
+
+  static double _getAdjustedCapacity(SampleStreamData stream, dynamic context) {
+    if (stream.type != SampleStreamType.rejected) {
+      return stream.capacityTonPerHour;
+    }
+    
+    final List<SampleStreamData> streams = context is SampleRecordData ? context.streams : context as List<SampleStreamData>;
+    
+    final rawStream = streams.where((s) => s.type == SampleStreamType.rawMaterial).firstOrNull;
+    final accStream = streams.where((s) => s.type == SampleStreamType.accepted).firstOrNull;
+    
+    if (rawStream != null && accStream != null) {
+      final rawRounded = double.tryParse(rawStream.capacityTonPerHour.toStringAsFixed(1)) ?? 0;
+      final accRounded = double.tryParse(accStream.capacityTonPerHour.toStringAsFixed(1)) ?? 0;
+      final rejRounded = rawRounded - accRounded;
+      return rejRounded < 0 ? 0 : rejRounded;
+    }
+    
+    return stream.capacityTonPerHour;
   }
 }
 

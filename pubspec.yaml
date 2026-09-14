@@ -51,7 +51,6 @@ dependencies:
   shared_preferences: ^2.5.5
   syncfusion_flutter_pdf: ^33.2.13
   image_picker: ^1.2.1
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -64,6 +63,12 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   archive: ^3.6.1
   xml: ^6.6.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
