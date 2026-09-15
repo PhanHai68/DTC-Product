@@ -41,7 +41,7 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
   void _startProgressSimulation() {
     _progressTimer?.cancel();
     // Simulate smooth natural progress up to 92% until 3D engine signals completion
-    _progressTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+    _progressTimer = Timer.periodic(const Duration(milliseconds: 180), (timer) {
       if (!mounted) {
         timer.cancel();
         return;
@@ -211,9 +211,20 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
             arModes: const ['scene-viewer', 'webxr', 'quick-look'],
             autoRotate: _autoRotate,
             autoRotateDelay: 0,
-            rotationPerSecond: '25deg',
+            rotationPerSecond: '18deg',
             cameraControls: true,
+            touchAction: TouchAction.none,
+            interactionPrompt: InteractionPrompt.none,
+            interpolationDecay: 80,
+            environmentImage: 'neutral',
+            exposure: 1.05,
             debugLogging: false,
+            relatedCss: '''
+              model-viewer {
+                contain: strict;
+                --progress-bar-color: #263238;
+              }
+            ''',
             javascriptChannels: {
               JavascriptChannel(
                 'LoadingChannel',
@@ -227,6 +238,12 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
             },
             relatedJs: '''
               const mv = document.querySelector('model-viewer');
+              customElements.whenDefined('model-viewer').then(() => {
+                const ModelViewerElement = customElements.get('model-viewer');
+                if (ModelViewerElement) {
+                  ModelViewerElement.minimumRenderScale = 0.35;
+                }
+              });
               if (mv) {
                 mv.addEventListener('progress', (e) => {
                   const p = Math.round((e.detail.totalProgress || 0) * 100);
@@ -241,6 +258,44 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
                 });
               }
             ''',
+          ),
+
+          // Brand identity is kept outside the WebView so it stays sharp while
+          // the 3D renderer dynamically lowers its resolution during gestures.
+          Positioned(
+            top: 12,
+            left: 16,
+            right: 16,
+            child: Center(
+              child: Container(
+                width: 168,
+                height: 56,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.96),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Semantics(
+                  image: true,
+                  label: 'Logo DTC Group',
+                  child: Image.asset(
+                    'assets/images/DTCGroup-Slogan.png',
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.medium,
+                  ),
+                ),
+              ),
+            ),
           ),
 
           // Centered Loading Overlay with Percentage
@@ -345,7 +400,7 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
 
           // Top Info Hint Banner
           Positioned(
-            top: 12,
+            top: 78,
             left: 16,
             right: 16,
             child: Container(

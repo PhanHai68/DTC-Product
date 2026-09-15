@@ -1,0 +1,7 @@
+# Sao chép file này thành android/key.properties và điền thông tin thật.
+# Không commit key.properties hoặc file keystore lên Git.
+storePassword=CHANGE_ME
+keyPassword=CHANGE_ME
+keyAlias=upload
+# Dùng đường dẫn tuyệt đối đến keystore được lưu an toàn ngoài repository.
+storeFile=C:/secure/dtc-product-upload.jks

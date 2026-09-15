@@ -1,5 +1,5 @@
-/// Màn hình Chọn Máy theo Yêu Cầu (Machine Selector).
-/// Người dùng nhập tiêu chí → App tìm và rank máy phù hợp.
+// Màn hình Chọn Máy theo Yêu Cầu (Machine Selector).
+// Người dùng nhập tiêu chí → App tìm và rank máy phù hợp.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../models/packing_machine.dart';
 import '../../models/machine_match_result.dart';
 import '../../providers/machine_selector_provider.dart';
+import '../../routes/route_locations.dart';
 import '../../widgets/packing/match_badge.dart';
 import '../../widgets/packing/packing_back_button.dart';
 
@@ -205,7 +206,6 @@ class _MachineSelectorScreenState extends State<MachineSelectorScreen> {
   }
 }
 
-
 /// Widget hiển thị kết quả tìm kiếm
 class _SearchResults extends StatelessWidget {
   final MachineSelectorProvider provider;
@@ -305,7 +305,7 @@ class _ResultCard extends StatelessWidget {
             : BorderSide.none,
       ),
       child: InkWell(
-        onTap: () => context.push('/packing_detail', extra: machine.model),
+        onTap: () => context.push(packingDetailLocation(machine.model)),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(14),
@@ -439,7 +439,7 @@ class _NotSuitableSectionState extends State<_NotSuitableSection> {
           ),
         ),
         if (_expanded)
-          ...widget.results.take(5).map((r) => _ResultCard(result: r)).toList(),
+          ...widget.results.take(5).map((r) => _ResultCard(result: r)),
       ],
     );
   }
@@ -521,7 +521,7 @@ class _DropdownField extends StatelessWidget {
 
     return DropdownButtonFormField<String>(
       key: Key(id),
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label + (isRequired ? '' : ' (tùy chọn)'),
         prefixIcon: Icon(icon, size: 20),

@@ -10,7 +10,7 @@ class ElectricityBillScreen extends StatefulWidget {
   const ElectricityBillScreen({super.key});
 
   @override
-  _ElectricityBillScreenState createState() => _ElectricityBillScreenState();
+  State<ElectricityBillScreen> createState() => _ElectricityBillScreenState();
 }
 
 class _ElectricityBillScreenState extends State<ElectricityBillScreen> {

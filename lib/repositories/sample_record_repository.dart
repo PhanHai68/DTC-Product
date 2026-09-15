@@ -1,11 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/sample_record.dart';
+import 'sample_file_storage.dart'
+    if (dart.library.io) 'sample_file_storage_io.dart'
+    if (dart.library.js_interop) 'sample_file_storage_web.dart';
 
 /// Boundary kept separate so a cloud-backed sync repository can be added later
 /// without changing the form, calculations, or PDF generation.
@@ -17,21 +19,14 @@ abstract interface class SampleRecordRepository {
     String sourcePath,
     SampleStreamType type, {
     String? slot,
+    List<int>? bytes,
   });
+  Future<Uint8List?> readPhoto(String storedPath);
   Future<String> savePdf(List<int> bytes, String fileName);
 }
 
 class LocalSampleRecordRepository implements SampleRecordRepository {
   static const _draftKey = 'sample_record_draft_v1';
-
-  Future<Directory> _featureDirectory(String child) async {
-    final root = await getApplicationDocumentsDirectory();
-    final directory = Directory(
-      p.join(root.path, 'DTCProduct', 'LuuMau', child),
-    );
-    if (!await directory.exists()) await directory.create(recursive: true);
-    return directory;
-  }
 
   @override
   Future<SampleRecordData?> loadDraft() async {
@@ -64,24 +59,26 @@ class LocalSampleRecordRepository implements SampleRecordRepository {
     String sourcePath,
     SampleStreamType type, {
     String? slot,
+    List<int>? bytes,
   }) async {
-    final directory = await _featureDirectory('Photos');
     final extension = p.extension(sourcePath).isEmpty
         ? '.jpg'
         : p.extension(sourcePath);
-    final target = p.join(
-      directory.path,
-      '${type.name}_${slot ?? 'overview'}_'
-      '${DateTime.now().millisecondsSinceEpoch}$extension',
+    final fileName =
+        '${type.name}_${slot ?? 'overview'}_'
+        '${DateTime.now().millisecondsSinceEpoch}$extension';
+    return persistSamplePhoto(
+      sourcePath: sourcePath,
+      fileName: fileName,
+      bytes: bytes,
     );
-    return (await File(sourcePath).copy(target)).path;
   }
 
   @override
-  Future<String> savePdf(List<int> bytes, String fileName) async {
-    final directory = await _featureDirectory('Exports');
-    final file = File(p.join(directory.path, fileName));
-    await file.writeAsBytes(bytes, flush: true);
-    return file.path;
-  }
+  Future<Uint8List?> readPhoto(String storedPath) =>
+      readSamplePhoto(storedPath);
+
+  @override
+  Future<String> savePdf(List<int> bytes, String fileName) =>
+      saveSamplePdf(bytes: bytes, fileName: fileName);
 }

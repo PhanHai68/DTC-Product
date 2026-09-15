@@ -284,7 +284,7 @@ class _MinimalFooter extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.fromLTRB(16, 18, 16, 12),
         child: Text(
-          'DTCGroup  •  v1.0.0',
+          'DTCGroup  •  v1.0.3',
           style: TextStyle(
             color: Color(0xFF8FA2AD),
             fontSize: 11,

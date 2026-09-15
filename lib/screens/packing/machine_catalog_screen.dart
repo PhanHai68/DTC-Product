@@ -1,7 +1,7 @@
-/// Màn hình Danh mục sản phẩm.
-/// Duyệt theo nhóm → dòng máy → model.
-/// Dữ liệu được tạo động từ database, không hard-code.
-/// Tích hợp tìm kiếm realtime theo tên model.
+// Màn hình Danh mục sản phẩm.
+// Duyệt theo nhóm → dòng máy → model.
+// Dữ liệu được tạo động từ database, không hard-code.
+// Tích hợp tìm kiếm realtime theo tên model.
 
 import 'dart:async';
 
@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../models/packing_machine.dart';
 import '../../repositories/packing_machine_repository.dart';
+import '../../routes/route_locations.dart';
 import '../../widgets/packing/machine_card.dart';
 import '../../widgets/packing/packing_back_button.dart';
 
@@ -229,10 +230,7 @@ class _MachineCatalogScreenState extends State<MachineCatalogScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: MachineCard(
             machine: machine,
-            onTap: () => context.push(
-              '/packing_detail',
-              extra: {'model': machine.model, 'showCatalog': true},
-            ),
+            onTap: () => context.push(packingDetailLocation(machine.model)),
           ),
         );
       }, childCount: _searchResults.length + 1),
@@ -505,7 +503,7 @@ class _GroupSectionState extends State<_GroupSection> {
                 lineName: lineEntry.key,
                 machines: lineEntry.value,
               );
-            }).toList(),
+            }),
         ],
       ),
     );
@@ -637,10 +635,8 @@ class _LineSectionState extends State<_LineSection> {
                   padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                   child: MachineCard(
                     machine: machine,
-                    onTap: () => context.push(
-                      '/packing_detail',
-                      extra: {'model': machine.model, 'showCatalog': true},
-                    ),
+                    onTap: () =>
+                        context.push(packingDetailLocation(machine.model)),
                   ),
                 );
               }),

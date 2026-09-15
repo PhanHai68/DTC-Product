@@ -44,5 +44,19 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Release signing credentials
+/android/key.properties
+*.jks
+*.keystore
+
+# Local extraction and audit artifacts
+/scratch_extract_docx/
+/**/excel_extracted/
+/temp.zip
+/analyze.txt
+/deps.txt
+/deps_utf8.txt
+/*.pid
+
 # Widget Preview related
 .widget_preview/

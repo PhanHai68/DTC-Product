@@ -1,7 +1,28 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    FileInputStream(keystorePropertiesFile).use(keystoreProperties::load)
+}
+
+val releaseBuildRequested = gradle.startParameter.taskNames.any {
+    it.contains("release", ignoreCase = true)
+}
+val allowInternalRelease =
+    providers.gradleProperty("allowInternalRelease").orNull == "true" ||
+        System.getenv("DTC_INTERNAL_RELEASE") == "true"
+if (releaseBuildRequested && !keystorePropertiesFile.exists() && !allowInternalRelease) {
+    throw GradleException(
+        "Thiếu android/key.properties. Hãy cấu hình khóa ký release theo android/key.properties.example."
+    )
 }
 
 android {
@@ -29,11 +50,28 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            } else if (allowInternalRelease) {
+                logger.warn(
+                    "INTERNAL RELEASE: APK is signed with the current debug certificate " +
+                        "for direct installation only; do not publish it to an app store."
+                )
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 }

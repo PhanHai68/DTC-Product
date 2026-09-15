@@ -1,11 +1,11 @@
-/// Service xử lý logic chọn máy phù hợp (rule-based filtering + ranking).
-/// Không dùng AI, chỉ dùng rules từ thông số kỹ thuật.
-///
-/// Logic ranking:
-/// - BEST MATCH: Tất cả điều kiện thỏa mãn, capacity gần nhất với yêu cầu
-/// - SUITABLE:   Tất cả điều kiện thỏa mãn, dư capacity < 50%
-/// - OVERSIZED:  Tất cả điều kiện thỏa mãn, dư capacity ≥ 50%
-/// - NOT SUITABLE: Không thỏa mãn ít nhất một điều kiện bắt buộc
+// Service xử lý logic chọn máy phù hợp (rule-based filtering + ranking).
+// Không dùng AI, chỉ dùng rules từ thông số kỹ thuật.
+//
+// Logic ranking:
+// - BEST MATCH: Tất cả điều kiện thỏa mãn, capacity gần nhất với yêu cầu
+// - SUITABLE:   Tất cả điều kiện thỏa mãn, dư capacity < 50%
+// - OVERSIZED:  Tất cả điều kiện thỏa mãn, dư capacity ≥ 50%
+// - NOT SUITABLE: Không thỏa mãn ít nhất một điều kiện bắt buộc
 
 import '../models/packing_machine.dart';
 import '../models/machine_selector_request.dart';

@@ -1,3 +1,24 @@
+import 'dart:math' as math;
+
+DateTime addCalendarMonths(DateTime date, int months) {
+  final firstDayOfTargetMonth = DateTime(date.year, date.month + months);
+  final lastDayOfTargetMonth = DateTime(
+    firstDayOfTargetMonth.year,
+    firstDayOfTargetMonth.month + 1,
+    0,
+  ).day;
+  return DateTime(
+    firstDayOfTargetMonth.year,
+    firstDayOfTargetMonth.month,
+    math.min(date.day, lastDayOfTargetMonth),
+    date.hour,
+    date.minute,
+    date.second,
+    date.millisecond,
+    date.microsecond,
+  );
+}
+
 class MaintenanceRecord {
   final int? id;
   final String customerName;
@@ -34,7 +55,8 @@ class MaintenanceRecord {
       customerName: customerName ?? this.customerName,
       machineModel: machineModel ?? this.machineModel,
       installDate: installDate ?? this.installDate,
-      maintenanceCycleMonths: maintenanceCycleMonths ?? this.maintenanceCycleMonths,
+      maintenanceCycleMonths:
+          maintenanceCycleMonths ?? this.maintenanceCycleMonths,
       nextMaintenanceDate: nextMaintenanceDate ?? this.nextMaintenanceDate,
       serviceType: serviceType ?? this.serviceType,
       notes: notes ?? this.notes,
@@ -59,9 +81,11 @@ class MaintenanceRecord {
       id: map['id'] as int?,
       customerName: map['customerName'] ?? '',
       machineModel: map['machineModel'] ?? '',
-      installDate: DateTime.tryParse(map['installDate'] ?? '') ?? DateTime.now(),
+      installDate:
+          DateTime.tryParse(map['installDate'] ?? '') ?? DateTime.now(),
       maintenanceCycleMonths: map['maintenanceCycleMonths'] ?? 3,
-      nextMaintenanceDate: DateTime.tryParse(map['nextMaintenanceDate'] ?? '') ?? DateTime.now(),
+      nextMaintenanceDate:
+          DateTime.tryParse(map['nextMaintenanceDate'] ?? '') ?? DateTime.now(),
       serviceType: map['serviceType'] ?? 'Bảo hành',
       notes: map['notes'] ?? '',
     );
@@ -71,7 +95,7 @@ class MaintenanceRecord {
   int get status {
     final now = DateTime.now();
     final difference = nextMaintenanceDate.difference(now).inDays;
-    
+
     if (difference < 0) return 0;
     if (difference <= 15) return 1;
     return 2;

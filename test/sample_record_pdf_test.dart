@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:dtc_product/models/sample_record.dart';
 import 'package:dtc_product/services/sample_record_pdf_service.dart';
 import 'package:flutter/services.dart';

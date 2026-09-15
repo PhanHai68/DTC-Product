@@ -113,43 +113,39 @@ class _AcompTankFillTimeScreenState extends State<AcompTankFillTimeScreen> {
               'Phương thức nhập lưu lượng:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: RadioListTile<String>(
-                    title: const Text(
-                      'Theo Model',
-                      style: TextStyle(fontSize: 14),
+            RadioGroup<String>(
+              groupValue: inputMode,
+              onChanged: (value) {
+                if (value == null) return;
+                setState(() {
+                  inputMode = value;
+                  _calculate();
+                });
+              },
+              child: Row(
+                children: [
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: const Text(
+                        'Theo Model',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      value: 'Model',
+                      contentPadding: EdgeInsets.zero,
                     ),
-                    value: 'Model',
-                    groupValue: inputMode,
-                    onChanged: (value) {
-                      setState(() {
-                        inputMode = value!;
-                        _calculate();
-                      });
-                    },
-                    contentPadding: EdgeInsets.zero,
                   ),
-                ),
-                Expanded(
-                  child: RadioListTile<String>(
-                    title: const Text(
-                      'Nhập tay',
-                      style: TextStyle(fontSize: 14),
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: const Text(
+                        'Nhập tay',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      value: 'Manual',
+                      contentPadding: EdgeInsets.zero,
                     ),
-                    value: 'Manual',
-                    groupValue: inputMode,
-                    onChanged: (value) {
-                      setState(() {
-                        inputMode = value!;
-                        _calculate();
-                      });
-                    },
-                    contentPadding: EdgeInsets.zero,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
 
             if (inputMode == 'Model') ...[

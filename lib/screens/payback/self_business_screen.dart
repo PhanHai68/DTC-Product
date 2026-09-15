@@ -10,7 +10,7 @@ class SelfBusinessScreen extends StatefulWidget {
   const SelfBusinessScreen({super.key});
 
   @override
-  _SelfBusinessScreenState createState() => _SelfBusinessScreenState();
+  State<SelfBusinessScreen> createState() => _SelfBusinessScreenState();
 }
 
 class _SelfBusinessScreenState extends State<SelfBusinessScreen> {

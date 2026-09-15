@@ -1,5 +1,5 @@
-/// Provider cho màn hình Machine Selector.
-/// Quản lý form input, dropdown options, và kết quả ranking.
+// Provider cho màn hình Machine Selector.
+// Quản lý form input, dropdown options, và kết quả ranking.
 
 import 'package:flutter/foundation.dart';
 

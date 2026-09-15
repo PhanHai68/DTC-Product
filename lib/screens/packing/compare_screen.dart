@@ -1,4 +1,4 @@
-/// Màn hình chọn và so sánh 2-3 model máy cân đóng gói.
+// Màn hình chọn và so sánh 2-3 model máy cân đóng gói.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../models/packing_machine.dart';
 import '../../providers/compare_provider.dart';
 import '../../providers/packing_provider.dart';
+import '../../routes/route_locations.dart';
 import '../../widgets/packing/machine_card.dart';
 import '../../widgets/packing/packing_back_button.dart';
 
@@ -616,8 +617,7 @@ class _SelectableMachineCard extends StatelessWidget {
                           IconButton(
                             tooltip: 'Xem chi tiết',
                             onPressed: () => context.push(
-                              '/packing_detail',
-                              extra: machine.model,
+                              packingDetailLocation(machine.model),
                             ),
                             icon: const Icon(Icons.open_in_new_rounded),
                           ),
@@ -837,7 +837,7 @@ class _ResultMachineCard extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => context.push('/packing_detail', extra: machine.model),
+        onTap: () => context.push(packingDetailLocation(machine.model)),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(

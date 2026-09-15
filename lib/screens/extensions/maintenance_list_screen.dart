@@ -36,6 +36,32 @@ class MaintenanceListScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
+          if (provider.errorMessage != null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.cloud_off_rounded,
+                      size: 56,
+                      color: colorScheme.error,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(provider.errorMessage!, textAlign: TextAlign.center),
+                    const SizedBox(height: 16),
+                    FilledButton.icon(
+                      onPressed: provider.loadRecords,
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: const Text('Thử lại'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
           final records = provider.filteredRecords;
 
           if (records.isEmpty) {
@@ -50,9 +76,9 @@ class MaintenanceListScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    provider.searchQuery.isEmpty 
-                      ? 'Chưa có dữ liệu bảo trì.\nBấm nút + để thêm máy mới.'
-                      : 'Không tìm thấy kết quả nào.',
+                    provider.searchQuery.isEmpty
+                        ? 'Chưa có dữ liệu bảo trì.\nBấm nút + để thêm máy mới.'
+                        : 'Không tìm thấy kết quả nào.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: colorScheme.onSurfaceVariant,
@@ -94,14 +120,14 @@ class _MaintenanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     // Status colors
     final statusColor = switch (record.status) {
       0 => Colors.red.shade700,
       1 => Colors.orange.shade700,
       _ => Colors.green.shade700,
     };
-    
+
     final statusText = switch (record.status) {
       0 => 'Quá hạn bảo trì',
       1 => 'Sắp đến hạn',
@@ -141,7 +167,10 @@ class _MaintenanceCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(12),
@@ -173,7 +202,11 @@ class _MaintenanceCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.settings_input_component_rounded, size: 16, color: colorScheme.onSurfaceVariant),
+                      Icon(
+                        Icons.settings_input_component_rounded,
+                        size: 16,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Model: ${record.machineModel}',
@@ -251,11 +284,27 @@ class _MaintenanceCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: FilledButton.icon(
-                  onPressed: () {
-                    context.read<MaintenanceProvider>().completeMaintenance(record);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Đã cập nhật chu kỳ bảo trì mới!')),
-                    );
+                  onPressed: () async {
+                    try {
+                      await context
+                          .read<MaintenanceProvider>()
+                          .completeMaintenance(record);
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Đã cập nhật chu kỳ bảo trì mới!'),
+                        ),
+                      );
+                    } catch (_) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Không thể cập nhật dữ liệu. Vui lòng thử lại.',
+                          ),
+                        ),
+                      );
+                    }
                   },
                   icon: const Icon(Icons.build_circle_outlined),
                   label: const Text('Xác nhận Đã bảo trì'),

@@ -1,5 +1,5 @@
-/// Card hiển thị thông tin tóm tắt một máy cân đóng gói.
-/// Sử dụng trong màn hình Search và Catalog.
+// Card hiển thị thông tin tóm tắt một máy cân đóng gói.
+// Sử dụng trong màn hình Search và Catalog.
 
 import 'package:flutter/material.dart';
 
@@ -152,8 +152,9 @@ class MachineCard extends StatelessWidget {
   Color _groupColor(BuildContext context, String? group) {
     if (group == null) return Theme.of(context).colorScheme.primary;
     if (group.contains('PE')) return Colors.blue.shade700;
-    if (group.contains('PP') || group.contains('Bao'))
+    if (group.contains('PP') || group.contains('Bao')) {
       return Colors.green.shade700;
+    }
     return Colors.orange.shade700;
   }
 }
@@ -180,7 +181,7 @@ class _MachineImage extends StatelessWidget {
                 child: Image.asset(
                   imagePath!,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => _placeholder(context),
+                  errorBuilder: (_, _, _) => _placeholder(context),
                 ),
               )
             : _placeholder(context),
@@ -262,7 +263,7 @@ class MachineImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        errorBuilder: (_, __, ___) => _buildPlaceholder(context),
+        errorBuilder: (_, _, _) => _buildPlaceholder(context),
       );
     }
     return _buildPlaceholder(context);

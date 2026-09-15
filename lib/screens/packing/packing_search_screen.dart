@@ -1,4 +1,4 @@
-/// Màn hình Tra cứu Model với search realtime và debounce.
+// Màn hình Tra cứu Model với search realtime và debounce.
 
 import 'dart:async';
 
@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/packing_provider.dart';
 import '../../providers/compare_provider.dart';
+import '../../routes/route_locations.dart';
 import '../../widgets/packing/machine_card.dart';
 import '../../widgets/packing/packing_back_button.dart';
 
@@ -184,11 +185,10 @@ class _PackingSearchScreenState extends State<PackingSearchScreen> {
                           isSelected: compareProvider.isSelected(machine.model),
                           onTap: () {
                             context.push(
-                              '/packing_detail',
-                              extra: {
-                                'model': machine.model,
-                                'showCatalog': false,
-                              },
+                              packingDetailLocation(
+                                machine.model,
+                                showCatalog: false,
+                              ),
                             );
                           },
                           onCompare: () {

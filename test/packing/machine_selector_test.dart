@@ -1,5 +1,5 @@
-/// Unit tests cho MachineSelectorService.
-/// Kiểm tra logic ranking với dữ liệu thực tế từ database.
+// Unit tests cho MachineSelectorService.
+// Kiểm tra logic ranking với dữ liệu thực tế từ database.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dtc_product/models/packing_machine.dart';
@@ -203,20 +203,6 @@ void main() {
         isTrue,
         reason: 'Phải có lý do về PE',
       );
-
-      print('--- Test Result: PE 6-cạnh 5kg 500túi/giờ ---');
-      for (final r in results) {
-        final m = r.machine as PackingMachine;
-        print(
-          '${m.model}: ${r.matchLevel.labelVi} | Score: ${r.score.toStringAsFixed(1)}',
-        );
-        for (final reason in r.matchReasons) {
-          print('  $reason');
-        }
-        for (final reason in r.mismatchReasons) {
-          print('  $reason');
-        }
-      }
     });
 
     test('LZB-1200-R40 với 500 túi/giờ phải là OVERSIZED (dư >50%)', () async {

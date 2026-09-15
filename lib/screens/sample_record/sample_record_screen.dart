@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -10,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../models/sample_record.dart';
 import '../../repositories/sample_record_repository.dart';
 import '../../services/sample_record_pdf_service.dart';
+import '../../widgets/stored_image.dart';
 import '../../widgets/technology_menu.dart';
 
 class SampleRecordScreen extends StatefulWidget {
@@ -186,6 +186,7 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
         image.path,
         type,
         slot: parameterIndex == null ? 'overview' : 'param_$parameterIndex',
+        bytes: await image.readAsBytes(),
       );
       if (!mounted) return;
       setState(() {
@@ -201,28 +202,24 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
     }
   }
 
-
-  Future<(Uint8List, String)> _generatePdfBytesAndName({bool isDraft = false}) async {
+  Future<(Uint8List, String)> _generatePdfBytesAndName({
+    bool isDraft = false,
+  }) async {
     final record = _record();
     await _repository.saveDraft(record);
     final photos = <SampleStreamType, Uint8List>{};
     final categoryPhotos = <SampleStreamType, List<Uint8List?>>{};
     for (final stream in record.streams) {
       if (stream.photoPath != null && stream.photoPath!.isNotEmpty) {
-        final file = File(stream.photoPath!);
-        if (await file.exists()) {
-          photos[stream.type] = await file.readAsBytes();
-        }
+        final bytes = await _repository.readPhoto(stream.photoPath!);
+        if (bytes != null) photos[stream.type] = bytes;
       }
       final streamCategoryPhotos = <Uint8List?>[];
       for (final item in stream.effectiveItems) {
         if (item.photoPath != null && item.photoPath!.isNotEmpty) {
-          final categoryFile = File(item.photoPath!);
-          if (await categoryFile.exists()) {
-            streamCategoryPhotos.add(await categoryFile.readAsBytes());
-          } else {
-            streamCategoryPhotos.add(null);
-          }
+          streamCategoryPhotos.add(
+            await _repository.readPhoto(item.photoPath!),
+          );
         } else {
           streamCategoryPhotos.add(null);
         }
@@ -250,10 +247,16 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
 
     setState(() => _savingToDevice = true);
     try {
-      final (bytes, fileName) = await _generatePdfBytesAndName(isDraft: isDraft);
+      final (bytes, fileName) = await _generatePdfBytesAndName(
+        isDraft: isDraft,
+      );
       await _repository.savePdf(bytes, fileName);
       if (mounted) {
-        _showMessage(isDraft ? 'Đã lưu bản nháp PDF về máy: $fileName' : 'Đã lưu file PDF về máy: $fileName');
+        _showMessage(
+          isDraft
+              ? 'Đã lưu bản nháp PDF về máy: $fileName'
+              : 'Đã lưu file PDF về máy: $fileName',
+        );
       }
     } catch (error) {
       _showMessage('Chưa thể lưu PDF: $error');
@@ -270,7 +273,9 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
 
     setState(() => _sharingPdf = true);
     try {
-      final (bytes, fileName) = await _generatePdfBytesAndName(isDraft: isDraft);
+      final (bytes, fileName) = await _generatePdfBytesAndName(
+        isDraft: isDraft,
+      );
       if (!mounted) return;
       final renderBox = context.findRenderObject() as RenderBox?;
       final origin = renderBox == null
@@ -278,7 +283,9 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
           : renderBox.localToGlobal(Offset.zero) & renderBox.size;
       await SharePlus.instance.share(
         ShareParams(
-          files: [XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName)],
+          files: [
+            XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName),
+          ],
           title: 'Form lưu mẫu - ${record.tagName}',
           text:
               'Form lưu mẫu ${record.tagName} - '
@@ -464,7 +471,10 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
                       foregroundColor: const Color(0xFF148147),
-                      side: const BorderSide(color: Color(0xFF148147), width: 1.5),
+                      side: const BorderSide(
+                        color: Color(0xFF148147),
+                        width: 1.5,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -602,14 +612,14 @@ class _ParameterControllerItem {
     required String initialName,
     double initialWeight = 0,
     this.photoPath,
-  })  : name = TextEditingController(text: initialName),
-        weight = TextEditingController(
-          text: initialWeight > 0
-              ? (initialWeight == initialWeight.roundToDouble()
-                  ? '${initialWeight.toInt()}'
-                  : '$initialWeight')
-              : '',
-        );
+  }) : name = TextEditingController(text: initialName),
+       weight = TextEditingController(
+         text: initialWeight > 0
+             ? (initialWeight == initialWeight.roundToDouble()
+                   ? '${initialWeight.toInt()}'
+                   : '$initialWeight')
+             : '',
+       );
 
   void addListener(VoidCallback listener) {
     name.addListener(listener);
@@ -821,10 +831,7 @@ class _SampleStreamSection extends StatelessWidget {
         ),
         title: Text(
           sectionTitle,
-          style: TextStyle(
-            color: primaryColor,
-            fontWeight: FontWeight.w900,
-          ),
+          style: TextStyle(color: primaryColor, fontWeight: FontWeight.w900),
         ),
         subtitle: Text(
           '${controllers.type.englishTitle} · ${data.capacityTonPerHour.toStringAsFixed(1)} t/h',
@@ -884,7 +891,10 @@ class _SampleStreamSection extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF1F6F7),
                       borderRadius: BorderRadius.circular(10),
@@ -892,7 +902,11 @@ class _SampleStreamSection extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.sync_rounded, size: 16, color: Color(0xFF148147)),
+                        const Icon(
+                          Icons.sync_rounded,
+                          size: 16,
+                          color: Color(0xFF148147),
+                        ),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
@@ -914,7 +928,10 @@ class _SampleStreamSection extends StatelessWidget {
           const SizedBox(height: 10),
           _ResultStrip(
             items: [
-              ('Thời gian đo', '${data.minutes}p ${data.seconds}g (${data.totalSeconds}g)'),
+              (
+                'Thời gian đo',
+                '${data.minutes}p ${data.seconds}g (${data.totalSeconds}g)',
+              ),
               (
                 'Năng suất',
                 '${data.capacityTonPerHour.toStringAsFixed(1)} t/h',
@@ -923,9 +940,12 @@ class _SampleStreamSection extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           _MiniHeading(switch (controllers.type) {
-            SampleStreamType.rawMaterial => 'Hình ảnh mẫu nguyên liệu / Raw material photo',
-            SampleStreamType.accepted => 'Hình ảnh mẫu thành phẩm / Accepted photo',
-            SampleStreamType.rejected => 'Hình ảnh mẫu phế phẩm / Rejected photo',
+            SampleStreamType.rawMaterial =>
+              'Hình ảnh mẫu nguyên liệu / Raw material photo',
+            SampleStreamType.accepted =>
+              'Hình ảnh mẫu thành phẩm / Accepted photo',
+            SampleStreamType.rejected =>
+              'Hình ảnh mẫu phế phẩm / Rejected photo',
           }),
           const SizedBox(height: 10),
           _PhotoCapture(
@@ -1015,8 +1035,7 @@ class _ParameterCardRow extends StatelessWidget {
     final percentage = sampleWeightGram <= 0
         ? 0.0
         : (weight / sampleWeightGram * 100);
-    final hasPhoto =
-        parameter.photoPath != null && File(parameter.photoPath!).existsSync();
+    final hasPhoto = storedImageCanDisplay(parameter.photoPath);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -1039,7 +1058,7 @@ class _ParameterCardRow extends StatelessWidget {
                 width: 58,
                 height: 58,
                 child: hasPhoto
-                    ? Image.file(File(parameter.photoPath!), fit: BoxFit.cover)
+                    ? StoredImage(path: parameter.photoPath!)
                     : const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -1205,7 +1224,7 @@ class _PhotoCapture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasPhoto = path != null && File(path!).existsSync();
+    final hasPhoto = storedImageCanDisplay(path);
     return Container(
       height: hasPhoto ? 190 : 112,
       width: double.infinity,
@@ -1219,7 +1238,7 @@ class _PhotoCapture extends StatelessWidget {
           ? Stack(
               fit: StackFit.expand,
               children: [
-                Image.file(File(path!), fit: BoxFit.cover),
+                StoredImage(path: path!),
                 Positioned(
                   right: 10,
                   bottom: 10,
@@ -1445,4 +1464,3 @@ class _StatusChip extends StatelessWidget {
     );
   }
 }
-

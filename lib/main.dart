@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'routes/app_routes.dart';
@@ -16,6 +18,7 @@ import 'providers/compare_provider.dart';
 import 'providers/maintenance_provider.dart';
 
 void main() {
+  FlutterError.onError = FlutterError.presentError;
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -24,8 +27,13 @@ void main() {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              '${details.exceptionAsString()}\n\n${details.stack?.toString() ?? ''}',
-              style: const TextStyle(color: Colors.red, fontSize: 14),
+              kDebugMode
+                  ? '${details.exceptionAsString()}\n\n${details.stack?.toString() ?? ''}'
+                  : 'Đã xảy ra lỗi khi hiển thị nội dung. Vui lòng quay lại và thử lại.',
+              style: TextStyle(
+                color: kDebugMode ? Colors.red : const Color(0xFF102F46),
+                fontSize: 14,
+              ),
             ),
           ),
         ),
@@ -54,10 +62,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PackingProvider()),
         ChangeNotifierProvider(create: (_) => MachineSelectorProvider()),
         ChangeNotifierProvider(create: (_) => CompareProvider()),
-        ChangeNotifierProvider(create: (_) => MaintenanceProvider()..loadRecords()),
+        ChangeNotifierProvider(
+          create: (_) => MaintenanceProvider()..loadRecords(),
+        ),
       ],
       child: MaterialApp.router(
         title: 'DTC Product',
+        locale: const Locale('vi', 'VN'),
+        supportedLocales: const [Locale('vi', 'VN')],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(

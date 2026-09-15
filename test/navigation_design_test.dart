@@ -31,7 +31,7 @@ void main() {
     expect(find.text('Máy nén khí'), findsOneWidget);
     expect(find.text('Cân đóng gói'), findsOneWidget);
     expect(find.text('Tiện ích mở rộng'), findsOneWidget);
-    expect(find.text('DTCGroup  •  v1.0.0'), findsOneWidget);
+    expect(find.text('DTCGroup  •  v1.0.3'), findsOneWidget);
     expect(find.text('Tra cứu nhanh'), findsNothing);
     expect(find.text('Tính toán kỹ thuật'), findsNothing);
     expect(find.text('Tài liệu vận hành'), findsNothing);
@@ -63,7 +63,7 @@ void main() {
     expect(extensionsCard.right, lessThanOrEqualTo(372));
     expect(tester.getCenter(find.text('DTC Product')).dx, closeTo(195, 1));
     expect(
-      tester.getBottomRight(find.text('DTCGroup  •  v1.0.0')).dy,
+      tester.getBottomRight(find.text('DTCGroup  •  v1.0.3')).dy,
       greaterThan(820),
     );
     expect(tester.takeException(), isNull);

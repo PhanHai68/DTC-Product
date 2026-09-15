@@ -1,5 +1,5 @@
-/// Màn hình chi tiết máy cân đóng gói.
-/// Hiển thị image gallery, tất cả thông số kỹ thuật, và nút XEM CATALOG.
+// Màn hình chi tiết máy cân đóng gói.
+// Hiển thị image gallery, tất cả thông số kỹ thuật, và nút XEM CATALOG.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +10,7 @@ import '../../data/packing_feature_data.dart';
 import '../../models/packing_machine.dart';
 import '../../providers/compare_provider.dart';
 import '../../repositories/packing_machine_repository.dart';
+import '../../routes/route_locations.dart';
 import '../../widgets/packing/spec_row.dart';
 import '../../widgets/packing/machine_card.dart';
 import '../../widgets/packing/packing_back_button.dart';
@@ -58,8 +59,9 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
         setState(() {
           _machine = machine;
           _isLoading = false;
-          if (machine == null)
+          if (machine == null) {
             _error = 'Không tìm thấy model ${widget.modelName}';
+          }
         });
       }
     } catch (e) {
@@ -80,12 +82,11 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
       return;
     }
     context.push(
-      '/packing_catalog_viewer',
-      extra: {
-        'path': machine.catalogAssetPath!,
-        'page': machine.catalogPage ?? 1,
-        'model': machine.model,
-      },
+      packingCatalogLocation(
+        assetPath: machine.catalogAssetPath!,
+        initialPage: machine.catalogPage ?? 1,
+        modelName: machine.model,
+      ),
     );
   }
 

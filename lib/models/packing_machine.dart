@@ -1,5 +1,5 @@
-/// Model Dart đại diện cho một máy cân đóng gói.
-/// Ánh xạ trực tiếp từ bảng packing_machines trong SQLite database.
+// Model Dart đại diện cho một máy cân đóng gói.
+// Ánh xạ trực tiếp từ bảng packing_machines trong SQLite database.
 
 class PackingMachine {
   final int id;

@@ -1,11 +1,9 @@
-import 'dart:io';
-
-import 'package:flutter/services.dart';
-import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../models/maintenance_record.dart';
+import 'local_database_factory.dart'
+    if (dart.library.io) 'local_database_factory_io.dart'
+    if (dart.library.js_interop) 'local_database_factory_web.dart';
 
 class LocalDatabase {
   LocalDatabase._();
@@ -19,24 +17,11 @@ class LocalDatabase {
   }
 
   Future<Database> _initDB(String filePath) async {
-    final DatabaseFactory factory;
-    if (Platform.isWindows || Platform.isLinux) {
-      sqfliteFfiInit();
-      factory = databaseFactoryFfi;
-    } else {
-      factory = databaseFactorySqflitePlugin;
-    }
-
-    final dbPath = await factory.getDatabasesPath();
-    final path = p.join(dbPath, filePath);
-
-    return await factory.openDatabase(
-      path,
-      options: OpenDatabaseOptions(
-        version: 2,
-        onCreate: _createDB,
-        onUpgrade: _upgradeDB,
-      ),
+    return openLocalDatabase(
+      fileName: filePath,
+      version: 2,
+      onCreate: _createDB,
+      onUpgrade: _upgradeDB,
     );
   }
 
@@ -57,7 +42,9 @@ class LocalDatabase {
 
   Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      await db.execute('ALTER TABLE maintenance_records ADD COLUMN serviceType TEXT DEFAULT "Bảo hành"');
+      await db.execute(
+        'ALTER TABLE maintenance_records ADD COLUMN serviceType TEXT DEFAULT "Bảo hành"',
+      );
     }
   }
 
@@ -92,5 +79,10 @@ class LocalDatabase {
       orderBy: 'nextMaintenanceDate ASC',
     );
     return result.map((map) => MaintenanceRecord.fromMap(map)).toList();
+  }
+
+  Future<void> close() async {
+    await _database?.close();
+    _database = null;
   }
 }

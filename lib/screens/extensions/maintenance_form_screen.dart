@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -17,15 +18,16 @@ class MaintenanceFormScreen extends StatefulWidget {
 
 class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late final TextEditingController _customerController;
   late final TextEditingController _modelController;
   late final TextEditingController _cycleController;
   late final TextEditingController _notesController;
-  
+
   late DateTime _installDate;
   late DateTime _nextDate;
   late String _serviceType;
+  bool _isSubmitting = false;
 
   final _dateFormat = DateFormat('dd/MM/yyyy');
   final List<String> _serviceTypes = ['Bảo hành', 'Sửa chữa dịch vụ'];
@@ -36,16 +38,16 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
     final rec = widget.record;
     _customerController = TextEditingController(text: rec?.customerName ?? '');
     _modelController = TextEditingController(text: rec?.machineModel ?? '');
-    _cycleController = TextEditingController(text: rec != null ? rec.maintenanceCycleMonths.toString() : '3');
+    _cycleController = TextEditingController(
+      text: rec != null ? rec.maintenanceCycleMonths.toString() : '3',
+    );
     _notesController = TextEditingController(text: rec?.notes ?? '');
     _serviceType = rec?.serviceType ?? 'Bảo hành';
-    
+
     _installDate = rec?.installDate ?? DateTime.now();
-    _nextDate = rec?.nextMaintenanceDate ?? DateTime(
-      _installDate.year, 
-      _installDate.month + int.parse(_cycleController.text), 
-      _installDate.day,
-    );
+    _nextDate =
+        rec?.nextMaintenanceDate ??
+        addCalendarMonths(_installDate, int.parse(_cycleController.text));
   }
 
   @override
@@ -58,13 +60,10 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   }
 
   void _recalcNextDate() {
-    final cycle = int.tryParse(_cycleController.text) ?? 3;
+    final cycle = int.tryParse(_cycleController.text);
+    if (cycle == null || cycle <= 0) return;
     setState(() {
-      _nextDate = DateTime(
-        _installDate.year,
-        _installDate.month + cycle,
-        _installDate.day,
-      );
+      _nextDate = addCalendarMonths(_installDate, cycle);
     });
   }
 
@@ -88,9 +87,10 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
     }
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    
+    setState(() => _isSubmitting = true);
+
     final record = MaintenanceRecord(
       id: widget.record?.id,
       customerName: _customerController.text.trim(),
@@ -103,26 +103,52 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
     );
 
     final provider = context.read<MaintenanceProvider>();
-    if (record.id == null) {
-      provider.addRecord(record);
-    } else {
-      provider.updateRecord(record);
+    try {
+      if (record.id == null) {
+        await provider.addRecord(record);
+      } else {
+        await provider.updateRecord(record);
+      }
+      if (mounted) context.pop();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Không thể lưu dữ liệu. Vui lòng thử lại.'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
-    
-    context.pop();
   }
 
-  void _delete() {
+  Future<void> _delete() async {
     if (widget.record?.id != null) {
-      context.read<MaintenanceProvider>().deleteRecord(widget.record!.id!);
-      context.pop();
+      setState(() => _isSubmitting = true);
+      try {
+        await context.read<MaintenanceProvider>().deleteRecord(
+          widget.record!.id!,
+        );
+        if (mounted) context.pop();
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Không thể xóa dữ liệu. Vui lòng thử lại.'),
+            ),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _isSubmitting = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.record != null;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Sửa thông tin máy' : 'Thêm máy mới'),
@@ -130,28 +156,35 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
           if (isEditing)
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.red),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: const Text('Xóa máy này?'),
-                    content: const Text('Hành động này không thể hoàn tác.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx),
-                        child: const Text('Hủy'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(ctx);
-                          _delete();
-                        },
-                        child: const Text('Xóa', style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
-                  ),
-                );
-              },
+              onPressed: _isSubmitting
+                  ? null
+                  : () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Xóa máy này?'),
+                          content: const Text(
+                            'Hành động này không thể hoàn tác.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Hủy'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(ctx);
+                                await _delete();
+                              },
+                              child: const Text(
+                                'Xóa',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
             ),
         ],
       ),
@@ -168,7 +201,8 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                   labelText: 'Tên Khách Hàng / Nhà Máy',
                   prefixIcon: Icon(Icons.business_rounded),
                 ),
-                validator: (val) => val == null || val.isEmpty ? 'Bắt buộc nhập' : null,
+                validator: (val) =>
+                    val == null || val.isEmpty ? 'Bắt buộc nhập' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -177,20 +211,18 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                   labelText: 'Model Máy',
                   prefixIcon: Icon(Icons.settings_input_component_rounded),
                 ),
-                validator: (val) => val == null || val.isEmpty ? 'Bắt buộc nhập' : null,
+                validator: (val) =>
+                    val == null || val.isEmpty ? 'Bắt buộc nhập' : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _serviceType,
+                initialValue: _serviceType,
                 decoration: const InputDecoration(
                   labelText: 'Loại công việc',
                   prefixIcon: Icon(Icons.category_rounded),
                 ),
                 items: _serviceTypes.map((type) {
-                  return DropdownMenuItem(
-                    value: type,
-                    child: Text(type),
-                  );
+                  return DropdownMenuItem(value: type, child: Text(type));
                 }).toList(),
                 onChanged: (val) {
                   if (val != null) {
@@ -222,8 +254,15 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                         suffixText: 'tháng',
                       ),
                       keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       onChanged: (_) => _recalcNextDate(),
-                      validator: (val) => val == null || val.isEmpty ? 'Lỗi' : null,
+                      validator: (val) {
+                        final cycle = int.tryParse(val ?? '');
+                        if (cycle == null || cycle <= 0) {
+                          return 'Nhập số tháng lớn hơn 0';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ],
@@ -238,7 +277,10 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                   ),
                   child: Text(
                     _dateFormat.format(_nextDate),
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
                   ),
                 ),
               ),
@@ -253,9 +295,17 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
               ),
               const SizedBox(height: 32),
               FilledButton.icon(
-                onPressed: _save,
-                icon: const Icon(Icons.save_rounded),
-                label: const Text('Lưu thông tin', style: TextStyle(fontSize: 16)),
+                onPressed: _isSubmitting ? null : _save,
+                icon: _isSubmitting
+                    ? const SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.save_rounded),
+                label: Text(
+                  _isSubmitting ? 'Đang lưu...' : 'Lưu thông tin',
+                  style: const TextStyle(fontSize: 16),
+                ),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(56),
                 ),

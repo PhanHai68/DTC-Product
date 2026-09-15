@@ -8,7 +8,7 @@ class PowerConsumptionScreen extends StatefulWidget {
   const PowerConsumptionScreen({super.key});
 
   @override
-  _PowerConsumptionScreenState createState() => _PowerConsumptionScreenState();
+  State<PowerConsumptionScreen> createState() => _PowerConsumptionScreenState();
 }
 
 class _PowerConsumptionScreenState extends State<PowerConsumptionScreen> {

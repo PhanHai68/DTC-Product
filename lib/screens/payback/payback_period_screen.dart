@@ -9,7 +9,7 @@ class PaybackPeriodScreen extends StatefulWidget {
   const PaybackPeriodScreen({super.key});
 
   @override
-  _PaybackPeriodScreenState createState() => _PaybackPeriodScreenState();
+  State<PaybackPeriodScreen> createState() => _PaybackPeriodScreenState();
 }
 
 class _PaybackPeriodScreenState extends State<PaybackPeriodScreen> {

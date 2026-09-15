@@ -10,7 +10,7 @@ class ProcessingProfitScreen extends StatefulWidget {
   const ProcessingProfitScreen({super.key});
 
   @override
-  _ProcessingProfitScreenState createState() => _ProcessingProfitScreenState();
+  State<ProcessingProfitScreen> createState() => _ProcessingProfitScreenState();
 }
 
 class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {

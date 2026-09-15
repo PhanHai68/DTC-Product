@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/home_screen.dart';
@@ -43,6 +44,35 @@ import '../models/maintenance_record.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
+  errorBuilder: (context, state) => Scaffold(
+    appBar: AppBar(title: const Text('Không tìm thấy nội dung')),
+    body: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.link_off_rounded,
+              size: 64,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Đường dẫn không hợp lệ hoặc nội dung không còn tồn tại.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            FilledButton.icon(
+              onPressed: () => context.go('/'),
+              icon: const Icon(Icons.home_rounded),
+              label: const Text('Về trang chủ'),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ),
   routes: [
     GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
     GoRoute(
@@ -185,13 +215,22 @@ final GoRouter appRouter = GoRouter(
       path: '/packing_detail',
       builder: (context, state) {
         final extra = state.extra;
+        var modelName = state.uri.queryParameters['model'] ?? '';
+        var showCatalog = state.uri.queryParameters['catalog'] != 'false';
         if (extra is Map) {
-          return MachineDetailScreen(
-            modelName: extra['model'] as String? ?? '',
-            showCatalog: extra['showCatalog'] as bool? ?? true,
-          );
+          modelName = modelName.isNotEmpty
+              ? modelName
+              : extra['model'] as String? ?? '';
+          if (!state.uri.queryParameters.containsKey('catalog')) {
+            showCatalog = extra['showCatalog'] as bool? ?? true;
+          }
+        } else if (modelName.isEmpty) {
+          modelName = extra as String? ?? '';
         }
-        return MachineDetailScreen(modelName: extra as String? ?? '');
+        return MachineDetailScreen(
+          modelName: modelName,
+          showCatalog: showCatalog,
+        );
       },
     ),
     GoRoute(
@@ -210,10 +249,12 @@ final GoRouter appRouter = GoRouter(
       path: '/packing_catalog_viewer',
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>? ?? {};
+        final query = state.uri.queryParameters;
         return PackingCatalogViewerScreen(
-          assetPath: extra['path'] as String? ?? '',
-          initialPage: extra['page'] as int? ?? 1,
-          modelName: extra['model'] as String? ?? '',
+          assetPath: query['path'] ?? extra['path'] as String? ?? '',
+          initialPage:
+              int.tryParse(query['page'] ?? '') ?? extra['page'] as int? ?? 1,
+          modelName: query['model'] ?? extra['model'] as String? ?? '',
         );
       },
     ),
