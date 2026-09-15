@@ -7,11 +7,19 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 class ColorSorter3dScreen extends StatefulWidget {
   final String modelName;
   final String modelPath;
+  final String dimensions;
+  final String configuration;
+  final String technology;
+  final double exposure;
 
   const ColorSorter3dScreen({
     super.key,
     this.modelName = 'SC16 Pro',
     this.modelPath = 'assets/models/sc16_pro.glb',
+    this.dimensions = '4830x1690x1915 mm',
+    this.configuration = '7:3:2',
+    this.technology = 'AI Deep Learning',
+    this.exposure = 0.85,
   });
 
   @override
@@ -217,7 +225,7 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
             interactionPrompt: InteractionPrompt.none,
             interpolationDecay: 80,
             environmentImage: 'neutral',
-            exposure: 1.05,
+            exposure: widget.exposure,
             debugLogging: false,
             relatedCss: '''
               model-viewer {
@@ -427,6 +435,7 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
                   Expanded(
                     child: Text(
                       'Vuốt để xoay 360° • Thu phóng chi tiết',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 12.5,
                         fontWeight: FontWeight.bold,
@@ -477,15 +486,15 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
                 children: [
                   _buildQuickSpecItem(
                     'Kích thước',
-                    '4830x1690x1915 mm',
+                    widget.dimensions,
                     Icons.straighten,
                   ),
                   Container(height: 28, width: 1, color: Colors.grey.shade300),
-                  _buildQuickSpecItem('Cấu hình', '7:3:2', Icons.view_stream),
+                  _buildQuickSpecItem('Cấu hình', widget.configuration, Icons.view_stream),
                   Container(height: 28, width: 1, color: Colors.grey.shade300),
                   _buildQuickSpecItem(
                     'Công nghệ',
-                    'AI Deep Learning',
+                    widget.technology,
                     Icons.memory,
                   ),
                 ],

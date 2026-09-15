@@ -57,14 +57,6 @@ abstract final class DtcPdfExportService {
       color: _navy,
       alignment: PdfTextAlignment.center,
     );
-    _drawText(
-      graphics,
-      'AI DEEP LEARNING  •  CLOUD CONTROL',
-      fonts.bold(8.5),
-      ui.Rect.fromLTWH(margin, 109, width, 13),
-      color: _muted,
-      alignment: PdfTextAlignment.center,
-    );
 
     if (machineBytes != null) {
       _drawImageContain(

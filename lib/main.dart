@@ -9,6 +9,7 @@ import 'providers/processing_profit_provider.dart';
 import 'providers/self_business_provider.dart';
 import 'providers/payback_period_provider.dart';
 import 'providers/color_sorter_provider.dart';
+import 'providers/tea_color_sorter_provider.dart';
 import 'providers/acomp_spec_provider.dart';
 import 'providers/acomp_suitable_provider.dart';
 import 'providers/acomp_tank_provider.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SelfBusinessProvider()),
         ChangeNotifierProvider(create: (_) => PaybackPeriodProvider()),
         ChangeNotifierProvider(create: (_) => ColorSorterProvider()),
+        ChangeNotifierProvider(create: (_) => TeaColorSorterProvider()),
         ChangeNotifierProvider(create: (_) => AcompSpecProvider()),
         ChangeNotifierProvider(create: (_) => AcompSuitableProvider()),
         ChangeNotifierProvider(create: (_) => AcompTankProvider()),

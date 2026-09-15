@@ -10,7 +10,7 @@ class HomeScreen extends StatelessWidget {
     _HomeAction(
       title: 'Máy tách màu',
       imagePath: 'assets/images/home_color_sorter_5_chutes_v5.png',
-      route: '/color_sorter_menu',
+      route: '/color_sorter_categories',
       tint: Color(0xFFF5F7F8),
     ),
     _HomeAction(
