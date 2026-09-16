@@ -10,6 +10,7 @@ import 'providers/self_business_provider.dart';
 import 'providers/payback_period_provider.dart';
 import 'providers/color_sorter_provider.dart';
 import 'providers/tea_color_sorter_provider.dart';
+import 'providers/paddy_color_sorter_provider.dart';
 import 'providers/acomp_spec_provider.dart';
 import 'providers/acomp_suitable_provider.dart';
 import 'providers/acomp_tank_provider.dart';
@@ -17,6 +18,10 @@ import 'providers/packing_provider.dart';
 import 'providers/machine_selector_provider.dart';
 import 'providers/compare_provider.dart';
 import 'providers/maintenance_provider.dart';
+
+// Projects Module
+import 'features/projects/providers/project_provider.dart';
+import 'features/projects/repositories/local_project_repository.dart';
 
 void main() {
   FlutterError.onError = FlutterError.presentError;
@@ -57,6 +62,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PaybackPeriodProvider()),
         ChangeNotifierProvider(create: (_) => ColorSorterProvider()),
         ChangeNotifierProvider(create: (_) => TeaColorSorterProvider()),
+        ChangeNotifierProvider(create: (_) => PaddyColorSorterProvider()),
         ChangeNotifierProvider(create: (_) => AcompSpecProvider()),
         ChangeNotifierProvider(create: (_) => AcompSuitableProvider()),
         ChangeNotifierProvider(create: (_) => AcompTankProvider()),
@@ -66,6 +72,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CompareProvider()),
         ChangeNotifierProvider(
           create: (_) => MaintenanceProvider()..loadRecords(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProjectProvider(LocalProjectRepository()),
         ),
       ],
       child: MaterialApp.router(
@@ -83,6 +92,21 @@ class MyApp extends StatelessWidget {
           ),
           scaffoldBackgroundColor: const Color(0xFFF3F7F9),
           visualDensity: VisualDensity.adaptivePlatformDensity,
+          textTheme: const TextTheme(
+            headlineSmall: TextStyle(
+              color: Color(0xFF102F46),
+              fontWeight: FontWeight.w800,
+            ),
+            titleLarge: TextStyle(
+              color: Color(0xFF102F46),
+              fontWeight: FontWeight.w800,
+            ),
+            titleMedium: TextStyle(
+              color: Color(0xFF102F46),
+              fontWeight: FontWeight.w700,
+            ),
+            bodyMedium: TextStyle(color: Color(0xFF29495E), height: 1.35),
+          ),
           appBarTheme: const AppBarTheme(
             centerTitle: false,
             elevation: 0,
@@ -108,6 +132,42 @@ class MyApp extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(color: Color(0xFFDCE7EB)),
+            ),
+          ),
+          filledButtonTheme: FilledButtonThemeData(
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(48, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              textStyle: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(48, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              textStyle: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(48, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              textStyle: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+          snackBarTheme: const SnackBarThemeData(
+            behavior: SnackBarBehavior.floating,
+            showCloseIcon: true,
+          ),
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
             ),
           ),
         ),

@@ -13,12 +13,6 @@ class ColorSorterMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void developing() {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tính năng đang được phát triển')),
-      );
-    }
-
     return TechnologyMenuScaffold(
       title: 'Máy tách màu',
       entries: [
@@ -51,7 +45,7 @@ class ColorSorterMenuScreen extends StatelessWidget {
           id: 'color_sorter_errors_btn',
           title: 'Tra cứu lỗi',
           icon: Icons.troubleshoot_rounded,
-          onTap: developing,
+          statusLabel: 'Sắp có',
         ),
         TechnologyMenuEntry(
           id: 'color_sorter_manual_btn',
@@ -102,10 +96,31 @@ class ColorSorterMenuScreen extends StatelessWidget {
             label: const Text('Sao chép'),
           ),
           FilledButton.icon(
-            onPressed: () => launchUrl(
-              Uri.parse(_installationDrawingUrl),
-              mode: LaunchMode.externalApplication,
-            ),
+            onPressed: () async {
+              try {
+                final opened = await launchUrl(
+                  Uri.parse(_installationDrawingUrl),
+                  mode: LaunchMode.externalApplication,
+                );
+                if (!opened && dialogContext.mounted) {
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Không thể mở Google Drive trên thiết bị này.',
+                      ),
+                    ),
+                  );
+                }
+              } catch (_) {
+                if (dialogContext.mounted) {
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    const SnackBar(
+                      content: Text('Không thể mở liên kết. Vui lòng thử lại.'),
+                    ),
+                  );
+                }
+              }
+            },
             icon: const Icon(Icons.open_in_new_rounded),
             label: const Text('Mở thư viện'),
           ),

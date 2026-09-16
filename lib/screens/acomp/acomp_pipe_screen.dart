@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../data/acomp_pipe_data.dart';
+import '../../core/input/localized_number.dart';
 
 class AcompPipeScreen extends StatefulWidget {
   const AcompPipeScreen({super.key});
@@ -28,6 +29,7 @@ class _AcompPipeScreenState extends State<AcompPipeScreen> {
 
   double? calculatedDiameter;
   Map<String, dynamic>? matchedPipe;
+  String? _validationMessage;
 
   @override
   void dispose() {
@@ -43,17 +45,20 @@ class _AcompPipeScreenState extends State<AcompPipeScreen> {
     if (inputMode == 'Model' && selectedModel != null) {
       flow = double.tryParse(selectedModel!['flow7bar'].toString()) ?? 0;
     } else {
-      flow = double.tryParse(_flowController.text) ?? 0;
+      flow = parseLocalizedDouble(_flowController.text) ?? 0;
     }
 
-    double deltaP = double.tryParse(_pressureDropController.text) ?? 0;
-    double pMax = double.tryParse(_maxPressureController.text) ?? 0;
-    double length = double.tryParse(_lengthController.text) ?? 0;
+    double deltaP = parseLocalizedDouble(_pressureDropController.text) ?? 0;
+    double pMax = parseLocalizedDouble(_maxPressureController.text) ?? 0;
+    double length = parseLocalizedDouble(_lengthController.text) ?? 0;
 
     if (flow <= 0 || deltaP <= 0 || pMax <= 0 || length <= 0) {
       setState(() {
         calculatedDiameter = null;
         matchedPipe = null;
+        _validationMessage = flow <= 0
+            ? 'Hãy chọn model hoặc nhập lưu lượng lớn hơn 0.'
+            : 'Các thông số độ sụt áp, áp suất và chiều dài phải lớn hơn 0.';
       });
       return;
     }
@@ -77,6 +82,7 @@ class _AcompPipeScreenState extends State<AcompPipeScreen> {
     setState(() {
       calculatedDiameter = diameter;
       matchedPipe = foundPipe;
+      _validationMessage = null;
     });
   }
 
@@ -175,7 +181,7 @@ class _AcompPipeScreenState extends State<AcompPipeScreen> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<Map<String, dynamic>>(
                     isExpanded: true,
-                    hint: const Text('▼ Click chọn'),
+                    hint: const Text('Chọn model máy nén khí'),
                     value: selectedModel,
                     items: acompModelsFlowData.map((data) {
                       return DropdownMenuItem<Map<String, dynamic>>(
@@ -231,6 +237,14 @@ class _AcompPipeScreenState extends State<AcompPipeScreen> {
                 ),
               ),
             ),
+            if (_validationMessage != null) ...[
+              const SizedBox(height: 10),
+              Text(
+                _validationMessage!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
         ),
       ),
@@ -246,6 +260,7 @@ class _AcompPipeScreenState extends State<AcompPipeScreen> {
         TextField(
           controller: controller,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: const [LocalizedDecimalTextInputFormatter()],
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             contentPadding: const EdgeInsets.symmetric(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../data/tea_specs_data.dart';
 
 class TeaColorSorterProvider extends ChangeNotifier {
+  final List<Map<String, String>> data;
+
   Map<String, String>? _specs;
   Map<String, String>? get specs => _specs;
 
@@ -14,8 +17,11 @@ class TeaColorSorterProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  TeaColorSorterProvider() {
-    selectModel('DF53 Pro');
+  TeaColorSorterProvider({
+    this.data = teaColorSorterSpecs,
+    String initialModel = 'DF53 Pro',
+  }) {
+    selectModel(initialModel);
   }
 
   void selectModel(String modelName) {
@@ -25,14 +31,16 @@ class TeaColorSorterProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final found = teaColorSorterSpecs.firstWhere(
+      final found = data.firstWhere(
         (e) => (e['model'] ?? '').toLowerCase() == modelName.toLowerCase(),
         orElse: () => <String, String>{},
       );
 
       if (found.isNotEmpty) {
         _specs = Map.fromEntries(
-          found.entries.where((e) => e.value.trim().isNotEmpty && e.value != 'N/A'),
+          found.entries.where(
+            (e) => e.value.trim().isNotEmpty && e.value != 'N/A',
+          ),
         );
       } else {
         _specs = null;
@@ -62,7 +70,7 @@ class TeaColorSorterProvider extends ChangeNotifier {
     try {
       Map<String, String>? result;
       // 1. Exact match Model name
-      for (var row in teaColorSorterSpecs) {
+      for (var row in data) {
         if (row['model']?.toLowerCase() == modelName.toLowerCase().trim()) {
           result = row;
           break;
@@ -71,8 +79,11 @@ class TeaColorSorterProvider extends ChangeNotifier {
 
       // 2. Partial match Model name
       if (result == null) {
-        for (var row in teaColorSorterSpecs) {
-          if (row['model']?.toLowerCase().contains(modelName.toLowerCase().trim()) == true) {
+        for (var row in data) {
+          if (row['model']?.toLowerCase().contains(
+                modelName.toLowerCase().trim(),
+              ) ==
+              true) {
             result = row;
             break;
           }
@@ -81,7 +92,7 @@ class TeaColorSorterProvider extends ChangeNotifier {
 
       // 3. Partial match across any spec
       if (result == null) {
-        for (var row in teaColorSorterSpecs) {
+        for (var row in data) {
           bool matchFound = false;
           for (var value in row.values) {
             if (value.toLowerCase().contains(modelName.toLowerCase().trim())) {
@@ -99,7 +110,9 @@ class TeaColorSorterProvider extends ChangeNotifier {
       if (result != null) {
         _selectedModel = result['model'] ?? _selectedModel;
         _specs = Map.fromEntries(
-          result.entries.where((e) => e.value.trim().isNotEmpty && e.value != 'N/A'),
+          result.entries.where(
+            (e) => e.value.trim().isNotEmpty && e.value != 'N/A',
+          ),
         );
       } else {
         _specs = null;
@@ -116,7 +129,7 @@ class TeaColorSorterProvider extends ChangeNotifier {
 
   Map<String, String>? getSpecByModel(String modelName) {
     try {
-      return teaColorSorterSpecs.firstWhere(
+      return data.firstWhere(
         (e) => (e['model'] ?? '').toLowerCase() == modelName.toLowerCase(),
       );
     } catch (_) {

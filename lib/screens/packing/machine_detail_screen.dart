@@ -676,6 +676,7 @@ class PackingCatalogViewerScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.close),
+            tooltip: 'Đóng tài liệu',
             onPressed: () => context.pop(),
           ),
         ],

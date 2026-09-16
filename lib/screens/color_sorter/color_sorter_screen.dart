@@ -7,7 +7,9 @@ import '../../data/specs_data.dart';
 import 'spec_image_export_dialog.dart';
 
 class ColorSorterScreen extends StatefulWidget {
-  const ColorSorterScreen({super.key});
+  const ColorSorterScreen({super.key, this.initialModel});
+
+  final String? initialModel;
 
   @override
   State<ColorSorterScreen> createState() => _ColorSorterScreenState();
@@ -138,6 +140,7 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                 top: 10,
                 right: 10,
                 child: IconButton(
+                  tooltip: 'Đóng ảnh',
                   icon: const Icon(Icons.close, color: Colors.white, size: 28),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -1021,7 +1024,14 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ColorSorterProvider(),
+      create: (_) {
+        final provider = ColorSorterProvider();
+        final initialModel = widget.initialModel;
+        if (initialModel != null && initialModel.trim().isNotEmpty) {
+          provider.selectModel(initialModel);
+        }
+        return provider;
+      },
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Thông số kỹ thuật Máy Tách Màu'),
@@ -1628,26 +1638,35 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
 
                                   if (tabIndex == 1) {
                                     // Hệ Thống Khí Nén - custom icon-chip grid layout
-                                    const khiNenItems = [
+                                    final compressor =
+                                        specs['Máy nén khí đồng bộ'] != null
+                                        ? 'Máy nén khí ${specs['Máy nén khí đồng bộ']}'
+                                        : 'Máy nén khí 100HP';
+                                    final tank =
+                                        specs['Bình tích khí đồng bộ'] != null
+                                        ? 'Bình tích khí ${specs['Bình tích khí đồng bộ']}'
+                                        : 'Bình tích khí 2000 lít';
+
+                                    final khiNenItems = [
                                       (
-                                        'Máy nén khí 100HP',
+                                        compressor,
                                         Icons.compress,
-                                        Color(0xFF006064),
+                                        const Color(0xFF006064),
                                       ),
                                       (
                                         'Máy sấy khí đi kèm',
                                         Icons.air,
-                                        Color(0xFF01579B),
+                                        const Color(0xFF01579B),
                                       ),
                                       (
-                                        'Bình tích khí 2000 lít',
+                                        tank,
                                         Icons.propane_tank,
-                                        Color(0xFF1B5E20),
+                                        const Color(0xFF1B5E20),
                                       ),
                                       (
                                         'Bộ lọc thô và bộ lọc tinh',
                                         Icons.filter_alt,
-                                        Color(0xFF4A148C),
+                                        const Color(0xFF4A148C),
                                       ),
                                     ];
                                     return Container(

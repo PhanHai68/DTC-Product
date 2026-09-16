@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../core/input/localized_number.dart';
+
 class AcompTankProvider extends ChangeNotifier {
   double _qc = 0.0; // Lưu lượng máy nén khí (m³/min)
   double _tc = 20.0; // Thời gian chu kỳ nạp/xả (s)
@@ -14,27 +16,27 @@ class AcompTankProvider extends ChangeNotifier {
   double get t1 => _t1;
 
   void setQc(String value) {
-    _qc = double.tryParse(value) ?? 0.0;
+    _qc = parseLocalizedDouble(value) ?? 0.0;
     notifyListeners();
   }
 
   void setTc(String value) {
-    _tc = double.tryParse(value) ?? 20.0;
+    _tc = parseLocalizedDouble(value) ?? 20.0;
     notifyListeners();
   }
 
   void setDeltaP(String value) {
-    _deltaP = double.tryParse(value) ?? 0.5;
+    _deltaP = parseLocalizedDouble(value) ?? 0.5;
     notifyListeners();
   }
 
   void setT0(String value) {
-    _t0 = double.tryParse(value) ?? 45.0;
+    _t0 = parseLocalizedDouble(value) ?? 45.0;
     notifyListeners();
   }
 
   void setT1(String value) {
-    _t1 = double.tryParse(value) ?? 35.0;
+    _t1 = parseLocalizedDouble(value) ?? 35.0;
     notifyListeners();
   }
 

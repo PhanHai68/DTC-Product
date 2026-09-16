@@ -458,8 +458,10 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
           elevation: 12,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 10,
               children: [
                 SizedBox(
                   width: 170,
@@ -497,7 +499,6 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
                 SizedBox(
                   width: 170,
                   child: FilledButton.icon(

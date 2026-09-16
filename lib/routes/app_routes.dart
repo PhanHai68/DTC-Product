@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../screens/home_screen.dart';
+import '../screens/global_search_screen.dart';
 import '../screens/extensions_screen.dart';
 import '../screens/sample_record/sample_record_screen.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
@@ -11,9 +12,17 @@ import '../screens/color_sorter_menu_screen.dart';
 import '../screens/color_sorter/color_sorter_screen.dart';
 import '../screens/color_sorter/color_sorter_3d_screen.dart';
 import '../screens/color_sorter/color_sorter_manual_screen.dart';
+import '../screens/paddy_color_sorter/paddy_color_sorter_menu_screen.dart';
+import '../screens/paddy_color_sorter/paddy_color_sorter_screen.dart';
 import '../screens/tea_color_sorter_menu_screen.dart';
 import '../screens/tea_color_sorter/tea_color_sorter_screen.dart';
+import '../screens/tea_color_sorter/tea_aux_equip_screen.dart';
+import '../screens/mineral_color_sorter_menu_screen.dart';
+import '../screens/mineral_color_sorter/mineral_color_sorter_screen.dart';
+import '../screens/agro_color_sorter_menu_screen.dart';
+import '../screens/agro_color_sorter/agro_color_sorter_screen.dart';
 import '../screens/aux_equip/aux_equip_screen.dart';
+import '../screens/paddy_color_sorter/paddy_aux_equip_screen.dart';
 import '../screens/payback_analysis_menu_screen.dart';
 import '../screens/payback/power_consumption_screen.dart';
 import '../screens/payback/electricity_bill_screen.dart';
@@ -39,6 +48,10 @@ import '../screens/packing/packing_menu_screen.dart';
 import '../screens/packing/packing_search_screen.dart';
 import '../screens/packing/machine_detail_screen.dart';
 import '../screens/packing/machine_selector_screen.dart';
+
+// Projects Module
+import '../features/projects/pages/projects_page.dart';
+import '../features/projects/pages/project_detail_page.dart';
 import '../screens/packing/machine_catalog_screen.dart';
 import '../screens/packing/compare_screen.dart';
 import '../screens/extensions/maintenance_list_screen.dart';
@@ -77,7 +90,15 @@ final GoRouter appRouter = GoRouter(
     ),
   ),
   routes: [
+    GoRoute(
+      path: '/paddy_aux_equip',
+      builder: (context, state) => const PaddyAuxEquipScreen(),
+    ),
     GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+    GoRoute(
+      path: '/search',
+      builder: (context, state) => const GlobalSearchScreen(),
+    ),
     GoRoute(
       path: '/extensions',
       builder: (context, state) => const ExtensionsScreen(),
@@ -99,6 +120,16 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const ColorSorterCategoriesScreen(),
     ),
     GoRoute(
+      path: '/paddy_color_sorter_menu',
+      builder: (context, state) => const PaddyColorSorterMenuScreen(),
+    ),
+    GoRoute(
+      path: '/paddy_color_sorter',
+      builder: (context, state) => PaddyColorSorterScreen(
+        initialModel: state.uri.queryParameters['model'],
+      ),
+    ),
+    GoRoute(
       path: '/color_sorter_menu',
       builder: (context, state) => const ColorSorterMenuScreen(),
     ),
@@ -108,7 +139,32 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/tea_color_sorter',
-      builder: (context, state) => const TeaColorSorterScreen(),
+      builder: (context, state) => TeaColorSorterScreen(
+        initialModel: state.uri.queryParameters['model'],
+      ),
+    ),
+    GoRoute(
+      path: '/tea_aux_equip',
+      builder: (context, state) {
+        final modelName = state.extra as String? ?? 'DF53 PRO';
+        return TeaAuxEquipScreen(modelName: modelName);
+      },
+    ),
+    GoRoute(
+      path: '/mineral_color_sorter_menu',
+      builder: (context, state) => const MineralColorSorterMenuScreen(),
+    ),
+    GoRoute(
+      path: '/mineral_color_sorter',
+      builder: (context, state) => const MineralColorSorterScreen(),
+    ),
+    GoRoute(
+      path: '/agro_color_sorter_menu',
+      builder: (context, state) => const AgroColorSorterMenuScreen(),
+    ),
+    GoRoute(
+      path: '/agro_color_sorter',
+      builder: (context, state) => const AgroColorSorterScreen(),
     ),
     GoRoute(
       path: '/acomp_menu',
@@ -167,7 +223,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/color_sorter',
-      builder: (context, state) => const ColorSorterScreen(),
+      builder: (context, state) =>
+          ColorSorterScreen(initialModel: state.uri.queryParameters['model']),
     ),
     GoRoute(
       path: '/color_sorter_3d',
@@ -175,6 +232,8 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra as Map<String, dynamic>?;
         final modelName = extra?['modelName'] ?? 'SC16 Pro';
         final modelPath = extra?['modelPath'] ?? 'assets/models/sc16_pro.glb';
+        final posterPath =
+            extra?['posterPath'] ?? 'assets/images/color_sorter/sc16.jpeg';
         final dimensions = extra?['dimensions'] ?? '4830x1690x1915 mm';
         final configuration = extra?['configuration'] ?? '7:3:2';
         final technology = extra?['technology'] ?? 'AI Deep Learning';
@@ -182,6 +241,7 @@ final GoRouter appRouter = GoRouter(
         return ColorSorter3dScreen(
           modelName: modelName as String,
           modelPath: modelPath as String,
+          posterPath: posterPath as String,
           dimensions: dimensions as String,
           configuration: configuration as String,
           technology: technology as String,
@@ -293,6 +353,18 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final record = state.extra as MaintenanceRecord?;
         return MaintenanceFormScreen(record: record);
+      },
+    ),
+    // Projects module routes
+    GoRoute(
+      path: '/projects',
+      builder: (context, state) => const ProjectsPage(),
+    ),
+    GoRoute(
+      path: '/projects/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return ProjectDetailPage(projectId: id);
       },
     ),
   ],

@@ -8,12 +8,6 @@ class AcompMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void developing() {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tính năng đang được phát triển')),
-      );
-    }
-
     return TechnologyMenuScaffold(
       title: 'Máy nén khí ACOMP',
       entries: [
@@ -58,7 +52,7 @@ class AcompMenuScreen extends StatelessWidget {
           id: 'acomp_materials_btn',
           title: 'Danh sách vật tư',
           icon: Icons.inventory_2_outlined,
-          onTap: developing,
+          statusLabel: 'Sắp có',
         ),
         TechnologyMenuEntry(
           id: 'acomp_fill_time_btn',

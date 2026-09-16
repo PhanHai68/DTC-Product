@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/acomp_tank_provider.dart';
+import '../../core/input/localized_number.dart';
 
 class AcompTankScreen extends StatefulWidget {
   const AcompTankScreen({super.key});
@@ -131,6 +132,7 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
           TextField(
             controller: controller,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: const [LocalizedDecimalTextInputFormatter()],
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               contentPadding: const EdgeInsets.symmetric(

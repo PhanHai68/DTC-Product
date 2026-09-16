@@ -31,12 +31,13 @@ void main() {
     expect(find.text('Máy nén khí'), findsOneWidget);
     expect(find.text('Cân đóng gói'), findsOneWidget);
     expect(find.text('Tiện ích mở rộng'), findsOneWidget);
-    expect(find.text('DTCGroup  •  v1.0.3'), findsOneWidget);
+    expect(find.text('DTC Group'), findsOneWidget);
+    expect(find.text('Tra cứu model hoặc chức năng'), findsOneWidget);
     expect(find.text('Tra cứu nhanh'), findsNothing);
     expect(find.text('Tính toán kỹ thuật'), findsNothing);
     expect(find.text('Tài liệu vận hành'), findsNothing);
     expect(
-      find.byKey(const ValueKey('home_solution_/color_sorter_menu')),
+      find.byKey(const ValueKey('home_solution_/color_sorter_categories')),
       findsOneWidget,
     );
     expect(
@@ -62,10 +63,7 @@ void main() {
     expect(compressorCard.left, lessThan(extensionsCard.left));
     expect(extensionsCard.right, lessThanOrEqualTo(372));
     expect(tester.getCenter(find.text('DTC Product')).dx, closeTo(195, 1));
-    expect(
-      tester.getBottomRight(find.text('DTCGroup  •  v1.0.3')).dy,
-      greaterThan(820),
-    );
+    expect(tester.getBottomRight(find.text('DTC Group')).dy, greaterThan(820));
     expect(tester.takeException(), isNull);
   });
 
@@ -79,7 +77,7 @@ void main() {
     );
 
     final first = tester.getRect(
-      find.byKey(const ValueKey('home_solution_/color_sorter_menu')),
+      find.byKey(const ValueKey('home_solution_/color_sorter_categories')),
     );
     final second = tester.getRect(
       find.byKey(const ValueKey('home_solution_/packing_menu')),

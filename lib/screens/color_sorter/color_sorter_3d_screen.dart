@@ -7,6 +7,7 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 class ColorSorter3dScreen extends StatefulWidget {
   final String modelName;
   final String modelPath;
+  final String posterPath;
   final String dimensions;
   final String configuration;
   final String technology;
@@ -16,6 +17,7 @@ class ColorSorter3dScreen extends StatefulWidget {
     super.key,
     this.modelName = 'SC16 Pro',
     this.modelPath = 'assets/models/sc16_pro.glb',
+    this.posterPath = 'assets/images/color_sorter/sc16.jpeg',
     this.dimensions = '4830x1690x1915 mm',
     this.configuration = '7:3:2',
     this.technology = 'AI Deep Learning',
@@ -112,9 +114,9 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
 
   String get _effectivePosterPath {
     if (kIsWeb) {
-      return 'assets/assets/images/color_sorter/sc16.jpeg';
+      return 'assets/${widget.posterPath}';
     }
-    return 'assets/images/color_sorter/sc16.jpeg';
+    return widget.posterPath;
   }
 
   void _showHelpDialog() {
@@ -490,7 +492,11 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
                     Icons.straighten,
                   ),
                   Container(height: 28, width: 1, color: Colors.grey.shade300),
-                  _buildQuickSpecItem('Cấu hình', widget.configuration, Icons.view_stream),
+                  _buildQuickSpecItem(
+                    'Cấu hình',
+                    widget.configuration,
+                    Icons.view_stream,
+                  ),
                   Container(height: 28, width: 1, color: Colors.grey.shade300),
                   _buildQuickSpecItem(
                     'Công nghệ',

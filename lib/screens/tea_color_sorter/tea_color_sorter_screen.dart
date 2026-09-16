@@ -6,7 +6,19 @@ import '../../providers/tea_color_sorter_provider.dart';
 import '../color_sorter/spec_image_export_dialog.dart';
 
 class TeaColorSorterScreen extends StatefulWidget {
-  const TeaColorSorterScreen({super.key});
+  const TeaColorSorterScreen({
+    super.key,
+    this.initialModel,
+    this.availableModels = const [
+      'DF53 Pro',
+      'DF36 Pro',
+      'DF21 Pro',
+      'DF12 Pro',
+    ],
+  });
+
+  final String? initialModel;
+  final List<String> availableModels;
 
   @override
   State<TeaColorSorterScreen> createState() => _TeaColorSorterScreenState();
@@ -20,6 +32,14 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    final initialModel = widget.initialModel;
+    if (initialModel != null && initialModel.trim().isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<TeaColorSorterProvider>().selectModel(initialModel);
+        }
+      });
+    }
   }
 
   @override
@@ -29,68 +49,161 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
   }
 
   IconData _getIconForSpec(String key) {
-    if (key.contains('năng suất') || key.contains('Năng suất')) return Icons.speed;
-    if (key.contains('máng')) return Icons.density_medium;
+    if (key.contains('năng suất') ||
+        key.contains('Năng suất') ||
+        key.contains('capacity')) {
+      return Icons.speed;
+    }
+    if (key.contains('máng') || key.contains('chute')) {
+      return Icons.density_medium;
+    }
     if (key.contains('ejector')) return Icons.scatter_plot;
-    if (key.contains('Camera')) return Icons.camera_alt;
-    if (key.contains('Công suất') || key.contains('power')) return Icons.electrical_services;
+    if (key.contains('Camera') || key.contains('camera')) {
+      return Icons.camera_alt;
+    }
+    if (key.contains('Công suất') || key.contains('power')) {
+      return Icons.electrical_services;
+    }
     if (key.contains('Điện áp') || key.contains('voltage')) return Icons.power;
-    if (key.contains('Trọng lượng') || key.contains('Khối lượng') || key.contains('weight')) return Icons.scale;
-    if (key.contains('Kích thước') || key.contains('dim')) return Icons.straighten;
-    if (key.contains('Áp suất') || key.contains('pressure')) return Icons.compress;
+    if (key.contains('Trọng lượng') ||
+        key.contains('Khối lượng') ||
+        key.contains('weight')) {
+      return Icons.scale;
+    }
+    if (key.contains('Kích thước') || key.contains('dim')) {
+      return Icons.straighten;
+    }
+    if (key.contains('Áp suất') || key.contains('pressure')) {
+      return Icons.compress;
+    }
     if (key.contains('Lưu lượng')) return Icons.wind_power;
-    if (key.contains('chính xác') || key.contains('quality')) return Icons.verified;
+    if (key.contains('Tần số') || key.contains('frequency')) {
+      return Icons.waves;
+    }
+    if (key.toLowerCase().contains('tầng') || key.toLowerCase().contains('layer')) {
+      return Icons.layers;
+    }
+    if (key.contains('chính xác') || key.contains('quality')) {
+      return Icons.verified;
+    }
     if (key.contains('phế phẩm') || key.contains('bắn phế')) {
       return Icons.change_circle;
     }
+    if (key.contains('Máy nén khí') || key.contains('air_compressor')) {
+      return Icons.compress;
+    }
+    if (key.contains('Bình tích') ||
+        key.contains('Bình chứa') ||
+        key.contains('air_tank')) {
+      return Icons.propane_tank;
+    }
+    if (key.contains('Máy sấy') || key.contains('air_dryer')) return Icons.air;
+    if (key.contains('Bộ lọc') || key.contains('air_filter')) {
+      return Icons.filter_alt;
+    }
+    if (key.contains('sàn')) return Icons.architecture;
+    if (key.contains('Nguyên liệu')) return Icons.grain;
     return Icons.info_outline;
   }
 
   Color _getColorForSpec(String key) {
-    if (key.contains('năng suất') || key.contains('Năng suất')) return const Color(0xFFEA6C00);
+    if (key.contains('năng suất') || key.contains('Năng suất')) {
+      return const Color(0xFFEA6C00);
+    }
     if (key.contains('máng') || key.contains('ejector')) {
       return const Color(0xFF0D47A1);
     }
     if (key.contains('Camera')) return const Color(0xFF1565C0);
-    if (key.contains('chính xác') || key.contains('quality')) return const Color(0xFF2E7D32);
+    if (key.contains('chính xác') || key.contains('quality')) {
+      return const Color(0xFF2E7D32);
+    }
     if (key.contains('phế phẩm') || key.contains('bắn phế')) {
       return const Color(0xFFB71C1C);
     }
-    if (key.contains('Công suất') || key.contains('Điện') || key.contains('power') || key.contains('voltage')) {
+    if (key.contains('Công suất') ||
+        key.contains('Điện') ||
+        key.contains('power') ||
+        key.contains('voltage')) {
       return const Color(0xFFF57F17);
     }
-    if (key.contains('Áp suất') || key.contains('Lưu lượng') || key.contains('pressure')) {
+    if (key.contains('Áp suất') ||
+        key.contains('Lưu lượng') ||
+        key.contains('pressure') ||
+        key.contains('air_compressor')) {
       return const Color(0xFF006064);
     }
-    if (key.contains('Trọng lượng') || key.contains('Khối lượng') || key.contains('weight')) return const Color(0xFF4A148C);
-    if (key.contains('Kích thước') || key.contains('sàn') || key.contains('dim')) {
+    if (key.contains('Trọng lượng') ||
+        key.contains('Khối lượng') ||
+        key.contains('weight') ||
+        key.contains('air_filter')) {
+      return const Color(0xFF4A148C);
+    }
+    if (key.contains('Kích thước') ||
+        key.contains('sàn') ||
+        key.contains('dim')) {
       return const Color(0xFF1A237E);
+    }
+    if (key.contains('Máy sấy') || key.contains('air_dryer')) {
+      return const Color(0xFF01579B);
+    }
+    if (key.contains('Bình tích') || key.contains('air_tank')) {
+      return const Color(0xFF1B5E20);
     }
     return const Color(0xFF37474F);
   }
 
   String _getDisplayName(String key) {
     switch (key) {
-      case 'id': return 'ID';
-      case 'category': return 'Danh mục';
-      case 'series': return 'Dòng máy (Series)';
-      case 'model': return 'Model';
-      case 'product_name': return 'Tên sản phẩm';
-      case 'capacity_display': return 'Năng suất';
-      case 'capacity_max_kg_h': return 'Năng suất tối đa (kg/h)';
-      case 'finished_quality_min_pct': return 'Chất lượng thành phẩm tối thiểu (%)';
-      case 'air_pressure_min_mpa': return 'Áp suất khí tối thiểu (MPa)';
-      case 'air_pressure_max_mpa': return 'Áp suất khí tối đa (MPa)';
-      case 'power_kw': return 'Công suất điện (kW)';
-      case 'voltage_v': return 'Điện áp (V)';
-      case 'frequency_hz': return 'Tần số (Hz)';
-      case 'dimensions_display_mm': return 'Kích thước (D x R x C mm)';
-      case 'dim_1_mm': return 'Kích thước D (mm)';
-      case 'dim_2_mm': return 'Kích thước R (mm)';
-      case 'dim_3_mm': return 'Kích thước C (mm)';
-      case 'weight_kg': return 'Khối lượng (kg)';
-      case 'key_features': return 'Tính năng nổi bật';
-      default: return key;
+      case 'id':
+        return 'ID';
+      case 'category':
+        return 'Danh mục';
+      case 'series':
+        return 'Dòng máy (Series)';
+      case 'model':
+        return 'Model';
+      case 'product_name':
+        return 'Tên sản phẩm';
+      case 'capacity_display':
+        return 'Năng suất';
+      case 'capacity_max_kg_h':
+        return 'Năng suất tối đa (kg/h)';
+      case 'layers_qty':
+        return 'Số tầng';
+      case 'chutes_qty':
+        return 'Số máng';
+      case 'ejector_qty':
+        return 'Số ejector';
+      case 'ejector_per_chute':
+        return 'Số ejector/ máng';
+      case 'camera_qty':
+        return 'Số camera';
+      case 'finished_quality_min_pct':
+        return 'Độ phân loại chính xác (%)';
+      case 'power_kw':
+        return 'Công suất (kW)';
+      case 'voltage_v':
+        return 'Điện áp (V)';
+      case 'frequency_hz':
+        return 'Tần số (Hz)';
+      case 'air_flow_m3_min':
+        return 'Lưu lượng khí nén (m³/phút)';
+      case 'dimensions_display_mm':
+        return 'Kích thước (D R C)';
+      case 'weight_kg':
+        return 'Trọng lượng';
+      case 'key_features':
+        return 'Tính năng nổi bật';
+      case 'air_compressor':
+        return 'Máy nén khí';
+      case 'air_dryer':
+        return 'Máy sấy khí';
+      case 'air_tank':
+        return 'Bình tích khí';
+      case 'air_filter':
+        return 'Bộ lọc khí';
+      default:
+        return key;
     }
   }
 
@@ -101,6 +214,35 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     if (m.contains('df36')) return 'assets/images/color_sorter/DF36Pro.jpg';
     if (m.contains('df21')) return 'assets/images/color_sorter/DF21Pro.jpg';
     if (m.contains('df12')) return 'assets/images/color_sorter/DF12Pro.jpg';
+    if (m == 'sx8') return 'assets/images/color_sorter/sx8.jpg';
+    return null;
+  }
+
+  Map<String, dynamic>? _get3dConfig(Map<String, String> specs) {
+    final model = (specs['model'] ?? '').toLowerCase().trim();
+    if (model == 'df53 pro') {
+      return {
+        'modelName': specs['model'] ?? 'DF53 Pro',
+        'modelPath': 'assets/models/df53_pro.glb',
+        'posterPath': 'assets/images/color_sorter/DF53Pro.jpg',
+        'dimensions': '${specs['dimensions_display_mm']} mm',
+        'configuration': '5 tầng 6 máng',
+        'technology': 'AI Deep Learning',
+        'exposure': 0.35,
+      };
+    }
+    if (model == 'sx8') {
+      return {
+        'modelName': 'SX8',
+        'modelPath': 'assets/models/sx8.glb',
+        'posterPath': 'assets/images/color_sorter/sx8.jpg',
+        'dimensions': '${specs['dimensions_display_mm']} mm',
+        'configuration':
+            '${specs['layers_qty']} tầng, ${specs['chutes_qty']} máng',
+        'technology': 'AI · PLOV 3.0',
+        'exposure': 0.25,
+      };
+    }
     return null;
   }
 
@@ -150,6 +292,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                 top: 10,
                 right: 10,
                 child: IconButton(
+                  tooltip: 'Đóng ảnh',
                   icon: const Icon(Icons.close, color: Colors.white, size: 28),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -244,7 +387,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                       ),
                       const SizedBox(height: 8),
                       _buildProFeatureRow(
-                        'Tích hợp nền tảng tự học Deep Learning AI, công nghệ PLOV 2.0',
+                        'Tích hợp nền tảng tự học Deep Learning AI, công nghệ PLOV 3.0',
                         'giúp đạt được mức hiệu quả >20% về chất lượng và năng suất.',
                       ),
                       const SizedBox(height: 6),
@@ -398,12 +541,125 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     );
   }
 
+  Widget _buildCapacityOverview(String value) {
+    final capacityBands = value
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toList();
+    final color = Colors.orange.shade800;
+
+    return Container(
+      key: const Key('multiline_capacity_overview'),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.14),
+            Colors.orange.shade50.withValues(alpha: 0.55),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.14),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.speed, color: color, size: 19),
+              ),
+              const SizedBox(width: 9),
+              Expanded(
+                child: Text(
+                  'Năng suất theo kích thước nguyên liệu',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ...capacityBands.map((line) {
+            final separator = line.indexOf(':');
+            final materialSize = separator < 0
+                ? line
+                : line.substring(0, separator).trim();
+            final capacity = separator < 0
+                ? ''
+                : line.substring(separator + 1).trim();
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 11,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.82),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: color.withValues(alpha: 0.14)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.grain_rounded, color: color, size: 16),
+                    const SizedBox(width: 7),
+                    Text(
+                      materialSize,
+                      style: const TextStyle(
+                        color: Color(0xFF5D4037),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      capacity,
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
   void _showTechDescription(BuildContext context, String title) {
     String description = '';
     switch (title) {
-      case 'Nền tảng PLOV 2.0':
+      case 'Nền tảng PLOV 3.0':
         description = 'Đảm bảo nguyên liệu trên mỗi máng dẫn được trải đều, tránh chồng xếp lên nhau.';
         break;
+      case 'AI':
       case 'Deep Learning AI':
         description = 'Bằng trí tuệ nhân tạo AI, mang tính đột phá cho ngành phân loại màu, đánh dấu bước tiến từ "nhận diện" sang "hiểu biết".';
         break;
@@ -491,9 +747,14 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     );
   }
 
-  Widget _buildShareSection(BuildContext context, Map<String, dynamic> rawSpecs) {
+  Widget _buildShareSection(
+    BuildContext context,
+    Map<String, dynamic> rawSpecs,
+  ) {
     // Convert to String map for the dialog
-    final specs = rawSpecs.map((k, v) => MapEntry(_getDisplayName(k), v.toString()));
+    final specs = rawSpecs.map(
+      (k, v) => MapEntry(_getDisplayName(k), v.toString()),
+    );
     // Re-add 'Model' key which the dialog expects
     specs['Model'] = rawSpecs['model']?.toString() ?? 'DF';
 
@@ -560,64 +821,120 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     final key = _getDisplayName(rawKey);
     final specColor = _getColorForSpec(rawKey);
     final icon = _getIconForSpec(rawKey);
+    final isMultiline = value.contains('\n');
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: specColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, size: 17, color: specColor),
-              ),
-              const SizedBox(width: 11),
-              Expanded(
-                flex: 5,
-                child: Text(
-                  key,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13.5,
-                    color: Color(0xFF1A1A2E),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                flex: 5,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: specColor.withValues(alpha: 0.09),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: specColor.withValues(alpha: 0.25),
-                      width: 1,
+          child: isMultiline
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: specColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(icon, size: 17, color: specColor),
+                        ),
+                        const SizedBox(width: 11),
+                        Expanded(
+                          child: Text(
+                            key,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13.5,
+                              color: Color(0xFF1A1A2E),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  child: Text(
-                    value,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12.5,
-                      color: specColor,
-                      height: 1.25,
+                    const SizedBox(height: 9),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 9,
+                      ),
+                      decoration: BoxDecoration(
+                        color: specColor.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: specColor.withValues(alpha: 0.22),
+                        ),
+                      ),
+                      child: Text(
+                        value,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13,
+                          color: specColor,
+                          height: 1.35,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: specColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(icon, size: 17, color: specColor),
+                    ),
+                    const SizedBox(width: 11),
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        key,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13.5,
+                          color: Color(0xFF1A1A2E),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 5,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: specColor.withValues(alpha: 0.09),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: specColor.withValues(alpha: 0.25),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          value,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12.5,
+                            color: specColor,
+                            height: 1.25,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
         ),
         Divider(
           height: 1,
@@ -633,9 +950,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Thông số kỹ thuật Máy Tách Màu Trà'),
-      ),
+      appBar: AppBar(title: const Text('Thông số kỹ thuật')),
       body: Consumer<TeaColorSorterProvider>(
         builder: (context, provider, child) {
           final specs = provider.specs;
@@ -656,10 +971,9 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: ['DF53 Pro', 'DF36 Pro', 'DF21 Pro', 'DF12 Pro'].map((
-                      m,
-                    ) {
-                      final isSelected = m.toLowerCase() == selectedModel.toLowerCase();
+                    children: widget.availableModels.map((m) {
+                      final isSelected =
+                          m.toLowerCase() == selectedModel.toLowerCase();
                       final isPro = m.toLowerCase().contains('pro');
 
                       return Padding(
@@ -678,13 +992,17 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                     vertical: 1,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: isSelected ? Colors.amber : Colors.red,
+                                    color: isSelected
+                                        ? Colors.amber
+                                        : Colors.red,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     'AI',
                                     style: TextStyle(
-                                      color: isSelected ? Colors.black87 : Colors.white,
+                                      color: isSelected
+                                          ? Colors.black87
+                                          : Colors.white,
                                       fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -697,13 +1015,17 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                           checkmarkColor: Colors.white,
                           labelStyle: TextStyle(
                             color: isSelected ? Colors.white : Colors.black87,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                           backgroundColor: Colors.grey.shade100,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                             side: BorderSide(
-                              color: isSelected ? Colors.blue.shade800 : Colors.grey.shade300,
+                              color: isSelected
+                                  ? Colors.blue.shade800
+                                  : Colors.grey.shade300,
                             ),
                           ),
                           onSelected: (_) => provider.selectModel(m),
@@ -744,11 +1066,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                             if (_getImagePath(specs['model']) != null)
                               Builder(
                                 builder: (context) {
-                                  final is3dAvailable =
-                                      specs['model']?.toLowerCase().contains(
-                                        'pro',
-                                      ) ==
-                                      true;
+                                  final model3dConfig = _get3dConfig(specs);
                                   return Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.stretch,
@@ -763,7 +1081,9 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                           height: 180,
                                           decoration: BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.circular(16),
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
                                             border: Border.all(
                                               color: Colors.grey.shade300,
                                               width: 1,
@@ -782,9 +1102,12 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                             alignment: Alignment.center,
                                             children: [
                                               Hero(
-                                                tag: 'machine-image-${specs['model']}',
+                                                tag:
+                                                    'machine-image-${specs['model']}',
                                                 child: Image.asset(
-                                                  _getImagePath(specs['model'])!,
+                                                  _getImagePath(
+                                                    specs['model'],
+                                                  )!,
                                                   fit: BoxFit.contain,
                                                 ),
                                               ),
@@ -792,11 +1115,12 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                                 right: 12,
                                                 bottom: 12,
                                                 child: Container(
-                                                  padding: const EdgeInsets.all(8),
+                                                  padding: const EdgeInsets.all(
+                                                    8,
+                                                  ),
                                                   decoration: BoxDecoration(
-                                                    color: Colors.black.withValues(
-                                                      alpha: 0.6,
-                                                    ),
+                                                    color: Colors.black
+                                                        .withValues(alpha: 0.6),
                                                     shape: BoxShape.circle,
                                                   ),
                                                   child: const Icon(
@@ -811,35 +1135,32 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                         ),
                                       ),
                                       const SizedBox(height: 14),
-                                      if (is3dAvailable)
+                                      if (model3dConfig != null)
                                         ElevatedButton.icon(
                                           onPressed: () {
                                             context.push(
                                               '/color_sorter_3d',
-                                              extra: {
-                                                'modelName': specs['model'] ?? 'DF53 Pro',
-                                                'modelPath': 'assets/models/df53_pro.glb',
-                                                'dimensions': '3680 x 3300 x 4350 mm',
-                                                'configuration': '5 tầng 6 máng',
-                                                'technology': 'AI Deep Learning',
-                                                'exposure': 0.35,
-                                              },
+                                              extra: model3dConfig,
                                             );
                                           },
                                           icon: const Icon(
                                             Icons.view_in_ar,
                                             size: 20,
                                           ),
-                                          label: const Text('Xem Mô Hình 3D 360°'),
+                                          label: const Text(
+                                            'Xem Mô Hình 3D 360°',
+                                          ),
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.blue.shade900,
+                                            backgroundColor:
+                                                Colors.blue.shade900,
                                             foregroundColor: Colors.white,
                                             padding: const EdgeInsets.symmetric(
                                               vertical: 12,
                                             ),
                                             elevation: 2,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
                                           ),
                                         ),
@@ -850,30 +1171,53 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                             const SizedBox(height: 14),
 
                             // Highlight Metrics
-                            Row(
-                              children: [
-                                _buildHighlightCard(
-                                  'Năng suất',
-                                  specs['capacity_display'] ?? '--',
-                                  Icons.speed,
-                                  Colors.orange.shade800,
-                                ),
-                                const SizedBox(width: 8),
-                                _buildHighlightCard(
-                                  'Số Camera',
-                                  specs['camera_qty'] ?? '--',
-                                  Icons.camera_alt,
-                                  Colors.blue.shade800,
-                                ),
-                                const SizedBox(width: 8),
-                                _buildHighlightCard(
-                                  'Số Ejector',
-                                  specs['ejector_qty'] ?? '--',
-                                  Icons.air,
-                                  Colors.green.shade800,
-                                ),
-                              ],
-                            ),
+                            if ((specs['capacity_display'] ?? '--').contains('\n') || (specs['capacity_display'] ?? '--').length > 15) ...[
+                              _buildCapacityOverview(
+                                specs['capacity_display'] ?? '--',
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  _buildHighlightCard(
+                                    'Số Camera',
+                                    specs['camera_qty'] ?? '--',
+                                    Icons.camera_alt,
+                                    Colors.blue.shade800,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  _buildHighlightCard(
+                                    'Số Ejector',
+                                    specs['ejector_qty'] ?? '--',
+                                    Icons.air,
+                                    Colors.green.shade800,
+                                  ),
+                                ],
+                              ),
+                            ] else
+                              Row(
+                                children: [
+                                  _buildHighlightCard(
+                                    'Năng suất',
+                                    specs['capacity_display'] ?? '--',
+                                    Icons.speed,
+                                    Colors.orange.shade800,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  _buildHighlightCard(
+                                    'Số Camera',
+                                    specs['camera_qty'] ?? '--',
+                                    Icons.camera_alt,
+                                    Colors.blue.shade800,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  _buildHighlightCard(
+                                    'Số Ejector',
+                                    specs['ejector_qty'] ?? '--',
+                                    Icons.air,
+                                    Colors.green.shade800,
+                                  ),
+                                ],
+                              ),
                             const SizedBox(height: 14),
 
                             // Core Technologies Badges
@@ -888,13 +1232,31 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                   children: (specs['key_features'] as String)
                                       .split(';')
                                       .where((e) => e.trim().isNotEmpty)
-                                      .map((e) => e.trim().endsWith('.') ? e.trim().substring(0, e.trim().length - 1) : e.trim())
+                                      .map(
+                                        (e) => e.trim().endsWith('.')
+                                            ? e.trim().substring(
+                                                0,
+                                                e.trim().length - 1,
+                                              )
+                                            : e.trim(),
+                                      )
                                       .toList()
                                       .asMap()
                                       .entries
                                       .map((entry) {
-                                        final colors = [Colors.blue, Colors.orange, Colors.purple, Colors.indigo, Colors.teal, Colors.brown];
-                                        return _buildTechChip(context, entry.value, colors[entry.key % colors.length]);
+                                        final colors = [
+                                          Colors.blue,
+                                          Colors.orange,
+                                          Colors.purple,
+                                          Colors.indigo,
+                                          Colors.teal,
+                                          Colors.brown,
+                                        ];
+                                        return _buildTechChip(
+                                          context,
+                                          entry.value,
+                                          colors[entry.key % colors.length],
+                                        );
                                       })
                                       .toList(),
                                 ),
@@ -1026,8 +1388,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                 indicatorSize: TabBarIndicatorSize.tab,
                                 dividerColor: Colors.transparent,
                                 labelColor: Colors.white,
-                                unselectedLabelColor:
-                                    Colors.blueGrey.shade600,
+                                unselectedLabelColor: Colors.blueGrey.shade600,
                                 labelStyle: const TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 11.5,
@@ -1094,29 +1455,64 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                 animation: _tabController,
                                 builder: (context, _) {
                                   List<String> visibleKeys = [];
-                                  
+
                                   // For Tea, we put most specs in Tech Specs for now.
                                   if (_tabController.index == 0) {
-                                    visibleKeys = specs.keys.where((k) =>
-                                      k != 'id' &&
-                                      k != 'category' &&
-                                      k != 'series' &&
-                                      k != 'model' &&
-                                      k != 'product_name' &&
-                                      k != 'key_features' &&
-                                      !k.contains('air_pressure') &&
-                                      !k.contains('dim_') &&
-                                      k != 'dimensions_display_mm' &&
-                                      k != 'weight_kg'
-                                    ).toList();
+                                    // Sắp xếp đồng bộ thông tin theo thứ tự yêu cầu
+                                    final List<String> orderedKeys = [
+                                      'capacity_display',
+                                      'layers_qty',
+                                      'chutes_qty',
+                                      'ejector_qty',
+                                      'ejector_per_chute',
+                                      'camera_qty',
+                                      'finished_quality_min_pct',
+                                      'power_kw',
+                                      'voltage_v',
+                                      'frequency_hz',
+                                    ];
+
+                                    // Add any remaining keys that belong to tab 0 but weren't ordered
+                                    final otherKeys = specs.keys
+                                        .where(
+                                          (k) =>
+                                              !orderedKeys.contains(k) &&
+                                              k != 'id' &&
+                                              k != 'category' &&
+                                              k != 'series' &&
+                                              k != 'model' &&
+                                              k != 'product_name' &&
+                                              k != 'key_features' &&
+                                              !k.contains('air_') &&
+                                              !k.contains('dim_') &&
+                                              k != 'dimensions_display_mm' &&
+                                              k != 'weight_kg' &&
+                                              k != 'capacity_max_kg_h',
+                                        )
+                                        .toList();
+
+                                    visibleKeys = [...orderedKeys, ...otherKeys]
+                                        .where((k) => specs.containsKey(k))
+                                        .toList();
                                   } else if (_tabController.index == 1) {
-                                    visibleKeys = specs.keys.where((k) => k.contains('air_pressure')).toList();
+                                    visibleKeys = specs.keys
+                                        .where(
+                                          (k) =>
+                                              k == 'air_compressor' ||
+                                              k == 'air_dryer' ||
+                                              k == 'air_tank' ||
+                                              k == 'air_filter' ||
+                                              k == 'air_flow_m3_min',
+                                        )
+                                        .toList();
                                   } else {
-                                    visibleKeys = specs.keys.where((k) => 
-                                      k == 'dimensions_display_mm' || 
-                                      k == 'weight_kg' || 
-                                      k.contains('dim_')
-                                    ).toList();
+                                    visibleKeys = specs.keys
+                                        .where(
+                                          (k) =>
+                                              k == 'dimensions_display_mm' ||
+                                              k == 'weight_kg',
+                                        )
+                                        .toList();
                                   }
 
                                   if (visibleKeys.isEmpty) {
@@ -1132,16 +1528,129 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                   }
 
                                   return Column(
-                                    children: List.generate(
-                                      visibleKeys.length,
-                                      (index) => _buildSpecRow(
-                                        visibleKeys[index],
-                                        specs[visibleKeys[index]] ?? '',
-                                        index,
+                                    children: [
+                                      ...List.generate(
+                                        visibleKeys.length,
+                                        (index) => _buildSpecRow(
+                                          visibleKeys[index],
+                                          specs[visibleKeys[index]] ?? '',
+                                          index,
+                                        ),
                                       ),
+                                      if (_tabController.index == 0) ...[
+                                        Divider(
+                                          height: 16,
+                                          thickness: 0.7,
+                                          indent: 14,
+                                          endIndent: 14,
+                                          color: Colors.blue.shade200,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                            12,
+                                            0,
+                                            12,
+                                            12,
+                                          ),
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: OutlinedButton.icon(
+                                              key: const Key(
+                                                'tea_aux_equip_button',
+                                              ),
+                                              onPressed: () {
+                                                final modelName =
+                                                    (specs['model'] ??
+                                                            selectedModel)
+                                                        .trim();
+                                                final isDf53Pro =
+                                                    modelName.toLowerCase() ==
+                                                    'df53 pro';
+
+                                                if (!isDf53Pro) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                        const SnackBar(
+                                                          content: Text(
+                                                            'Chức năng đang được phát triển. Vui lòng quay lại sau!',
+                                                          ),
+                                                          duration: Duration(
+                                                            seconds: 2,
+                                                          ),
+                                                        ),
+                                                      );
+                                                  return;
+                                                }
+
+                                                context.push(
+                                                  '/tea_aux_equip',
+                                                  extra: modelName,
+                                                );
+                                              },
+                                              icon: Icon(
+                                                Icons.settings_outlined,
+                                                size: 18,
+                                                color: Colors.blue.shade800,
+                                              ),
+                                              label: Text(
+                                                'Thiết bị phụ trợ đồng bộ',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 13.5,
+                                                  color: Colors.blue.shade800,
+                                                ),
+                                              ),
+                                              style: OutlinedButton.styleFrom(
+                                                side: BorderSide(
+                                                  color: Colors.blue.shade300,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                    ),
+                                                backgroundColor:
+                                                    Colors.blue.shade50,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            // Sales & ROI Quick Actions
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Chức năng Phân tích hoàn vốn đang được phát triển. Vui lòng quay lại sau!',
+                                      ),
+                                      duration: Duration(seconds: 2),
                                     ),
                                   );
                                 },
+                                icon: const Icon(Icons.analytics_outlined),
+                                label: const Text('Phân tích hoàn vốn (ROI)'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.indigo.shade800,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 13,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
                               ),
                             ),
                             const SizedBox(height: 16),

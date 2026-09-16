@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../data/power_consumption_data.dart';
+import '../core/input/localized_number.dart';
 
 class ElectricityBillProvider extends ChangeNotifier {
   String? _selectedModel;
@@ -17,6 +19,9 @@ class ElectricityBillProvider extends ChangeNotifier {
   String? get selectedModel => _selectedModel;
   double? get totalHours => _totalHours;
   double? get totalBill => _totalBill;
+  double get normalHours => _normalHours;
+  double get offPeakHours => _offPeakHours;
+  double get peakHours => _peakHours;
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
@@ -27,15 +32,15 @@ class ElectricityBillProvider extends ChangeNotifier {
   }
 
   void setNormalHours(String val) {
-    _normalHours = double.tryParse(val) ?? 0;
+    _normalHours = parseLocalizedDouble(val) ?? 0;
   }
 
   void setOffPeakHours(String val) {
-    _offPeakHours = double.tryParse(val) ?? 0;
+    _offPeakHours = parseLocalizedDouble(val) ?? 0;
   }
 
   void setPeakHours(String val) {
-    _peakHours = double.tryParse(val) ?? 0;
+    _peakHours = parseLocalizedDouble(val) ?? 0;
   }
 
   void updateRates(double normal, double offPeak, double peak) {
@@ -69,17 +74,36 @@ class ElectricityBillProvider extends ChangeNotifier {
         return;
       }
 
-      var avgPowerStr = specs.firstWhere((e) => e['Tiêu chí'] == 'Công suất trung bình (kW)')['Thông số'] ?? '0';
+      var avgPowerStr =
+          specs.firstWhere(
+            (e) => e['Tiêu chí'] == 'Công suất trung bình (kW)',
+          )['Thông số'] ??
+          '0';
       double averagePower = double.tryParse(avgPowerStr) ?? 0;
 
       _totalHours = _normalHours + _offPeakHours + _peakHours;
-      double rawBill = averagePower * (_normalHours * normalRate + _offPeakHours * offPeakRate + _peakHours * peakRate);
+      double rawBill =
+          averagePower *
+          (_normalHours * normalRate +
+              _offPeakHours * offPeakRate +
+              _peakHours * peakRate);
       _totalBill = rawBill.roundToDouble(); // làm tròn kết quả
     } catch (e) {
       _errorMessage = 'Lỗi tính toán: ${e.toString()}';
       _totalHours = null;
       _totalBill = null;
     }
+    notifyListeners();
+  }
+
+  void resetSession() {
+    _selectedModel = null;
+    _normalHours = 0;
+    _offPeakHours = 0;
+    _peakHours = 0;
+    _totalHours = null;
+    _totalBill = null;
+    _errorMessage = null;
     notifyListeners();
   }
 }

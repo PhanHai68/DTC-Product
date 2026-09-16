@@ -28,6 +28,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   late DateTime _nextDate;
   late String _serviceType;
   bool _isSubmitting = false;
+  bool _hasChanges = false;
 
   final _dateFormat = DateFormat('dd/MM/yyyy');
   final List<String> _serviceTypes = ['Bảo hành', 'Sửa chữa dịch vụ'];
@@ -48,6 +49,18 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
     _nextDate =
         rec?.nextMaintenanceDate ??
         addCalendarMonths(_installDate, int.parse(_cycleController.text));
+    for (final controller in [
+      _customerController,
+      _modelController,
+      _cycleController,
+      _notesController,
+    ]) {
+      controller.addListener(_markChanged);
+    }
+  }
+
+  void _markChanged() {
+    if (!_hasChanges && mounted) setState(() => _hasChanges = true);
   }
 
   @override
@@ -77,6 +90,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
     );
     if (picked != null) {
       setState(() {
+        _hasChanges = true;
         if (isInstallDate) {
           _installDate = picked;
           _recalcNextDate();
@@ -109,7 +123,10 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
       } else {
         await provider.updateRecord(record);
       }
-      if (mounted) context.pop();
+      if (mounted) {
+        _hasChanges = false;
+        context.pop();
+      }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -125,12 +142,36 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
 
   Future<void> _delete() async {
     if (widget.record?.id != null) {
+      final deletedRecord = widget.record!;
+      final provider = context.read<MaintenanceProvider>();
+      final messenger = ScaffoldMessenger.of(context);
       setState(() => _isSubmitting = true);
       try {
-        await context.read<MaintenanceProvider>().deleteRecord(
-          widget.record!.id!,
-        );
-        if (mounted) context.pop();
+        await provider.deleteRecord(deletedRecord.id!);
+        if (mounted) {
+          _hasChanges = false;
+          context.pop();
+          messenger.showSnackBar(
+            SnackBar(
+              content: const Text('Đã xóa máy khỏi lịch bảo trì.'),
+              action: SnackBarAction(
+                label: 'Hoàn tác',
+                onPressed: () => provider.addRecord(
+                  MaintenanceRecord(
+                    customerName: deletedRecord.customerName,
+                    machineModel: deletedRecord.machineModel,
+                    installDate: deletedRecord.installDate,
+                    maintenanceCycleMonths:
+                        deletedRecord.maintenanceCycleMonths,
+                    nextMaintenanceDate: deletedRecord.nextMaintenanceDate,
+                    serviceType: deletedRecord.serviceType,
+                    notes: deletedRecord.notes,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
       } catch (_) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -149,168 +190,201 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
   Widget build(BuildContext context) {
     final isEditing = widget.record != null;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Sửa thông tin máy' : 'Thêm máy mới'),
-        actions: [
-          if (isEditing)
-            IconButton(
-              icon: const Icon(Icons.delete_outline, color: Colors.red),
-              onPressed: _isSubmitting
-                  ? null
-                  : () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: const Text('Xóa máy này?'),
-                          content: const Text(
-                            'Hành động này không thể hoàn tác.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(ctx),
-                              child: const Text('Hủy'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(ctx);
-                                await _delete();
-                              },
-                              child: const Text(
-                                'Xóa',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+    return PopScope(
+      canPop: !_hasChanges || _isSubmitting,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final discard = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('Bỏ thay đổi chưa lưu?'),
+            content: const Text(
+              'Các thông tin bạn vừa nhập sẽ không được lưu.',
             ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _customerController,
-                decoration: const InputDecoration(
-                  labelText: 'Tên Khách Hàng / Nhà Máy',
-                  prefixIcon: Icon(Icons.business_rounded),
-                ),
-                validator: (val) =>
-                    val == null || val.isEmpty ? 'Bắt buộc nhập' : null,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Tiếp tục chỉnh sửa'),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _modelController,
-                decoration: const InputDecoration(
-                  labelText: 'Model Máy',
-                  prefixIcon: Icon(Icons.settings_input_component_rounded),
-                ),
-                validator: (val) =>
-                    val == null || val.isEmpty ? 'Bắt buộc nhập' : null,
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                initialValue: _serviceType,
-                decoration: const InputDecoration(
-                  labelText: 'Loại công việc',
-                  prefixIcon: Icon(Icons.category_rounded),
-                ),
-                items: _serviceTypes.map((type) {
-                  return DropdownMenuItem(value: type, child: Text(type));
-                }).toList(),
-                onChanged: (val) {
-                  if (val != null) {
-                    setState(() => _serviceType = val);
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => _pickDate(true),
-                      child: InputDecorator(
-                        decoration: const InputDecoration(
-                          labelText: 'Ngày lắp đặt',
-                          prefixIcon: Icon(Icons.calendar_today_rounded),
-                        ),
-                        child: Text(_dateFormat.format(_installDate)),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _cycleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Chu kỳ (Tháng)',
-                        suffixText: 'tháng',
-                      ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      onChanged: (_) => _recalcNextDate(),
-                      validator: (val) {
-                        final cycle = int.tryParse(val ?? '');
-                        if (cycle == null || cycle <= 0) {
-                          return 'Nhập số tháng lớn hơn 0';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              InkWell(
-                onTap: () => _pickDate(false),
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Ngày bảo trì dự kiến tiếp theo',
-                    prefixIcon: Icon(Icons.event_available_rounded),
-                  ),
-                  child: Text(
-                    _dateFormat.format(_nextDate),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _notesController,
-                decoration: const InputDecoration(
-                  labelText: 'Ghi chú thêm',
-                  prefixIcon: Icon(Icons.notes_rounded),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 32),
-              FilledButton.icon(
-                onPressed: _isSubmitting ? null : _save,
-                icon: _isSubmitting
-                    ? const SizedBox.square(
-                        dimension: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.save_rounded),
-                label: Text(
-                  _isSubmitting ? 'Đang lưu...' : 'Lưu thông tin',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(56),
-                ),
+              FilledButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: const Text('Bỏ thay đổi'),
               ),
             ],
+          ),
+        );
+        if (discard == true && context.mounted) {
+          _hasChanges = false;
+          context.pop();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(isEditing ? 'Sửa thông tin máy' : 'Thêm máy mới'),
+          actions: [
+            if (isEditing)
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                tooltip: 'Xóa máy',
+                onPressed: _isSubmitting
+                    ? null
+                    : () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('Xóa máy này?'),
+                            content: const Text(
+                              'Hành động này không thể hoàn tác.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: const Text('Hủy'),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(ctx);
+                                  await _delete();
+                                },
+                                child: const Text(
+                                  'Xóa',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+              ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _customerController,
+                  decoration: const InputDecoration(
+                    labelText: 'Tên Khách Hàng / Nhà Máy',
+                    prefixIcon: Icon(Icons.business_rounded),
+                  ),
+                  validator: (val) =>
+                      val == null || val.isEmpty ? 'Bắt buộc nhập' : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _modelController,
+                  decoration: const InputDecoration(
+                    labelText: 'Model Máy',
+                    prefixIcon: Icon(Icons.settings_input_component_rounded),
+                  ),
+                  validator: (val) =>
+                      val == null || val.isEmpty ? 'Bắt buộc nhập' : null,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  initialValue: _serviceType,
+                  decoration: const InputDecoration(
+                    labelText: 'Loại công việc',
+                    prefixIcon: Icon(Icons.category_rounded),
+                  ),
+                  items: _serviceTypes.map((type) {
+                    return DropdownMenuItem(value: type, child: Text(type));
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() => _serviceType = val);
+                      _markChanged();
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => _pickDate(true),
+                        child: InputDecorator(
+                          decoration: const InputDecoration(
+                            labelText: 'Ngày lắp đặt',
+                            prefixIcon: Icon(Icons.calendar_today_rounded),
+                          ),
+                          child: Text(_dateFormat.format(_installDate)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _cycleController,
+                        decoration: const InputDecoration(
+                          labelText: 'Chu kỳ (Tháng)',
+                          suffixText: 'tháng',
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        onChanged: (_) => _recalcNextDate(),
+                        validator: (val) {
+                          final cycle = int.tryParse(val ?? '');
+                          if (cycle == null || cycle <= 0) {
+                            return 'Nhập số tháng lớn hơn 0';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () => _pickDate(false),
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      labelText: 'Ngày bảo trì dự kiến tiếp theo',
+                      prefixIcon: Icon(Icons.event_available_rounded),
+                    ),
+                    child: Text(
+                      _dateFormat.format(_nextDate),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _notesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Ghi chú thêm',
+                    prefixIcon: Icon(Icons.notes_rounded),
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 32),
+                FilledButton.icon(
+                  onPressed: _isSubmitting ? null : _save,
+                  icon: _isSubmitting
+                      ? const SizedBox.square(
+                          dimension: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.save_rounded),
+                  label: Text(
+                    _isSubmitting ? 'Đang lưu...' : 'Lưu thông tin',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(56),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

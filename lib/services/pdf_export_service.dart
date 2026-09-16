@@ -63,7 +63,6 @@ abstract final class DtcPdfExportService {
         graphics,
         PdfBitmap(machineBytes),
         ui.Rect.fromLTWH(margin + 32, 126, width - 64, 150),
-        838 / 384,
       );
     }
 
@@ -74,7 +73,7 @@ abstract final class DtcPdfExportService {
       graphics,
       fonts,
       ui.Rect.fromLTWH(margin, metricY, metricWidth, 46),
-      specs['Năng suất (tấn/giờ)'] ?? '--',
+      specs['Năng suất'] ?? specs['Năng suất (tấn/giờ)'] ?? '--',
       'Năng suất (T/h)',
     );
     _drawMetric(
@@ -86,7 +85,7 @@ abstract final class DtcPdfExportService {
         metricWidth,
         46,
       ),
-      specs['Số Camera'] ?? '--',
+      specs['Số camera'] ?? specs['Số Camera'] ?? '--',
       'Số Camera',
     );
     _drawMetric(
@@ -143,6 +142,7 @@ abstract final class DtcPdfExportService {
       graphics,
       fonts,
       ui.Rect.fromLTWH(margin, applicationY + 22, width, 96),
+      specs,
     );
 
     _drawFooter(
@@ -297,6 +297,165 @@ abstract final class DtcPdfExportService {
     return bytes;
   }
 
+  static Future<Uint8List> buildTeaAuxEquipmentPdf({
+    required String model,
+    required List<Map<String, dynamic>> items,
+  }) async {
+    final fonts = await _PdfFonts.load();
+    final logoBytes = await _loadAsset('assets/images/DTCGroup-Slogan.png');
+    final document = PdfDocument();
+    document.pageSettings
+      ..size = PdfPageSize.a4
+      ..orientation = PdfPageOrientation.landscape
+      ..margins.all = 28;
+    final page = document.pages.add();
+    final size = page.getClientSize();
+    final graphics = page.graphics;
+
+    _drawImageContain(
+      graphics,
+      PdfBitmap(logoBytes),
+      ui.Rect.fromLTWH((size.width - 135) / 2, 0, 135, 47),
+      2048 / 713,
+    );
+    _drawText(
+      graphics,
+      'BẢNG KÊ CHI TIẾT DÂY CHUYỀN THIẾT BỊ PHỤ TRỢ',
+      fonts.bold(18),
+      ui.Rect.fromLTWH(0, 55, size.width, 24),
+      color: _navy,
+      alignment: PdfTextAlignment.center,
+    );
+    _drawText(
+      graphics,
+      'MÁY TÁCH MÀU TRÀ ${model.toUpperCase()}',
+      fonts.bold(12),
+      ui.Rect.fromLTWH(0, 80, size.width, 18),
+      color: _green,
+      alignment: PdfTextAlignment.center,
+    );
+    graphics.drawLine(
+      PdfPen(_border, width: 0.8),
+      const ui.Offset(0, 106),
+      ui.Offset(size.width, 106),
+    );
+
+    final grid = PdfGrid();
+    grid.columns.add(count: 6);
+    grid.columns[0].width = size.width * 0.04; // STT
+    grid.columns[1].width = size.width * 0.14; // Tên TB
+    grid.columns[2].width = size.width * 0.06; // SL
+    grid.columns[3].width = size.width * 0.25; // Chức năng
+    grid.columns[4].width = size.width * 0.31; // Bộ phận
+    grid.columns[5].width = size.width * 0.20; // Specs
+
+    grid.style = PdfGridStyle(
+      font: fonts.regular(8.2),
+      textBrush: PdfSolidBrush(_navy),
+      cellPadding: PdfPaddings(left: 6, right: 6, top: 6, bottom: 6),
+    );
+    final header = grid.headers.add(1)[0];
+    header.style
+      ..backgroundBrush = PdfSolidBrush(_navy)
+      ..textBrush = PdfBrushes.white
+      ..font = fonts.bold(8.5);
+      
+    const headings = [
+      'STT',
+      'Tên thiết bị',
+      'SL',
+      'Chức năng chính',
+      'Các bộ phận chính',
+      'Thông số kỹ thuật',
+    ];
+    for (var i = 0; i < headings.length; i++) {
+      header.cells[i].value = headings[i];
+      header.cells[i].stringFormat = PdfStringFormat(
+        alignment: PdfTextAlignment.center,
+        lineAlignment: PdfVerticalAlignment.middle,
+      );
+    }
+
+    for (var i = 0; i < items.length; i++) {
+      final item = items[i];
+      final row = grid.rows.add();
+      
+      row.cells[0].value = '${i + 1}';
+      
+      final name = item['name'] as String;
+      final itemModel = item['model'] as String;
+      row.cells[1].value = itemModel.isNotEmpty ? '$name\n(Model: $itemModel)' : name;
+      
+      row.cells[2].value = '${item['quantity']} ${item['unit']}';
+      
+      row.cells[3].value = item['function'] as String;
+      
+      final comps = item['components'] as List<String>;
+      row.cells[4].value = comps.map((c) => '• $c').join('\n');
+      
+      final power = item['power'] as String;
+      final volt = item['voltage'] as String;
+      final dim = item['dimensions'] as String;
+      final weight = item['weight'] as String;
+      
+      final specsList = <String>[];
+      if (power.isNotEmpty) specsList.add('Công suất: $power');
+      if (volt.isNotEmpty) specsList.add('Điện áp: $volt');
+      if (dim.isNotEmpty) specsList.add('Kích thước:\n$dim');
+      if (weight.isNotEmpty) specsList.add('Trọng lượng: $weight kg');
+      
+      row.cells[5].value = specsList.join('\n');
+
+      for (var c = 0; c < row.cells.count; c++) {
+        final align = (c == 0 || c == 2) ? PdfTextAlignment.center : PdfTextAlignment.left;
+        row.cells[c].stringFormat = PdfStringFormat(
+          alignment: align,
+          lineAlignment: PdfVerticalAlignment.middle,
+        );
+      }
+    }
+
+    grid.draw(
+      page: page,
+      bounds: ui.Rect.fromLTWH(0, 115, size.width, size.height - 150),
+      format: PdfLayoutFormat(layoutType: PdfLayoutType.paginate),
+    );
+
+    for (var i = 0; i < document.pages.count; i++) {
+      final current = document.pages[i];
+      final currentSize = current.getClientSize();
+      _drawText(
+        current.graphics,
+        'DTCGroup  •  Bảng kê chi tiết dây chuyền $model',
+        fonts.regular(7),
+        ui.Rect.fromLTWH(
+          0,
+          currentSize.height - 18,
+          currentSize.width - 50,
+          12,
+        ),
+        color: _muted,
+      );
+      _drawText(
+        current.graphics,
+        '${i + 1}/${document.pages.count}',
+        fonts.regular(7),
+        ui.Rect.fromLTWH(
+          currentSize.width - 50,
+          currentSize.height - 18,
+          50,
+          12,
+        ),
+        color: _muted,
+        alignment: PdfTextAlignment.right,
+      );
+    }
+
+    final bytes = Uint8List.fromList(await document.save());
+    document.dispose();
+    return bytes;
+  }
+
   static Future<Uint8List> _loadAsset(String path) async {
     final data = await rootBundle.load(path);
     return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -305,14 +464,15 @@ abstract final class DtcPdfExportService {
   static void _drawImageContain(
     PdfGraphics graphics,
     PdfBitmap image,
-    ui.Rect bounds,
-    double aspectRatio,
-  ) {
+    ui.Rect bounds, [
+    double? aspectRatio,
+  ]) {
+    final ratio = aspectRatio ?? (image.width / image.height);
     var width = bounds.width;
-    var height = width / aspectRatio;
+    var height = width / ratio;
     if (height > bounds.height) {
       height = bounds.height;
-      width = height * aspectRatio;
+      width = height * ratio;
     }
     graphics.drawImage(
       image,
@@ -402,16 +562,16 @@ abstract final class DtcPdfExportService {
     ui.Rect bounds,
   ) {
     final rows = <(String, String)>[
-      ('Năng suất', '${specs['Năng suất (tấn/giờ)'] ?? '--'} tấn/giờ'),
+      ('Năng suất', '${specs['Năng suất'] ?? specs['Năng suất (tấn/giờ)'] ?? '--'} tấn/giờ'),
       ('Số máng', specs['Số máng'] ?? '--'),
       ('Số ejector', specs['Số ejector'] ?? '--'),
-      ('Số camera', specs['Số Camera'] ?? '--'),
-      ('Độ chính xác', specs['Độ chính xác phân loại'] ?? '--'),
-      ('Công suất điện', '${specs['Công suất điện (kW)'] ?? '--'} kW'),
-      ('Điện áp', specs['Điện áp'] ?? '--'),
-      ('Áp suất khí nén', specs['Áp suất khí nén'] ?? '--'),
-      ('Kích thước D×R×C', '${specs['Kích thước (D x R x C mm)'] ?? '--'} mm'),
-      ('Trọng lượng', '${specs['Trọng lượng (kg)'] ?? '--'} kg'),
+      ('Số camera', specs['Số camera'] ?? specs['Số Camera'] ?? '--'),
+      ('Độ chính xác', specs['Độ phân loại chính xác (%)'] != null ? '≥ ${specs['Độ phân loại chính xác (%)']}%' : specs['Độ chính xác phân loại'] ?? '--'),
+      ('Công suất điện', '${specs['Công suất (kW)'] ?? specs['Công suất điện (kW)'] ?? '--'} kW'),
+      ('Điện áp', specs['Điện áp (V)'] ?? specs['Điện áp'] ?? '--'),
+      ('Áp suất khí nén', specs['Áp suất khí nén (Mpa)'] ?? specs['Áp suất khí nén'] ?? '--'),
+      ('Kích thước D×R×C', '${specs['Kích thước (D R C)'] ?? specs['Kích thước (D x R x C mm)'] ?? '--'} mm'),
+      ('Trọng lượng', '${specs['Trọng lượng'] ?? specs['Trọng lượng (kg)'] ?? '--'} kg'),
     ];
     final rowHeight = bounds.height / rows.length;
     graphics.drawRectangle(pen: PdfPen(_border, width: 0.6), bounds: bounds);
@@ -532,7 +692,28 @@ abstract final class DtcPdfExportService {
     PdfGraphics graphics,
     _PdfFonts fonts,
     ui.Rect bounds,
+    Map<String, String> specs,
   ) {
+    if (specs['Model'] == 'SF7D Pro') {
+      final rect = ui.Rect.fromLTWH(bounds.left, bounds.top, bounds.width, bounds.height);
+      graphics.drawRectangle(
+        brush: PdfSolidBrush(PdfColor(240, 247, 255)), // blue.shade50
+        pen: PdfPen(PdfColor(147, 197, 253), width: 0.5), // blue.shade300
+        bounds: rect,
+      );
+      
+      const text = 'Máy tách màu lúa giống và lúa cựa lứt SF7D Pro dùng để phân loại thóc và gạo xô tại cối hồi hoặc phễu của gầu tải (Tuỳ gầu), lượng gạo xô sau khi phân loại sẽ đi qua giai đoạn xát trắng mà không cần quay trở lại máy bóc vỏ, giúp giảm tỷ lệ gãy / vỡ đến 96%.\n\nĐồng thời, SF7D Pro giúp tăng sản lượng gạo xô thu hồi đến 99.99% sau giai đoạn gầu tải thóc.\n\nMáy tách màu lúa giống và lúa cựa lứt SF7D Pro được trang bị 7 máng với năng suất đạt được 3.5 - 7 tấn trong một giờ giúp sản lượng thành phẩm thu hoạch đạt được gấp 10 lần năng suất thông thường. Tuy có năng suất lớn nhưng công suất điện tiêu thụ chỉ đạt 3.5kW giúp tiết kiệm điện năng tốt nhất.';
+      
+      _drawText(
+        graphics,
+        text,
+        fonts.regular(9),
+        ui.Rect.fromLTWH(rect.left + 10, rect.top + 10, rect.width - 20, rect.height - 20),
+        color: PdfColor(30, 41, 59),
+      );
+      return;
+    }
+
     const applications = <(String, String)>[
       ('Tách màu sắc', 'Gạo vàng, hạt đỏ, hạt đen, bạc bụng, chấm kim.'),
       ('Tách hình dạng', 'Phân loại hạt tròn, dài, ngắn theo kích thước.'),

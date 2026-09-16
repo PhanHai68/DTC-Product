@@ -52,6 +52,12 @@ class _MachineCatalogScreenState extends State<MachineCatalogScreen> {
   }
 
   Future<void> _loadCatalog() async {
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+    }
     try {
       final groups = await _repository.getDistinctProductGroups();
       final catalog = <String, Map<String, List<PackingMachine>>>{};
@@ -79,9 +85,10 @@ class _MachineCatalogScreenState extends State<MachineCatalogScreen> {
         });
       }
     } catch (e) {
+      debugPrint('Không thể tải danh mục cân đóng gói: $e');
       if (mounted) {
         setState(() {
-          _error = 'Lỗi tải danh mục: $e';
+          _error = 'Không thể tải danh mục sản phẩm trên thiết bị này.';
           _isLoading = false;
         });
       }
@@ -170,7 +177,9 @@ class _MachineCatalogScreenState extends State<MachineCatalogScreen> {
               child: Center(child: CircularProgressIndicator()),
             )
           else if (_error != null)
-            SliverFillRemaining(child: Center(child: Text(_error!)))
+            SliverFillRemaining(
+              child: _CatalogLoadError(message: _error!, onRetry: _loadCatalog),
+            )
           else if (_isSearching)
             _buildSearchResults()
           else
@@ -371,6 +380,7 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
             ),
             suffixIcon: query.isNotEmpty
                 ? IconButton(
+                    tooltip: 'Xóa từ khóa',
                     icon: const Icon(Icons.close_rounded, size: 20),
                     onPressed: onClear,
                     color: const Color(0xFF8FA3B1),
@@ -379,6 +389,40 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(vertical: 14),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CatalogLoadError extends StatelessWidget {
+  const _CatalogLoadError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              size: 56,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            const SizedBox(height: 12),
+            Text(message, textAlign: TextAlign.center),
+            const SizedBox(height: 18),
+            FilledButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Thử lại'),
+            ),
+          ],
         ),
       ),
     );

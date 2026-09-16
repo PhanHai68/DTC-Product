@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/packing_machine.dart';
+import '../../core/input/localized_number.dart';
 import '../../models/machine_match_result.dart';
 import '../../providers/machine_selector_provider.dart';
 import '../../routes/route_locations.dart';
@@ -580,6 +581,7 @@ class _NumberField extends StatelessWidget {
       key: Key(id),
       controller: controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: const [LocalizedDecimalTextInputFormatter()],
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
@@ -592,15 +594,15 @@ class _NumberField extends StatelessWidget {
         ),
       ),
       onChanged: (text) {
-        final value = double.tryParse(text);
+        final value = parseLocalizedDouble(text);
         onChanged(value);
       },
       validator: (value) {
         if (value != null && value.isNotEmpty) {
-          if (double.tryParse(value) == null) {
+          if (parseLocalizedDouble(value) == null) {
             return 'Vui lòng nhập số hợp lệ';
           }
-          if (double.parse(value) <= 0) {
+          if (parseLocalizedDouble(value)! <= 0) {
             return 'Giá trị phải lớn hơn 0';
           }
         }

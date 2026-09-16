@@ -90,11 +90,11 @@ class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
             if (value == 'last') {
               _pdfController.jumpToPage(_totalPages);
             } else if (value == 'zoom_in') {
-              _pdfController.zoomLevel =
-                  (_pdfController.zoomLevel + 0.25).clamp(0.5, 4.0);
+              _pdfController.zoomLevel = (_pdfController.zoomLevel + 0.25)
+                  .clamp(0.5, 4.0);
             } else if (value == 'zoom_out') {
-              _pdfController.zoomLevel =
-                  (_pdfController.zoomLevel - 0.25).clamp(0.5, 4.0);
+              _pdfController.zoomLevel = (_pdfController.zoomLevel - 0.25)
+                  .clamp(0.5, 4.0);
             } else if (value == 'zoom_fit') {
               _pdfController.zoomLevel = 1.0;
             }
@@ -152,8 +152,11 @@ class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
               decoration: InputDecoration(
                 hintText: 'Nhập từ cần tìm...',
                 hintStyle: TextStyle(color: Colors.blue.shade200),
-                prefixIcon:
-                    Icon(Icons.search, color: Colors.blue.shade200, size: 20),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.blue.shade200,
+                  size: 20,
+                ),
                 filled: true,
                 fillColor: Colors.white.withValues(alpha: 0.1),
                 contentPadding: const EdgeInsets.symmetric(vertical: 8),
@@ -298,6 +301,7 @@ class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
         children: [
           IconButton(
             icon: const Icon(Icons.chevron_left, color: Colors.white, size: 28),
+            tooltip: 'Trang trước',
             onPressed: _currentPage > 1
                 ? () => _pdfController.jumpToPage(_currentPage - 1)
                 : null,
@@ -305,8 +309,7 @@ class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
           GestureDetector(
             onTap: _showGoToPageDialog,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(20),
@@ -314,8 +317,11 @@ class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.description_outlined,
-                      color: Colors.white70, size: 14),
+                  const Icon(
+                    Icons.description_outlined,
+                    color: Colors.white70,
+                    size: 14,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     'Trang $_currentPage / $_totalPages',
@@ -326,15 +332,22 @@ class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  const Icon(Icons.edit_outlined,
-                      color: Colors.white54, size: 13),
+                  const Icon(
+                    Icons.edit_outlined,
+                    color: Colors.white54,
+                    size: 13,
+                  ),
                 ],
               ),
             ),
           ),
           IconButton(
-            icon:
-                const Icon(Icons.chevron_right, color: Colors.white, size: 28),
+            icon: const Icon(
+              Icons.chevron_right,
+              color: Colors.white,
+              size: 28,
+            ),
+            tooltip: 'Trang sau',
             onPressed: _currentPage < _totalPages
                 ? () => _pdfController.jumpToPage(_currentPage + 1)
                 : null,

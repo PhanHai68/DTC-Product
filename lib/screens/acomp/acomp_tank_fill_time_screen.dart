@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/acomp_pipe_data.dart';
+import '../../core/input/localized_number.dart';
 
 class AcompTankFillTimeScreen extends StatefulWidget {
   const AcompTankFillTimeScreen({super.key});
@@ -23,6 +24,7 @@ class _AcompTankFillTimeScreenState extends State<AcompTankFillTimeScreen> {
 
   double? timeMinutes;
   double? timeSeconds;
+  String? _validationMessage;
 
   @override
   void dispose() {
@@ -38,18 +40,23 @@ class _AcompTankFillTimeScreenState extends State<AcompTankFillTimeScreen> {
     if (inputMode == 'Model' && selectedModel != null) {
       flowM3Phut = double.tryParse(selectedModel!['flow8bar']) ?? 0;
     } else {
-      flowM3Phut = double.tryParse(_flowController.text) ?? 0;
+      flowM3Phut = parseLocalizedDouble(_flowController.text) ?? 0;
     }
 
     double flowLitPhut = flowM3Phut * 1000;
-    double p1 = double.tryParse(_p1Controller.text) ?? 0;
-    double p2 = double.tryParse(_p2Controller.text) ?? 0;
-    double tankVolume = double.tryParse(_tankVolumeController.text) ?? 0;
+    double p1 = parseLocalizedDouble(_p1Controller.text) ?? 0;
+    double p2 = parseLocalizedDouble(_p2Controller.text) ?? 0;
+    double tankVolume = parseLocalizedDouble(_tankVolumeController.text) ?? 0;
 
     if (flowLitPhut <= 0 || p2 <= p1 || tankVolume <= 0) {
       setState(() {
         timeMinutes = null;
         timeSeconds = null;
+        _validationMessage = flowLitPhut <= 0
+            ? 'Hãy chọn model hoặc nhập lưu lượng lớn hơn 0.'
+            : p2 <= p1
+            ? 'Áp suất cần đạt phải lớn hơn áp suất ban đầu.'
+            : 'Thể tích bình phải lớn hơn 0.';
       });
       return;
     }
@@ -68,6 +75,7 @@ class _AcompTankFillTimeScreenState extends State<AcompTankFillTimeScreen> {
     setState(() {
       timeMinutes = tPhut;
       timeSeconds = tGiay;
+      _validationMessage = null;
     });
   }
 
@@ -235,6 +243,14 @@ class _AcompTankFillTimeScreenState extends State<AcompTankFillTimeScreen> {
                 ),
               ),
             ),
+            if (_validationMessage != null) ...[
+              const SizedBox(height: 10),
+              Text(
+                _validationMessage!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
         ),
       ),
@@ -250,6 +266,7 @@ class _AcompTankFillTimeScreenState extends State<AcompTankFillTimeScreen> {
         TextField(
           controller: controller,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: const [LocalizedDecimalTextInputFormatter()],
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             contentPadding: const EdgeInsets.symmetric(

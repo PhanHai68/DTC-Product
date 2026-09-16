@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/acomp_suitable_provider.dart';
@@ -79,7 +80,7 @@ class AcompSuitableScreen extends StatelessWidget {
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<MaterialModel>(
                   isExpanded: true,
-                  hint: const Text('▼ Click chọn'),
+                  hint: const Text('Chọn nguyên liệu'),
                   value: provider.selectedMaterial,
                   items: materialDataList.map((model) {
                     return DropdownMenuItem<MaterialModel>(
@@ -101,10 +102,12 @@ class AcompSuitableScreen extends StatelessWidget {
             const SizedBox(height: 8),
             TextField(
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Nhập số béc',
                 suffixText: 'Béc',
+                helperText: 'Ejector là béc phun khí dùng để loại hạt lỗi.',
               ),
               onChanged: (value) {
                 provider.setEjectorCount(value);

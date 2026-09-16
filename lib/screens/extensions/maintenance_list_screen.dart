@@ -105,6 +105,7 @@ class MaintenanceListScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Thêm máy mới',
         onPressed: () => context.push('/maintenance_form'),
         child: const Icon(Icons.add),
       ),

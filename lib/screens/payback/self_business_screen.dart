@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../providers/electricity_bill_provider.dart';
 import '../../providers/self_business_provider.dart';
+import '../../core/input/localized_number.dart';
 import '../../data/power_consumption_data.dart';
 
 class SelfBusinessScreen extends StatefulWidget {
@@ -102,6 +103,7 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: businessProvider.setRawMaterialPrice,
                 ),
                 const SizedBox(height: 16),
@@ -111,6 +113,7 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: businessProvider.setFinishedProductPrice,
                 ),
                 const SizedBox(height: 16),
@@ -120,6 +123,7 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: businessProvider.setByProductPrice,
                 ),
                 const SizedBox(height: 24),

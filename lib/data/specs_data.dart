@@ -40,8 +40,8 @@ const List<Map<String, String>> colorSorterSpecs = [
     "Trọng lượng (kg)": "2280",
     "Kích thước (D x R x C mm)": "4150 x 1690 x 1915",
     "Kích thước sàn đặt máy": "5500 x 3200 x 3500 mm",
-    "Máy nén khí đồng bộ": "Acomp 75Hp (55kW)",
-    "Bình tích khí đồng bộ": "1.500 Lít",
+    "Máy nén khí đồng bộ": "75HP",
+    "Bình tích khí đồng bộ": "1500 lít",
     "Nguyên liệu phù hợp": "Gạo xuất khẩu, gạo thơm, gạo lứt, nếp, cà phê, tiêu, hạt điều"
   },
   {
@@ -61,8 +61,8 @@ const List<Map<String, String>> colorSorterSpecs = [
     "Trọng lượng (kg)": "1850",
     "Kích thước (D x R x C mm)": "3350 x 1690 x 1915",
     "Kích thước sàn đặt máy": "4300 x 3200 x 2500 mm",
-    "Máy nén khí đồng bộ": "Acomp 50Hp (37kW)",
-    "Bình tích khí đồng bộ": "1.500 Lít",
+    "Máy nén khí đồng bộ": "50HP",
+    "Bình tích khí đồng bộ": "1500 lít",
     "Nguyên liệu phù hợp": "Gạo trắng, gạo thơm, nếp, tấm, gạo lứt, cà phê, tiêu, hạt điều"
   },
   {
@@ -82,8 +82,8 @@ const List<Map<String, String>> colorSorterSpecs = [
     "Trọng lượng (kg)": "1380",
     "Kích thước (D x R x C mm)": "2550 x 1690 x 1915",
     "Kích thước sàn đặt máy": "3700 x 3200 x 2500 mm",
-    "Máy nén khí đồng bộ": "Acomp 50Hp (37kW)",
-    "Bình tích khí đồng bộ": "1.500 Lít",
+    "Máy nén khí đồng bộ": "50HP",
+    "Bình tích khí đồng bộ": "1500 lít",
     "Nguyên liệu phù hợp": "Gạo trắng, gạo thơm, nếp, tấm, gạo lứt, cà phê, tiêu, đậu"
   },
   {
@@ -103,8 +103,8 @@ const List<Map<String, String>> colorSorterSpecs = [
     "Trọng lượng (kg)": "1020",
     "Kích thước (D x R x C mm)": "1870 x 1690 x 1915",
     "Kích thước sàn đặt máy": "3000 x 3000 x 1500 mm",
-    "Máy nén khí đồng bộ": "Acomp 30Hp (22kW)",
-    "Bình tích khí đồng bộ": "1.000 Lít",
+    "Máy nén khí đồng bộ": "30HP",
+    "Bình tích khí đồng bộ": "1000 lít",
     "Nguyên liệu phù hợp": "Gạo trắng, gạo thơm, tấm, nếp, mè, đậu xanh, cà phê"
   },
   {

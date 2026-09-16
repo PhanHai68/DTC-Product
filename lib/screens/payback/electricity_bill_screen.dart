@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/electricity_bill_provider.dart';
 import '../../data/power_consumption_data.dart';
+import '../../core/input/localized_number.dart';
 
 import 'package:intl/intl.dart';
 
@@ -43,6 +44,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
               TextField(
                 controller: normalCtrl,
                 keyboardType: TextInputType.number,
+                inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                 decoration: const InputDecoration(
                   labelText: 'Giá bình thường (VNĐ)',
                 ),
@@ -50,6 +52,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
               TextField(
                 controller: offPeakCtrl,
                 keyboardType: TextInputType.number,
+                inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                 decoration: const InputDecoration(
                   labelText: 'Giá thấp điểm (VNĐ)',
                 ),
@@ -57,6 +60,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
               TextField(
                 controller: peakCtrl,
                 keyboardType: TextInputType.number,
+                inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                 decoration: const InputDecoration(
                   labelText: 'Giá cao điểm (VNĐ)',
                 ),
@@ -70,11 +74,23 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                provider.updateRates(
-                  double.tryParse(normalCtrl.text) ?? 1811,
-                  double.tryParse(offPeakCtrl.text) ?? 1190,
-                  double.tryParse(peakCtrl.text) ?? 3266,
-                );
+                final normal = parseLocalizedDouble(normalCtrl.text);
+                final offPeak = parseLocalizedDouble(offPeakCtrl.text);
+                final peak = parseLocalizedDouble(peakCtrl.text);
+                if (normal == null ||
+                    offPeak == null ||
+                    peak == null ||
+                    normal <= 0 ||
+                    offPeak <= 0 ||
+                    peak <= 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Vui lòng nhập đủ ba đơn giá lớn hơn 0.'),
+                    ),
+                  );
+                  return;
+                }
+                provider.updateRates(normal, offPeak, peak);
                 Navigator.pop(context);
               },
               child: const Text('Lưu'),
@@ -95,6 +111,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings),
+                tooltip: 'Cài đặt giá điện',
                 onPressed: () => _showSettingsDialog(context, provider),
               ),
             ],
@@ -125,6 +142,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                     border: const OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: provider.setNormalHours,
                 ),
                 const SizedBox(height: 16),
@@ -135,6 +153,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                     border: const OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: provider.setOffPeakHours,
                 ),
                 const SizedBox(height: 16),
@@ -145,6 +164,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                     border: const OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: provider.setPeakHours,
                 ),
                 const SizedBox(height: 24),

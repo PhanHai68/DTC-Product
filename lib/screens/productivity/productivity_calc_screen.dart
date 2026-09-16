@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../models/productivity_calc.dart';
+import '../../core/input/localized_number.dart';
 import '../../services/productivity_pdf_service.dart';
 
 class ProductivityCalcScreen extends StatefulWidget {
@@ -104,7 +106,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Đã áp dụng thời gian đo: ${h > 0 ? '$h giờ ' : ''}$m phút $s giây'),
+        content: Text(
+          'Đã áp dụng thời gian đo: ${h > 0 ? '$h giờ ' : ''}$m phút $s giây',
+        ),
         backgroundColor: const Color(0xFF148147),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
@@ -121,7 +125,7 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
 
   // --- Tính toán kết quả ---
   ProductivityCalcData _getCalculationData() {
-    final weight = double.tryParse(_weightController.text.trim()) ?? 0.0;
+    final weight = parseLocalizedDouble(_weightController.text) ?? 0.0;
     final h = int.tryParse(_hoursController.text.trim()) ?? 0;
     final m = int.tryParse(_minutesController.text.trim()) ?? 0;
     final s = int.tryParse(_secondsController.text.trim()) ?? 0;
@@ -143,7 +147,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
     if (data.weightKg <= 0 || data.totalSeconds <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Vui lòng nhập khối lượng và thời gian đo lớn hơn 0 để xuất PDF.'),
+          content: Text(
+            'Vui lòng nhập khối lượng và thời gian đo lớn hơn 0 để xuất PDF.',
+          ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.redAccent,
         ),
@@ -159,7 +165,8 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
       final safeName = data.customerName.isNotEmpty
           ? data.customerName.replaceAll(RegExp(r'[\\/:*?"<>| ]'), '_')
           : 'Mẫu_Đo';
-      final fileName = 'Ket_qua_tinh_nang_suat_${safeName}_${DateFormat('ddMMyyyy_HHmm').format(data.measuredAt)}.pdf';
+      final fileName =
+          'Ket_qua_tinh_nang_suat_${safeName}_${DateFormat('ddMMyyyy_HHmm').format(data.measuredAt)}.pdf';
 
       // Hiển thị dialog xem trước PDF
       await showDialog(
@@ -170,7 +177,10 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
             constraints: const BoxConstraints(maxWidth: 850, maxHeight: 850),
             child: Scaffold(
               appBar: AppBar(
-                title: const Text('Xem Trước Phiếu Năng Suất (A4)', style: TextStyle(fontSize: 16)),
+                title: const Text(
+                  'Xem Trước Phiếu Năng Suất (A4)',
+                  style: TextStyle(fontSize: 16),
+                ),
                 backgroundColor: const Color(0xFF0A2740),
                 foregroundColor: Colors.white,
                 actions: [
@@ -179,7 +189,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                     tooltip: 'Chia sẻ / Tải về PDF',
                     onPressed: () async {
                       final box = context.findRenderObject() as RenderBox?;
-                      final origin = box == null ? null : box.localToGlobal(Offset.zero) & box.size;
+                      final origin = box == null
+                          ? null
+                          : box.localToGlobal(Offset.zero) & box.size;
                       await SharePlus.instance.share(
                         ShareParams(
                           files: [
@@ -190,7 +202,8 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                             ),
                           ],
                           title: 'Phiếu kết quả tính năng suất - DTC Group',
-                          text: 'Phiếu kết quả tính năng suất: ${data.customerName} - ${data.materialName} - Năng suất: ${data.kgPerHour.toStringAsFixed(1)} kg/h (${data.tonPerHour.toStringAsFixed(2)} tấn/h)',
+                          text:
+                              'Phiếu kết quả tính năng suất: ${data.customerName} - ${data.materialName} - Năng suất: ${data.kgPerHour.toStringAsFixed(1)} kg/h (${data.tonPerHour.toStringAsFixed(2)} tấn/h)',
                           sharePositionOrigin: origin,
                           fileNameOverrides: [fileName],
                         ),
@@ -207,7 +220,10 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi khi tạo PDF: $e'), backgroundColor: Colors.redAccent),
+          SnackBar(
+            content: Text('Lỗi khi tạo PDF: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
         );
       }
     } finally {
@@ -247,7 +263,10 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
                 : const Icon(Icons.picture_as_pdf_rounded),
             tooltip: 'Xuất PDF A4 có dấu Verified',
@@ -309,7 +328,11 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                     color: const Color(0xFF148147).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.speed_rounded, color: Color(0xFF148147), size: 24),
+                  child: const Icon(
+                    Icons.speed_rounded,
+                    color: Color(0xFF148147),
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
@@ -324,7 +347,10 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE8F5E9),
                     borderRadius: BorderRadius.circular(20),
@@ -332,7 +358,11 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.verified_rounded, color: Color(0xFF4CAF50), size: 16),
+                      const Icon(
+                        Icons.verified_rounded,
+                        color: Color(0xFF4CAF50),
+                        size: 16,
+                      ),
                       const SizedBox(width: 5),
                       Text(
                         'DTC Verified',
@@ -355,7 +385,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                 Expanded(
                   child: _buildMetricBlock(
                     label: 'NĂNG SUẤT / GIỜ',
-                    value: hasValidData ? numberFmt.format(data.kgPerHour) : '0.0',
+                    value: hasValidData
+                        ? numberFmt.format(data.kgPerHour)
+                        : '0.0',
                     unit: 'Kg / Giờ',
                     highlightColor: const Color(0xFF148147),
                   ),
@@ -364,7 +396,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                 Expanded(
                   child: _buildMetricBlock(
                     label: 'QUY ĐỔI TẤN',
-                    value: hasValidData ? tonFmt.format(data.tonPerHour) : '0.00',
+                    value: hasValidData
+                        ? tonFmt.format(data.tonPerHour)
+                        : '0.00',
                     unit: 'Tấn / Giờ',
                     highlightColor: const Color(0xFFF57F17),
                   ),
@@ -387,7 +421,11 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(color: Colors.grey.shade700, fontSize: 11, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: Colors.grey.shade700,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4),
@@ -403,10 +441,7 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
             ),
           ),
         ),
-        Text(
-          unit,
-          style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
-        ),
+        Text(unit, style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
       ],
     );
   }
@@ -422,11 +457,19 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
           children: [
             const Row(
               children: [
-                Icon(Icons.person_pin_outlined, color: Color(0xFF148147), size: 22),
+                Icon(
+                  Icons.person_pin_outlined,
+                  color: Color(0xFF148147),
+                  size: 22,
+                ),
                 SizedBox(width: 8),
                 Text(
                   'Thông tin',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0A2740)),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0A2740),
+                  ),
                 ),
               ],
             ),
@@ -437,7 +480,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                 labelText: 'Tên Khách Hàng / Nhà Máy',
                 hintText: 'Ví dụ: Nhà máy xay xát Tân Phát...',
                 prefixIcon: const Icon(Icons.business_rounded, size: 20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 isDense: true,
               ),
             ),
@@ -448,7 +493,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                 labelText: 'Tên Nguyên Liệu',
                 hintText: 'Ví dụ: Gạo Jasmine, Cà phê Robusta, Tiêu đen...',
                 prefixIcon: const Icon(Icons.grain_rounded, size: 20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 isDense: true,
               ),
             ),
@@ -459,7 +506,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                 labelText: 'Ghi Chú Thêm (Dòng máy, chế độ, thông số cài đặt)',
                 hintText: 'Ví dụ: Máy 5 máng, áp suất 3.5 bar, chạy chế độ tách hạt vàng...',
                 prefixIcon: const Icon(Icons.note_alt_outlined, size: 20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 isDense: true,
               ),
             ),
@@ -484,7 +533,11 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                 SizedBox(width: 8),
                 Text(
                   'Khối lượng và thời gian tính',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0A2740)),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0A2740),
+                  ),
                 ),
               ],
             ),
@@ -493,7 +546,11 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
             // Ô nhập khối lượng
             Text(
               '1. Khối lượng mẫu cân đã hứng được (kg):',
-              style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey.shade800, fontSize: 13.5),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade800,
+                fontSize: 13.5,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -501,12 +558,19 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                 Expanded(
                   child: TextField(
                     controller: _weightController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    inputFormatters: const [
+                      LocalizedDecimalTextInputFormatter(),
+                    ],
                     decoration: InputDecoration(
                       hintText: 'Nhập số kg...',
                       suffixText: 'kg',
                       prefixIcon: const Icon(Icons.scale_rounded, size: 20),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       isDense: true,
                     ),
                   ),
@@ -518,7 +582,11 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
             // Ô chọn thời gian
             Text(
               '2. Thời gian đo đạc thực tế:',
-              style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey.shade800, fontSize: 13.5),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade800,
+                fontSize: 13.5,
+              ),
             ),
             const SizedBox(height: 10),
 
@@ -550,9 +618,14 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: _isStopwatchActive ? Colors.green.shade100 : Colors.grey.shade200,
+                          color: _isStopwatchActive
+                              ? Colors.green.shade100
+                              : Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -560,7 +633,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: _isStopwatchActive ? Colors.green.shade800 : Colors.grey.shade700,
+                            color: _isStopwatchActive
+                                ? Colors.green.shade800
+                                : Colors.grey.shade700,
                           ),
                         ),
                       ),
@@ -587,7 +662,11 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                         ElevatedButton.icon(
                           onPressed: _startStopwatch,
                           icon: const Icon(Icons.play_arrow_rounded, size: 18),
-                          label: Text(_stopwatchElapsedSeconds > 0 ? 'Tiếp tục' : 'Bắt đầu bấm giờ'),
+                          label: Text(
+                            _stopwatchElapsedSeconds > 0
+                                ? 'Tiếp tục'
+                                : 'Bắt đầu bấm giờ',
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF148147),
                             foregroundColor: Colors.white,
@@ -604,13 +683,20 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                           ),
                         ),
                       OutlinedButton.icon(
-                        onPressed: _stopwatchElapsedSeconds > 0 ? _resetStopwatch : null,
+                        onPressed: _stopwatchElapsedSeconds > 0
+                            ? _resetStopwatch
+                            : null,
                         icon: const Icon(Icons.replay_rounded, size: 18),
                         label: const Text('Đặt lại'),
                       ),
                       ElevatedButton.icon(
-                        onPressed: _stopwatchElapsedSeconds > 0 ? _applyStopwatchToInputs : null,
-                        icon: const Icon(Icons.check_circle_outline_rounded, size: 18),
+                        onPressed: _stopwatchElapsedSeconds > 0
+                            ? _applyStopwatchToInputs
+                            : null,
+                        icon: const Icon(
+                          Icons.check_circle_outline_rounded,
+                          size: 18,
+                        ),
                         label: const Text('Áp dụng thời gian này'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0A2740),
@@ -627,7 +713,11 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
             // Nhập tay thông số Giờ / Phút / Giây
             Text(
               'Hoặc tự nhập tay thông số thời gian:',
-              style: TextStyle(fontSize: 12.5, color: Colors.grey.shade700, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 12.5,
+                color: Colors.grey.shade700,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -639,7 +729,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                     decoration: InputDecoration(
                       labelText: 'Giờ',
                       suffixText: 'giờ',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       isDense: true,
                     ),
                   ),
@@ -652,7 +744,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                     decoration: InputDecoration(
                       labelText: 'Phút',
                       suffixText: 'phút',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       isDense: true,
                     ),
                   ),
@@ -665,7 +759,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                     decoration: InputDecoration(
                       labelText: 'Giây',
                       suffixText: 'giây',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       isDense: true,
                     ),
                   ),
@@ -690,7 +786,10 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
                 : const Icon(Icons.picture_as_pdf_rounded, size: 22),
             label: const Text(
@@ -701,7 +800,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
               backgroundColor: const Color(0xFF148147),
               foregroundColor: Colors.white,
               elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),

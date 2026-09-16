@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../providers/electricity_bill_provider.dart';
 import '../../providers/processing_profit_provider.dart';
+import '../../core/input/localized_number.dart';
 import '../../data/power_consumption_data.dart';
 
 class ProcessingProfitScreen extends StatefulWidget {
@@ -90,21 +91,23 @@ class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
                 const SizedBox(height: 24),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Nhập giá gia công 1 Tấn (VNĐ)',
+                    labelText: 'Giá gia công (nghìn đồng/tấn)',
                     border: OutlineInputBorder(),
-                    suffixText: ',000',
+                    suffixText: 'nghìn ₫',
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: profitProvider.setProcessingPrice,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Nhập lương nhân viên 1 ngày (VNĐ)',
+                    labelText: 'Lương nhân viên/ngày (nghìn đồng)',
                     border: OutlineInputBorder(),
-                    suffixText: ',000',
+                    suffixText: 'nghìn ₫',
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: profitProvider.setDailySalary,
                 ),
                 const SizedBox(height: 24),

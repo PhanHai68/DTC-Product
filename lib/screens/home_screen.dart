@@ -41,6 +41,7 @@ class HomeScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             const SliverToBoxAdapter(child: _BrandHeader()),
+            const SliverToBoxAdapter(child: _QuickSearchBar()),
             SliverToBoxAdapter(
               child: Center(
                 child: ConstrainedBox(
@@ -160,61 +161,111 @@ class _HomeActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFDDE6E9)),
-        boxShadow: [
-          BoxShadow(
-            color: DtcPalette.navy.withValues(alpha: 0.055),
-            blurRadius: 18,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          key: ValueKey('home_solution_${action.route}'),
-          onTap: onTap,
-          child: Padding(
-            padding: EdgeInsets.all(compact ? 9 : 11),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(compact ? 8 : 12),
-                    decoration: BoxDecoration(
-                      color: action.tint,
-                      borderRadius: BorderRadius.circular(15),
+    return Semantics(
+      button: true,
+      label: 'Mở ${action.title}',
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0xFFDDE6E9)),
+          boxShadow: [
+            BoxShadow(
+              color: DtcPalette.navy.withValues(alpha: 0.055),
+              blurRadius: 18,
+              offset: const Offset(0, 7),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            key: ValueKey('home_solution_${action.route}'),
+            onTap: onTap,
+            child: Padding(
+              padding: EdgeInsets.all(compact ? 9 : 11),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(compact ? 8 : 12),
+                      decoration: BoxDecoration(
+                        color: action.tint,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: _ActionVisual(action: action, compact: compact),
                     ),
-                    child: _ActionVisual(action: action, compact: compact),
                   ),
-                ),
-                SizedBox(height: compact ? 9 : 11),
-                SizedBox(
-                  height: compact ? 33 : 38,
-                  child: Center(
-                    child: Text(
-                      action.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: DtcPalette.ink,
-                        fontSize: compact ? 15.5 : 17,
-                        height: 1.12,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.25,
+                  SizedBox(height: compact ? 9 : 11),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: compact ? 33 : 38),
+                    child: Center(
+                      child: Text(
+                        action.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: DtcPalette.ink,
+                          fontSize: compact ? 15.5 : 17,
+                          height: 1.12,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.25,
+                        ),
                       ),
                     ),
                   ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickSearchBar extends StatelessWidget {
+  const _QuickSearchBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1120),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 0, 18, 10),
+          child: Material(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: Color(0xFFDDE6E9)),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () => context.push('/search'),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Row(
+                  children: [
+                    Icon(Icons.search_rounded, color: Color(0xFF087F78)),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Tra cứu model hoặc chức năng',
+                        style: TextStyle(
+                          color: DtcPalette.muted,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Icon(Icons.arrow_forward_rounded, color: Color(0xFF087F78)),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -284,10 +335,10 @@ class _MinimalFooter extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.fromLTRB(16, 18, 16, 12),
         child: Text(
-          'DTCGroup  •  v1.0.3',
+          'DTC Group',
           style: TextStyle(
-            color: Color(0xFF8FA2AD),
-            fontSize: 11,
+            color: Color(0xFF536B78),
+            fontSize: 12,
             fontWeight: FontWeight.w700,
           ),
         ),

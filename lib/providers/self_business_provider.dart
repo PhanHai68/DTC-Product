@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../core/input/localized_number.dart';
+
 class SelfBusinessProvider extends ChangeNotifier {
   double _rawMaterialPrice = 0;
   double _finishedProductPrice = 0;
@@ -16,15 +18,15 @@ class SelfBusinessProvider extends ChangeNotifier {
   double? get netProfit => _netProfit;
 
   void setRawMaterialPrice(String val) {
-    _rawMaterialPrice = double.tryParse(val) ?? 0;
+    _rawMaterialPrice = parseLocalizedDouble(val) ?? 0;
   }
 
   void setFinishedProductPrice(String val) {
-    _finishedProductPrice = double.tryParse(val) ?? 0;
+    _finishedProductPrice = parseLocalizedDouble(val) ?? 0;
   }
 
   void setByProductPrice(String val) {
-    _byProductPrice = double.tryParse(val) ?? 0;
+    _byProductPrice = parseLocalizedDouble(val) ?? 0;
   }
 
   void calculate({
@@ -42,15 +44,31 @@ class SelfBusinessProvider extends ChangeNotifier {
     _costRawMaterial = capacity * 1000 * totalHours * _rawMaterialPrice;
 
     // Tổng Doanh thu Bán Thành Phẩm = Năng suất thành phẩm x 1000 x Số giờ x Giá bán
-    _revenueFinished = finishedCapacity * 1000 * totalHours * _finishedProductPrice;
+    _revenueFinished =
+        finishedCapacity * 1000 * totalHours * _finishedProductPrice;
 
     // Tổng Doanh thu Bán Phế Phẩm = Năng suất phế phẩm x 1000 x Số giờ x Giá bán
     _revenueByProduct = byProductCapacity * 1000 * totalHours * _byProductPrice;
 
     // Lợi nhuận ròng = Doanh thu - Phí nguyên liệu - Điện - Lương
     // (Áp dụng theo ghi chú công thức để chính xác với khái niệm "Lợi nhuận ròng")
-    _netProfit = (_revenueFinished! + _revenueByProduct!) - _costRawMaterial! - electricityBill - dailySalary;
+    _netProfit =
+        (_revenueFinished! + _revenueByProduct!) -
+        _costRawMaterial! -
+        electricityBill -
+        dailySalary;
 
+    notifyListeners();
+  }
+
+  void resetSession() {
+    _rawMaterialPrice = 0;
+    _finishedProductPrice = 0;
+    _byProductPrice = 0;
+    _costRawMaterial = null;
+    _revenueFinished = null;
+    _revenueByProduct = null;
+    _netProfit = null;
     notifyListeners();
   }
 }

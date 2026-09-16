@@ -8,45 +8,54 @@ class ColorSorterCategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void developing() {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tính năng đang được phát triển')),
-      );
-    }
-
     return TechnologyMenuScaffold(
       title: 'Máy tách màu',
       entries: [
         TechnologyMenuEntry(
           id: 'category_rice',
-          title: 'Máy tách màu Gạo',
-          icon: Icons.grass_rounded,
+          title: 'Gạo',
+          icon: Icons.rice_bowl_rounded,
+          imagePath: 'assets/images/icon_paddy.jpg',
+          iconColor: const Color(0xFFE65100),
+          iconBackgroundColor: const Color(0xFFFFF3E0),
           featured: true,
           onTap: () => context.push('/color_sorter_menu'),
         ),
         TechnologyMenuEntry(
           id: 'category_paddy',
-          title: 'Máy tách màu Thóc và Gạo xô',
-          icon: Icons.agriculture_rounded,
-          onTap: developing,
+          title: 'Thóc và Gạo xô',
+          icon: Icons.grass_rounded,
+          imagePath: 'assets/images/icon_paddy.jpg',
+          iconColor: const Color(0xFFF57F17),
+          iconBackgroundColor: const Color(0xFFFFFDE7),
+          onTap: () => context.push('/paddy_color_sorter_menu'),
         ),
         TechnologyMenuEntry(
           id: 'category_tea',
-          title: 'Máy tách màu Trà',
-          icon: Icons.emoji_nature_rounded,
+          title: 'Trà (Chè)',
+          icon: Icons.eco_rounded,
+          imagePath: 'assets/images/icon_tea.jpg',
+          iconColor: const Color(0xFF2E7D32),
+          iconBackgroundColor: const Color(0xFFE8F5E9),
           onTap: () => context.push('/tea_color_sorter_menu'),
         ),
         TechnologyMenuEntry(
           id: 'category_mineral',
-          title: 'Máy tách màu khoáng sản',
-          icon: Icons.landslide_rounded,
-          onTap: developing,
+          title: 'Khoáng sản',
+          icon: Icons.terrain_rounded,
+          imagePath: 'assets/images/icon_mineral.jpg',
+          iconColor: const Color(0xFF00838F),
+          iconBackgroundColor: const Color(0xFFE0F7FA),
+          onTap: () => context.push('/mineral_color_sorter_menu'),
         ),
         TechnologyMenuEntry(
           id: 'category_agro',
-          title: 'Máy tách màu nông sản và các loại hạt',
-          icon: Icons.eco_rounded,
-          onTap: developing,
+          title: 'Nông sản và các loại hạt',
+          icon: Icons.spa_rounded,
+          imagePath: 'assets/images/icon_agro.jpg',
+          iconColor: const Color(0xFF5D4037),
+          iconBackgroundColor: const Color(0xFFEFEBE9),
+          onTap: () => context.push('/agro_color_sorter_menu'),
         ),
       ],
     );

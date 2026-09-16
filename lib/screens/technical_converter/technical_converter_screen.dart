@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/technical_conversion.dart';
+import '../../core/input/localized_number.dart';
 
 class TechnicalConverterScreen extends StatefulWidget {
   const TechnicalConverterScreen({super.key});
@@ -41,10 +42,16 @@ class _TechnicalConverterScreenState extends State<TechnicalConverterScreen>
           indicatorColor: const Color(0xFF148147),
           indicatorWeight: 3.5,
           tabs: const [
-            Tab(icon: Icon(Icons.grain_rounded, size: 20), text: 'Mesh - Micron - mm'),
-            Tab(icon: Icon(Icons.adjust_rounded, size: 20), text: 'Kích Thước Ống (DN)'),
-            Tab(icon: Icon(Icons.compress_rounded, size: 20), text: 'Áp Suất (Pressure)'),
-            Tab(icon: Icon(Icons.air_rounded, size: 20), text: 'Lưu Lượng Khí (Air Flow)'),
+            Tab(
+              icon: Icon(Icons.grain_rounded, size: 20),
+              text: 'Mesh - Micron - mm',
+            ),
+            Tab(
+              icon: Icon(Icons.adjust_rounded, size: 20),
+              text: 'Kích thước ống (DN)',
+            ),
+            Tab(icon: Icon(Icons.compress_rounded, size: 20), text: 'Áp suất'),
+            Tab(icon: Icon(Icons.air_rounded, size: 20), text: 'Lưu lượng khí'),
           ],
         ),
       ),
@@ -73,7 +80,8 @@ class _MeshMicronTab extends StatefulWidget {
 
 class _MeshMicronTabState extends State<_MeshMicronTab> {
   final _searchController = TextEditingController();
-  MeshConversionItem? _selectedItem = TechnicalConversionData.meshList[10]; // Mặc định Mesh 18
+  MeshConversionItem? _selectedItem =
+      TechnicalConversionData.meshList[10]; // Mặc định Mesh 18
 
   @override
   void dispose() {
@@ -114,6 +122,7 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
                   prefixIcon: const Icon(Icons.search_rounded),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
+                          tooltip: 'Xóa từ khóa',
                           icon: const Icon(Icons.clear_rounded),
                           onPressed: () {
                             _searchController.clear();
@@ -123,7 +132,9 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
                       : null,
                   filled: true,
                   fillColor: Colors.white,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   isDense: true,
                 ),
               ),
@@ -132,21 +143,70 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
               // 3. Bảng dữ liệu Mesh - Micron
               Card(
                 elevation: 1.5,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                         color: const Color(0xFF148147).withValues(alpha: 0.1),
                         child: const Row(
                           children: [
-                            Expanded(flex: 2, child: Text('Mesh (US)', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('Micron (μm)', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('Milimet (mm)', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('Inch', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Mesh (US)',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Micron (μm)',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Milimet (mm)',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Inch',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -163,8 +223,13 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
                             child: Container(
                               color: isSelected
                                   ? const Color(0xFFE8F5E9)
-                                  : (idx % 2 == 0 ? Colors.white : const Color(0xFFFAFAFA)),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  : (idx % 2 == 0
+                                        ? Colors.white
+                                        : const Color(0xFFFAFAFA)),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -174,14 +239,48 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                                        color: isSelected ? const Color(0xFF148147) : const Color(0xFF0A2740),
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.w600,
+                                        color: isSelected
+                                            ? const Color(0xFF148147)
+                                            : const Color(0xFF0A2740),
                                       ),
                                     ),
                                   ),
-                                  Expanded(flex: 3, child: Text('${item.micron} μm', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14))),
-                                  Expanded(flex: 3, child: Text('${item.mm} mm', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14))),
-                                  Expanded(flex: 3, child: Text('${item.inch}"', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade700, fontSize: 14))),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      '${item.micron} μm',
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      '${item.mm} mm',
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      '${item.inch}"',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -213,23 +312,38 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.check_circle_rounded, color: Color(0xFF148147), size: 20),
+                    Icon(
+                      Icons.check_circle_rounded,
+                      color: Color(0xFF148147),
+                      size: 20,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       'KÍCH THƯỚC ĐANG TRA CỨU',
-                      style: TextStyle(color: Color(0xFF148147), fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Color(0xFF148147),
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE8F5E9),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     'Mesh ${item.mesh}',
-                    style: const TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold, fontSize: 13),
+                    style: const TextStyle(
+                      color: Color(0xFF2E7D32),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
               ],
@@ -269,11 +383,22 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
   Widget _buildInfoSub(String title, String value, Color color) {
     return Column(
       children: [
-        Text(title, style: TextStyle(color: Colors.grey.shade700, fontSize: 11, fontWeight: FontWeight.w600)),
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.grey.shade700,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: color,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );
@@ -291,7 +416,8 @@ class _PipeSizeTab extends StatefulWidget {
 }
 
 class _PipeSizeTabState extends State<_PipeSizeTab> {
-  PipeSizeItem _selectedPipe = TechnicalConversionData.pipeSizeList[4]; // Mặc định DN20 (3/4")
+  PipeSizeItem _selectedPipe =
+      TechnicalConversionData.pipeSizeList[4]; // Mặc định DN20 (3/4")
 
   @override
   Widget build(BuildContext context) {
@@ -307,7 +433,9 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
               Card(
                 elevation: 2,
                 color: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(18),
                   child: Column(
@@ -317,21 +445,38 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.radio_button_checked_rounded, color: Color(0xFF148147), size: 20),
+                              const Icon(
+                                Icons.radio_button_checked_rounded,
+                                color: Color(0xFF148147),
+                                size: 20,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 '${_selectedPipe.dn} (${_selectedPipe.inch})',
-                                style: const TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFE8F5E9),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Text('Tiêu Chuẩn Công Nghiệp', style: TextStyle(color: Color(0xFF2E7D32), fontSize: 11)),
+                            child: const Text(
+                              'Tiêu Chuẩn Công Nghiệp',
+                              style: TextStyle(
+                                color: Color(0xFF2E7D32),
+                                fontSize: 11,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -341,21 +486,65 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
                           Expanded(
                             child: Column(
                               children: [
-                                Text('ĐƯỜNG KÍNH NGOÀI OD', style: TextStyle(color: Colors.grey.shade700, fontSize: 11, fontWeight: FontWeight.w600)),
+                                Text(
+                                  'ĐƯỜNG KÍNH NGOÀI OD',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
-                                Text('Ø ${_selectedPipe.odMm} mm', style: const TextStyle(color: Color(0xFF148147), fontSize: 22, fontWeight: FontWeight.bold)),
-                                Text('Phi tiêu chuẩn', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
+                                Text(
+                                  'Ø ${_selectedPipe.odMm} mm',
+                                  style: const TextStyle(
+                                    color: Color(0xFF148147),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'Phi tiêu chuẩn',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 11,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                          Container(width: 1, height: 50, color: Colors.black12),
+                          Container(
+                            width: 1,
+                            height: 50,
+                            color: Colors.black12,
+                          ),
                           Expanded(
                             child: Column(
                               children: [
-                                Text('ĐƯỜNG KÍNH TRONG ID', style: TextStyle(color: Colors.grey.shade700, fontSize: 11, fontWeight: FontWeight.w600)),
+                                Text(
+                                  'ĐƯỜNG KÍNH TRONG ID',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
-                                Text('${_selectedPipe.idMm} mm', style: const TextStyle(color: Color(0xFFF57F17), fontSize: 22, fontWeight: FontWeight.bold)),
-                                Text('Ống SCH40', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
+                                Text(
+                                  '${_selectedPipe.idMm} mm',
+                                  style: const TextStyle(
+                                    color: Color(0xFFF57F17),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'Ống SCH40',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 11,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -370,21 +559,70 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
               // Bảng danh sách kích thước ống
               Card(
                 elevation: 1.5,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                         color: const Color(0xFF148147).withValues(alpha: 0.1),
                         child: const Row(
                           children: [
-                            Expanded(flex: 2, child: Text('DN', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('Hệ Inch', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('OD (mm) - Phi', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
-                            Expanded(flex: 3, child: Text('ID (mm) - SCH40', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 13))),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'DN',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Hệ Inch',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'OD (mm) - Phi',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'ID (mm) - SCH40',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -394,15 +632,21 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
                         itemCount: TechnicalConversionData.pipeSizeList.length,
                         separatorBuilder: (_, _) => const Divider(height: 1),
                         itemBuilder: (context, idx) {
-                          final item = TechnicalConversionData.pipeSizeList[idx];
+                          final item =
+                              TechnicalConversionData.pipeSizeList[idx];
                           final isSelected = item.dn == _selectedPipe.dn;
                           return InkWell(
                             onTap: () => setState(() => _selectedPipe = item),
                             child: Container(
                               color: isSelected
                                   ? const Color(0xFFE8F5E9)
-                                  : (idx % 2 == 0 ? Colors.white : const Color(0xFFFAFAFA)),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  : (idx % 2 == 0
+                                        ? Colors.white
+                                        : const Color(0xFFFAFAFA)),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -413,13 +657,45 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: isSelected ? const Color(0xFF148147) : const Color(0xFF0A2740),
+                                        color: isSelected
+                                            ? const Color(0xFF148147)
+                                            : const Color(0xFF0A2740),
                                       ),
                                     ),
                                   ),
-                                  Expanded(flex: 3, child: Text(item.inch, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14))),
-                                  Expanded(flex: 3, child: Text('${item.odMm} mm', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14))),
-                                  Expanded(flex: 3, child: Text('${item.idMm} mm', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade700, fontSize: 14))),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      item.inch,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      '${item.odMm} mm',
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      '${item.idMm} mm',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -509,7 +785,9 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
               // Hướng dẫn
               Card(
                 elevation: 1.5,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -517,60 +795,107 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.swap_vert_rounded, color: Color(0xFF148147), size: 24),
+                          Icon(
+                            Icons.swap_vert_rounded,
+                            color: Color(0xFF148147),
+                            size: 24,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             'Máy Tính Quy Đổi Áp Suất',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0A2740)),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0A2740),
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 6),
                       Text(
                         'Nhập bất kỳ giá trị nào dưới đây, các đơn vị còn lại sẽ tự động quy đổi đồng bộ tức thì:',
-                        style: TextStyle(fontSize: 12.5, color: Colors.grey.shade700),
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          color: Colors.grey.shade700,
+                        ),
                       ),
                       const SizedBox(height: 16),
 
                       // Ô Bar
-                      _buildUnitField('Bar', 'Áp suất Bar (chuẩn Châu Âu / Máy nén khí)', _barCtrl, Colors.green),
+                      _buildUnitField(
+                        'Bar',
+                        'Áp suất Bar (chuẩn Châu Âu / Máy nén khí)',
+                        _barCtrl,
+                        Colors.green,
+                      ),
                       const SizedBox(height: 12),
 
                       // Ô PSI
-                      _buildUnitField('PSI', 'Pound per square inch (hệ Mỹ / Đồng hồ áp)', _psiCtrl, Colors.blue),
+                      _buildUnitField(
+                        'PSI',
+                        'Pound per square inch (hệ Mỹ / Đồng hồ áp)',
+                        _psiCtrl,
+                        Colors.blue,
+                      ),
                       const SizedBox(height: 12),
 
                       // Ô MPa
-                      _buildUnitField('MPa', 'Megapascal (tiêu chuẩn SI)', _mpaCtrl, Colors.teal),
+                      _buildUnitField(
+                        'MPa',
+                        'Megapascal (tiêu chuẩn SI)',
+                        _mpaCtrl,
+                        Colors.teal,
+                      ),
                       const SizedBox(height: 12),
 
                       // Ô kgf/cm²
-                      _buildUnitField('kgf/cm²', 'Ký hơi (áp lực thực tế nhà xưởng)', _kgfCtrl, Colors.orange),
+                      _buildUnitField(
+                        'kgf/cm²',
+                        'Ký hơi (áp lực thực tế nhà xưởng)',
+                        _kgfCtrl,
+                        Colors.orange,
+                      ),
                       const SizedBox(height: 12),
 
                       // Ô kPa
-                      _buildUnitField('kPa', 'Kilopascal (1 Bar = 100 kPa)', _kpaCtrl, Colors.indigo),
+                      _buildUnitField(
+                        'kPa',
+                        'Kilopascal (1 Bar = 100 kPa)',
+                        _kpaCtrl,
+                        Colors.indigo,
+                      ),
                       const SizedBox(height: 18),
 
                       // Các nút bấm nhanh áp suất thường dùng máy tách màu
                       Text(
                         'Mức áp suất thường gặp trong máy tách màu & máy nén khí:',
-                        style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: Colors.grey.shade800),
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade800,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children: [2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 6.0, 7.0, 8.0].map((barVal) {
-                          return ActionChip(
-                            label: Text('$barVal Bar', style: const TextStyle(fontWeight: FontWeight.w600)),
-                            backgroundColor: const Color(0xFFE8F5E9),
-                            onPressed: () {
-                              _barCtrl.text = '$barVal';
-                              _updateFromUnit(barVal, 'Bar');
-                            },
-                          );
-                        }).toList(),
+                        children: [2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 6.0, 7.0, 8.0]
+                            .map((barVal) {
+                              return ActionChip(
+                                label: Text(
+                                  '$barVal Bar',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                backgroundColor: const Color(0xFFE8F5E9),
+                                onPressed: () {
+                                  _barCtrl.text = '$barVal';
+                                  _updateFromUnit(barVal, 'Bar');
+                                },
+                              );
+                            })
+                            .toList(),
                       ),
                     ],
                   ),
@@ -587,22 +912,32 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
     );
   }
 
-  Widget _buildUnitField(String unit, String desc, TextEditingController ctrl, MaterialColor color) {
+  Widget _buildUnitField(
+    String unit,
+    String desc,
+    TextEditingController ctrl,
+    MaterialColor color,
+  ) {
     return Row(
       children: [
         SizedBox(
           width: 90,
           child: Text(
             unit,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2740)),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0A2740),
+            ),
           ),
         ),
         Expanded(
           child: TextField(
             controller: ctrl,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: const [LocalizedDecimalTextInputFormatter()],
             onChanged: (val) {
-              final d = double.tryParse(val.trim()) ?? 0.0;
+              final d = parseLocalizedDouble(val) ?? 0.0;
               _updateFromUnit(d, unit);
             },
             decoration: InputDecoration(
@@ -610,7 +945,9 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
               helperText: desc,
               helperStyle: const TextStyle(fontSize: 11),
               suffixText: unit,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               isDense: true,
             ),
           ),
@@ -620,7 +957,20 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
   }
 
   Widget _buildReferenceTable() {
-    final sampleBars = [0.5, 1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0];
+    final sampleBars = [
+      0.5,
+      1.0,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      10.0,
+    ];
 
     return Card(
       elevation: 1.5,
@@ -634,7 +984,11 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
                 'Bảng Quy Đổi Mẫu Chuẩn (Database_QuyDoi)',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0A2740)),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Color(0xFF0A2740),
+                ),
               ),
             ),
             Container(
@@ -642,11 +996,61 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
               color: const Color(0xFF148147).withValues(alpha: 0.1),
               child: const Row(
                 children: [
-                  Expanded(child: Text('Bar', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('PSI', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('MPa', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('kgf/cm²', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('kPa', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
+                  Expanded(
+                    child: Text(
+                      'Bar',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'PSI',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'MPa',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'kgf/cm²',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'kPa',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -660,14 +1064,51 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
                 final res = TechnicalConversionData.convertPressure(bar, 'Bar');
                 return Container(
                   color: idx % 2 == 0 ? Colors.white : const Color(0xFFFAFAFA),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   child: Row(
                     children: [
-                      Expanded(child: Text('$bar', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF148147), fontSize: 14))),
-                      Expanded(child: Text(res['PSI']!.toStringAsFixed(1), textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
-                      Expanded(child: Text(res['MPa']!.toStringAsFixed(2), textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
-                      Expanded(child: Text(res['kgf/cm²']!.toStringAsFixed(2), textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
-                      Expanded(child: Text(res['kPa']!.toStringAsFixed(0), textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
+                      Expanded(
+                        child: Text(
+                          '$bar',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF148147),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          res['PSI']!.toStringAsFixed(1),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          res['MPa']!.toStringAsFixed(2),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          res['kgf/cm²']!.toStringAsFixed(2),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          res['kPa']!.toStringAsFixed(0),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -750,7 +1191,9 @@ class _AirFlowConverterTabState extends State<_AirFlowConverterTab> {
             children: [
               Card(
                 elevation: 1.5,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -758,54 +1201,96 @@ class _AirFlowConverterTabState extends State<_AirFlowConverterTab> {
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.air_rounded, color: Color(0xFF148147), size: 24),
+                          Icon(
+                            Icons.air_rounded,
+                            color: Color(0xFF148147),
+                            size: 24,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             'Máy Tính Quy Đổi Lưu Lượng Khí Nén',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0A2740)),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0A2740),
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 6),
                       Text(
                         'Nhập giá trị vào bất kỳ ô nào để tính toán đồng thời các đơn vị còn lại:',
-                        style: TextStyle(fontSize: 12.5, color: Colors.grey.shade700),
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          color: Colors.grey.shade700,
+                        ),
                       ),
                       const SizedBox(height: 16),
 
-                      _buildUnitField('m³/min', 'Mét khối / phút (tiêu chuẩn máy nén khí)', _m3MinCtrl),
+                      _buildUnitField(
+                        'm³/min',
+                        'Mét khối / phút (tiêu chuẩn máy nén khí)',
+                        _m3MinCtrl,
+                      ),
                       const SizedBox(height: 12),
 
-                      _buildUnitField('L/min', 'Lít / phút (1 m³/min = 1,000 L/min)', _lMinCtrl),
+                      _buildUnitField(
+                        'L/min',
+                        'Lít / phút (1 m³/min = 1,000 L/min)',
+                        _lMinCtrl,
+                      ),
                       const SizedBox(height: 12),
 
-                      _buildUnitField('CFM', 'Cubic feet per minute (hệ Anh/Mỹ)', _cfmCtrl),
+                      _buildUnitField(
+                        'CFM',
+                        'Cubic feet per minute (hệ Anh/Mỹ)',
+                        _cfmCtrl,
+                      ),
                       const SizedBox(height: 12),
 
-                      _buildUnitField('m³/h', 'Mét khối / giờ (1 m³/min = 60 m³/h)', _m3HCtrl),
+                      _buildUnitField(
+                        'm³/h',
+                        'Mét khối / giờ (1 m³/min = 60 m³/h)',
+                        _m3HCtrl,
+                      ),
                       const SizedBox(height: 12),
 
-                      _buildUnitField('L/s', 'Lít / giây (1 L/s = 60 L/min)', _lSCtrl),
+                      _buildUnitField(
+                        'L/s',
+                        'Lít / giây (1 L/s = 60 L/min)',
+                        _lSCtrl,
+                      ),
                       const SizedBox(height: 18),
 
                       Text(
                         'Dải lưu lượng thường gặp của máy nén khí máy tách màu:',
-                        style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: Colors.grey.shade800),
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade800,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children: [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0].map((flowVal) {
-                          return ActionChip(
-                            label: Text('$flowVal m³/min', style: const TextStyle(fontWeight: FontWeight.w600)),
-                            backgroundColor: const Color(0xFFE8F5E9),
-                            onPressed: () {
-                              _m3MinCtrl.text = '$flowVal';
-                              _updateFromUnit(flowVal, 'm³/min');
-                            },
-                          );
-                        }).toList(),
+                        children: [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0]
+                            .map((flowVal) {
+                              return ActionChip(
+                                label: Text(
+                                  '$flowVal m³/min',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                backgroundColor: const Color(0xFFE8F5E9),
+                                onPressed: () {
+                                  _m3MinCtrl.text = '$flowVal';
+                                  _updateFromUnit(flowVal, 'm³/min');
+                                },
+                              );
+                            })
+                            .toList(),
                       ),
                     ],
                   ),
@@ -828,15 +1313,20 @@ class _AirFlowConverterTabState extends State<_AirFlowConverterTab> {
           width: 90,
           child: Text(
             unit,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2740)),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0A2740),
+            ),
           ),
         ),
         Expanded(
           child: TextField(
             controller: ctrl,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: const [LocalizedDecimalTextInputFormatter()],
             onChanged: (val) {
-              final d = double.tryParse(val.trim()) ?? 0.0;
+              final d = parseLocalizedDouble(val) ?? 0.0;
               _updateFromUnit(d, unit);
             },
             decoration: InputDecoration(
@@ -844,7 +1334,9 @@ class _AirFlowConverterTabState extends State<_AirFlowConverterTab> {
               helperText: desc,
               helperStyle: const TextStyle(fontSize: 11),
               suffixText: unit,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               isDense: true,
             ),
           ),
@@ -868,7 +1360,11 @@ class _AirFlowConverterTabState extends State<_AirFlowConverterTab> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
                 'Bảng Quy Đổi Mẫu Chuẩn (Database_QuyDoi)',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0A2740)),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Color(0xFF0A2740),
+                ),
               ),
             ),
             Container(
@@ -876,11 +1372,61 @@ class _AirFlowConverterTabState extends State<_AirFlowConverterTab> {
               color: const Color(0xFF148147).withValues(alpha: 0.1),
               child: const Row(
                 children: [
-                  Expanded(child: Text('m³/min', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('L/min', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('CFM', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('m³/h', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
-                  Expanded(child: Text('L/s', textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 12.5))),
+                  Expanded(
+                    child: Text(
+                      'm³/min',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'L/min',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'CFM',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'm³/h',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'L/s',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -891,17 +1437,57 @@ class _AirFlowConverterTabState extends State<_AirFlowConverterTab> {
               separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (context, idx) {
                 final flow = sampleFlows[idx];
-                final res = TechnicalConversionData.convertAirFlow(flow, 'm³/min');
+                final res = TechnicalConversionData.convertAirFlow(
+                  flow,
+                  'm³/min',
+                );
                 return Container(
                   color: idx % 2 == 0 ? Colors.white : const Color(0xFFFAFAFA),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   child: Row(
                     children: [
-                      Expanded(child: Text('$flow', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF148147), fontSize: 14))),
-                      Expanded(child: Text(res['L/min']!.toStringAsFixed(0), textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
-                      Expanded(child: Text(res['CFM']!.toStringAsFixed(2), textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
-                      Expanded(child: Text(res['m³/h']!.toStringAsFixed(0), textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
-                      Expanded(child: Text(res['L/s']!.toStringAsFixed(2), textAlign: TextAlign.center, style: const TextStyle(fontSize: 14))),
+                      Expanded(
+                        child: Text(
+                          '$flow',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF148147),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          res['L/min']!.toStringAsFixed(0),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          res['CFM']!.toStringAsFixed(2),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          res['m³/h']!.toStringAsFixed(0),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          res['L/s']!.toStringAsFixed(2),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
                     ],
                   ),
                 );

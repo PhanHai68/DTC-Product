@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../providers/processing_profit_provider.dart';
 import '../../providers/payback_period_provider.dart';
+import '../../core/input/localized_number.dart';
 
 class PaybackPeriodScreen extends StatefulWidget {
   const PaybackPeriodScreen({super.key});
@@ -73,21 +74,23 @@ class _PaybackPeriodScreenState extends State<PaybackPeriodScreen> {
                 const SizedBox(height: 24),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Nhập giá máy tách màu (VNĐ)',
+                    labelText: 'Giá máy tách màu (nghìn đồng)',
                     border: OutlineInputBorder(),
-                    suffixText: ',000',
+                    suffixText: 'nghìn ₫',
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: paybackProvider.setMachinePrice,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Nhập giá trọn cụm thiết bị (VNĐ)',
+                    labelText: 'Giá trọn cụm thiết bị (nghìn đồng)',
                     border: OutlineInputBorder(),
-                    suffixText: ',000',
+                    suffixText: 'nghìn ₫',
                   ),
                   keyboardType: TextInputType.number,
+                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: paybackProvider.setFullSetupPrice,
                 ),
                 const SizedBox(height: 24),

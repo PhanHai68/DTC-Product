@@ -33,48 +33,57 @@ class _PowerConsumptionScreenState extends State<PowerConsumptionScreen> {
             children: [
               Consumer<PowerConsumptionProvider>(
                 builder: (context, provider, child) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: DropdownMenu<String>(
-                          controller: _searchController,
-                          expandedInsets: EdgeInsets.zero,
-                          label: const Text('Chọn tên model máy'),
-                          enableFilter: true,
-                          leadingIcon: const Icon(Icons.search),
-                          dropdownMenuEntries: powerConsumptionData.keys
-                              .map(
-                                (modelName) => DropdownMenuEntry<String>(
-                                  value: modelName,
-                                  label: modelName,
-                                ),
-                              )
-                              .toList(),
-                          onSelected: (value) {
-                            if (value != null) {
-                              provider.selectModel(value);
-                              FocusScope.of(context).unfocus();
-                            }
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: provider.isLoading
-                            ? null
-                            : () {
-                                provider.selectModel(_searchController.text);
-                                FocusScope.of(context).unfocus();
-                              },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 16,
+                  final selector = DropdownMenu<String>(
+                    controller: _searchController,
+                    expandedInsets: EdgeInsets.zero,
+                    label: const Text('Chọn tên model máy'),
+                    enableFilter: true,
+                    leadingIcon: const Icon(Icons.search),
+                    dropdownMenuEntries: powerConsumptionData.keys
+                        .map(
+                          (modelName) => DropdownMenuEntry<String>(
+                            value: modelName,
+                            label: modelName,
                           ),
-                        ),
-                        child: const Text('Tra cứu'),
-                      ),
-                    ],
+                        )
+                        .toList(),
+                    onSelected: (value) {
+                      if (value != null) {
+                        provider.selectModel(value);
+                        FocusScope.of(context).unfocus();
+                      }
+                    },
+                  );
+                  final button = ElevatedButton.icon(
+                    onPressed: provider.isLoading
+                        ? null
+                        : () {
+                            provider.selectModel(_searchController.text);
+                            FocusScope.of(context).unfocus();
+                          },
+                    icon: const Icon(Icons.search_rounded),
+                    label: const Text('Tra cứu'),
+                  );
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 520) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            selector,
+                            const SizedBox(height: 10),
+                            button,
+                          ],
+                        );
+                      }
+                      return Row(
+                        children: [
+                          Expanded(child: selector),
+                          const SizedBox(width: 12),
+                          button,
+                        ],
+                      );
+                    },
                   );
                 },
               ),
