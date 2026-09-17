@@ -13,11 +13,11 @@ class AgroColorSorterScreen extends StatelessWidget {
     return ChangeNotifierProvider<TeaColorSorterProvider>(
       create: (_) => TeaColorSorterProvider(
         data: agroColorSorterSpecs,
-        initialModel: 'H-7',
+        initialModel: 'H7',
       ),
       child: const TeaColorSorterScreen(
-        initialModel: 'H-7',
-        availableModels: ['H-7'],
+        initialModel: 'H7',
+        availableModels: ['H7'],
       ),
     );
   }

@@ -104,6 +104,8 @@ void main() {
     expect(find.text('Tiện ích mở rộng'), findsOneWidget);
     expect(find.text('Lập Form Lưu Mẫu'), findsOneWidget);
     expect(find.byKey(const Key('extension_sample_record')), findsOneWidget);
+    expect(find.text('Theo Dõi Dự Án'), findsOneWidget);
+    expect(find.byKey(const Key('extension_project_tracking')), findsOneWidget);
     expect(find.text('Phân tích hoàn vốn'), findsNothing);
     expect(find.text('Thiết bị phụ trợ máy tách màu'), findsNothing);
     expect(tester.takeException(), isNull);

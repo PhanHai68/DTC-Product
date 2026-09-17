@@ -215,6 +215,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     if (m.contains('df21')) return 'assets/images/color_sorter/DF21Pro.jpg';
     if (m.contains('df12')) return 'assets/images/color_sorter/DF12Pro.jpg';
     if (m == 'sx8') return 'assets/images/color_sorter/sx8.jpg';
+    if (m == 'h7') return 'assets/images/color_sorter/Hinh_anh H7.jpg';
     return null;
   }
 
@@ -349,60 +350,128 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
             child: ListView(
               shrinkWrap: true,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.green.shade50,
-                        Colors.teal.shade50.withValues(alpha: 0.5),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.green.shade300,
-                      width: 1.2,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Text('⭐', style: TextStyle(fontSize: 16)),
-                          const SizedBox(width: 6),
-                          Text(
-                            'ĐẶC QUYỀN CÔNG NGHỆ DF PRO',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13.5,
-                              color: Colors.green.shade800,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
+                if (modelName.toLowerCase().startsWith('h') || modelName.toLowerCase() == 'sx8')
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.blue.shade50,
+                          Colors.indigo.shade50.withValues(alpha: 0.5),
                         ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      const SizedBox(height: 8),
-                      _buildProFeatureRow(
-                        'Tích hợp nền tảng tự học Deep Learning AI, công nghệ PLOV 3.0',
-                        'giúp đạt được mức hiệu quả >20% về chất lượng và năng suất.',
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.blue.shade300,
+                        width: 1.2,
                       ),
-                      const SizedBox(height: 6),
-                      _buildProFeatureRow(
-                        'Tối ưu hóa khả năng phân biệt các kích cỡ lá trà',
-                        'giảm thiểu vỡ vụn và hiện tượng chồng chéo nguyên liệu, tách hiệu quả cẫng, bồm, tạp chất... trong một lần xử lý.',
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text('⭐', style: TextStyle(fontSize: 16)),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Khả năng phân loại hạt',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 13.5,
+                                  color: Colors.blue.shade800,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Máy tách màu dòng H phù hợp với mọi nguyên liệu dạng hạt: hạt ít dầu, hạt nhiều dầu, hạt ít bụi, hạt nhiều bụi',
+                          style: TextStyle(fontSize: 12.5, height: 1.35, color: Colors.black87),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildProFeatureRow(
+                          'Công nghệ AI đột phá',
+                          'Được hỗ trợ bởi công nghệ phân loại chất lượng AI, máy có khả năng nhận diện chính xác những khác biệt nhỏ về màu sắc, hình dạng, kích thước và vật liệu. Từ đó nâng cao toàn diện khả năng phân loại hình dáng và tạp chất.',
+                        ),
+                        const SizedBox(height: 6),
+                        _buildProFeatureRow(
+                          'Công nghệ đa phổ VNIR',
+                          'Công nghệ tích hợp sâu đa phổ VNIR nhận diện chính xác những khác biệt nhỏ.',
+                        ),
+                        const SizedBox(height: 6),
+                        _buildProFeatureRow(
+                          'Công nghệ tự động thông minh',
+                          'Nhận biết một cách thông minh những khác biệt nhỏ của nguyên liệu thô và giảm hao hụt.',
+                        ),
+                        const SizedBox(height: 6),
+                        _buildProFeatureRow(
+                          'Dễ dàng kết nối và giám sát',
+                          'Kết nối dễ dàng với nhiều thiết bị đầu cuối khác nhau, điều khiển từ xa và phản hồi lập tức cho phép vận hành tự động.\n\nGiám sát sự thay đổi dòng liệu của dây chuyền sản xuất, điều chỉnh lưu lượng thông minh, tương tác và tích hợp hài hòa để hiện thực hóa quy trình sản xuất linh hoạt.',
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.green.shade50,
+                          Colors.teal.shade50.withValues(alpha: 0.5),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      const SizedBox(height: 6),
-                      _buildProFeatureRow(
-                        'Đáp ứng mọi bài toán phân loại',
-                        'phù hợp với mọi loại trà và quy trình sản xuất, yêu cầu phân loại cao hoàn toàn nằm trong tầm kiểm soát.',
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.green.shade300,
+                        width: 1.2,
                       ),
-                    ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text('⭐', style: TextStyle(fontSize: 16)),
+                            const SizedBox(width: 6),
+                            Text(
+                              'ĐẶC QUYỀN CÔNG NGHỆ DF PRO',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13.5,
+                                color: Colors.green.shade800,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        _buildProFeatureRow(
+                          'Tích hợp nền tảng tự học Deep Learning AI, công nghệ PLOV 3.0',
+                          'giúp đạt được mức hiệu quả >20% về chất lượng và năng suất.',
+                        ),
+                        const SizedBox(height: 6),
+                        _buildProFeatureRow(
+                          'Tối ưu hóa khả năng phân biệt các kích cỡ lá trà',
+                          'giảm thiểu vỡ vụn và hiện tượng chồng chéo nguyên liệu, tách hiệu quả cẫng, bồm, tạp chất... trong một lần xử lý.',
+                        ),
+                        const SizedBox(height: 6),
+                        _buildProFeatureRow(
+                          'Đáp ứng mọi bài toán phân loại',
+                          'phù hợp với mọi loại trà và quy trình sản xuất, yêu cầu phân loại cao hoàn toàn nằm trong tầm kiểm soát.',
+                        ),
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -587,7 +656,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
               const SizedBox(width: 9),
               Expanded(
                 child: Text(
-                  'Năng suất theo kích thước nguyên liệu',
+                  'Năng suất',
                   style: TextStyle(
                     color: color,
                     fontSize: 14,
@@ -623,7 +692,11 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.grain_rounded, color: color, size: 16),
+                    Icon(
+                      materialSize.toLowerCase().contains('cà phê') ? Icons.coffee : Icons.grain_rounded,
+                      color: color, 
+                      size: 16
+                    ),
                     const SizedBox(width: 7),
                     Text(
                       materialSize,
@@ -671,6 +744,21 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         break;
       case 'Camera mắt diều hâu 3.0':
         description = 'Hệ thống camera mắt diều hâu kết hợp camera holographic nhận biết chính xác những khác biệt nhỏ về màu sắc và hình dạng.';
+        break;
+      case 'AI Deep Learning':
+        description = '• Tự học và ghi nhớ đặc điểm vật liệu theo thời gian thực.\n• Phân tích – đánh giá mức độ lỗi từ đơn giản đến phức tạp.\n• Nhận diện chính xác các hạt lỗi ngay cả khi hình dạng và màu sắc gần tương đồng.\n• Mở ra khả năng phân loại không giới hạn, tối ưu chất lượng thành phẩm xuất khẩu.';
+        break;
+      case 'Công nghệ mắt diều hâu 3.0':
+        description = '• Chụp sắc nét từng hạt vật liệu chuyển động ở vận tốc siêu cao.\n• Phân biệt rõ các hạt có sắc thái màu gần tương tự nhau (như đốm kim, bạc bụng nhẹ).\n• Tăng khả năng nhận diện nguyên liệu khó lên đến 50%.';
+        break;
+      case 'Công nghệ tích hợp đa điểm ảnh':
+        description = '• Ánh sáng khả kiến (Visible): Tách các hạt khác màu.\n• Hồng ngoại gần (NIR): Nhận diện cấu trúc vật chất bên trong hạt.\n• Hồng ngoại sóng ngắn (SWIR): Phát hiện tạp chất vô cơ như nhựa trong, thủy tinh, đá sỏi.';
+        break;
+      case 'Công nghệ PLOV':
+        description = '• Kiểm soát tối ưu biên độ và tần số rung máng trượt hợp kim chống mài mòn.\n• Phân phối hạt gạo dàn đều, chuyển động song song ổn định.\n• Triệt tiêu tình trạng hạt nhảy cẫng, tăng độ chính xác của tia phun tách.';
+        break;
+      case 'Công nghệ hút bụi độc lập':
+        description = '• Hệ thống ống hút bụi khí động học bố trí riêng biệt tại từng máng.\n• Ngăn bụi bám vào thấu kính camera và đèn LED chiếu sáng.\n• Duy trì độ chính xác phân loại liên tục suốt ca làm việc 24/7.';
         break;
       default:
         description = 'Thông tin chi tiết công nghệ đang được cập nhật...';
@@ -1168,56 +1256,116 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                   );
                                 },
                               ),
-                            const SizedBox(height: 14),
-
+                              // Application Material Image
+                              if ((specs['model'] ?? '').toLowerCase().startsWith('h'))
+                                Column(
+                                  children: [
+                                    const SizedBox(height: 14),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: Colors.grey.shade300,
+                                          width: 1,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: 0.05,
+                                            ),
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 12.0),
+                                            child: Text(
+                                              'Nguyên liệu máy có khả năng tách',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue.shade900,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(12),
+                                              child: Image.asset(
+                                                'assets/images/color_sorter/Lieu-H.jpg',
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              const SizedBox(height: 14),
                             // Highlight Metrics
-                            if ((specs['capacity_display'] ?? '--').contains('\n') || (specs['capacity_display'] ?? '--').length > 15) ...[
-                              _buildCapacityOverview(
-                                specs['capacity_display'] ?? '--',
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  _buildHighlightCard(
-                                    'Số Camera',
-                                    specs['camera_qty'] ?? '--',
-                                    Icons.camera_alt,
-                                    Colors.blue.shade800,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _buildHighlightCard(
-                                    'Số Ejector',
-                                    specs['ejector_qty'] ?? '--',
-                                    Icons.air,
-                                    Colors.green.shade800,
-                                  ),
-                                ],
-                              ),
-                            ] else
-                              Row(
-                                children: [
-                                  _buildHighlightCard(
-                                    'Năng suất',
-                                    specs['capacity_display'] ?? '--',
-                                    Icons.speed,
-                                    Colors.orange.shade800,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _buildHighlightCard(
-                                    'Số Camera',
-                                    specs['camera_qty'] ?? '--',
-                                    Icons.camera_alt,
-                                    Colors.blue.shade800,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _buildHighlightCard(
-                                    'Số Ejector',
-                                    specs['ejector_qty'] ?? '--',
-                                    Icons.air,
-                                    Colors.green.shade800,
-                                  ),
-                                ],
-                              ),
+                            Builder(
+                              builder: (context) {
+                                final capText = specs['capacity_highlight'] ?? specs['capacity_display'] ?? '--';
+                                if (capText.contains('\n') || capText.length > 15) {
+                                  return Column(
+                                    children: [
+                                      _buildCapacityOverview(capText),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          _buildHighlightCard(
+                                            'Số Camera',
+                                            specs['camera_qty'] ?? '--',
+                                            Icons.camera_alt,
+                                            Colors.blue.shade800,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          _buildHighlightCard(
+                                            'Số Ejector',
+                                            specs['ejector_qty'] ?? '--',
+                                            Icons.air,
+                                            Colors.green.shade800,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return Row(
+                                    children: [
+                                      _buildHighlightCard(
+                                        'Năng suất',
+                                        capText,
+                                        Icons.speed,
+                                        Colors.orange.shade800,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      _buildHighlightCard(
+                                        'Số Camera',
+                                        specs['camera_qty'] ?? '--',
+                                        Icons.camera_alt,
+                                        Colors.blue.shade800,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      _buildHighlightCard(
+                                        'Số Ejector',
+                                        specs['ejector_qty'] ?? '--',
+                                        Icons.air,
+                                        Colors.green.shade800,
+                                      ),
+                                    ],
+                                  );
+                                }
+                              },
+                            ),
                             const SizedBox(height: 14),
 
                             // Core Technologies Badges

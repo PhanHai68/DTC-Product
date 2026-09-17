@@ -5,10 +5,11 @@ const List<Map<String, String>> mineralColorSorterSpecs = [
     'series': 'SX',
     'model': 'SX8',
     'product_name': 'Máy tách quang khoáng sản SX8',
+    'capacity_highlight': '4 - 10 t/h',
     'capacity_display':
-        '0.1–0.4 mm: 4–6 tấn/giờ\n'
-        '0.4–0.7 mm: 5–9 tấn/giờ\n'
-        '0.7–1.2 mm: 6–10 tấn/giờ',
+        '0.1–0.4 mm: 4–6 t/h\n'
+        '0.4–0.7 mm: 5–9 t/h\n'
+        '0.7–1.2 mm: 6–10 t/h',
     'layers_qty': '2',
     'camera_qty': '64',
     'ejector_qty': '2048',

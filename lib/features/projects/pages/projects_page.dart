@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/project_provider.dart';
 import '../models/project.dart';
+import '../providers/project_provider.dart';
+import '../widgets/project_card.dart';
+
+enum _ProjectSort { updated, name, startDate }
 
 class ProjectsPage extends StatefulWidget {
   const ProjectsPage({super.key});
@@ -12,218 +15,327 @@ class ProjectsPage extends StatefulWidget {
   State<ProjectsPage> createState() => _ProjectsPageState();
 }
 
-class _ProjectsPageState extends State<ProjectsPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _ProjectsPageState extends State<ProjectsPage> {
+  final _searchController = TextEditingController();
+  ProjectStatus? _status;
+  String? _engineer;
+  String? _customer;
+  DateTimeRange? _dateRange;
+  _ProjectSort _sort = _ProjectSort.updated;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        context.read<ProjectProvider>().loadProjects();
-      }
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => context.read<ProjectProvider>().loadProjects(),
+    );
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ProjectProvider>();
-    final theme = Theme.of(context);
-    final tealColor = const Color(0xFF007F7A);
-
+    final projects = _filtered(provider.projects);
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F7F9),
       appBar: AppBar(
-        title: const Text('THEO DÕI DỰ ÁN', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF102F46),
-        elevation: 0,
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(110),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Tìm kiếm dự án...',
-                    prefixIcon: Icon(Icons.search, color: tealColor),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
+        title: const Text('Theo dõi dự án'),
+        actions: [
+          IconButton(
+            tooltip: 'Bộ lọc nâng cao',
+            onPressed: () => _showFilters(provider.projects),
+            icon: Badge(
+              isLabelVisible:
+                  _engineer != null || _customer != null || _dateRange != null,
+              child: const Icon(Icons.filter_alt_outlined),
+            ),
+          ),
+          PopupMenuButton<_ProjectSort>(
+            tooltip: 'Sắp xếp',
+            initialValue: _sort,
+            onSelected: (value) => setState(() => _sort = value),
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: _ProjectSort.updated,
+                child: Text('Cập nhật gần nhất'),
               ),
-              TabBar(
-                controller: _tabController,
-                labelColor: tealColor,
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: tealColor,
-                tabs: const [
-                  Tab(text: 'Tất cả'),
-                  Tab(text: 'Đang triển khai'),
-                  Tab(text: 'Hoàn thành'),
-                ],
+              PopupMenuItem(value: _ProjectSort.name, child: Text('Tên dự án')),
+              PopupMenuItem(
+                value: _ProjectSort.startDate,
+                child: Text('Ngày bắt đầu'),
               ),
             ],
           ),
-        ),
+        ],
       ),
       body: provider.isLoadingProjects
           ? const Center(child: CircularProgressIndicator())
-          : provider.error != null
-              ? Center(child: Text(provider.error!))
-              : TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildProjectList(provider.projects),
-                    _buildProjectList(provider.projects.where((p) => p.status != 'Hoàn thành').toList()),
-                    _buildProjectList(provider.projects.where((p) => p.status == 'Hoàn thành').toList()),
-                  ],
-                ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Tính năng thêm dự án đang phát triển (Phase 2)')),
-          );
+          : provider.error != null && provider.projects.isEmpty
+          ? _ErrorState(
+              message: provider.error!,
+              onRetry: provider.loadProjects,
+            )
+          : RefreshIndicator(
+              onRefresh: provider.loadProjects,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: _Dashboard(projects: provider.projects),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _searchController,
+                            onChanged: (_) => setState(() {}),
+                            decoration: InputDecoration(
+                              hintText:
+                                  'Tên dự án, khách hàng, mã, model, serial...',
+                              prefixIcon: const Icon(Icons.search_rounded),
+                              suffixIcon: _searchController.text.isEmpty
+                                  ? null
+                                  : IconButton(
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(Icons.clear_rounded),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            height: 40,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                ChoiceChip(
+                                  label: const Text('Tất cả'),
+                                  selected: _status == null,
+                                  onSelected: (_) =>
+                                      setState(() => _status = null),
+                                ),
+                                const SizedBox(width: 8),
+                                ...ProjectStatus.values.map(
+                                  (status) => Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: ChoiceChip(
+                                      label: Text(status.label),
+                                      selected: _status == status,
+                                      onSelected: (_) =>
+                                          setState(() => _status = status),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (projects.isEmpty)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _EmptyState(
+                        hasFilter:
+                            _status != null ||
+                            _searchController.text.isNotEmpty,
+                      ),
+                    )
+                  else
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+                      sliver: SliverList.builder(
+                        itemCount: projects.length,
+                        itemBuilder: (_, index) => ProjectCard(
+                          project: projects[index],
+                          onTap: () async {
+                            await context.push(
+                              '/projects/${projects[index].id}',
+                            );
+                            if (context.mounted) {
+                              context.read<ProjectProvider>().loadProjects();
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          final created = await context.push<bool>('/projects/create');
+          if (!context.mounted) return;
+          if (created == true) {
+            context.read<ProjectProvider>().loadProjects();
+          }
         },
-        backgroundColor: tealColor,
-        child: const Icon(Icons.add, color: Colors.white),
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Tạo dự án'),
       ),
     );
   }
 
-  Widget _buildProjectList(List<Project> projects) {
-    if (projects.isEmpty) {
-      return const Center(child: Text('Không có dự án nào.', style: TextStyle(color: Colors.grey)));
+  List<Project> _filtered(List<Project> source) {
+    final query = _searchController.text.trim().toLowerCase();
+    final items = source.where((project) {
+      if (_status != null && project.status != _status) return false;
+      if (_engineer != null && project.technicalEngineer != _engineer) {
+        return false;
+      }
+      if (_customer != null && project.customerName != _customer) return false;
+      if (_dateRange != null &&
+          (project.startDate.isBefore(_dateRange!.start) ||
+              project.startDate.isAfter(
+                _dateRange!.end.add(const Duration(days: 1)),
+              ))) {
+        return false;
+      }
+      if (query.isEmpty) return true;
+      final machineText = project.machines
+          .map((item) => '${item.model} ${item.serialNumber}')
+          .join(' ');
+      return '${project.projectName} ${project.customerName} ${project.projectCode} $machineText'
+          .toLowerCase()
+          .contains(query);
+    }).toList();
+    switch (_sort) {
+      case _ProjectSort.name:
+        items.sort((a, b) => a.projectName.compareTo(b.projectName));
+      case _ProjectSort.startDate:
+        items.sort((a, b) => b.startDate.compareTo(a.startDate));
+      case _ProjectSort.updated:
+        items.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     }
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: projects.length,
-      itemBuilder: (context, index) {
-        final project = projects[index];
-        return _buildProjectCard(context, project);
-      },
-    );
+    return items;
   }
 
-  Widget _buildProjectCard(BuildContext context, Project project) {
-    final tealColor = const Color(0xFF007F7A);
-    final isCompleted = project.progress >= 1.0;
-    
-    String machinesText = project.machines.map((m) => '\${m.model} × \${m.quantity}').join(', ');
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: Colors.blueGrey.shade100),
-      ),
-      color: Colors.white,
-      child: InkWell(
-        onTap: () {
-          context.push('/projects/${project.id}');
-        },
-        borderRadius: BorderRadius.circular(14),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+  Future<void> _showFilters(List<Project> projects) async {
+    final engineers =
+        projects
+            .map((item) => item.technicalEngineer)
+            .where((item) => item.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
+    final customers =
+        projects
+            .map((item) => item.customerName)
+            .where((item) => item.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
+    var engineer = _engineer;
+    var customer = _customer;
+    var dateRange = _dateRange;
+    final applied = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setSheetState) => Padding(
+          padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      project.customerName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF102F46),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isCompleted ? Colors.green.shade50 : Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      isCompleted ? 'Hoàn thành' : 'Đang triển khai',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: isCompleted ? Colors.green.shade700 : Colors.blue.shade700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
               Text(
-                project.projectName,
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade700, fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(Icons.precision_manufacturing, size: 16, color: Colors.blueGrey.shade400),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      machinesText.isNotEmpty ? machinesText : 'Chưa có thông tin máy',
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ],
+                'Bộ lọc dự án',
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Tiến độ: ${(project.progress * 100).toInt()}%',
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.black87),
+              DropdownButtonFormField<String?>(
+                initialValue: engineer,
+                decoration: const InputDecoration(labelText: 'Kỹ sư phụ trách'),
+                items: [
+                  const DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text('Tất cả kỹ sư'),
+                  ),
+                  ...engineers.map(
+                    (value) =>
+                        DropdownMenuItem(value: value, child: Text(value)),
                   ),
                 ],
+                onChanged: (value) => setSheetState(() => engineer = value),
               ),
-              const SizedBox(height: 6),
-              LinearProgressIndicator(
-                value: project.progress,
-                backgroundColor: Colors.grey.shade200,
-                valueColor: AlwaysStoppedAnimation<Color>(tealColor),
-                minHeight: 6,
-                borderRadius: BorderRadius.circular(3),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String?>(
+                initialValue: customer,
+                decoration: const InputDecoration(labelText: 'Khách hàng'),
+                items: [
+                  const DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text('Tất cả khách hàng'),
+                  ),
+                  ...customers.map(
+                    (value) =>
+                        DropdownMenuItem(value: value, child: Text(value)),
+                  ),
+                ],
+                onChanged: (value) => setSheetState(() => customer = value),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                ),
+                leading: const Icon(Icons.date_range_outlined),
+                title: const Text('Khoảng ngày bắt đầu'),
+                subtitle: Text(
+                  dateRange == null
+                      ? 'Tất cả thời gian'
+                      : '${_shortDate(dateRange!.start)} – ${_shortDate(dateRange!.end)}',
+                ),
+                trailing: dateRange == null
+                    ? null
+                    : IconButton(
+                        onPressed: () => setSheetState(() => dateRange = null),
+                        icon: const Icon(Icons.clear),
+                      ),
+                onTap: () async {
+                  final value = await showDateRangePicker(
+                    context: context,
+                    firstDate: DateTime(2020),
+                    lastDate: DateTime(2100),
+                    initialDateRange: dateRange,
+                  );
+                  if (value != null) setSheetState(() => dateRange = value);
+                },
+              ),
+              const SizedBox(height: 18),
               Row(
                 children: [
-                  Icon(Icons.location_on_outlined, size: 14, color: Colors.grey.shade600),
-                  const SizedBox(width: 4),
-                  Text(
-                    project.location,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        engineer = null;
+                        customer = null;
+                        dateRange = null;
+                        Navigator.pop(sheetContext, true);
+                      },
+                      child: const Text('Xóa lọc'),
+                    ),
                   ),
-                  const Spacer(),
-                  Icon(Icons.calendar_today_outlined, size: 14, color: Colors.grey.shade600),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${project.startDate.day}/${project.startDate.month}/${project.startDate.year}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () => Navigator.pop(sheetContext, true),
+                      child: const Text('Áp dụng'),
+                    ),
                   ),
                 ],
               ),
@@ -232,5 +344,149 @@ class _ProjectsPageState extends State<ProjectsPage> with SingleTickerProviderSt
         ),
       ),
     );
+    if (applied == true && mounted) {
+      setState(() {
+        _engineer = engineer;
+        _customer = customer;
+        _dateRange = dateRange;
+      });
+    }
   }
+
+  String _shortDate(DateTime value) =>
+      '${value.day.toString().padLeft(2, '0')}/${value.month.toString().padLeft(2, '0')}/${value.year}';
+}
+
+class _Dashboard extends StatelessWidget {
+  const _Dashboard({required this.projects});
+  final List<Project> projects;
+
+  @override
+  Widget build(BuildContext context) {
+    final values = [
+      ('Tổng dự án', projects.length, Icons.folder_copy_outlined),
+      (
+        'Đang chạy',
+        projects.where((item) => item.status == ProjectStatus.active).length,
+        Icons.play_circle_outline_rounded,
+      ),
+      (
+        'Chờ nghiệm thu',
+        projects
+            .where((item) => item.status == ProjectStatus.waitingAcceptance)
+            .length,
+        Icons.fact_check_outlined,
+      ),
+      (
+        'Hoàn thành',
+        projects.where((item) => item.status == ProjectStatus.completed).length,
+        Icons.task_alt_rounded,
+      ),
+    ];
+    return SizedBox(
+      height: 112,
+      child: ListView.separated(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        scrollDirection: Axis.horizontal,
+        itemCount: values.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
+        itemBuilder: (_, index) {
+          final item = values[index];
+          return Container(
+            width: 145,
+            padding: const EdgeInsets.all(13),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(item.$3, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${item.$2}',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      Text(
+                        item.$1,
+                        maxLines: 2,
+                        style: const TextStyle(fontSize: 11.5),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.hasFilter});
+  final bool hasFilter;
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.folder_open_rounded,
+            size: 60,
+            color: Colors.blueGrey,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            hasFilter ? 'Không tìm thấy dự án phù hợp' : 'Chưa có dự án',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            hasFilter
+                ? 'Hãy thử từ khóa hoặc bộ lọc khác.'
+                : 'Nhấn “Tạo dự án” để bắt đầu theo dõi.',
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _ErrorState extends StatelessWidget {
+  const _ErrorState({required this.message, required this.onRetry});
+  final String message;
+  final Future<void> Function() onRetry;
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.error_outline_rounded, size: 52),
+          const SizedBox(height: 12),
+          Text(message, textAlign: TextAlign.center),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh),
+            label: const Text('Thử lại'),
+          ),
+        ],
+      ),
+    ),
+  );
 }
