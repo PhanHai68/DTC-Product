@@ -19,10 +19,6 @@ class AcompDs8011SettingsScreen extends StatelessWidget {
 
           return Card(
             margin: const EdgeInsets.symmetric(vertical: 8),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
             child: ExpansionTile(
               initiallyExpanded: index == 0,
               title: Text(

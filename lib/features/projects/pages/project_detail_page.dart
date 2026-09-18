@@ -524,6 +524,7 @@ class _DocumentsTab extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         trailing: IconButton(
+                          tooltip: 'Xóa tệp đính kèm',
                           icon: const Icon(Icons.delete_outline),
                           onPressed: () => _delete(context, provider, item),
                         ),

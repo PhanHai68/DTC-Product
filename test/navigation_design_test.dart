@@ -30,7 +30,7 @@ void main() {
     expect(find.text('Máy tách màu'), findsOneWidget);
     expect(find.text('Máy nén khí'), findsOneWidget);
     expect(find.text('Cân đóng gói'), findsOneWidget);
-    expect(find.text('Tiện ích mở rộng'), findsOneWidget);
+    expect(find.text('Công cụ & Quản lý'), findsOneWidget);
     expect(find.text('DTC Group'), findsOneWidget);
     expect(find.text('Tra cứu model hoặc chức năng'), findsOneWidget);
     expect(find.text('Tra cứu nhanh'), findsNothing);
@@ -92,7 +92,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Tiện ích mở rộng hiển thị chức năng lập form lưu mẫu', (
+  testWidgets('Công cụ & Quản lý hiển thị chức năng lập form lưu mẫu', (
     tester,
   ) async {
     await _pumpAtSize(
@@ -101,7 +101,7 @@ void main() {
       home: const ExtensionsScreen(),
     );
 
-    expect(find.text('Tiện ích mở rộng'), findsOneWidget);
+    expect(find.text('Công cụ & Quản lý'), findsOneWidget);
     expect(find.text('Lập Form Lưu Mẫu'), findsOneWidget);
     expect(find.byKey(const Key('extension_sample_record')), findsOneWidget);
     expect(find.text('Theo Dõi Dự Án'), findsOneWidget);

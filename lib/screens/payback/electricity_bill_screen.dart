@@ -15,6 +15,7 @@ class ElectricityBillScreen extends StatefulWidget {
 }
 
 class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
+  final _formKey = GlobalKey<FormState>();
   final formatCurrency = NumberFormat.currency(
     locale: 'vi_VN',
     symbol: 'VNĐ',
@@ -118,7 +119,10 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 DropdownButtonFormField<String>(
@@ -133,6 +137,8 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                     );
                   }).toList(),
                   onChanged: provider.setModel,
+                  validator: (value) =>
+                      value == null ? 'Vui lòng chọn model máy' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -144,6 +150,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: provider.setNormalHours,
+                  validator: validateHoursInRange,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -155,6 +162,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: provider.setOffPeakHours,
+                  validator: validateHoursInRange,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -166,11 +174,27 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: provider.setPeakHours,
+                  validator: validateHoursInRange,
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
                     FocusScope.of(context).unfocus();
+                    if (!_formKey.currentState!.validate()) return;
+                    final totalInputHours =
+                        provider.normalHours +
+                        provider.offPeakHours +
+                        provider.peakHours;
+                    if (totalInputHours > 24) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Tổng số giờ chạy 3 khung không được vượt quá 24 giờ/ngày.',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     provider.calculate();
                   },
                   style: ElevatedButton.styleFrom(
@@ -187,10 +211,6 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                   ),
                 if (provider.totalHours != null && provider.totalBill != null)
                   Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -253,6 +273,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                     ),
                   ),
               ],
+              ),
             ),
           ),
         );

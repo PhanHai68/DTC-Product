@@ -33,16 +33,15 @@ class MachineCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      elevation: isSelected ? 4 : 1,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         side: isSelected
             ? BorderSide(color: colorScheme.primary, width: 2)
-            : BorderSide.none,
+            : const BorderSide(color: Color(0xFFDCE7EB)),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(

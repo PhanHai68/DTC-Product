@@ -298,16 +298,15 @@ class _ResultCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      elevation: result.matchLevel == MatchLevel.bestMatch ? 4 : 1,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         side: result.matchLevel == MatchLevel.bestMatch
             ? const BorderSide(color: Colors.green, width: 2)
-            : BorderSide.none,
+            : const BorderSide(color: Color(0xFFDCE7EB)),
       ),
       child: InkWell(
         onTap: () => context.push(packingDetailLocation(machine.model)),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(

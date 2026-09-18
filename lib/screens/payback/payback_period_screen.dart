@@ -14,6 +14,7 @@ class PaybackPeriodScreen extends StatefulWidget {
 }
 
 class _PaybackPeriodScreenState extends State<PaybackPeriodScreen> {
+  final _formKey = GlobalKey<FormState>();
   final formatCurrency = NumberFormat.currency(
     locale: 'vi_VN',
     symbol: 'VNĐ',
@@ -35,15 +36,14 @@ class _PaybackPeriodScreenState extends State<PaybackPeriodScreen> {
           appBar: AppBar(title: const Text('Khấu hao / Hoàn vốn')),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Hiển thị thông số đã lấy từ mục trước
                 Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                   color: Colors.blue.shade50,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -81,6 +81,10 @@ class _PaybackPeriodScreenState extends State<PaybackPeriodScreen> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: paybackProvider.setMachinePrice,
+                  validator: (value) => validateRequiredPositiveNumber(
+                    value,
+                    label: 'giá máy tách màu',
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -92,11 +96,16 @@ class _PaybackPeriodScreenState extends State<PaybackPeriodScreen> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: paybackProvider.setFullSetupPrice,
+                  validator: (value) => validateRequiredPositiveNumber(
+                    value,
+                    label: 'giá trọn cụm thiết bị',
+                  ),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
                     FocusScope.of(context).unfocus();
+                    if (!_formKey.currentState!.validate()) return;
                     paybackProvider.calculate(totalProfit);
                   },
                   style: ElevatedButton.styleFrom(
@@ -108,10 +117,6 @@ class _PaybackPeriodScreenState extends State<PaybackPeriodScreen> {
                 if (paybackProvider.machinePaybackDays != null &&
                     paybackProvider.fullSetupPaybackDays != null)
                   Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -178,6 +183,7 @@ class _PaybackPeriodScreenState extends State<PaybackPeriodScreen> {
                     ),
                   ),
               ],
+              ),
             ),
           ),
         );

@@ -9,7 +9,7 @@ class ExtensionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TechnologyMenuScaffold(
-      title: 'Tiện ích mở rộng',
+      title: 'Công cụ & Quản lý',
       backButtonKey: const Key('extensions_back_button'),
       entries: [
         TechnologyMenuEntry(

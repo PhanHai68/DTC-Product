@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
     ),
     _HomeAction(
       title: 'Cân đóng gói',
-      imagePath: 'assets/images/home_packing_v2.png',
+      imagePath: 'assets/images/home_packing_lzb1200.jpg',
       route: '/packing_menu',
       tint: Color(0xFFF5F7F8),
     ),
@@ -26,8 +26,8 @@ class HomeScreen extends StatelessWidget {
       tint: Color(0xFFF5F7F8),
     ),
     _HomeAction(
-      title: 'Tiện ích mở rộng',
-      icon: Icons.extension_outlined,
+      title: 'Công cụ & Quản lý',
+      icon: Icons.dashboard_customize_outlined,
       route: '/extensions',
       tint: Color(0xFFF5F7F8),
     ),

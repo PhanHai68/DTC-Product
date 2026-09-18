@@ -243,7 +243,9 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   Future<void> _savePdfToDevice() async {
     final form = _formKey.currentState;
     final record = _record();
-    final isDraft = form == null || !form.validate() || !record.hasAllPhotos;
+    final formValid = form?.validate() ?? false;
+    final missingPhotos = !record.hasAllPhotos;
+    final isDraft = !formValid || missingPhotos;
 
     setState(() => _savingToDevice = true);
     try {
@@ -253,9 +255,11 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
       await _repository.savePdf(bytes, fileName);
       if (mounted) {
         _showMessage(
-          isDraft
-              ? 'Đã lưu bản nháp PDF về máy: $fileName'
-              : 'Đã lưu file PDF về máy: $fileName',
+          !isDraft
+              ? 'Đã lưu file PDF về máy: $fileName'
+              : !formValid
+              ? 'Còn thiếu thông tin bắt buộc — đã lưu bản nháp PDF về máy: $fileName'
+              : 'Còn thiếu ảnh mẫu — đã lưu bản nháp PDF về máy: $fileName',
         );
       }
     } catch (error) {
@@ -269,7 +273,16 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   Future<void> _sharePdfOnly() async {
     final form = _formKey.currentState;
     final record = _record();
-    final isDraft = form == null || !form.validate() || !record.hasAllPhotos;
+    final formValid = form?.validate() ?? false;
+    final missingPhotos = !record.hasAllPhotos;
+    final isDraft = !formValid || missingPhotos;
+    if (isDraft && mounted) {
+      _showMessage(
+        !formValid
+            ? 'Còn thiếu thông tin bắt buộc — sẽ chia sẻ bản nháp PDF.'
+            : 'Còn thiếu ảnh mẫu — sẽ chia sẻ bản nháp PDF.',
+      );
+    }
 
     setState(() => _sharingPdf = true);
     try {

@@ -57,9 +57,7 @@ class AcompTechCategoryScreen extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return Card(
-      elevation: 3,
       margin: const EdgeInsets.only(bottom: 16.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
           vertical: 12.0,

@@ -99,8 +99,6 @@ class _AcompTankFillTimeScreenState extends State<AcompTankFillTimeScreen> {
 
   Widget _buildInputSection() {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -286,8 +284,6 @@ class _AcompTankFillTimeScreenState extends State<AcompTankFillTimeScreen> {
     }
 
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

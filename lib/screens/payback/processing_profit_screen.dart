@@ -15,6 +15,7 @@ class ProcessingProfitScreen extends StatefulWidget {
 }
 
 class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
+  final _formKey = GlobalKey<FormState>();
   final formatCurrency = NumberFormat.currency(
     locale: 'vi_VN',
     symbol: 'VNĐ',
@@ -53,15 +54,14 @@ class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
           appBar: AppBar(title: const Text('Lợi nhuận gia công')),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Hiển thị thông số đã lấy từ mục trước
                 Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                   color: Colors.blue.shade50,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -98,6 +98,10 @@ class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: profitProvider.setProcessingPrice,
+                  validator: (value) => validateRequiredPositiveNumber(
+                    value,
+                    label: 'giá gia công',
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -105,15 +109,21 @@ class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
                     labelText: 'Lương nhân viên/ngày (nghìn đồng)',
                     border: OutlineInputBorder(),
                     suffixText: 'nghìn ₫',
+                    helperText: 'Nhập 0 nếu không tính lương vào chi phí',
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: profitProvider.setDailySalary,
+                  validator: (value) => validateRequiredNonNegativeNumber(
+                    value,
+                    label: 'lương nhân viên/ngày',
+                  ),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
                     FocusScope.of(context).unfocus();
+                    if (!_formKey.currentState!.validate()) return;
                     profitProvider.calculate(
                       capacity: capacity,
                       totalHours: totalHours,
@@ -128,10 +138,6 @@ class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
                 const SizedBox(height: 24),
                 if (profitProvider.totalProfit != null)
                   Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -171,6 +177,7 @@ class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
                     ),
                   ),
               ],
+              ),
             ),
           ),
         );

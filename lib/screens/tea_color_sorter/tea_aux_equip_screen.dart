@@ -3,17 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../data/tea_aux_equip_data.dart';
 import '../../services/pdf_export_service.dart';
-
-abstract final class DtcPalette {
-  static const navy = Color(0xFF0A2740);
-  static const navyLight = Color(0xFF123D5A);
-  static const cyan = Color(0xFF00A6A6);
-  static const cyanLight = Color(0xFF37C6B7);
-  static const ink = Color(0xFF102F46);
-  static const muted = Color(0xFF607786);
-  static const canvas = Color(0xFFF3F7F9);
-  static const border = Color(0xFFDCE7EB);
-}
+import '../../theme/dtc_palette.dart';
 
 class TeaAuxEquipScreen extends StatefulWidget {
   final String modelName;

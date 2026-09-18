@@ -49,8 +49,6 @@ class AcompSuitableScreen extends StatelessWidget {
     AcompSuitableProvider provider,
   ) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -121,8 +119,6 @@ class AcompSuitableScreen extends StatelessWidget {
 
   Widget _buildResultSection1(AcompSuitableProvider provider) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -157,10 +153,9 @@ class AcompSuitableScreen extends StatelessWidget {
 
   Widget _buildResultSection2(AcompSuitableProvider provider) {
     return Card(
-      elevation: 4,
       color: Colors.orange.shade50,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         side: BorderSide(color: Colors.orange.shade200),
       ),
       child: Padding(

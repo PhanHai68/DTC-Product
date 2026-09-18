@@ -251,6 +251,7 @@ class _ProjectPhotoGalleryPageState extends State<ProjectPhotoGalleryPage> {
                     if (dialogContext.mounted) Navigator.pop(dialogContext);
                   }
                 },
+                tooltip: 'Xóa ảnh',
                 icon: const Icon(Icons.delete_outline),
               ),
             ],

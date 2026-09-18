@@ -102,6 +102,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                               suffixIcon: _searchController.text.isEmpty
                                   ? null
                                   : IconButton(
+                                      tooltip: 'Xóa từ khóa',
                                       onPressed: () {
                                         _searchController.clear();
                                         setState(() {});
@@ -303,6 +304,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 trailing: dateRange == null
                     ? null
                     : IconButton(
+                        tooltip: 'Xóa khoảng ngày',
                         onPressed: () => setSheetState(() => dateRange = null),
                         icon: const Icon(Icons.clear),
                       ),

@@ -117,10 +117,6 @@ class _PowerConsumptionScreenState extends State<PowerConsumptionScreen> {
                     }
 
                     return Card(
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           return SingleChildScrollView(

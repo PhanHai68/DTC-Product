@@ -35,6 +35,12 @@ class _PackingMenuScreenState extends State<PackingMenuScreen> {
           onTap: () => context.push('/machine_catalog'),
         ),
         TechnologyMenuEntry(
+          id: 'packing_search_btn',
+          title: 'Tìm nhanh theo tên model',
+          icon: Icons.search_rounded,
+          onTap: () => context.push('/packing_search'),
+        ),
+        TechnologyMenuEntry(
           id: 'machine_selector_btn',
           title: 'Chọn máy theo yêu cầu',
           icon: Icons.manage_search_rounded,

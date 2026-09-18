@@ -98,6 +98,7 @@ class _PackingSearchScreenState extends State<PackingSearchScreen> {
                   ),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
+                          tooltip: 'Xóa từ khóa',
                           icon: const Icon(Icons.clear),
                           onPressed: _clearSearch,
                           color: colorScheme.onSurfaceVariant,

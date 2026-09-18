@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -313,9 +314,6 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
     final hasValidData = data.weightKg > 0 && data.totalSeconds > 0;
 
     return Card(
-      elevation: 1.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -448,8 +446,6 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
 
   Widget _buildGeneralInfoCard() {
     return Card(
-      elevation: 1.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -520,8 +516,6 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
 
   Widget _buildMeasurementInputCard() {
     return Card(
-      elevation: 1.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -726,6 +720,7 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                   child: TextField(
                     controller: _hoursController,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
                       labelText: 'Giờ',
                       suffixText: 'giờ',
@@ -741,6 +736,7 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                   child: TextField(
                     controller: _minutesController,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
                       labelText: 'Phút',
                       suffixText: 'phút',
@@ -756,6 +752,7 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
                   child: TextField(
                     controller: _secondsController,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
                       labelText: 'Giây',
                       suffixText: 'giây',

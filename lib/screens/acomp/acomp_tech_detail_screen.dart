@@ -68,10 +68,6 @@ class _AcompTechDetailScreenState extends State<AcompTechDetailScreen> {
             if (_selectedModel != null)
               Expanded(
                 child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                   child: ListView(
                     padding: const EdgeInsets.all(16.0),
                     children: [

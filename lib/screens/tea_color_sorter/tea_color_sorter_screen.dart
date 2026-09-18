@@ -230,6 +230,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         'configuration': '5 tầng 6 máng',
         'technology': 'AI Deep Learning',
         'exposure': 0.35,
+        'showHotspots': true,
       };
     }
     if (model == 'sx8') {
@@ -242,6 +243,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
             '${specs['layers_qty']} tầng, ${specs['chutes_qty']} máng',
         'technology': 'AI · PLOV 3.0',
         'exposure': 0.25,
+        'showHotspots': true,
       };
     }
     return null;

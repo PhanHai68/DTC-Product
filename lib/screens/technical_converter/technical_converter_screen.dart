@@ -142,10 +142,6 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
 
               // 3. Bảng dữ liệu Mesh - Micron
               Card(
-                elevation: 1.5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
@@ -300,9 +296,6 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
 
   Widget _buildSelectedCard(MeshConversionItem item) {
     return Card(
-      elevation: 2,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
@@ -431,11 +424,6 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
             children: [
               // Thẻ hiển thị ống đang chọn
               Card(
-                elevation: 2,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
                 child: Padding(
                   padding: const EdgeInsets.all(18),
                   child: Column(
@@ -558,10 +546,6 @@ class _PipeSizeTabState extends State<_PipeSizeTab> {
 
               // Bảng danh sách kích thước ống
               Card(
-                elevation: 1.5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
@@ -784,10 +768,6 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
             children: [
               // Hướng dẫn
               Card(
-                elevation: 1.5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -973,8 +953,6 @@ class _PressureConverterTabState extends State<_PressureConverterTab> {
     ];
 
     return Card(
-      elevation: 1.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
@@ -1190,10 +1168,6 @@ class _AirFlowConverterTabState extends State<_AirFlowConverterTab> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Card(
-                elevation: 1.5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -1349,8 +1323,6 @@ class _AirFlowConverterTabState extends State<_AirFlowConverterTab> {
     final sampleFlows = [0.2, 0.5, 0.8, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0];
 
     return Card(
-      elevation: 1.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(

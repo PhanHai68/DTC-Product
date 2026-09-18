@@ -12,6 +12,7 @@ class ColorSorter3dScreen extends StatefulWidget {
   final String configuration;
   final String technology;
   final double exposure;
+  final bool showHotspots;
 
   const ColorSorter3dScreen({
     super.key,
@@ -22,6 +23,7 @@ class ColorSorter3dScreen extends StatefulWidget {
     this.configuration = '7:3:2',
     this.technology = 'AI Deep Learning',
     this.exposure = 0.85,
+    this.showHotspots = false,
   });
 
   @override
@@ -286,7 +288,7 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
             environmentImage: 'neutral',
             exposure: widget.exposure,
             debugLogging: false,
-            innerModelViewerHtml: '''
+            innerModelViewerHtml: !widget.showHotspots ? '' : '''
               <button class="hotspot" slot="hotspot-1" data-position="-0.202 -1.171 -9.434" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 1: Sàng trải liệu');"></button>
               <button class="hotspot" slot="hotspot-2" data-position="-0.223 -0.992 -6.950" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 2: Sàng tách đá');"></button>
               <button class="hotspot" slot="hotspot-3" data-position="-0.159 -1.290 -5.914" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 3: Trục lăn tách dị vật trọng lượng nhẹ');"></button>
@@ -372,6 +374,7 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
               ),
             },
             relatedJs: '''
+              ${!widget.showHotspots ? '' : '''
               window.toggleHotspots = function() {
                 const mv = document.querySelector('model-viewer');
                 mv.classList.toggle('show-hotspots');
@@ -379,10 +382,10 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
                 const text = document.getElementById('toggle-text');
                 if(text) text.innerText = isShow ? 'Ẩn vị trí các thiết bị chính' : 'Hiện vị trí các thiết bị chính';
               };
-              
+
               // Tạo nút bấm ngoài luồng shadow DOM của model-viewer để không bị transform ảnh hưởng
               const btn = document.createElement('button');
-              btn.innerHTML = '<span style="margin-right: 6px; font-size: 16px;">📍</span><span id="toggle-text">Hiện vị trí các thiết bị chính</span>';
+              btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" height="17" fill="#1976D2" style="margin-right: 6px; flex-shrink: 0;"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span id="toggle-text">Hiện vị trí các thiết bị chính</span>';
               btn.style.position = 'fixed';
               btn.style.bottom = '120px';
               btn.style.left = '50%';
@@ -403,6 +406,7 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
               btn.style.whiteSpace = 'nowrap';
               btn.onclick = window.toggleHotspots;
               document.body.appendChild(btn);
+              '''}
 
               const mv = document.querySelector('model-viewer');
               customElements.whenDefined('model-viewer').then(() => {
@@ -476,7 +480,7 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
                 color: const Color(0xFFF1F5F9).withValues(alpha: 0.95),
                 alignment: Alignment.center,
                 child: Container(
-                  width: 260,
+                  constraints: const BoxConstraints(maxWidth: 260),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 26,

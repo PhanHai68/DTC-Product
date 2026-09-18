@@ -64,8 +64,6 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
 
   Widget _buildInputSection(BuildContext context, AcompTankProvider provider) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -150,10 +148,9 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
 
   Widget _buildResultSection(AcompTankProvider provider) {
     return Card(
-      elevation: 4,
       color: Colors.blue.shade50,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         side: BorderSide(color: Colors.blue.shade200),
       ),
       child: Padding(

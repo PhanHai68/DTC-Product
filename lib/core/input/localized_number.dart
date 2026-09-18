@@ -28,6 +28,55 @@ int? parseLocalizedInt(String? raw) {
   return value.toInt();
 }
 
+/// Form field validator: requires a non-empty value strictly greater than 0.
+/// Use for calculator inputs where a blank or zero value would silently
+/// produce a misleading result (e.g. a price or rate).
+String? validateRequiredPositiveNumber(String? value, {String label = 'giá trị'}) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Vui lòng nhập $label';
+  }
+  final parsed = parseLocalizedDouble(value);
+  if (parsed == null) {
+    return 'Giá trị không hợp lệ';
+  }
+  if (parsed <= 0) {
+    return 'Giá trị phải lớn hơn 0';
+  }
+  return null;
+}
+
+/// Form field validator: requires a non-empty value that is zero or more.
+/// Use where 0 is a legitimate input (e.g. salary, by-product price).
+String? validateRequiredNonNegativeNumber(String? value, {String label = 'giá trị'}) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Vui lòng nhập $label';
+  }
+  final parsed = parseLocalizedDouble(value);
+  if (parsed == null) {
+    return 'Giá trị không hợp lệ';
+  }
+  if (parsed < 0) {
+    return 'Giá trị không được âm';
+  }
+  return null;
+}
+
+/// Form field validator: requires a non-empty value within `[0, max]`.
+/// Use for hour-of-day style inputs.
+String? validateHoursInRange(String? value, {double max = 24}) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Vui lòng nhập số giờ';
+  }
+  final parsed = parseLocalizedDouble(value);
+  if (parsed == null) {
+    return 'Giá trị không hợp lệ';
+  }
+  if (parsed < 0 || parsed > max) {
+    return 'Phải trong khoảng 0-${max.toInt()} giờ';
+  }
+  return null;
+}
+
 /// Allows a signed decimal value and accepts both `,` and `.` while typing.
 class LocalizedDecimalTextInputFormatter extends TextInputFormatter {
   const LocalizedDecimalTextInputFormatter({this.allowNegative = false});

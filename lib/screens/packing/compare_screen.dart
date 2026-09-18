@@ -983,12 +983,7 @@ class _CompareTable extends StatelessWidget {
 
     return Card(
       margin: EdgeInsets.zero,
-      elevation: 0,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFFDCE5EA)),
-      ),
       child: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(

@@ -55,8 +55,6 @@ import '../features/projects/pages/project_detail_page.dart';
 import '../features/projects/pages/project_create_page.dart';
 import '../features/projects/pages/project_machine_page.dart';
 import '../features/projects/pages/project_stage_page.dart';
-import '../features/projects/pages/project_photo_gallery_page.dart';
-import '../features/projects/pages/project_acceptance_page.dart';
 import '../screens/packing/machine_catalog_screen.dart';
 import '../screens/packing/compare_screen.dart';
 import '../screens/extensions/maintenance_list_screen.dart';
@@ -95,10 +93,6 @@ final GoRouter appRouter = GoRouter(
     ),
   ),
   routes: [
-    GoRoute(
-      path: '/paddy_aux_equip',
-      builder: (context, state) => const PaddyAuxEquipScreen(),
-    ),
     GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
     GoRoute(
       path: '/search',
@@ -133,6 +127,10 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => PaddyColorSorterScreen(
         initialModel: state.uri.queryParameters['model'],
       ),
+    ),
+    GoRoute(
+      path: '/paddy_aux_equip',
+      builder: (context, state) => const PaddyAuxEquipScreen(),
     ),
     GoRoute(
       path: '/color_sorter_menu',
@@ -243,6 +241,7 @@ final GoRouter appRouter = GoRouter(
         final configuration = extra?['configuration'] ?? '7:3:2';
         final technology = extra?['technology'] ?? 'AI Deep Learning';
         final exposure = extra?['exposure'] ?? 0.85;
+        final showHotspots = extra?['showHotspots'] as bool? ?? false;
         return ColorSorter3dScreen(
           modelName: modelName as String,
           modelPath: modelPath as String,
@@ -251,6 +250,7 @@ final GoRouter appRouter = GoRouter(
           configuration: configuration as String,
           technology: technology as String,
           exposure: (exposure as num).toDouble(),
+          showHotspots: showHotspots,
         );
       },
     ),
@@ -380,16 +380,6 @@ final GoRouter appRouter = GoRouter(
         projectId: state.pathParameters['id']!,
         stageId: state.pathParameters['stageId']!,
       ),
-    ),
-    GoRoute(
-      path: '/projects/:id/photos',
-      builder: (context, state) =>
-          ProjectPhotoGalleryPage(projectId: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: '/projects/:id/acceptance',
-      builder: (context, state) =>
-          ProjectAcceptancePage(projectId: state.pathParameters['id']!),
     ),
     GoRoute(
       path: '/projects/:id',

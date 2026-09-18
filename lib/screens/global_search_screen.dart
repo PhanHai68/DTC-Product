@@ -6,6 +6,7 @@ import '../data/paddy_specs_data.dart';
 import '../data/specs_data.dart';
 import '../data/tea_specs_data.dart';
 import '../data/mineral_specs_data.dart';
+import '../data/agro_specs_data.dart';
 
 class GlobalSearchScreen extends StatefulWidget {
   const GlobalSearchScreen({super.key});
@@ -78,6 +79,13 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       icon: Icons.query_stats_rounded,
       keywords: 'roi tiền điện doanh thu lợi nhuận',
     ),
+    const _SearchItem(
+      title: 'Theo Dõi Dự Án',
+      subtitle: 'Tiến độ thi công, nghiệm thu và hồ sơ dự án',
+      location: '/projects',
+      icon: Icons.engineering_outlined,
+      keywords: 'du an project tracking tien do nghiem thu cong trinh',
+    ),
     ...colorSorterSpecs.map((spec) {
       final model = spec['Model'] ?? '';
       return _SearchItem(
@@ -116,6 +124,16 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         subtitle: 'Máy tách màu Khoáng sản',
         location: '/mineral_color_sorter',
         icon: Icons.terrain_rounded,
+        keywords: spec.values.join(' '),
+      );
+    }),
+    ...agroColorSorterSpecs.map((spec) {
+      final model = spec['model'] ?? '';
+      return _SearchItem(
+        title: model,
+        subtitle: 'Máy tách màu Nông sản',
+        location: '/agro_color_sorter',
+        icon: Icons.spa_rounded,
         keywords: spec.values.join(' '),
       );
     }),

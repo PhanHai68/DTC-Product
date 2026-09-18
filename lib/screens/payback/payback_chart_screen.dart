@@ -30,7 +30,9 @@ class PaybackChartScreen extends StatelessWidget {
     if (processingProfit <= 0) processingProfit = 0.001;
     if (selfBusinessProfit <= 0) selfBusinessProfit = 0.001;
 
-    double maxDays = (totalInvestment / processingProfit).ceilToDouble();
+    final processingPaybackDays = (totalInvestment / processingProfit)
+        .ceilToDouble();
+    double maxDays = processingPaybackDays;
     double selfBusinessDays = (totalInvestment / selfBusinessProfit)
         .ceilToDouble();
     if (selfBusinessDays > maxDays) maxDays = selfBusinessDays;
@@ -47,10 +49,6 @@ class PaybackChartScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -90,8 +88,19 @@ class PaybackChartScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
-            SizedBox(
-              height: 400,
+            Semantics(
+              label:
+                  'Biểu đồ tích lũy lợi nhuận theo ngày, đầu tư '
+                  '${formatCurrency.format(totalInvestment)}. '
+                  'Hoàn vốn theo gia công sau khoảng '
+                  '${processingPaybackDays.toStringAsFixed(0)} ngày, '
+                  'theo tự kinh doanh sau khoảng '
+                  '${selfBusinessDays.toStringAsFixed(0)} ngày.',
+              child: SizedBox(
+              height: (MediaQuery.sizeOf(context).height * 0.45).clamp(
+                260.0,
+                400.0,
+              ),
               child: LineChart(
                 LineChartData(
                   clipData: const FlClipData.all(),
@@ -302,6 +311,7 @@ class PaybackChartScreen extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
             ),
           ],
         ),

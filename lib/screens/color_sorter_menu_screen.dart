@@ -14,7 +14,7 @@ class ColorSorterMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TechnologyMenuScaffold(
-      title: 'Máy tách màu',
+      title: 'Máy tách màu Gạo',
       entries: [
         TechnologyMenuEntry(
           id: 'color_sorter_specs_btn',

@@ -106,8 +106,6 @@ class _AcompPipeScreenState extends State<AcompPipeScreen> {
 
   Widget _buildInputSection() {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -284,8 +282,6 @@ class _AcompPipeScreenState extends State<AcompPipeScreen> {
         : 'Ngoài dải';
 
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

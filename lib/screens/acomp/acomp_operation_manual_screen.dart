@@ -55,10 +55,6 @@ class AcompOperationManualScreen extends StatelessWidget {
 
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
             child: ExpansionTile(
               initiallyExpanded: index == 0,
               leading: Icon(

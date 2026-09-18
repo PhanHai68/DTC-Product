@@ -15,6 +15,7 @@ class SelfBusinessScreen extends StatefulWidget {
 }
 
 class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
+  final _formKey = GlobalKey<FormState>();
   final formatCurrency = NumberFormat.currency(
     locale: 'vi_VN',
     symbol: 'VNĐ',
@@ -55,15 +56,14 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
           appBar: AppBar(title: const Text('Doanh thu tự kinh doanh')),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Hiển thị thông số cơ bản
                 Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                   color: Colors.blue.shade50,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -105,6 +105,10 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: businessProvider.setRawMaterialPrice,
+                  validator: (value) => validateRequiredPositiveNumber(
+                    value,
+                    label: 'giá nguyên liệu mua vào',
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -115,21 +119,31 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: businessProvider.setFinishedProductPrice,
+                  validator: (value) => validateRequiredPositiveNumber(
+                    value,
+                    label: 'giá thành phẩm bán ra',
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Giá Gạo phế phẩm bán ra (VNĐ/kg)',
                     border: OutlineInputBorder(),
+                    helperText: 'Nhập 0 nếu không bán phế phẩm',
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: const [LocalizedDecimalTextInputFormatter()],
                   onChanged: businessProvider.setByProductPrice,
+                  validator: (value) => validateRequiredNonNegativeNumber(
+                    value,
+                    label: 'giá phế phẩm bán ra',
+                  ),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
                     FocusScope.of(context).unfocus();
+                    if (!_formKey.currentState!.validate()) return;
                     businessProvider.calculate(
                       capacity: capacity,
                       totalHours: totalHours,
@@ -145,10 +159,6 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                 const SizedBox(height: 24),
                 if (businessProvider.netProfit != null)
                   Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -210,6 +220,7 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                     ),
                   ),
               ],
+              ),
             ),
           ),
         );
