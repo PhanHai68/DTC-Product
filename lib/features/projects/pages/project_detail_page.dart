@@ -43,19 +43,6 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
           title: const Text('Chi tiết dự án'),
           actions: [
             if (project != null)
-              IconButton(
-                tooltip: 'Xuất báo cáo PDF Verified',
-                onPressed: _exporting
-                    ? null
-                    : () => _exportReport(provider, project),
-                icon: _exporting
-                    ? const SizedBox.square(
-                        dimension: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.picture_as_pdf_outlined),
-              ),
-            if (project != null)
               PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'delete') {
@@ -109,6 +96,28 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
                     ),
                   ),
                 ],
+              ),
+        bottomNavigationBar: project == null
+            ? null
+            : SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                  child: FilledButton.icon(
+                    onPressed: _exporting
+                        ? null
+                        : () => _exportReport(provider, project),
+                    icon: _exporting
+                        ? const SizedBox.square(
+                            dimension: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.share_rounded),
+                    label: const Text('Chia sẻ pdf báo cáo'),
+                  ),
+                ),
               ),
       ),
     );
@@ -201,32 +210,38 @@ class _ProjectHeader extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Text(
+          project.trackingTitle,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 6),
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    project.trackingTitle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    project.location,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+            Icon(
+              Icons.location_on_outlined,
+              size: 16,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              project.location,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(width: 10),
-            Chip(label: Text(project.status.label)),
+            const SizedBox(width: 12),
+            Chip(
+              label: Text(project.status.label),
+              padding: EdgeInsets.zero,
+              visualDensity: VisualDensity.compact,
+            ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         ProjectProgress(value: project.progress),
       ],
     ),

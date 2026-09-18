@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
@@ -108,18 +109,43 @@ abstract final class ProjectReportPdfService {
         );
       } else {
         for (final group in groups) {
-          _drawStagePage(
-            document.pages.add(),
-            project,
-            stage,
-            group.$1,
-            group.$2,
-            updates.length,
-            photoBytes,
-            stamp,
-            fonts,
-            generatedAt,
-          );
+          final update = group.$1;
+          final allPhotos = group.$2;
+          
+          if (allPhotos.isEmpty) {
+            _drawStagePage(
+              document.pages.add(),
+              project,
+              stage,
+              update,
+              [],
+              updates.length,
+              photoBytes,
+              stamp,
+              fonts,
+              generatedAt,
+            );
+          } else {
+            const maxPhotosPerPage = 4;
+            for (var i = 0; i < allPhotos.length; i += maxPhotosPerPage) {
+              final chunk = allPhotos.sublist(
+                i,
+                math.min(i + maxPhotosPerPage, allPhotos.length),
+              );
+              _drawStagePage(
+                document.pages.add(),
+                project,
+                stage,
+                update,
+                chunk,
+                updates.length,
+                photoBytes,
+                stamp,
+                fonts,
+                generatedAt,
+              );
+            }
+          }
         }
       }
     }
@@ -452,7 +478,7 @@ abstract final class ProjectReportPdfService {
       return;
     }
     
-    final rows = groupPhotos.length > 4 ? 2 : 1;
+    final rows = groupPhotos.length > 2 ? 2 : 1;
     final columns = (groupPhotos.length + rows - 1) ~/ rows;
     const photoGap = 5.0;
     final cardWidth = (photosWidth - photoGap * (columns - 1)) / columns;
@@ -471,7 +497,7 @@ abstract final class ProjectReportPdfService {
       final bytes = photos[attachment.id];
       if (bytes != null) {
         try {
-          _drawImageCover(
+          _drawImageContain(
             graphics,
             PdfBitmap(bytes),
             ui.Rect.fromLTWH(

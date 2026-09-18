@@ -119,6 +119,63 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
     return widget.posterPath;
   }
 
+  void _showHotspotDialog(String partName) {
+    final Map<String, String> partDetails = {
+      'Bộ phận 1: Sàng trải liệu': 'Phân tán nguyên liệu trên một mặt, dòng liệu được trải mỏng và khoảng cách đồng đều.',
+      'Bộ phận 2: Sàng tách đá': 'Dựa trên khác biệt về trọng lượng để loại bỏ vật liệu nặng như: Đá, thuỷ tinh, kim loại…',
+      'Bộ phận 3: Trục lăn tách dị vật trọng lượng nhẹ': 'Tách các vật liệu nhẹ như dây nilon, tóc, sợi vải... lẫn trong chè.',
+      'Bộ phận 4: Sàng rung cám': 'Tách cám và cấp liệu đồng đều.',
+      'Bộ phận 5: Băng tải chữ Z': 'Cấp liệu lên máy tách màu.',
+      'Bộ phận 6: Máy tách màu': 'Phân loại cẫng chè, bồm (lá vàng), chè và các loại tạp chất lẫn trong chè…',
+      'Bộ phận 7: Sàng rung cấp liệu': 'Rung cấp liệu vào bộ rung máy tách màu',
+      'Bộ phận 8: Màn hình': 'Điều khiển thông số vận hành',
+      'Bộ phận 9: Băng tải ra': 'Dẫn liệu ra sau khi tách',
+      'Bộ phận 10: Băng tải hồi ngang': 'Vận chuyển đường liệu sau khi tách màu',
+      'Bộ phận 11: Băng tải hồi nghiêng': 'Vận chuyển đường liệu sau khi tách màu',
+    };
+    
+    final String description = partDetails[partName] ?? 'Đây là thông tin chi tiết về bộ phận $partName trên máy ${widget.modelName}.\n\n(Dữ liệu có thể được cập nhật thêm sau)';
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            const Icon(Icons.settings_suggest, color: Colors.blue, size: 26),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                partName.contains(':') ? partName.split(':')[1].trim() : partName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          description,
+          style: const TextStyle(height: 1.5, fontSize: 14.5),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue[800],
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text('Đóng'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showHelpDialog() {
     showDialog(
       context: context,
@@ -229,10 +286,72 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
             environmentImage: 'neutral',
             exposure: widget.exposure,
             debugLogging: false,
+            innerModelViewerHtml: '''
+              <button class="hotspot" slot="hotspot-1" data-position="-0.202 -1.171 -9.434" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 1: Sàng trải liệu');"></button>
+              <button class="hotspot" slot="hotspot-2" data-position="-0.223 -0.992 -6.950" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 2: Sàng tách đá');"></button>
+              <button class="hotspot" slot="hotspot-3" data-position="-0.159 -1.290 -5.914" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 3: Trục lăn tách dị vật trọng lượng nhẹ');"></button>
+              <button class="hotspot" slot="hotspot-4" data-position="-0.293 -1.595 -5.428" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 4: Sàng rung cám');"></button>
+              <button class="hotspot" slot="hotspot-5" data-position="-0.433 -0.120 -3.251" data-normal="0.000 0.500 -0.866" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 5: Băng tải chữ Z');"></button>
+              <button class="hotspot" slot="hotspot-6" data-position="0.904 0.364 -0.348" data-normal="0.863 0.505 -0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 6: Máy tách màu');"></button>
+              <button class="hotspot" slot="hotspot-7" data-position="-0.340 1.620 -0.326" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 7: Sàng rung cấp liệu');"></button>
+              <button class="hotspot" slot="hotspot-8" data-position="1.805 -0.403 1.177" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 8: Màn hình');"></button>
+              <button class="hotspot" slot="hotspot-9" data-position="0.767 -1.127 1.610" data-normal="0.000 1.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 9: Băng tải ra');"></button>
+              <button class="hotspot" slot="hotspot-10" data-position="-0.879 -1.652 -1.684" data-normal="0.000 1.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 10: Băng tải hồi ngang');"></button>
+              <button class="hotspot" slot="hotspot-11" data-position="-1.608 -0.958 -4.005" data-normal="0.965 0.008 0.262" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 11: Băng tải hồi nghiêng');"></button>
+            ''',
             relatedCss: '''
               model-viewer {
                 contain: strict;
                 --progress-bar-color: #263238;
+              }
+              .hotspot-toggle {
+                display: flex !important;
+                position: fixed !important;
+                bottom: 20px !important;
+                left: 16px !important;
+                transform: none !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                background: white;
+                padding: 8px 16px;
+                border-radius: 20px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+                font-family: sans-serif;
+                font-weight: bold;
+                font-size: 13.5px;
+                color: #1976D2;
+                cursor: pointer;
+                align-items: center;
+                z-index: 1000;
+                border: 1px solid #e3f2fd;
+              }
+              .hotspot {
+                display: none;
+                width: 24px;
+                height: 24px;
+                border-radius: 12px;
+                border: 2px solid #ffffff;
+                background-color: #2196F3;
+                box-sizing: border-box;
+                cursor: pointer;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+                transition: transform 0.2s, background-color 0.2s;
+                align-items: center;
+                justify-content: center;
+              }
+              .hotspot::after {
+                content: "+";
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+                font-family: monospace;
+              }
+              model-viewer.show-hotspots .hotspot {
+                display: flex;
+              }
+              .hotspot:hover {
+                transform: scale(1.25);
+                background-color: #1565C0;
               }
             ''',
             javascriptChannels: {
@@ -245,8 +364,46 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
                   }
                 },
               ),
+              JavascriptChannel(
+                'HotspotChannel',
+                onMessageReceived: (message) {
+                  _showHotspotDialog(message.message);
+                },
+              ),
             },
             relatedJs: '''
+              window.toggleHotspots = function() {
+                const mv = document.querySelector('model-viewer');
+                mv.classList.toggle('show-hotspots');
+                const isShow = mv.classList.contains('show-hotspots');
+                const text = document.getElementById('toggle-text');
+                if(text) text.innerText = isShow ? 'Ẩn vị trí các thiết bị chính' : 'Hiện vị trí các thiết bị chính';
+              };
+              
+              // Tạo nút bấm ngoài luồng shadow DOM của model-viewer để không bị transform ảnh hưởng
+              const btn = document.createElement('button');
+              btn.innerHTML = '<span style="margin-right: 6px; font-size: 16px;">📍</span><span id="toggle-text">Hiện vị trí các thiết bị chính</span>';
+              btn.style.position = 'fixed';
+              btn.style.bottom = '120px';
+              btn.style.left = '50%';
+              btn.style.transform = 'translateX(-50%)';
+              btn.style.backgroundColor = 'white';
+              btn.style.padding = '10px 20px';
+              btn.style.borderRadius = '24px';
+              btn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+              btn.style.fontFamily = 'sans-serif';
+              btn.style.fontWeight = 'bold';
+              btn.style.fontSize = '14.5px';
+              btn.style.color = '#1976D2';
+              btn.style.cursor = 'pointer';
+              btn.style.border = '1px solid #e3f2fd';
+              btn.style.zIndex = '999999';
+              btn.style.display = 'flex';
+              btn.style.alignItems = 'center';
+              btn.style.whiteSpace = 'nowrap';
+              btn.onclick = window.toggleHotspots;
+              document.body.appendChild(btn);
+
               const mv = document.querySelector('model-viewer');
               customElements.whenDefined('model-viewer').then(() => {
                 const ModelViewerElement = customElements.get('model-viewer');

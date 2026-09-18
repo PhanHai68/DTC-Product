@@ -63,7 +63,7 @@ class ProjectCard extends StatelessWidget {
                     text: _date(project.startDate),
                   ),
                   _Meta(
-                    icon: Icons.precision_manufacturing_outlined,
+                    icon: Icons.inventory_2_outlined,
                     text: '${project.machineCount} máy',
                   ),
                 ],

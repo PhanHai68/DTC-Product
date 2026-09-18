@@ -91,6 +91,8 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
     if (m.contains('sc10')) return 'assets/images/color_sorter/sc10.jpeg';
     if (m.contains('sc8')) return 'assets/images/color_sorter/sc8.jpeg';
     if (m.contains('sc4')) return 'assets/images/color_sorter/sc4.jpeg';
+    if (m.contains('s+80d'))
+      return 'assets/images/color_sorter/may_phan_tich_mau_s80d.jpg';
     return null;
   }
 
@@ -172,6 +174,18 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
         break;
       case 'Công nghệ hút bụi độc lập':
         description = '• Hệ thống ống hút bụi khí động học bố trí riêng biệt tại từng máng.\n• Ngăn bụi bám vào thấu kính camera và đèn LED chiếu sáng.\n• Duy trì độ chính xác phân loại liên tục suốt ca làm việc 24/7.';
+        break;
+      case 'Deep Learning AI':
+        description = 'Mô hình lớn phân loại chất lượng bằng AI đa phương thức tận dụng sức mạnh điện toán để thiết lập mô hình phân loại nhanh hơn, phân biệt chính xác hơn, huấn luyện và triển khai mô hình nhanh hơn, cùng với khả năng phân tích dữ liệu tự động nâng cao.';
+        break;
+      case 'Nền tảng PLOV 3.0':
+        description = 'Cấu trúc trãi liệu đồng đều thông minh đã được nâng cấp lên PLOV 3.0, đảm bảo nguyên liệu luôn được dàn đều mà không bị chồng chéo lên nhau trong suốt quá trình phân loại ở tốc độ cao và năng suất cao.';
+        break;
+      case 'Camera Hawkeye 4.0':
+        description = 'Công nghệ AI kết hợp Camera Hawkeye cho phép chụp ảnh động tốc độ cao rõ nét hơn với khả năng nhận diện thông minh và chính xác hơn.';
+        break;
+      case 'Hợp nhất đa điểm ảnh MPF':
+        description = 'Về cơ bản, công nghệ này phân biệt các chất khác nhau dựa trên các đặc điểm dấu vân tay quang phổ của từng loại vật liệu.';
         break;
       default:
         description = 'Thông tin chi tiết công nghệ đang được cập nhật...';
@@ -271,101 +285,125 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
             child: ListView(
               shrinkWrap: true,
               children: [
-                // ⭐ ĐẶC QUYỀN DÒNG SC PRO
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.amber.shade50,
-                        Colors.orange.shade50.withValues(alpha: 0.5),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                if (modelName == 'S+80D')
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.blue.shade200,
+                        width: 1.2,
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.amber.shade300,
-                      width: 1.2,
+                    child: const Text(
+                      'Máy phân tích mẫu S+80D với khả năng tự động lấy mẫu nhanh chóng và phân tích đến hơn 30 chỉ số trong nguyên liệu, S+ 80D đảm bảo độ chính xác cao trong mọi phép đo. Chỉ cần vài phút, kết quả chi tiết sẽ được cung cấp, hỗ trợ tối ưu hiệu suất cho các quy trình sản xuất hiện đại.',
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        height: 1.5,
+                        color: Colors.black87,
+                      ),
+                      textAlign: TextAlign.justify,
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Text('⭐', style: TextStyle(fontSize: 16)),
-                          const SizedBox(width: 6),
-                          Text(
-                            'ĐẶC QUYỀN DÒNG SC PRO',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13.5,
-                              color: Colors.red.shade800,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
+                  )
+                else ...[
+                  // ⭐ ĐẶC QUYỀN DÒNG SC PRO
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.amber.shade50,
+                          Colors.orange.shade50.withValues(alpha: 0.5),
                         ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      const SizedBox(height: 8),
-                      _buildProFeatureRow(
-                        'Trí tuệ nhân tạo AI',
-                        'Nhận diện chính xác tuyệt đối các lỗi phức tạp.',
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.amber.shade300,
+                        width: 1.2,
                       ),
-                      const SizedBox(height: 6),
-                      _buildProFeatureRow(
-                        'Tích hợp máy phân tích mẫu S+80D',
-                        'Phân tích hơn 30 chỉ số  gạo trong 3 phút.',
-                      ),
-                      const SizedBox(height: 6),
-                      _buildProFeatureRow(
-                        'Cloud Control',
-                        'Giám sát mọi lúc trên Smartphone.',
-                      ),
-                    ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text('⭐', style: TextStyle(fontSize: 16)),
+                            const SizedBox(width: 6),
+                            Text(
+                              'ĐẶC QUYỀN DÒNG SC PRO',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13.5,
+                                color: Colors.red.shade800,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        _buildProFeatureRow(
+                          'Trí tuệ nhân tạo AI',
+                          'Nhận diện chính xác tuyệt đối các lỗi phức tạp.',
+                        ),
+                        const SizedBox(height: 6),
+                        _buildProFeatureRow(
+                          'Tích hợp máy phân tích mẫu S+80D',
+                          'Phân tích hơn 30 chỉ số  gạo trong 3 phút.',
+                        ),
+                        const SizedBox(height: 6),
+                        _buildProFeatureRow(
+                          'Cloud Control',
+                          'Giám sát mọi lúc trên Smartphone.',
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-                // 🎨 Tách màu sắc
-                _buildAppCategoryCard(
-                  emoji: '🎨',
-                  title: 'Tách màu sắc',
-                  content: 'Tách sạch gạo vàng, vàng mơ, hạt đỏ, hạt đen, bạc bụng toàn phần, bạc bụng một phần, chấm kim nhỏ nhất.',
-                  cardColor: const Color(0xFFEFF6FF),
-                  borderColor: const Color(0xFFBFDBFE),
-                  titleColor: const Color(0xFF1D4ED8),
-                ),
+                  // 🎨 Tách màu sắc
+                  _buildAppCategoryCard(
+                    emoji: '🎨',
+                    title: 'Tách màu sắc',
+                    content: 'Tách sạch gạo vàng, vàng mơ, hạt đỏ, hạt đen, bạc bụng toàn phần, bạc bụng một phần, chấm kim nhỏ nhất.',
+                    cardColor: const Color(0xFFEFF6FF),
+                    borderColor: const Color(0xFFBFDBFE),
+                    titleColor: const Color(0xFF1D4ED8),
+                  ),
 
-                // ⬜ Tách hình dạng
-                _buildAppCategoryCard(
-                  emoji: '⬜',
-                  title: 'Tách hình dạng',
-                  content: 'Tách riêng hạt tròn lẫn trong gạo dài hoặc ngược lại, phân loại hạt theo kích thước chiều dài/ngắn.',
-                  cardColor: const Color(0xFFF0FDF4),
-                  borderColor: const Color(0xFFBBF7D0),
-                  titleColor: const Color(0xFF15803D),
-                ),
+                  // ⬜ Tách hình dạng
+                  _buildAppCategoryCard(
+                    emoji: '⬜',
+                    title: 'Tách hình dạng',
+                    content: 'Tách riêng hạt tròn lẫn trong gạo dài hoặc ngược lại, phân loại hạt theo kích thước chiều dài/ngắn.',
+                    cardColor: const Color(0xFFF0FDF4),
+                    borderColor: const Color(0xFFBBF7D0),
+                    titleColor: const Color(0xFF15803D),
+                  ),
 
-                // 🔻 Tách tạp chất
-                _buildAppCategoryCard(
-                  emoji: '🔻',
-                  title: 'Tách tạp chất',
-                  content: 'Loại bỏ được sạn, đá, mảnh nhựa màu/nhựa trong, bông cỏ, mảnh thủy tinh...',
-                  cardColor: const Color(0xFFFFF7ED),
-                  borderColor: const Color(0xFFFED7AA),
-                  titleColor: const Color(0xFFC2410C),
-                ),
+                  // 🔻 Tách tạp chất
+                  _buildAppCategoryCard(
+                    emoji: '🔻',
+                    title: 'Tách tạp chất',
+                    content: 'Loại bỏ được sạn, đá, mảnh nhựa màu/nhựa trong, bông cỏ, mảnh thủy tinh...',
+                    cardColor: const Color(0xFFFFF7ED),
+                    borderColor: const Color(0xFFFED7AA),
+                    titleColor: const Color(0xFFC2410C),
+                  ),
 
-                // ⇄ Chế độ bắn ngược
-                _buildAppCategoryCard(
-                  emoji: '⇄',
-                  title: 'Chế độ bắn ngược',
-                  content: 'Có thể điều chỉnh tách hạt gạo tốt ra khỏi dòng gạo phế, tiết kiệm tối đa lượng khí nén tiêu thụ.',
-                  cardColor: const Color(0xFFFAF5FF),
-                  borderColor: const Color(0xFFE9D5FF),
-                  titleColor: const Color(0xFF7E22CE),
-                ),
+                  // ⇄ Chế độ bắn ngược
+                  _buildAppCategoryCard(
+                    emoji: '⇄',
+                    title: 'Chế độ bắn ngược',
+                    content: 'Có thể điều chỉnh tách hạt gạo tốt ra khỏi dòng gạo phế, tiết kiệm tối đa lượng khí nén tiêu thụ.',
+                    cardColor: const Color(0xFFFAF5FF),
+                    borderColor: const Color(0xFFE9D5FF),
+                    titleColor: const Color(0xFF7E22CE),
+                  ),
+                ],
               ],
             ),
           ),
@@ -1073,69 +1111,81 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: ['SC16 Pro', 'SC12', 'SC10', 'SC8', 'SC4'].map((
-                        m,
-                      ) {
-                        final isSelected =
-                            m.toLowerCase() == selectedModel.toLowerCase();
-                        final isPro = m.toLowerCase().contains('pro');
+                      children:
+                          [
+                            'SC16 Pro',
+                            'SC12',
+                            'SC10',
+                            'SC8',
+                            'SC4',
+                            'S+80D',
+                          ].map((m) {
+                            final isSelected =
+                                m.toLowerCase() == selectedModel.toLowerCase();
+                            final isPro = m.toLowerCase().contains('pro');
 
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: FilterChip(
-                            selected: isSelected,
-                            label: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(m),
-                                if (isPro) ...[
-                                  const SizedBox(width: 4),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                      vertical: 1,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? Colors.amber
-                                          : Colors.red,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      'AI',
-                                      style: TextStyle(
-                                        color: isSelected
-                                            ? Colors.black87
-                                            : Colors.white,
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                            selectedColor: Colors.blue.shade800,
-                            checkmarkColor: Colors.white,
-                            labelStyle: TextStyle(
-                              color: isSelected ? Colors.white : Colors.black87,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                            backgroundColor: Colors.grey.shade100,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(
-                                color: isSelected
-                                    ? Colors.blue.shade800
-                                    : Colors.grey.shade300,
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4.0,
                               ),
-                            ),
-                            onSelected: (_) => provider.selectModel(m),
-                          ),
-                        );
-                      }).toList(),
+                              child: FilterChip(
+                                selected: isSelected,
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(m),
+                                    if (isPro) ...[
+                                      const SizedBox(width: 4),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                          vertical: 1,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? Colors.amber
+                                              : Colors.red,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'AI',
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? Colors.black87
+                                                : Colors.white,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                selectedColor: Colors.blue.shade800,
+                                checkmarkColor: Colors.white,
+                                labelStyle: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.black87,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                                backgroundColor: Colors.grey.shade100,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: BorderSide(
+                                    color: isSelected
+                                        ? Colors.blue.shade800
+                                        : Colors.grey.shade300,
+                                  ),
+                                ),
+                                onSelected: (_) => provider.selectModel(m),
+                              ),
+                            );
+                          }).toList(),
                     ),
                   ),
                 ),
@@ -1156,7 +1206,9 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                'MÁY TÁCH MÀU ${(specs['Model'] ?? 'SC').toUpperCase()}',
+                                specs['Model'] == 'S+80D'
+                                    ? 'MÁY PHÂN TÍCH MẪU S+80D'
+                                    : 'MÁY TÁCH MÀU ${(specs['Model'] ?? 'SC').toUpperCase()}',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 20,
@@ -1220,7 +1272,73 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                                                   ),
                                                 ),
                                                 // 3D badge on image
-                                                if (is3dAvailable)
+                                                if (specs['Model'] == 'S+80D')
+                                                  Positioned(
+                                                    top: 8,
+                                                    right: 8,
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 5,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        gradient:
+                                                            LinearGradient(
+                                                              colors: [
+                                                                Colors
+                                                                    .blue
+                                                                    .shade700,
+                                                                Colors
+                                                                    .purple
+                                                                    .shade700,
+                                                              ],
+                                                            ),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              20,
+                                                            ),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.blue
+                                                                .withValues(
+                                                                  alpha: 0.3,
+                                                                ),
+                                                            blurRadius: 6,
+                                                            offset:
+                                                                const Offset(
+                                                                  0,
+                                                                  2,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: const [
+                                                          Icon(
+                                                            Icons.auto_awesome,
+                                                            color: Colors.white,
+                                                            size: 16,
+                                                          ),
+                                                          SizedBox(width: 4),
+                                                          Text(
+                                                            'AI',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                                else if (is3dAvailable)
                                                   Positioned(
                                                     top: 8,
                                                     right: 8,
@@ -1387,30 +1505,36 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                               const SizedBox(height: 14),
 
                               // Highlight Metrics
-                              Row(
-                                children: [
-                                  _buildHighlightCard(
-                                    'Năng suất (T/h)',
-                                    specs['Năng suất (tấn/giờ)'] ?? '--',
-                                    Icons.speed,
-                                    Colors.orange.shade800,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _buildHighlightCard(
-                                    'Số Camera',
-                                    specs['Số Camera'] ?? '--',
-                                    Icons.camera_alt,
-                                    Colors.blue.shade800,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _buildHighlightCard(
-                                    'Số Ejector',
-                                    specs['Số ejector'] ?? '--',
-                                    Icons.air,
-                                    Colors.green.shade800,
-                                  ),
-                                ],
-                              ),
+                              if (specs['Model'] != 'S+80D') ...[
+                                Row(
+                                  children: [
+                                    if (specs['Năng suất (tấn/giờ)'] !=
+                                        null) ...[
+                                      _buildHighlightCard(
+                                        'Năng suất (T/h)',
+                                        specs['Năng suất (tấn/giờ)']!,
+                                        Icons.speed,
+                                        Colors.orange.shade800,
+                                      ),
+                                      const SizedBox(width: 8),
+                                    ],
+                                    _buildHighlightCard(
+                                      'Số Camera',
+                                      specs['Số Camera'] ?? '--',
+                                      Icons.camera_alt,
+                                      Colors.blue.shade800,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildHighlightCard(
+                                      'Số Ejector',
+                                      specs['Số ejector'] ?? '--',
+                                      Icons.air,
+                                      Colors.green.shade800,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 14),
+                              ],
                               const SizedBox(height: 14),
 
                               // Core Technologies Badges - Center Aligned
@@ -1422,9 +1546,25 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                                   spacing: 6.0,
                                   runSpacing: 6.0,
                                   children: [
-                                    if (specs['Model']?.toLowerCase().contains(
-                                          'pro',
-                                        ) ==
+                                    if (specs['Model'] == 'S+80D') ...[
+                                      _buildTechChip(
+                                        context,
+                                        'Deep Learning AI',
+                                        Colors.blue,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Nền tảng PLOV 3.0',
+                                        Colors.orange,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Camera Hawkeye 4.0',
+                                        Colors.purple,
+                                      ),
+                                    ] else if (specs['Model']
+                                            ?.toLowerCase()
+                                            .contains('pro') ==
                                         true) ...[
                                       _buildTechChip(
                                         context,
@@ -1441,28 +1581,44 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                                         'Công nghệ mắt diều hâu 3.0',
                                         Colors.purple,
                                       ),
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ tích hợp đa điểm ảnh',
+                                        Colors.indigo,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ PLOV',
+                                        Colors.teal,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ hút bụi độc lập',
+                                        Colors.blueGrey,
+                                      ),
                                     ] else ...[
                                       _buildTechChip(
                                         context,
                                         'Công nghệ mắt diều hâu 3.0',
                                         Colors.purple,
                                       ),
+
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ tích hợp đa điểm ảnh',
+                                        Colors.indigo,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ PLOV',
+                                        Colors.teal,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ hút bụi độc lập',
+                                        Colors.brown,
+                                      ),
                                     ],
-                                    _buildTechChip(
-                                      context,
-                                      'Công nghệ tích hợp đa điểm ảnh',
-                                      Colors.indigo,
-                                    ),
-                                    _buildTechChip(
-                                      context,
-                                      'Công nghệ PLOV',
-                                      Colors.teal,
-                                    ),
-                                    _buildTechChip(
-                                      context,
-                                      'Công nghệ hút bụi độc lập',
-                                      Colors.brown,
-                                    ),
                                   ],
                                 ),
                               ),
@@ -1637,7 +1793,31 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                                   final tabIndex = _tabController.index;
 
                                   if (tabIndex == 1) {
-                                    // Hệ Thống Khí Nén - custom icon-chip grid layout
+                                    // Hệ Thống Khí Nén
+                                    if (specs['Model'] == 'S+80D') {
+                                      return Container(
+                                        padding: const EdgeInsets.all(24),
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.grey.shade200,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Dòng máy phân tích không yêu cầu hệ thống khí nén',
+                                          style: TextStyle(
+                                            color: Colors.grey.shade600,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      );
+                                    }
+
+                                    // custom icon-chip grid layout
                                     final compressor =
                                         specs['Máy nén khí đồng bộ'] != null
                                         ? 'Máy nén khí ${specs['Máy nén khí đồng bộ']}'
@@ -1911,24 +2091,36 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                                   }
 
                                   List<String> currentKeys = [];
-                                  if (tabIndex == 0) {
-                                    currentKeys = [
-                                      'Năng suất (tấn/giờ)',
-                                      'Số máng',
-                                      'Số ejector',
-                                      'Số ejector/ máng',
-                                      'Số Camera',
-                                      'Độ chính xác phân loại',
-                                      'Tỉ lệ phế phẩm',
-                                    ];
+                                  if (specs['Model'] == 'S+80D') {
+                                    if (tabIndex == 0) {
+                                      currentKeys = [
+                                        'Công suất điện (kw)',
+                                        'Điện áp (V/Hz)',
+                                        'Trọng lượng (Kg)',
+                                        'Kích thước (DxRxC) (mm)',
+                                      ];
+                                    }
                                   } else {
-                                    currentKeys = [
-                                      'Trọng lượng (kg)',
-                                      'Kích thước (D x R x C mm)',
-                                      'Kích thước sàn đặt máy',
-                                    ];
+                                    if (tabIndex == 0) {
+                                      currentKeys = [
+                                        'Năng suất (tấn/giờ)',
+                                        'Số máng',
+                                        'Số ejector',
+                                        'Số ejector/ máng',
+                                        'Số Camera',
+                                        'Độ chính xác phân loại',
+                                        'Tỉ lệ phế phẩm',
+                                      ];
+                                    } else {
+                                      currentKeys = [
+                                        'Công suất điện (kW)',
+                                        'Điện áp',
+                                        'Trọng lượng (kg)',
+                                        'Kích thước (D x R x C mm)',
+                                        'Kích thước sàn đặt máy',
+                                      ];
+                                    }
                                   }
-
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -1964,152 +2156,138 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                               ),
                               const SizedBox(height: 16),
 
-                              // Combo Auxiliary Equipment Recommended
-                              Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.teal.shade50,
-                                      const Color(0xFFE0F7FA),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: Colors.teal.shade200,
-                                    width: 1.2,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.teal.withValues(
-                                        alpha: 0.08,
-                                      ),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 3),
+                              // Thiết bị phụ trợ
+                              if (specs['Model'] != 'S+80D') ...[
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.teal.shade50.withValues(
+                                      alpha: 0.5,
                                     ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Header
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                        14,
-                                        12,
-                                        14,
-                                        0,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(6),
-                                            decoration: BoxDecoration(
-                                              color: Colors.teal.shade100,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Icon(
-                                              Icons.settings_outlined,
-                                              color: Colors.teal.shade800,
-                                              size: 18,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Text(
-                                              'Thiết bị phụ trợ đồng bộ',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 13.5,
-                                                color: Colors.teal.shade900,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Colors.teal.shade100,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                          12,
+                                          12,
+                                          12,
+                                          0,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: Colors.teal.shade100,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Icon(
+                                                Icons.settings_outlined,
+                                                color: Colors.teal.shade800,
+                                                size: 18,
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                'Thiết bị phụ trợ đồng bộ',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 13.5,
+                                                  color: Colors.teal.shade900,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Divider(
-                                      height: 16,
-                                      thickness: 0.7,
-                                      indent: 14,
-                                      endIndent: 14,
-                                      color: Colors.teal.shade200,
-                                    ),
-                                    // CTA Button
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                        12,
-                                        0,
-                                        12,
-                                        12,
+                                      Divider(
+                                        height: 16,
+                                        thickness: 0.7,
+                                        indent: 14,
+                                        endIndent: 14,
+                                        color: Colors.teal.shade200,
                                       ),
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: OutlinedButton.icon(
-                                          onPressed: () {
-                                            context.push(
-                                              '/aux_equip',
-                                              extra: specs['Model'],
-                                            );
-                                          },
-                                          icon: Icon(
-                                            Icons.open_in_new,
-                                            size: 16,
-                                            color: Colors.teal.shade800,
-                                          ),
-                                          label: Text(
-                                            'Xem thiết bị phụ trợ',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 13,
+                                      // CTA Button
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                          12,
+                                          0,
+                                          12,
+                                          12,
+                                        ),
+                                        child: SizedBox(
+                                          width: double.infinity,
+                                          child: OutlinedButton.icon(
+                                            onPressed: () {
+                                              context.push(
+                                                '/aux_equip',
+                                                extra: specs['Model'],
+                                              );
+                                            },
+                                            icon: Icon(
+                                              Icons.open_in_new,
+                                              size: 16,
                                               color: Colors.teal.shade800,
                                             ),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 11,
-                                              horizontal: 16,
+                                            label: Text(
+                                              'Xem thiết bị phụ trợ',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 13,
+                                                color: Colors.teal.shade800,
+                                              ),
                                             ),
-                                            side: BorderSide(
-                                              color: Colors.teal.shade400,
-                                              width: 1.5,
+                                            style: OutlinedButton.styleFrom(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 11,
+                                                    horizontal: 16,
+                                                  ),
+                                              side: BorderSide(
+                                                color: Colors.teal.shade400,
+                                                width: 1.5,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              backgroundColor: Colors.white
+                                                  .withValues(alpha: 0.7),
                                             ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            backgroundColor: Colors.white
-                                                .withValues(alpha: 0.7),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
+                                const SizedBox(height: 16),
 
-                              // Sales & ROI Quick Actions
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  context.push('/payback_analysis');
-                                },
-                                icon: const Icon(Icons.analytics_outlined),
-                                label: const Text('Phân tích hoàn vốn (ROI)'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.indigo.shade800,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 13,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                // Sales & ROI Quick Actions
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    context.push('/payback_analysis');
+                                  },
+                                  icon: const Icon(Icons.analytics_outlined),
+                                  label: const Text('Phân tích hoàn vốn (ROI)'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.indigo.shade800,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 13,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
+                                const SizedBox(height: 16),
+                              ],
                               _buildShareSection(context, specs),
                               const SizedBox(height: 20),
                             ],

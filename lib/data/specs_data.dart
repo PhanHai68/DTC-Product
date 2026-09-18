@@ -127,5 +127,13 @@ const List<Map<String, String>> colorSorterSpecs = [
     "Máy nén khí đồng bộ": "Acomp 100Hp (75kW)",
     "Bình tích khí đồng bộ": "2.000 Lít",
     "Nguyên liệu phù hợp": "Gạo xuất khẩu cao cấp, gạo lứt, cà phê hạt, hạt điều, ngũ cốc"
+  },
+  {
+    "Model": "S+80D",
+    "Phân khúc": "Máy phân tích mẫu",
+    "Công suất điện (kw)": "1.5",
+    "Điện áp (V/Hz)": "220V/50Hz",
+    "Trọng lượng (Kg)": "218",
+    "Kích thước (DxRxC) (mm)": "1020x682x11238"
   }
 ];

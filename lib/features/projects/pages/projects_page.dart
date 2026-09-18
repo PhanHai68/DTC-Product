@@ -383,48 +383,52 @@ class _Dashboard extends StatelessWidget {
         Icons.task_alt_rounded,
       ),
     ];
-    return SizedBox(
-      height: 112,
-      child: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-        scrollDirection: Axis.horizontal,
-        itemCount: values.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 10),
-        itemBuilder: (_, index) {
-          final item = values[index];
-          return Container(
-            width: 145,
-            padding: const EdgeInsets.all(13),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outlineVariant,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(item.$3, color: Theme.of(context).colorScheme.primary),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = (constraints.maxWidth - 10) / 2;
+          return Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: values.map((item) {
+              return SizedBox(
+                width: width,
+                child: Container(
+                  padding: const EdgeInsets.all(13),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                  ),
+                  child: Row(
                     children: [
-                      Text(
-                        '${item.$2}',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      Text(
-                        item.$1,
-                        maxLines: 2,
-                        style: const TextStyle(fontSize: 11.5),
+                      Icon(item.$3, color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${item.$2}',
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            Text(
+                              item.$1,
+                              maxLines: 2,
+                              style: const TextStyle(fontSize: 11.5),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              );
+            }).toList(),
           );
         },
       ),
