@@ -363,7 +363,7 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DtcPalette.canvas,
+      backgroundColor: DtcPalette.of(context).canvas,
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Lập Form Lưu Mẫu'),
@@ -820,6 +820,7 @@ class _SampleStreamSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     final data = controllers.toData();
     final totalParamWeight = controllers.parameters
         .map((p) => parseSampleNumber(p.weight.text))
@@ -849,7 +850,7 @@ class _SampleStreamSection extends StatelessWidget {
         ),
         subtitle: Text(
           '${controllers.type.englishTitle} · ${data.capacityTonPerHour.toStringAsFixed(1)} t/h',
-          style: const TextStyle(color: DtcPalette.muted, fontSize: 12.5),
+          style: TextStyle(color: palette.muted, fontSize: 12.5),
         ),
         children: [
           const _MiniHeading('Tính năng suất / Productivity'),
@@ -910,9 +911,9 @@ class _SampleStreamSection extends StatelessWidget {
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF1F6F7),
+                      color: palette.canvas,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: DtcPalette.border),
+                      border: Border.all(color: palette.border),
                     ),
                     child: Row(
                       children: [
@@ -925,10 +926,10 @@ class _SampleStreamSection extends StatelessWidget {
                         Expanded(
                           child: Text(
                             'Thời gian: ${data.minutes}p ${data.seconds}g\n(Đồng bộ theo nguyên liệu)',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 11.5,
                               fontWeight: FontWeight.w600,
-                              color: DtcPalette.navy,
+                              color: palette.navy,
                             ),
                           ),
                         ),
@@ -969,9 +970,9 @@ class _SampleStreamSection extends StatelessWidget {
           const SizedBox(height: 18),
           const _MiniHeading('Phân tích mẫu có hình ảnh / Sample Analysis'),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Nhập tổng mẫu, tên các thông số và chụp ảnh trực tiếp cho từng loại hạt.',
-            style: TextStyle(color: DtcPalette.muted, fontSize: 12),
+            style: TextStyle(color: palette.muted, fontSize: 12),
           ),
           const SizedBox(height: 10),
           _NumberField(
@@ -1045,6 +1046,7 @@ class _ParameterCardRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     final weight = parseSampleNumber(parameter.weight.text);
     final percentage = sampleWeightGram <= 0
         ? 0.0
@@ -1055,9 +1057,9 @@ class _ParameterCardRow extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7FAFB),
+        color: palette.canvas,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: DtcPalette.border),
+        border: Border.all(color: palette.border),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1238,14 +1240,15 @@ class _PhotoCapture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     final hasPhoto = storedImageCanDisplay(path);
     return Container(
       height: hasPhoto ? 190 : 112,
       width: double.infinity,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F6F7),
-        border: Border.all(color: DtcPalette.border),
+        color: palette.canvas,
+        border: Border.all(color: palette.border),
         borderRadius: BorderRadius.circular(14),
       ),
       child: hasPhoto
@@ -1266,22 +1269,22 @@ class _PhotoCapture extends StatelessWidget {
             )
           : InkWell(
               onTap: onCapture,
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.add_a_photo_outlined,
                     size: 34,
                     color: Color(0xFF148147),
                   ),
-                  SizedBox(height: 8),
-                  Text(
+                  const SizedBox(height: 8),
+                  const Text(
                     'Mở camera sau để chụp ảnh tổng quan',
                     style: TextStyle(fontWeight: FontWeight.w800),
                   ),
                   Text(
                     'Bắt buộc trước khi xuất PDF',
-                    style: TextStyle(color: DtcPalette.muted, fontSize: 12),
+                    style: TextStyle(color: palette.muted, fontSize: 12),
                   ),
                 ],
               ),
@@ -1305,6 +1308,7 @@ class _FormSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -1321,16 +1325,16 @@ class _FormSection extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          color: DtcPalette.navy,
+                        style: TextStyle(
+                          color: palette.navy,
                           fontSize: 17,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                       Text(
                         subtitle,
-                        style: const TextStyle(
-                          color: DtcPalette.muted,
+                        style: TextStyle(
+                          color: palette.muted,
                           fontSize: 10.5,
                           fontWeight: FontWeight.w700,
                           letterSpacing: .7,
@@ -1357,6 +1361,7 @@ class _ResultStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
@@ -1371,10 +1376,7 @@ class _ResultStrip extends StatelessWidget {
                   children: [
                     Text(
                       item.$1,
-                      style: const TextStyle(
-                        color: DtcPalette.muted,
-                        fontSize: 11.5,
-                      ),
+                      style: TextStyle(color: palette.muted, fontSize: 11.5),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -1403,8 +1405,8 @@ class _MiniHeading extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     text,
-    style: const TextStyle(
-      color: DtcPalette.navy,
+    style: TextStyle(
+      color: DtcPalette.of(context).navy,
       fontSize: 14,
       fontWeight: FontWeight.w900,
     ),
@@ -1423,15 +1425,15 @@ class _OfflineBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: const Color(0xFFC9E9D8)),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(Icons.cloud_off_outlined, color: Color(0xFF148147)),
-          SizedBox(width: 10),
+          const Icon(Icons.cloud_off_outlined, color: Color(0xFF148147)),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               'Chạy hoàn toàn offline · Dữ liệu được tự động lưu trên thiết bị',
               style: TextStyle(
-                color: DtcPalette.navy,
+                color: DtcPalette.of(context).navy,
                 fontSize: 12.5,
                 fontWeight: FontWeight.w700,
               ),

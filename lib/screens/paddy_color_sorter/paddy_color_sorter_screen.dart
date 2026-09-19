@@ -878,7 +878,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
       create: (_) => PaddyColorSorterProvider(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Thông số kỹ thuật Máy Tách Màu'),
+          title: const Text('Thông số kỹ thuật'),
           actions: [
             Consumer<PaddyColorSorterProvider>(
               builder: (context, provider, _) => IconButton(

@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import '../../models/packing_machine.dart';
 import '../../repositories/packing_machine_repository.dart';
 import '../../routes/route_locations.dart';
+import '../../theme/dtc_palette.dart';
 import '../../widgets/packing/machine_card.dart';
 import '../../widgets/packing/packing_back_button.dart';
 
@@ -132,27 +133,26 @@ class _MachineCatalogScreenState extends State<MachineCatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F7FA),
+      backgroundColor: palette.canvas,
       body: CustomScrollView(
         slivers: [
-          // App bar với gradient
+          // App bar đồng bộ theo theme chung của app
           SliverAppBar(
-            expandedHeight: 140,
+            expandedHeight: 116,
             pinned: true,
             elevation: 0,
-            backgroundColor: const Color(0xFF3158A5),
-            foregroundColor: Colors.white,
+            scrolledUnderElevation: 1,
+            backgroundColor: palette.surface,
+            foregroundColor: palette.navy,
+            surfaceTintColor: Colors.transparent,
             centerTitle: true,
             leadingWidth: 64,
-            leading: PackingBackButton(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.white.withValues(alpha: 0.16),
-              tooltip: 'Về Cân đóng gói',
-            ),
-            title: const Text(
+            leading: const PackingBackButton(tooltip: 'Về Cân đóng gói'),
+            title: Text(
               'Danh mục sản phẩm',
-              style: TextStyle(fontWeight: FontWeight.w800),
+              style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
             ),
             flexibleSpace: FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
@@ -268,63 +268,49 @@ class _MachineCatalogScreenState extends State<MachineCatalogScreen> {
   }
 }
 
-/// Header gradient trong SliverAppBar
+/// Header trong SliverAppBar — đồng bộ với phong cách "Trung tâm chức năng"
+/// dùng ở các màn hình menu khác (thanh nhấn teal + phụ đề navy).
+/// Tiêu đề chính "Danh mục sản phẩm" đã nằm ở AppBar phía trên, ở đây chỉ
+/// hiển thị số lượng model và hướng dẫn để tránh lặp lại.
 class _CatalogHeader extends StatelessWidget {
   final int totalCount;
   const _CatalogHeader({required this.totalCount});
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF1A3B7A), Color(0xFF3158A5), Color(0xFF4A7CC9)],
+      color: palette.canvas,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 52, 20, 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 4,
+                height: 22,
+                decoration: BoxDecoration(
+                  color: palette.cyan,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: totalCount > 0
+                    ? Text(
+                        '$totalCount model · Chọn dòng máy để xem chi tiết',
+                        style: TextStyle(
+                          color: palette.navy,
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -20,
-            bottom: -30,
-            child: Opacity(
-              opacity: 0.07,
-              child: const Icon(
-                Icons.category_rounded,
-                size: 120,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 52, 20, 16),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.category_rounded,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: totalCount > 0
-                        ? Text(
-                            '$totalCount model · Chọn dòng máy để xem chi tiết',
-                            style: const TextStyle(
-                              color: Color(0xFFD9E6FA),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -359,11 +345,12 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
+    final palette = DtcPalette.of(context);
     return Container(
-      color: const Color(0xFFF4F7FA),
+      color: palette.canvas,
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Material(
-        color: Colors.white,
+        color: palette.surface,
         elevation: overlapsContent ? 2 : 1,
         shadowColor: Colors.black12,
         borderRadius: BorderRadius.circular(14),
@@ -373,17 +360,14 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
           onChanged: onChanged,
           decoration: InputDecoration(
             hintText: 'Tìm theo model, nhóm máy, loại vật liệu...',
-            hintStyle: const TextStyle(fontSize: 14, color: Color(0xFF8FA3B1)),
-            prefixIcon: const Icon(
-              Icons.search_rounded,
-              color: Color(0xFF3158A5),
-            ),
+            hintStyle: TextStyle(fontSize: 14, color: palette.muted),
+            prefixIcon: Icon(Icons.search_rounded, color: palette.muted),
             suffixIcon: query.isNotEmpty
                 ? IconButton(
                     tooltip: 'Xóa từ khóa',
                     icon: const Icon(Icons.close_rounded, size: 20),
                     onPressed: onClear,
-                    color: const Color(0xFF8FA3B1),
+                    color: palette.muted,
                   )
                 : null,
             border: InputBorder.none,
@@ -489,19 +473,11 @@ class _GroupSectionState extends State<_GroupSection> {
                           .withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: widget.groupName.contains('PE')
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(9),
-                            child: Image.asset(
-                              'assets/images/packing/pe_group_icon.png',
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Icon(
-                            _groupIcon(widget.groupName),
-                            color: _groupForegroundColor(widget.groupName),
-                            size: 20,
-                          ),
+                    child: Icon(
+                      _groupIcon(widget.groupName),
+                      color: _groupForegroundColor(widget.groupName),
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(

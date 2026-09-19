@@ -546,44 +546,48 @@ class _FeatureCard extends StatelessWidget {
 
     return Material(
       color: const Color(0xFFF7FCF9),
-      borderRadius: BorderRadius.circular(13),
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () => _showDetail(context),
-        borderRadius: BorderRadius.circular(13),
+        borderRadius: BorderRadius.circular(16),
         child: Container(
-          height: 110,
-          padding: const EdgeInsets.all(11),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(13),
-            border: Border.all(color: accent.withValues(alpha: 0.24)),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: accent.withValues(alpha: 0.22)),
           ),
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE4F4EA),
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      accent.withValues(alpha: 0.14),
+                      accent.withValues(alpha: 0.24),
+                    ],
+                  ),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(feature.icon, color: accent, size: 21),
+                child: Icon(feature.icon, color: accent, size: 22),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  feature.title,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: accent,
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w800,
-                    height: 1.2,
-                  ),
+              const SizedBox(height: 8),
+              Text(
+                feature.title,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: accent,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w800,
+                  height: 1.2,
                 ),
               ),
-              const SizedBox(width: 4),
-              const Icon(Icons.arrow_forward_rounded, color: accent, size: 17),
             ],
           ),
         ),

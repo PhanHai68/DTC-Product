@@ -13,25 +13,25 @@ class ExtensionsScreen extends StatelessWidget {
       backButtonKey: const Key('extensions_back_button'),
       entries: [
         TechnologyMenuEntry(
-          id: 'extension_sample_record',
-          title: 'Lập Form Lưu Mẫu',
-          icon: Icons.assignment_turned_in_outlined,
-          featured: true,
-          onTap: () => context.push('/sample_record'),
-        ),
-        TechnologyMenuEntry(
           id: 'extension_maintenance',
-          title: 'Quản lý Bảo trì',
+          title: 'Nhắc Nhở Lịch Bảo Trì',
           icon: Icons.build_circle_outlined,
           featured: true,
           onTap: () => context.push('/maintenance'),
         ),
         TechnologyMenuEntry(
           id: 'extension_project_tracking',
-          title: 'Theo Dõi Dự Án',
+          title: 'Theo Dõi Lắp Đặt Và Nghiệm Thu',
           icon: Icons.engineering_outlined,
           featured: true,
           onTap: () => context.push('/projects'),
+        ),
+        TechnologyMenuEntry(
+          id: 'extension_sample_record',
+          title: 'Lập Form Lưu Mẫu',
+          icon: Icons.assignment_turned_in_outlined,
+          featured: true,
+          onTap: () => context.push('/sample_record'),
         ),
         TechnologyMenuEntry(
           id: 'extension_productivity_calc',
@@ -41,7 +41,7 @@ class ExtensionsScreen extends StatelessWidget {
         ),
         TechnologyMenuEntry(
           id: 'extension_technical_converter',
-          title: 'Quy Đổi Kỹ Thuật',
+          title: 'Chuyển Đổi Đơn Vị',
           icon: Icons.swap_horiz_rounded,
           onTap: () => context.push('/technical_converter'),
         ),

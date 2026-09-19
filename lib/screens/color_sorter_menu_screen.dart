@@ -61,9 +61,9 @@ class ColorSorterMenuScreen extends StatelessWidget {
     await showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        icon: const Icon(
+        icon: Icon(
           Icons.folder_shared_outlined,
-          color: DtcPalette.cyan,
+          color: DtcPalette.of(dialogContext).cyan,
           size: 34,
         ),
         title: const Text(
@@ -73,10 +73,13 @@ class ColorSorterMenuScreen extends StatelessWidget {
         ),
         content: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 440),
-          child: const Text(
+          child: Text(
             'Tài liệu được lưu trên Google Drive. Bạn có thể mở thư viện để xem hoặc sao chép liên kết để chia sẻ.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: DtcPalette.muted, height: 1.45),
+            style: TextStyle(
+              color: DtcPalette.of(dialogContext).muted,
+              height: 1.45,
+            ),
           ),
         ),
         actionsAlignment: MainAxisAlignment.center,

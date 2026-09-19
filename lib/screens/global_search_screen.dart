@@ -52,11 +52,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       keywords: 'kg tấn giờ stopwatch pdf',
     ),
     const _SearchItem(
-      title: 'Quy đổi kỹ thuật',
+      title: 'Chuyển đổi đơn vị',
       subtitle: 'Mesh, kích thước ống, áp suất và lưu lượng',
       location: '/technical_converter',
       icon: Icons.swap_horiz_rounded,
-      keywords: 'mesh micron mm inch dn bar psi cfm',
+      keywords: 'mesh micron mm inch dn bar psi cfm quy doi ky thuat',
     ),
     const _SearchItem(
       title: 'Lập Form Lưu Mẫu',
@@ -66,11 +66,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       keywords: 'lưu mẫu form ảnh pdf',
     ),
     const _SearchItem(
-      title: 'Quản lý bảo trì',
+      title: 'Nhắc Nhở Lịch Bảo Trì',
       subtitle: 'Theo dõi máy và lịch bảo trì',
       location: '/maintenance',
       icon: Icons.build_circle_outlined,
-      keywords: 'bảo dưỡng lịch máy khách hàng',
+      keywords: 'bảo dưỡng lịch máy khách hàng quản lý bảo trì theo dõi',
     ),
     const _SearchItem(
       title: 'Phân tích hoàn vốn',
@@ -80,11 +80,12 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       keywords: 'roi tiền điện doanh thu lợi nhuận',
     ),
     const _SearchItem(
-      title: 'Theo Dõi Dự Án',
+      title: 'Theo Dõi Lắp Đặt Và Nghiệm Thu',
       subtitle: 'Tiến độ thi công, nghiệm thu và hồ sơ dự án',
       location: '/projects',
       icon: Icons.engineering_outlined,
-      keywords: 'du an project tracking tien do nghiem thu cong trinh',
+      keywords:
+          'du an project tracking tien do nghiem thu cong trinh theo doi du an',
     ),
     ...colorSorterSpecs.map((spec) {
       final model = spec['Model'] ?? '';

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../screens/home_screen.dart';
 import '../screens/global_search_screen.dart';
 import '../screens/extensions_screen.dart';
+import '../screens/settings_screen.dart';
 import '../screens/sample_record/sample_record_screen.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
 import '../screens/technical_converter/technical_converter_screen.dart';
@@ -97,6 +98,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/search',
       builder: (context, state) => const GlobalSearchScreen(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
     ),
     GoRoute(
       path: '/extensions',

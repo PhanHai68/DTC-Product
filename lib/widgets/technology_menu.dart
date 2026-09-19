@@ -47,18 +47,19 @@ class TechnologyMenuScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Scaffold(
-      backgroundColor: DtcPalette.canvas,
+      backgroundColor: palette.canvas,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             pinned: true,
             elevation: 0,
             toolbarHeight: 68,
-            backgroundColor: Colors.white,
-            foregroundColor: DtcPalette.navy,
+            backgroundColor: palette.surface,
+            foregroundColor: palette.navy,
             surfaceTintColor: Colors.transparent,
-            shadowColor: DtcPalette.navy.withValues(alpha: 0.08),
+            shadowColor: palette.navy.withValues(alpha: 0.08),
             scrolledUnderElevation: 2,
             leadingWidth: 64,
             leading: Padding(
@@ -74,8 +75,8 @@ class TechnologyMenuScaffold extends StatelessWidget {
                   }
                 },
                 style: IconButton.styleFrom(
-                  foregroundColor: DtcPalette.navy,
-                  backgroundColor: const Color(0xFFE8F5F3),
+                  foregroundColor: palette.navy,
+                  backgroundColor: palette.cyan.withValues(alpha: 0.14),
                 ),
                 icon: const Icon(Icons.arrow_back_rounded),
               ),
@@ -84,8 +85,8 @@ class TechnologyMenuScaffold extends StatelessWidget {
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: DtcPalette.navy,
+              style: TextStyle(
+                color: palette.navy,
                 fontSize: 21,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -0.3,
@@ -150,22 +151,23 @@ class _SectionHeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Row(
       children: [
         Container(
           width: 4,
           height: 38,
           decoration: BoxDecoration(
-            color: DtcPalette.cyan,
+            color: palette.cyan,
             borderRadius: BorderRadius.circular(4),
           ),
         ),
         const SizedBox(width: 10),
-        const Expanded(
+        Expanded(
           child: Text(
             'Trung tâm chức năng',
             style: TextStyle(
-              color: DtcPalette.ink,
+              color: palette.ink,
               fontSize: 19,
               fontWeight: FontWeight.w900,
             ),
@@ -174,13 +176,13 @@ class _SectionHeading extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
           decoration: BoxDecoration(
-            color: const Color(0xFFE7F7F5),
+            color: palette.cyan.withValues(alpha: 0.14),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             '$itemCount mục',
-            style: const TextStyle(
-              color: Color(0xFF087F78),
+            style: TextStyle(
+              color: palette.cyan,
               fontSize: 12,
               fontWeight: FontWeight.w800,
             ),
@@ -199,6 +201,7 @@ class _TechnologyActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Semantics(
       button: entry.enabled,
       enabled: entry.enabled,
@@ -206,16 +209,18 @@ class _TechnologyActionCard extends StatelessWidget {
       hint: entry.statusLabel,
       child: Material(
         color: entry.enabled
-            ? (entry.featured ? const Color(0xFFF0FAF9) : Colors.white)
-            : const Color(0xFFF4F6F7),
+            ? (entry.featured
+                  ? palette.cyan.withValues(alpha: 0.10)
+                  : palette.surface)
+            : palette.canvas,
         elevation: entry.enabled && entry.featured ? 2 : 0,
-        shadowColor: DtcPalette.navy.withValues(alpha: 0.12),
+        shadowColor: palette.navy.withValues(alpha: 0.12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: entry.featured && entry.enabled
-                ? DtcPalette.cyan.withValues(alpha: 0.48)
-                : DtcPalette.border,
+                ? palette.cyan.withValues(alpha: 0.48)
+                : palette.border,
           ),
         ),
         clipBehavior: Clip.antiAlias,
@@ -234,10 +239,13 @@ class _TechnologyActionCard extends StatelessWidget {
                     height: 46,
                     decoration: BoxDecoration(
                       gradient: entry.iconBackgroundColor == null
-                          ? const LinearGradient(
+                          ? LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
-                              colors: [Color(0xFFE4F5F4), Color(0xFFD8F0F2)],
+                              colors: [
+                                palette.cyan.withValues(alpha: 0.14),
+                                palette.cyan.withValues(alpha: 0.22),
+                              ],
                             )
                           : null,
                       color: entry.iconBackgroundColor,
@@ -251,13 +259,13 @@ class _TechnologyActionCard extends StatelessWidget {
                               fit: BoxFit.cover,
                               errorBuilder: (_, _, _) => Icon(
                                 entry.icon,
-                                color: entry.iconColor ?? DtcPalette.navyLight,
+                                color: entry.iconColor ?? palette.navyLight,
                               ),
                             ),
                           )
                         : Icon(
                             entry.icon,
-                            color: entry.iconColor ?? DtcPalette.navyLight,
+                            color: entry.iconColor ?? palette.navyLight,
                             size: 23,
                           ),
                   ),
@@ -271,8 +279,8 @@ class _TechnologyActionCard extends StatelessWidget {
                           entry.title,
                           style: TextStyle(
                             color: entry.enabled
-                                ? DtcPalette.ink
-                                : DtcPalette.muted,
+                                ? palette.ink
+                                : palette.muted,
                             fontSize: 15.5,
                             height: 1.15,
                             fontWeight: FontWeight.w800,
@@ -282,8 +290,8 @@ class _TechnologyActionCard extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             entry.subtitle!,
-                            style: const TextStyle(
-                              color: DtcPalette.muted,
+                            style: TextStyle(
+                              color: palette.muted,
                               fontSize: 12,
                               height: 1.2,
                             ),
@@ -300,13 +308,18 @@ class _TechnologyActionCard extends StatelessWidget {
                         vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFF3CD),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF4A3B12)
+                            : const Color(0xFFFFF3CD),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
                         entry.statusLabel!,
-                        style: const TextStyle(
-                          color: Color(0xFF725400),
+                        style: TextStyle(
+                          color: Theme.of(context).brightness ==
+                                  Brightness.dark
+                              ? const Color(0xFFFFD966)
+                              : const Color(0xFF725400),
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                         ),
@@ -316,7 +329,7 @@ class _TechnologyActionCard extends StatelessWidget {
                     Text(
                       index.toString().padLeft(2, '0'),
                       style: TextStyle(
-                        color: DtcPalette.navy.withValues(alpha: 0.28),
+                        color: palette.navy.withValues(alpha: 0.28),
                         fontSize: 13,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.8,
@@ -328,9 +341,7 @@ class _TechnologyActionCard extends StatelessWidget {
                         ? Icons.chevron_right_rounded
                         : Icons.schedule_rounded,
                     size: 22,
-                    color: entry.enabled
-                        ? const Color(0xFF087F78)
-                        : DtcPalette.muted,
+                    color: entry.enabled ? palette.cyan : palette.muted,
                   ),
                 ],
               ),

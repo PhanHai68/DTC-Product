@@ -31,7 +31,7 @@ void main() {
     expect(find.text('Máy nén khí'), findsOneWidget);
     expect(find.text('Cân đóng gói'), findsOneWidget);
     expect(find.text('Công cụ & Quản lý'), findsOneWidget);
-    expect(find.text('DTC Group'), findsOneWidget);
+    expect(find.text('DTCGroup'), findsOneWidget);
     expect(find.text('Tra cứu model hoặc chức năng'), findsOneWidget);
     expect(find.text('Tra cứu nhanh'), findsNothing);
     expect(find.text('Tính toán kỹ thuật'), findsNothing);
@@ -63,7 +63,7 @@ void main() {
     expect(compressorCard.left, lessThan(extensionsCard.left));
     expect(extensionsCard.right, lessThanOrEqualTo(372));
     expect(tester.getCenter(find.text('DTC Product')).dx, closeTo(195, 1));
-    expect(tester.getBottomRight(find.text('DTC Group')).dy, greaterThan(820));
+    expect(tester.getBottomRight(find.text('DTCGroup')).dy, greaterThan(820));
     expect(tester.takeException(), isNull);
   });
 
@@ -104,7 +104,7 @@ void main() {
     expect(find.text('Công cụ & Quản lý'), findsOneWidget);
     expect(find.text('Lập Form Lưu Mẫu'), findsOneWidget);
     expect(find.byKey(const Key('extension_sample_record')), findsOneWidget);
-    expect(find.text('Theo Dõi Dự Án'), findsOneWidget);
+    expect(find.text('Theo Dõi Lắp Đặt Và Nghiệm Thu'), findsOneWidget);
     expect(find.byKey(const Key('extension_project_tracking')), findsOneWidget);
     expect(find.text('Phân tích hoàn vốn'), findsNothing);
     expect(find.text('Thiết bị phụ trợ máy tách màu'), findsNothing);

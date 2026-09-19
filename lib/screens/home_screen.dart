@@ -11,32 +11,29 @@ class HomeScreen extends StatelessWidget {
       title: 'Máy tách màu',
       imagePath: 'assets/images/home_color_sorter_5_chutes_v5.png',
       route: '/color_sorter_categories',
-      tint: Color(0xFFF5F7F8),
     ),
     _HomeAction(
       title: 'Cân đóng gói',
       imagePath: 'assets/images/home_packing_lzb1200.jpg',
       route: '/packing_menu',
-      tint: Color(0xFFF5F7F8),
     ),
     _HomeAction(
       title: 'Máy nén khí',
       imagePath: 'assets/images/home_air_compressor_v5.png',
       route: '/acomp_menu',
-      tint: Color(0xFFF5F7F8),
     ),
     _HomeAction(
       title: 'Công cụ & Quản lý',
       icon: Icons.dashboard_customize_outlined,
       route: '/extensions',
-      tint: Color(0xFFF5F7F8),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F8),
+      backgroundColor: palette.canvas,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -104,29 +101,44 @@ class _BrandHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 14),
-      child: Center(
-        child: Text.rich(
-          TextSpan(
-            children: [
+    final palette = DtcPalette.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 20, 8, 14),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Center(
+            child: Text.rich(
               TextSpan(
-                text: 'DTC',
-                style: TextStyle(color: Color(0xFF138347)),
+                children: [
+                  TextSpan(
+                    text: 'DTC',
+                    style: TextStyle(color: Color(0xFF138347)),
+                  ),
+                  TextSpan(
+                    text: ' Product',
+                    style: TextStyle(color: Color(0xFF72AD30)),
+                  ),
+                ],
               ),
-              TextSpan(
-                text: ' Product',
-                style: TextStyle(color: Color(0xFF72AD30)),
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.8,
               ),
-            ],
+            ),
           ),
-          maxLines: 1,
-          style: TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -0.8,
+          Positioned(
+            right: 12,
+            child: IconButton(
+              key: const ValueKey('home_settings_button'),
+              tooltip: 'Cài đặt',
+              onPressed: () => context.push('/settings'),
+              icon: Icon(Icons.settings_outlined, color: palette.muted),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -137,14 +149,12 @@ class _HomeAction {
   final String? imagePath;
   final IconData? icon;
   final String route;
-  final Color tint;
 
   const _HomeAction({
     required this.title,
     this.imagePath,
     this.icon,
     required this.route,
-    required this.tint,
   });
 }
 
@@ -161,17 +171,18 @@ class _HomeActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Semantics(
       button: true,
       label: 'Mở ${action.title}',
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: palette.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFDDE6E9)),
+          border: Border.all(color: palette.border),
           boxShadow: [
             BoxShadow(
-              color: DtcPalette.navy.withValues(alpha: 0.055),
+              color: palette.navy.withValues(alpha: 0.055),
               blurRadius: 18,
               offset: const Offset(0, 7),
             ),
@@ -193,7 +204,7 @@ class _HomeActionCard extends StatelessWidget {
                       width: double.infinity,
                       padding: EdgeInsets.all(compact ? 8 : 12),
                       decoration: BoxDecoration(
-                        color: action.tint,
+                        color: palette.canvas,
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: _ActionVisual(action: action, compact: compact),
@@ -209,7 +220,7 @@ class _HomeActionCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: DtcPalette.ink,
+                          color: palette.ink,
                           fontSize: compact ? 15.5 : 17,
                           height: 1.12,
                           fontWeight: FontWeight.w800,
@@ -233,36 +244,40 @@ class _QuickSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1120),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(18, 0, 18, 10),
           child: Material(
-            color: Colors.white,
+            color: palette.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: const BorderSide(color: Color(0xFFDDE6E9)),
+              side: BorderSide(color: palette.border),
             ),
             child: InkWell(
               borderRadius: BorderRadius.circular(16),
               onTap: () => context.push('/search'),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 child: Row(
                   children: [
-                    Icon(Icons.search_rounded, color: Color(0xFF087F78)),
-                    SizedBox(width: 12),
+                    Icon(Icons.search_rounded, color: palette.cyan),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         'Tra cứu model hoặc chức năng',
                         style: TextStyle(
-                          color: DtcPalette.muted,
+                          color: palette.muted,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    Icon(Icons.arrow_forward_rounded, color: Color(0xFF087F78)),
+                    Icon(Icons.arrow_forward_rounded, color: palette.cyan),
                   ],
                 ),
               ),
@@ -282,22 +297,28 @@ class _ActionVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     final imagePath = action.imagePath;
     if (imagePath != null) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final image = Image.asset(
+        imagePath,
+        fit: BoxFit.contain,
+        errorBuilder: (_, _, _) => Icon(
+          Icons.precision_manufacturing_outlined,
+          color: palette.navy,
+          size: 54,
+        ),
+      );
+      // Chỉ áp filter làm dịu ảnh ở chế độ sáng; ở chế độ tối filter multiply
+      // với nền tối sẽ làm ảnh gần như biến mất nên bỏ qua, giữ ảnh gốc.
+      if (isDark) return image;
       return ColorFiltered(
         colorFilter: const ColorFilter.mode(
           Color(0xFFF5F7F8),
           BlendMode.multiply,
         ),
-        child: Image.asset(
-          imagePath,
-          fit: BoxFit.contain,
-          errorBuilder: (_, _, _) => const Icon(
-            Icons.precision_manufacturing_outlined,
-            color: DtcPalette.navy,
-            size: 54,
-          ),
-        ),
+        child: image,
       );
     }
     return Padding(
@@ -330,17 +351,24 @@ class _MinimalFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Align(
+    return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(16, 18, 16, 12),
-        child: Text(
-          'DTC Group',
-          style: TextStyle(
-            color: Color(0xFF536B78),
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
+        padding: const EdgeInsets.fromLTRB(16, 18, 16, 12),
+        child: const Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: 'DTC',
+                style: TextStyle(color: Color(0xFF138347)),
+              ),
+              TextSpan(
+                text: 'Group',
+                style: TextStyle(color: Color(0xFF72AD30)),
+              ),
+            ],
           ),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
         ),
       ),
     );

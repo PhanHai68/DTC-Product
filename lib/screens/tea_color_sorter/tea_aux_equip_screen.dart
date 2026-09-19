@@ -25,20 +25,24 @@ class _TeaAuxEquipScreenState extends State<TeaAuxEquipScreen> {
         items: teaAuxEquipData,
       );
       if (!mounted) return;
-      
-      final safeModel = widget.modelName.replaceAll(RegExp(r'[^a-zA-Z0-9]+'), '-');
+
+      final safeModel = widget.modelName.replaceAll(
+        RegExp(r'[^a-zA-Z0-9]+'),
+        '-',
+      );
       final fileName = 'thiet-bi-phu-tro-tra-$safeModel.pdf';
       final renderBox = context.findRenderObject() as RenderBox?;
       final origin = renderBox == null
           ? null
           : renderBox.localToGlobal(Offset.zero) & renderBox.size;
-          
+
       await SharePlus.instance.share(
         ShareParams(
           files: [
             XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName),
           ],
-          text: 'Bảng kê chi tiết dây chuyền thiết bị phụ trợ máy tách màu trà ${widget.modelName}',
+          text:
+              'Bảng kê chi tiết dây chuyền thiết bị phụ trợ máy tách màu trà ${widget.modelName}',
           title: 'Thiết bị phụ trợ ${widget.modelName}',
           sharePositionOrigin: origin,
           fileNameOverrides: [fileName],
@@ -57,18 +61,19 @@ class _TeaAuxEquipScreenState extends State<TeaAuxEquipScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return Scaffold(
-      backgroundColor: DtcPalette.canvas,
+      backgroundColor: palette.canvas,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             pinned: true,
             elevation: 0,
             toolbarHeight: 68,
-            backgroundColor: Colors.white,
-            foregroundColor: DtcPalette.navy,
+            backgroundColor: palette.surface,
+            foregroundColor: palette.navy,
             surfaceTintColor: Colors.transparent,
-            shadowColor: DtcPalette.navy.withValues(alpha: 0.08),
+            shadowColor: palette.navy.withValues(alpha: 0.08),
             scrolledUnderElevation: 2,
             leadingWidth: 64,
             leading: Padding(
@@ -81,8 +86,8 @@ class _TeaAuxEquipScreenState extends State<TeaAuxEquipScreen> {
                   }
                 },
                 style: IconButton.styleFrom(
-                  foregroundColor: DtcPalette.navy,
-                  backgroundColor: const Color(0xFFE8F5F3),
+                  foregroundColor: palette.navy,
+                  backgroundColor: palette.cyan.withValues(alpha: 0.14),
                 ),
                 icon: const Icon(Icons.arrow_back_rounded),
               ),
@@ -91,8 +96,8 @@ class _TeaAuxEquipScreenState extends State<TeaAuxEquipScreen> {
               'Thiết bị phụ trợ ${widget.modelName}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: DtcPalette.navy,
+              style: TextStyle(
+                color: palette.navy,
                 fontSize: 19,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -0.3,
@@ -106,10 +111,7 @@ class _TeaAuxEquipScreenState extends State<TeaAuxEquipScreen> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final item = teaAuxEquipData[index];
-                  return _AuxEquipCard(
-                    item: item,
-                    index: index,
-                  );
+                  return _AuxEquipCard(item: item, index: index);
                 },
                 childCount: teaAuxEquipData.length,
               ),
@@ -119,14 +121,17 @@ class _TeaAuxEquipScreenState extends State<TeaAuxEquipScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _isExportingPdf ? null : _sharePdf,
-        backgroundColor: DtcPalette.navy,
+        backgroundColor: palette.navy,
         foregroundColor: Colors.white,
         elevation: 4,
-        icon: _isExportingPdf 
+        icon: _isExportingPdf
             ? const SizedBox(
-                width: 20, 
-                height: 20, 
-                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.5,
+                ),
               )
             : const Icon(Icons.picture_as_pdf_rounded),
         label: Text(
@@ -146,7 +151,9 @@ class _AuxEquipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasSpecs = (item['power'] as String).isNotEmpty ||
+    final palette = DtcPalette.of(context);
+    final hasSpecs =
+        (item['power'] as String).isNotEmpty ||
         (item['voltage'] as String).isNotEmpty ||
         (item['dimensions'] as String).isNotEmpty ||
         (item['weight'] as String).isNotEmpty;
@@ -154,16 +161,16 @@ class _AuxEquipCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: palette.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: DtcPalette.navy.withValues(alpha: 0.04),
+            color: palette.navy.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: DtcPalette.border),
+        border: Border.all(color: palette.border),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -172,12 +179,13 @@ class _AuxEquipCard extends StatelessWidget {
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: const BoxDecoration(
-                color: Color(0xFFF9FBFB),
-                border: Border(
-                  bottom: BorderSide(color: DtcPalette.border),
-                ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              decoration: BoxDecoration(
+                color: palette.canvas,
+                border: Border(bottom: BorderSide(color: palette.border)),
               ),
               child: Row(
                 children: [
@@ -186,13 +194,13 @@ class _AuxEquipCard extends StatelessWidget {
                     height: 32,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: DtcPalette.cyan.withValues(alpha: 0.1),
+                      color: palette.cyan.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       '${index + 1}',
-                      style: const TextStyle(
-                        color: DtcPalette.cyan,
+                      style: TextStyle(
+                        color: palette.cyan,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
@@ -205,8 +213,8 @@ class _AuxEquipCard extends StatelessWidget {
                       children: [
                         Text(
                           item['name'],
-                          style: const TextStyle(
-                            color: DtcPalette.navy,
+                          style: TextStyle(
+                            color: palette.navy,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -216,8 +224,8 @@ class _AuxEquipCard extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               'Model: ${item['model']}',
-                              style: const TextStyle(
-                                color: DtcPalette.muted,
+                              style: TextStyle(
+                                color: palette.muted,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -227,15 +235,19 @@ class _AuxEquipCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: DtcPalette.canvas,
+                      color: palette.canvas,
                       borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: palette.border),
                     ),
                     child: Text(
                       'SL: ${item['quantity']} ${item['unit']}',
-                      style: const TextStyle(
-                        color: DtcPalette.ink,
+                      style: TextStyle(
+                        color: palette.ink,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
@@ -253,52 +265,59 @@ class _AuxEquipCard extends StatelessWidget {
                 children: [
                   // Function
                   _buildSection(
+                    palette: palette,
                     icon: Icons.auto_awesome_rounded,
                     title: 'Chức năng chính',
                     content: Text(
                       item['function'],
-                      style: const TextStyle(
-                        color: DtcPalette.ink,
+                      style: TextStyle(
+                        color: palette.ink,
                         fontSize: 14,
                         height: 1.4,
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Components
                   _buildSection(
+                    palette: palette,
                     icon: Icons.settings_rounded,
                     title: 'Các bộ phận chính',
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: (item['components'] as List<String>)
-                          .map((comp) => Padding(
-                                padding: const EdgeInsets.only(bottom: 6),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(top: 6, right: 8),
-                                      child: Icon(
-                                        Icons.circle,
-                                        size: 6,
-                                        color: DtcPalette.muted,
+                          .map(
+                            (comp) => Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 6,
+                                      right: 8,
+                                    ),
+                                    child: Icon(
+                                      Icons.circle,
+                                      size: 6,
+                                      color: palette.muted,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      comp,
+                                      style: TextStyle(
+                                        color: palette.ink,
+                                        fontSize: 14,
+                                        height: 1.4,
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Text(
-                                        comp,
-                                        style: const TextStyle(
-                                          color: DtcPalette.ink,
-                                          fontSize: 14,
-                                          height: 1.4,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ))
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
                           .toList(),
                     ),
                   ),
@@ -306,20 +325,40 @@ class _AuxEquipCard extends StatelessWidget {
                   // Specs Grid
                   if (hasSpecs) ...[
                     const SizedBox(height: 16),
-                    const Divider(color: DtcPalette.border, height: 1),
+                    Divider(color: palette.border, height: 1),
                     const SizedBox(height: 16),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: [
                         if ((item['power'] as String).isNotEmpty)
-                          _buildSpecChip(Icons.bolt_rounded, 'Công suất', item['power']),
+                          _buildSpecChip(
+                            palette,
+                            Icons.bolt_rounded,
+                            'Công suất',
+                            item['power'],
+                          ),
                         if ((item['voltage'] as String).isNotEmpty)
-                          _buildSpecChip(Icons.power_rounded, 'Điện áp', item['voltage']),
+                          _buildSpecChip(
+                            palette,
+                            Icons.power_rounded,
+                            'Điện áp',
+                            item['voltage'],
+                          ),
                         if ((item['dimensions'] as String).isNotEmpty)
-                          _buildSpecChip(Icons.straighten_rounded, 'Kích thước', item['dimensions']),
+                          _buildSpecChip(
+                            palette,
+                            Icons.straighten_rounded,
+                            'Kích thước',
+                            item['dimensions'],
+                          ),
                         if ((item['weight'] as String).isNotEmpty)
-                          _buildSpecChip(Icons.scale_rounded, 'Trọng lượng', '${item['weight']} kg'),
+                          _buildSpecChip(
+                            palette,
+                            Icons.scale_rounded,
+                            'Trọng lượng',
+                            '${item['weight']} kg',
+                          ),
                       ],
                     ),
                   ],
@@ -333,6 +372,7 @@ class _AuxEquipCard extends StatelessWidget {
   }
 
   Widget _buildSection({
+    required DtcPaletteData palette,
     required IconData icon,
     required String title,
     required Widget content,
@@ -342,12 +382,12 @@ class _AuxEquipCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 16, color: DtcPalette.cyan),
+            Icon(icon, size: 16, color: palette.cyan),
             const SizedBox(width: 6),
             Text(
               title,
-              style: const TextStyle(
-                color: DtcPalette.navy,
+              style: TextStyle(
+                color: palette.navy,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
@@ -355,39 +395,41 @@ class _AuxEquipCard extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        Padding(
-          padding: const EdgeInsets.only(left: 22),
-          child: content,
-        ),
+        Padding(padding: const EdgeInsets.only(left: 22), child: content),
       ],
     );
   }
 
-  Widget _buildSpecChip(IconData icon, String label, String value) {
+  Widget _buildSpecChip(
+    DtcPaletteData palette,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F5F9),
+        color: palette.canvas,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: DtcPalette.border),
+        border: Border.all(color: palette.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: DtcPalette.muted),
+          Icon(icon, size: 14, color: palette.muted),
           const SizedBox(width: 6),
           Text(
             '$label: ',
-            style: const TextStyle(
-              color: DtcPalette.muted,
+            style: TextStyle(
+              color: palette.muted,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
-              color: DtcPalette.navy,
+            style: TextStyle(
+              color: palette.navy,
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),

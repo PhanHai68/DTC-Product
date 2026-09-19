@@ -252,7 +252,7 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7F9),
       appBar: AppBar(
-        title: const Text('Tính Năng Suất Máy Tách Màu'),
+        title: const Text('Tính Năng Suất'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),

@@ -243,7 +243,6 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
             '${specs['layers_qty']} tầng, ${specs['chutes_qty']} máng',
         'technology': 'AI · PLOV 3.0',
         'exposure': 0.25,
-        'showHotspots': true,
       };
     }
     return null;

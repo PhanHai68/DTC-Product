@@ -1072,7 +1072,7 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Thông số kỹ thuật Máy Tách Màu'),
+          title: const Text('Thông số kỹ thuật'),
           actions: [
             Consumer<ColorSorterProvider>(
               builder: (context, provider, _) => IconButton(
