@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/settings_provider.dart';
+
+const _feedbackFormUrl =
+    'https://docs.google.com/forms/d/e/1FAIpQLSeaDLwY-fH6r67GDD5wURN8Kcus5HzA4efHtV_Jn3z04zM2GA/viewform?usp=publish-editor';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -50,6 +54,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Đã xóa lịch sử tìm kiếm.')));
+  }
+
+  Future<void> _openFeedbackForm() async {
+    final uri = Uri.parse(_feedbackFormUrl);
+    var opened = false;
+    try {
+      opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      opened = false;
+    }
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Không thể mở biểu mẫu góp ý.')),
+      );
+    }
   }
 
   String _themeModeLabel(ThemeMode mode) => switch (mode) {
@@ -135,6 +154,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'Xóa các mục "Đã mở gần đây" ở Tra cứu nhanh',
               ),
               onTap: _clearSearchHistory,
+            ),
+          ),
+          const SizedBox(height: 16),
+          _SettingsSection(
+            icon: Icons.feedback_outlined,
+            title: 'Góp ý',
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.rate_review_outlined),
+              title: const Text('Gửi góp ý cho DTC Product'),
+              subtitle: const Text('Mở biểu mẫu Google Form trên trình duyệt'),
+              onTap: _openFeedbackForm,
             ),
           ),
           const SizedBox(height: 16),
