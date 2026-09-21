@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -31,11 +33,14 @@ import 'features/projects/repositories/local_project_repository.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
-  try {
-    await NoteNotificationService.init();
-  } catch (error) {
-    debugPrint('Không thể khởi tạo dịch vụ thông báo: $error');
-  }
+  // Không chờ init() xong mới vẽ khung hình đầu tiên — dịch vụ thông báo tự
+  // khởi tạo song song trong lúc UI hiển thị; schedule()/cancel()/
+  // requestPermission() đã tự đảm bảo init() hoàn tất trước khi dùng.
+  unawaited(
+    NoteNotificationService.init().catchError((Object error) {
+      debugPrint('Không thể khởi tạo dịch vụ thông báo: $error');
+    }),
+  );
 
   FlutterError.onError = FlutterError.presentError;
   ErrorWidget.builder = (FlutterErrorDetails details) {

@@ -180,6 +180,12 @@ class _MachineImage extends StatelessWidget {
                 child: Image.asset(
                   imagePath!,
                   fit: BoxFit.contain,
+                  // Ảnh nguồn thường lớn hơn nhiều so với ô icon (chỉ ~size
+                  // px) — giới hạn cacheWidth để giải mã đúng độ phân giải
+                  // cần hiển thị, tránh tốn bộ nhớ/thời gian decode.
+                  cacheWidth:
+                      (size * MediaQuery.of(context).devicePixelRatio)
+                          .round(),
                   errorBuilder: (_, _, _) => _placeholder(context),
                 ),
               )

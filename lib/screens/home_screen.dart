@@ -303,9 +303,16 @@ class _ActionVisual extends StatelessWidget {
     final imagePath = action.imagePath;
     if (imagePath != null) {
       final isDark = Theme.of(context).brightness == Brightness.dark;
+      // Ảnh gốc lớn hơn nhiều so với kích thước hiển thị trong card (chỉ
+      // ~150-280px) — giới hạn cacheWidth để Flutter giải mã ảnh ở độ phân
+      // giải phù hợp thay vì decode nguyên ảnh gốc rồi mới thu nhỏ, giảm
+      // thời gian và bộ nhớ khi vẽ Home.
+      final cacheWidth =
+          (280 * MediaQuery.of(context).devicePixelRatio).round();
       final image = Image.asset(
         imagePath,
         fit: BoxFit.contain,
+        cacheWidth: cacheWidth,
         errorBuilder: (_, _, _) => Icon(
           Icons.precision_manufacturing_outlined,
           color: palette.navy,
