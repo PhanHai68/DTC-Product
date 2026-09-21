@@ -60,4 +60,8 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
- 
+
+# Kho tài liệu tham khảo đã sắp xếp lại từ docs/ (ảnh, bản vẽ, catalog...) —
+# chỉ lưu local, không đưa lên Git vì dung lượng lớn (~126MB) và không phải
+# code. Xem docs_database/README.md để biết cách tổ chức.
+/docs_database/
