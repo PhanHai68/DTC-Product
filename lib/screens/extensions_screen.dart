@@ -13,6 +13,13 @@ class ExtensionsScreen extends StatelessWidget {
       backButtonKey: const Key('extensions_back_button'),
       entries: [
         TechnologyMenuEntry(
+          id: 'extension_notes',
+          title: 'Ghi Chú & Nhắc Hẹn',
+          icon: Icons.edit_note_rounded,
+          featured: true,
+          onTap: () => context.push('/notes'),
+        ),
+        TechnologyMenuEntry(
           id: 'extension_maintenance',
           title: 'Nhắc Nhở Lịch Bảo Trì',
           icon: Icons.build_circle_outlined,
@@ -21,17 +28,10 @@ class ExtensionsScreen extends StatelessWidget {
         ),
         TechnologyMenuEntry(
           id: 'extension_project_tracking',
-          title: 'Theo Dõi Lắp Đặt Và Nghiệm Thu',
+          title: 'Theo Dõi Dự Án',
           icon: Icons.engineering_outlined,
           featured: true,
           onTap: () => context.push('/projects'),
-        ),
-        TechnologyMenuEntry(
-          id: 'extension_notes',
-          title: 'Ghi Chú & Nhắc Hẹn',
-          icon: Icons.edit_note_rounded,
-          featured: true,
-          onTap: () => context.push('/notes'),
         ),
         TechnologyMenuEntry(
           id: 'extension_sample_record',

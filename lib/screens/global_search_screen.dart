@@ -87,7 +87,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       keywords: 'roi tiền điện doanh thu lợi nhuận',
     ),
     const _SearchItem(
-      title: 'Theo Dõi Lắp Đặt Và Nghiệm Thu',
+      title: 'Theo Dõi Dự Án',
       subtitle: 'Tiến độ thi công, nghiệm thu và hồ sơ dự án',
       location: '/projects',
       icon: Icons.engineering_outlined,

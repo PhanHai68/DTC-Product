@@ -52,12 +52,13 @@ abstract final class NoteExportService {
   }
 
   static String _fileBaseName(Note note) {
-    final safeTitle = (note.title.trim().isEmpty ? 'ghi-chu' : note.title)
-        .replaceAll(RegExp(r'[^a-zA-Z0-9À-ỹ ]+'), '')
+    final safeTitle = (note.title.trim().isEmpty ? 'Ghi chú' : note.title)
+        // Chỉ loại các ký tự không hợp lệ trong tên file, giữ nguyên dấu
+        // tiếng Việt và khoảng trắng để tên file dễ đọc.
+        .replaceAll(RegExp(r'[\\/:*?"<>|]+'), '')
         .trim()
-        .replaceAll(RegExp(r'\s+'), '-');
-    final date = DateFormat('yyyyMMdd-HHmm').format(DateTime.now());
-    return '${safeTitle.isEmpty ? 'ghi-chu' : safeTitle}-$date';
+        .replaceAll(RegExp(r'\s+'), ' ');
+    return 'DTC ${safeTitle.isEmpty ? 'Ghi chú' : safeTitle}';
   }
 
   static String pdfFileName(Note note) => '${_fileBaseName(note)}.pdf';
@@ -68,19 +69,25 @@ abstract final class NoteExportService {
     required String fileName,
     required String mimeType,
     String? text,
-  }) {
-    return SharePlus.instance.share(
-      ShareParams(
-        files: [
-          XFile.fromData(
-            Uint8List.fromList(bytes),
-            mimeType: mimeType,
-            name: fileName,
-          ),
-        ],
-        text: text,
-      ),
-    );
+  }) async {
+    final XFile file;
+    if (kIsWeb) {
+      file = XFile.fromData(
+        Uint8List.fromList(bytes),
+        mimeType: mimeType,
+        name: fileName,
+      );
+    } else {
+      // XFile.fromData() ghi ra file tạm với tên ngẫu nhiên trên Android nên
+      // ứng dụng nhận (Zalo, Messenger...) hiển thị sai tên file khi chia
+      // sẻ — ghi thẳng ra file có đúng tên mong muốn rồi mới chia sẻ.
+      final path = await cacheNoteFileForOpen(
+        bytes: bytes,
+        fileName: fileName,
+      );
+      file = XFile(path, mimeType: mimeType, name: fileName);
+    }
+    await SharePlus.instance.share(ShareParams(files: [file], text: text));
   }
 
   /// Lưu file vào bộ nhớ ứng dụng, trả về đường dẫn đã lưu (rỗng trên web vì

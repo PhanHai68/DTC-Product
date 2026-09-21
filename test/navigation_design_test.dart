@@ -1,18 +1,26 @@
+import 'package:dtc_product/providers/settings_provider.dart';
 import 'package:dtc_product/screens/color_sorter_menu_screen.dart';
 import 'package:dtc_product/screens/extensions_screen.dart';
 import 'package:dtc_product/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _pumpAtSize(
   WidgetTester tester, {
   required Size size,
   required Widget home,
 }) async {
+  SharedPreferences.setMockInitialValues({});
+  final prefs = await SharedPreferences.getInstance();
   await tester.binding.setSurfaceSize(size);
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    MaterialApp(theme: ThemeData(useMaterial3: true), home: home),
+    ChangeNotifierProvider<SettingsProvider>(
+      create: (_) => SettingsProvider(prefs),
+      child: MaterialApp(theme: ThemeData(useMaterial3: true), home: home),
+    ),
   );
   await tester.pumpAndSettle();
 }
@@ -104,7 +112,7 @@ void main() {
     expect(find.text('Công cụ & Tiện ích'), findsOneWidget);
     expect(find.text('Lập Form Lưu Mẫu'), findsOneWidget);
     expect(find.byKey(const Key('extension_sample_record')), findsOneWidget);
-    expect(find.text('Theo Dõi Lắp Đặt Và Nghiệm Thu'), findsOneWidget);
+    expect(find.text('Theo Dõi Dự Án'), findsOneWidget);
     expect(find.byKey(const Key('extension_project_tracking')), findsOneWidget);
     expect(find.text('Phân tích hoàn vốn'), findsNothing);
     expect(find.text('Thiết bị phụ trợ máy tách màu'), findsNothing);

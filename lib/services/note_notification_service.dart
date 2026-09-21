@@ -138,6 +138,7 @@ abstract final class NoteNotificationService {
             importance: Importance.high,
             priority: Priority.high,
             styleInformation: BigTextStyleInformation(''),
+            largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
           ),
         ),
       );

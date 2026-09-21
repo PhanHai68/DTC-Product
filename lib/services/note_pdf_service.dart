@@ -78,7 +78,7 @@ abstract final class NotePdfService {
     _text(
       graphics,
       note.title.isEmpty ? '(Không có tiêu đề)' : note.title,
-      fonts.bold(14),
+      fonts.bold(12),
       ui.Rect.fromLTWH(margin, currentY + 14, contentWidth, 22),
       color: _navy,
     );
@@ -99,8 +99,7 @@ abstract final class NotePdfService {
         graphics,
         fonts,
         'Ngày nhắc:',
-        '${dateFormat.format(note.reminderDateTime!)} '
-            '(nhắc trước ${note.reminderLeadTime.label.toLowerCase()})',
+        dateFormat.format(note.reminderDateTime!),
         margin + halfWidth + 16,
         currentY,
         halfWidth,
@@ -153,30 +152,47 @@ abstract final class NotePdfService {
         currentY,
         contentWidth,
       );
-      final checklistBuffer = StringBuffer();
+
+      const boxSize = 11.0;
+      const boxTextGap = 10.0;
+      final itemTextWidth = contentWidth - boxSize - boxTextGap;
+
       for (final item in note.checklistItems) {
-        checklistBuffer.writeln(
-          '${item.isCompleted ? '[x]' : '[ ]'} ${item.text}',
+        if (currentY > size.height - 60) {
+          page = document.pages.add();
+          graphics = page.graphics;
+          currentY = 32;
+        }
+
+        final itemElement = PdfTextElement(
+          text: item.text,
+          font: fonts.regular(10.5),
+          brush: PdfSolidBrush(item.isCompleted ? _muted : _navy),
         );
+        final itemResult = itemElement.draw(
+          page: page,
+          bounds: ui.Rect.fromLTWH(
+            margin + boxSize + boxTextGap,
+            currentY,
+            itemTextWidth,
+            size.height - currentY - 60,
+          ),
+          format: PdfLayoutFormat(layoutType: PdfLayoutType.paginate),
+        )!;
+
+        // Vẽ checkbox trên trang chứa dòng đầu của mục này, trước khi
+        // graphics/page được cập nhật sang trang kế (nếu text tràn trang).
+        _drawChecklistBox(
+          graphics,
+          ui.Rect.fromLTWH(margin, currentY + 1.5, boxSize, boxSize),
+          item.isCompleted,
+        );
+
+        page = itemResult.page;
+        graphics = page.graphics;
+        currentY = itemResult.bounds.bottom + 9;
       }
-      final checklistElement = PdfTextElement(
-        text: checklistBuffer.toString().trimRight(),
-        font: fonts.regular(10.5),
-        brush: PdfSolidBrush(_navy),
-      );
-      result = checklistElement.draw(
-        page: page,
-        bounds: ui.Rect.fromLTWH(
-          margin,
-          currentY,
-          contentWidth,
-          size.height - currentY - 60,
-        ),
-        format: PdfLayoutFormat(layoutType: PdfLayoutType.paginate),
-      );
-      page = result!.page;
-      graphics = page.graphics;
-      currentY = result.bounds.bottom + 20;
+      currentY += 11;
     }
 
     // Chân trang — vẽ trên trang cuối cùng chứa nội dung.
@@ -267,6 +283,51 @@ abstract final class NotePdfService {
         lineAlignment: PdfVerticalAlignment.middle,
       ),
     );
+  }
+
+  /// Vẽ checkbox nhỏ cho 1 mục checklist: ô vuông viền mờ khi chưa xong,
+  /// nền xanh + dấu tick trắng khi đã hoàn thành — thay cho ký tự "[x]/[ ]"
+  /// đơn điệu trước đây.
+  static void _drawChecklistBox(
+    PdfGraphics graphics,
+    ui.Rect bounds,
+    bool completed,
+  ) {
+    if (completed) {
+      graphics.drawRectangle(brush: PdfSolidBrush(_green), bounds: bounds);
+      final tickPen = PdfPen(
+        PdfColor(255, 255, 255),
+        width: 1.4,
+        lineCap: PdfLineCap.round,
+      );
+      graphics.drawLine(
+        tickPen,
+        ui.Offset(
+          bounds.left + bounds.width * 0.22,
+          bounds.top + bounds.height * 0.55,
+        ),
+        ui.Offset(
+          bounds.left + bounds.width * 0.42,
+          bounds.top + bounds.height * 0.76,
+        ),
+      );
+      graphics.drawLine(
+        tickPen,
+        ui.Offset(
+          bounds.left + bounds.width * 0.42,
+          bounds.top + bounds.height * 0.76,
+        ),
+        ui.Offset(
+          bounds.left + bounds.width * 0.82,
+          bounds.top + bounds.height * 0.24,
+        ),
+      );
+    } else {
+      graphics.drawRectangle(
+        pen: PdfPen(_muted, width: 1.0),
+        bounds: bounds,
+      );
+    }
   }
 
   static void _drawImageContain(

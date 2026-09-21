@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -114,6 +115,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 16),
           _SettingsSection(
+            icon: Icons.badge_outlined,
+            title: 'Cá nhân hóa',
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.badge_outlined),
+              title: const Text('Cá nhân hóa trang chủ'),
+              subtitle: const Text(
+                'Thêm tên hiển thị và dòng giới thiệu riêng trên trang chủ',
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/settings/home_personalization'),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _SettingsSection(
             icon: Icons.text_fields_rounded,
             title: 'Cỡ chữ',
             child: Column(
@@ -146,14 +162,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _SettingsSection(
             icon: Icons.storage_outlined,
             title: 'Dữ liệu',
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.delete_sweep_outlined),
-              title: const Text('Xóa lịch sử tìm kiếm gần đây'),
-              subtitle: const Text(
-                'Xóa các mục "Đã mở gần đây" ở Tra cứu nhanh',
-              ),
-              onTap: _clearSearchHistory,
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.folder_copy_outlined),
+                  title: const Text('Bộ nhớ & Tệp đã lưu'),
+                  subtitle: const Text(
+                    'Xem dung lượng, quản lý file PDF/ảnh/3D đã lưu, xóa cache',
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/storage'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.delete_sweep_outlined),
+                  title: const Text('Xóa lịch sử tìm kiếm gần đây'),
+                  subtitle: const Text(
+                    'Xóa các mục "Đã mở gần đây" ở Tra cứu nhanh',
+                  ),
+                  onTap: _clearSearchHistory,
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),

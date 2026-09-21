@@ -25,13 +25,42 @@ class SettingsProvider extends ChangeNotifier {
   static const _themeModeKey = 'settings_theme_mode';
   static const _textScaleKey = 'settings_text_scale';
 
+  // Cá nhân hóa trang chủ — chỉ là tùy chỉnh hiển thị cục bộ trên thiết bị,
+  // không liên quan tài khoản/nhân sự. Mặc định tắt (enabled = false).
+  static const _homePersonalizationEnabledKey = 'home_personalization_enabled';
+  static const _homeDisplayNameKey = 'home_display_name';
+  static const _homeShortTextKey = 'home_short_text';
+  static const _homeNameFontSizeKey = 'home_name_font_size';
+  static const _homeNameColorKey = 'home_name_color';
+  static const _homeShortTextFontSizeKey = 'home_short_text_font_size';
+  static const _homeShortTextColorKey = 'home_short_text_color';
+
+  static const double defaultHomeNameFontSize = 14.0;
+  static const double defaultHomeShortTextFontSize = 20.0;
+
   final SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.system;
   AppTextScale _textScale = AppTextScale.normal;
 
+  bool _homePersonalizationEnabled = false;
+  String _homeDisplayName = '';
+  String _homeShortText = '';
+  double _homeNameFontSize = defaultHomeNameFontSize;
+  Color? _homeNameColor;
+  double _homeShortTextFontSize = defaultHomeShortTextFontSize;
+  Color? _homeShortTextColor;
+
   ThemeMode get themeMode => _themeMode;
   AppTextScale get textScale => _textScale;
+
+  bool get homePersonalizationEnabled => _homePersonalizationEnabled;
+  String get homeDisplayName => _homeDisplayName;
+  String get homeShortText => _homeShortText;
+  double get homeNameFontSize => _homeNameFontSize;
+  Color? get homeNameColor => _homeNameColor;
+  double get homeShortTextFontSize => _homeShortTextFontSize;
+  Color? get homeShortTextColor => _homeShortTextColor;
 
   void _load() {
     final savedMode = _prefs.getString(_themeModeKey);
@@ -44,6 +73,21 @@ class SettingsProvider extends ChangeNotifier {
     if (savedScale != null) {
       _textScale = AppTextScale.fromScale(savedScale);
     }
+    _homePersonalizationEnabled =
+        _prefs.getBool(_homePersonalizationEnabledKey) ?? false;
+    _homeDisplayName = _prefs.getString(_homeDisplayNameKey) ?? '';
+    _homeShortText = _prefs.getString(_homeShortTextKey) ?? '';
+    _homeNameFontSize =
+        _prefs.getDouble(_homeNameFontSizeKey) ?? defaultHomeNameFontSize;
+    _homeShortTextFontSize =
+        _prefs.getDouble(_homeShortTextFontSizeKey) ??
+        defaultHomeShortTextFontSize;
+    final nameColorValue = _prefs.getInt(_homeNameColorKey);
+    _homeNameColor = nameColorValue == null ? null : Color(nameColorValue);
+    final shortTextColorValue = _prefs.getInt(_homeShortTextColorKey);
+    _homeShortTextColor = shortTextColorValue == null
+        ? null
+        : Color(shortTextColorValue);
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -63,4 +107,52 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
     await _prefs.setDouble(_textScaleKey, scale.scale);
   }
+
+  /// Lưu toàn bộ tuỳ chỉnh cá nhân hóa trang chủ cùng lúc (nút "Lưu thay
+  /// đổi" ở màn Cá nhân hóa trang chủ) để Home chỉ cập nhật 1 lần.
+  /// [nameColor]/[shortTextColor] = null nghĩa là theo màu mặc định của theme.
+  Future<void> saveHomePersonalization({
+    required bool enabled,
+    required String displayName,
+    required String shortText,
+    required double nameFontSize,
+    required Color? nameColor,
+    required double shortTextFontSize,
+    required Color? shortTextColor,
+  }) async {
+    _homePersonalizationEnabled = enabled;
+    _homeDisplayName = displayName;
+    _homeShortText = shortText;
+    _homeNameFontSize = nameFontSize;
+    _homeNameColor = nameColor;
+    _homeShortTextFontSize = shortTextFontSize;
+    _homeShortTextColor = shortTextColor;
+    notifyListeners();
+    await Future.wait([
+      _prefs.setBool(_homePersonalizationEnabledKey, enabled),
+      _prefs.setString(_homeDisplayNameKey, displayName),
+      _prefs.setString(_homeShortTextKey, shortText),
+      _prefs.setDouble(_homeNameFontSizeKey, nameFontSize),
+      _prefs.setDouble(_homeShortTextFontSizeKey, shortTextFontSize),
+      if (nameColor != null)
+        _prefs.setInt(_homeNameColorKey, nameColor.toARGB32())
+      else
+        _prefs.remove(_homeNameColorKey),
+      if (shortTextColor != null)
+        _prefs.setInt(_homeShortTextColorKey, shortTextColor.toARGB32())
+      else
+        _prefs.remove(_homeShortTextColorKey),
+    ]);
+  }
+
+  /// Khôi phục cá nhân hóa trang chủ về mặc định (tắt, xóa toàn bộ nội dung).
+  Future<void> resetHomePersonalization() => saveHomePersonalization(
+    enabled: false,
+    displayName: '',
+    shortText: '',
+    nameFontSize: defaultHomeNameFontSize,
+    nameColor: null,
+    shortTextFontSize: defaultHomeShortTextFontSize,
+    shortTextColor: null,
+  );
 }

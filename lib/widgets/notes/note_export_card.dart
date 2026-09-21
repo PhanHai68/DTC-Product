@@ -45,20 +45,10 @@ class NoteExportCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'DTC',
-                      style: TextStyle(color: Color(0xFF138347)),
-                    ),
-                    TextSpan(
-                      text: 'Product',
-                      style: TextStyle(color: Color(0xFF72AD30)),
-                    ),
-                  ],
-                ),
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+              Image.asset(
+                'assets/images/DTCGroup-Slogan.png',
+                height: 34,
+                fit: BoxFit.contain,
               ),
               const Spacer(),
               const Text(
@@ -77,8 +67,8 @@ class NoteExportCard extends StatelessWidget {
             note.title.trim().isEmpty ? '(Không có tiêu đề)' : note.title,
             style: const TextStyle(
               color: _navy,
-              fontSize: 24,
-              fontWeight: FontWeight.w900,
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
               height: 1.25,
             ),
           ),
@@ -129,18 +119,31 @@ class NoteExportCard extends StatelessWidget {
             const SizedBox(height: 8),
             ...note.checklistItems.map(
               (item) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      item.isCompleted
-                          ? Icons.check_box_rounded
-                          : Icons.check_box_outline_blank_rounded,
-                      size: 20,
-                      color: item.isCompleted ? _green : _muted,
+                    Container(
+                      width: 19,
+                      height: 19,
+                      margin: const EdgeInsets.only(top: 1.5),
+                      decoration: BoxDecoration(
+                        color: item.isCompleted ? _green : Colors.white,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                          color: item.isCompleted ? _green : _border,
+                          width: 1.4,
+                        ),
+                      ),
+                      child: item.isCompleted
+                          ? const Icon(
+                              Icons.check_rounded,
+                              size: 14,
+                              color: Colors.white,
+                            )
+                          : null,
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 11),
                     Expanded(
                       child: Text(
                         item.text,

@@ -5,8 +5,14 @@ import '../screens/home_screen.dart';
 import '../screens/global_search_screen.dart';
 import '../screens/extensions_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/home_personalization_screen.dart';
 import '../screens/notes/notes_list_screen.dart';
 import '../screens/notes/note_edit_screen.dart';
+import '../screens/storage/storage_overview_screen.dart';
+import '../screens/storage/stored_pdf_viewer_screen.dart';
+import '../screens/storage/stored_image_viewer_screen.dart';
+import '../screens/storage/stored_model_viewer_screen.dart';
+import '../models/stored_file.dart';
 import '../screens/sample_record/sample_record_screen.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
 import '../screens/technical_converter/technical_converter_screen.dart';
@@ -106,6 +112,10 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const SettingsScreen(),
     ),
     GoRoute(
+      path: '/settings/home_personalization',
+      builder: (context, state) => const HomePersonalizationScreen(),
+    ),
+    GoRoute(
       path: '/notes',
       builder: (context, state) => const NotesListScreen(),
     ),
@@ -116,6 +126,25 @@ final GoRouter appRouter = GoRouter(
         final noteId = extra?['noteId'] as int?;
         return NoteEditScreen(noteId: noteId);
       },
+    ),
+    GoRoute(
+      path: '/storage',
+      builder: (context, state) => const StorageOverviewScreen(),
+    ),
+    GoRoute(
+      path: '/storage/pdf',
+      builder: (context, state) =>
+          StoredPdfViewerScreen(file: state.extra! as StoredFile),
+    ),
+    GoRoute(
+      path: '/storage/image',
+      builder: (context, state) =>
+          StoredImageViewerScreen(file: state.extra! as StoredFile),
+    ),
+    GoRoute(
+      path: '/storage/model',
+      builder: (context, state) =>
+          StoredModelViewerScreen(file: state.extra! as StoredFile),
     ),
     GoRoute(
       path: '/extensions',
