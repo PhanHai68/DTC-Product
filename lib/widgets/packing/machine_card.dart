@@ -263,11 +263,25 @@ class MachineImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (imagePath != null && imagePath!.isNotEmpty) {
+      // Khi biết trước kích thước hiển thị, giới hạn cacheWidth để Flutter
+      // giải mã ảnh đúng độ phân giải cần dùng thay vì decode nguyên ảnh gốc
+      // (thường lớn hơn nhiều) rồi mới thu nhỏ. Chỉ truyền MỘT trong hai
+      // (cacheWidth hoặc cacheHeight) — nếu truyền cả hai mà tỉ lệ khác ảnh
+      // gốc, ảnh giải mã ra sẽ bị méo trước khi fit áp dụng.
+      final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+      final cacheWidth = width != null
+          ? (width! * devicePixelRatio).round()
+          : null;
+      final cacheHeight = cacheWidth == null && height != null
+          ? (height! * devicePixelRatio).round()
+          : null;
       return Image.asset(
         imagePath!,
         width: width,
         height: height,
         fit: fit,
+        cacheWidth: cacheWidth,
+        cacheHeight: cacheHeight,
         errorBuilder: (_, _, _) => _buildPlaceholder(context),
       );
     }

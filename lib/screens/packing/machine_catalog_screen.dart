@@ -598,6 +598,8 @@ class _LineSectionState extends State<_LineSection> {
                     borderRadius: BorderRadius.circular(7),
                     child: MachineImage(
                       imagePath: widget.machines.first.imageMainPath,
+                      width: 50,
+                      height: 50,
                       fit: BoxFit.contain,
                     ),
                   ),
