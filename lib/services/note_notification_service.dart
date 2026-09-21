@@ -53,7 +53,18 @@ abstract final class NoteNotificationService {
       const androidSettings = AndroidInitializationSettings(
         '@mipmap/ic_launcher',
       );
-      const settings = InitializationSettings(android: androidSettings);
+      // Không xin quyền ngay lúc khởi tạo — chỉ xin khi người dùng thật sự
+      // bật "Nhắc tôi" cho 1 ghi chú (xem [requestPermission]), giống hành vi
+      // trên Android (permission cũng được xin riêng, không phải lúc init).
+      const iosSettings = DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      );
+      const settings = InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      );
 
       await _plugin.initialize(
         settings: settings,
@@ -90,18 +101,36 @@ abstract final class NoteNotificationService {
     appRouter.push('/notes/edit', extra: {'noteId': noteId});
   }
 
-  /// Yêu cầu quyền hiển thị thông báo (Android 13+). Trả về `true` nếu được
-  /// cấp quyền hoặc không cần xin (Android cũ hơn).
+  /// Yêu cầu quyền hiển thị thông báo — Android 13+ (POST_NOTIFICATIONS) và
+  /// iOS (alert/badge/sound). Trả về `true` nếu được cấp quyền hoặc không
+  /// cần xin (Android cũ hơn, hoặc nền tảng không yêu cầu xin quyền).
   static Future<bool> requestPermission() async {
     if (!_initialized) await init();
     if (!_pluginReady) return false;
+
     final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >();
-    if (androidPlugin == null) return true;
-    final granted = await androidPlugin.requestNotificationsPermission();
-    return granted ?? true;
+    if (androidPlugin != null) {
+      final granted = await androidPlugin.requestNotificationsPermission();
+      return granted ?? true;
+    }
+
+    final iosPlugin = _plugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
+    if (iosPlugin != null) {
+      final granted = await iosPlugin.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      return granted ?? true;
+    }
+
+    return true;
   }
 
   /// Lên lịch (hoặc thay thế lịch cũ) thông báo cho 1 ghi chú.
@@ -139,6 +168,11 @@ abstract final class NoteNotificationService {
             priority: Priority.high,
             styleInformation: BigTextStyleInformation(''),
             largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
           ),
         ),
       );
