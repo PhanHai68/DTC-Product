@@ -9,7 +9,7 @@ class ExtensionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TechnologyMenuScaffold(
-      title: 'Công cụ & Quản lý',
+      title: 'Công cụ & Tiện ích',
       backButtonKey: const Key('extensions_back_button'),
       entries: [
         TechnologyMenuEntry(
@@ -25,6 +25,13 @@ class ExtensionsScreen extends StatelessWidget {
           icon: Icons.engineering_outlined,
           featured: true,
           onTap: () => context.push('/projects'),
+        ),
+        TechnologyMenuEntry(
+          id: 'extension_notes',
+          title: 'Ghi Chú & Nhắc Hẹn',
+          icon: Icons.edit_note_rounded,
+          featured: true,
+          onTap: () => context.push('/notes'),
         ),
         TechnologyMenuEntry(
           id: 'extension_sample_record',

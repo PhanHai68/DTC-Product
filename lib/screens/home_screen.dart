@@ -23,7 +23,7 @@ class HomeScreen extends StatelessWidget {
       route: '/acomp_menu',
     ),
     _HomeAction(
-      title: 'Công cụ & Quản lý',
+      title: 'Công cụ & Tiện ích',
       icon: Icons.dashboard_customize_outlined,
       route: '/extensions',
     ),

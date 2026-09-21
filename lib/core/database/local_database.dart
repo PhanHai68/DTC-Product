@@ -19,7 +19,7 @@ class LocalDatabase {
   Future<Database> _initDB(String filePath) async {
     return openLocalDatabase(
       fileName: filePath,
-      version: 2,
+      version: 3,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -38,6 +38,34 @@ class LocalDatabase {
         notes TEXT
       )
     ''');
+    await _createNotesTables(db);
+  }
+
+  Future<void> _createNotesTables(Database db) async {
+    await db.execute('''
+      CREATE TABLE notes(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL DEFAULT '',
+        content TEXT NOT NULL DEFAULT '',
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        isPinned INTEGER NOT NULL DEFAULT 0,
+        reminderEnabled INTEGER NOT NULL DEFAULT 0,
+        reminderDateTime TEXT,
+        reminderBeforeMinutes INTEGER NOT NULL DEFAULT 0,
+        notificationId INTEGER
+      )
+    ''');
+    await db.execute('''
+      CREATE TABLE checklist_items(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        noteId INTEGER NOT NULL,
+        text TEXT NOT NULL DEFAULT '',
+        isCompleted INTEGER NOT NULL DEFAULT 0,
+        sortOrder INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY (noteId) REFERENCES notes(id) ON DELETE CASCADE
+      )
+    ''');
   }
 
   Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -45,6 +73,9 @@ class LocalDatabase {
       await db.execute(
         'ALTER TABLE maintenance_records ADD COLUMN serviceType TEXT DEFAULT "Bảo hành"',
       );
+    }
+    if (oldVersion < 3) {
+      await _createNotesTables(db);
     }
   }
 

@@ -59,6 +59,13 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       keywords: 'mesh micron mm inch dn bar psi cfm quy doi ky thuat',
     ),
     const _SearchItem(
+      title: 'Ghi Chú & Nhắc Hẹn',
+      subtitle: 'Ghi chú cá nhân, checklist và nhắc hẹn theo giờ',
+      location: '/notes',
+      icon: Icons.edit_note_rounded,
+      keywords: 'ghi chu note nhac hen checklist cong viec ca nhan',
+    ),
+    const _SearchItem(
       title: 'Lập Form Lưu Mẫu',
       subtitle: 'Ghi nhận mẫu, ảnh và xuất PDF',
       location: '/sample_record',

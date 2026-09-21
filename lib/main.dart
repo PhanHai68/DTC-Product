@@ -20,6 +20,8 @@ import 'providers/machine_selector_provider.dart';
 import 'providers/compare_provider.dart';
 import 'providers/maintenance_provider.dart';
 import 'providers/settings_provider.dart';
+import 'providers/notes_provider.dart';
+import 'services/note_notification_service.dart';
 
 // Projects Module
 import 'features/projects/providers/project_provider.dart';
@@ -28,6 +30,11 @@ import 'features/projects/repositories/local_project_repository.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  try {
+    await NoteNotificationService.init();
+  } catch (error) {
+    debugPrint('Không thể khởi tạo dịch vụ thông báo: $error');
+  }
 
   FlutterError.onError = FlutterError.presentError;
   ErrorWidget.builder = (FlutterErrorDetails details) {
@@ -188,6 +195,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CompareProvider()),
         ChangeNotifierProvider(
           create: (_) => MaintenanceProvider()..loadRecords(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => NotesProvider()..loadNotes(),
         ),
         ChangeNotifierProvider(
           create: (_) => ProjectProvider(LocalProjectRepository()),
