@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dtc_product/main.dart';
@@ -8,6 +9,6 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(MyApp(settingsProvider: SettingsProvider(prefs)));
-    expect(find.text('DTC Product'), findsOneWidget);
+    expect(find.byKey(const Key('home_brand_wordmark')), findsOneWidget);
   });
 }

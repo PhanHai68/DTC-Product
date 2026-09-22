@@ -33,7 +33,7 @@ void main() {
       home: const HomeScreen(),
     );
 
-    expect(find.text('DTC Product'), findsOneWidget);
+    expect(find.byKey(const Key('home_brand_wordmark')), findsOneWidget);
     expect(find.text('Giải pháp công nghệ - Danh mục sản phẩm'), findsNothing);
     expect(find.text('Máy tách màu'), findsOneWidget);
     expect(find.text('Máy nén khí'), findsOneWidget);
@@ -70,7 +70,10 @@ void main() {
     expect(compressorCard.size, extensionsCard.size);
     expect(compressorCard.left, lessThan(extensionsCard.left));
     expect(extensionsCard.right, lessThanOrEqualTo(372));
-    expect(tester.getCenter(find.text('DTC Product')).dx, closeTo(195, 1));
+    expect(
+      tester.getCenter(find.byKey(const Key('home_brand_wordmark'))).dx,
+      closeTo(195, 1),
+    );
     expect(tester.getBottomRight(find.text('DTCGroup')).dy, greaterThan(820));
     expect(tester.takeException(), isNull);
   });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/home_personalization_widget.dart';
@@ -109,34 +110,31 @@ class _BrandHeader extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          const Center(
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'DTC',
-                    style: TextStyle(color: Color(0xFF138347)),
+          Center(
+            child: Row(
+              key: const Key('home_brand_wordmark'),
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'DTC',
+                  style: TextStyle(
+                    color: Color(0xFF138347),
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.8,
                   ),
-                  TextSpan(
-                    text: ' Product',
-                    // Nghiêng + nhẹ tay hơn "DTC" để gợi phong cách chữ viết
-                    // tay của chữ "Product" trong logo app (logo dùng font
-                    // script riêng không có sẵn trong app để nhúng chính
-                    // xác).
-                    style: TextStyle(
-                      color: Color(0xFF72AD30),
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-              maxLines: 1,
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -0.8,
-              ),
+                ),
+                const SizedBox(width: 6),
+                // Vector chữ "Product" tách thẳng từ logo app (đường nét viết
+                // tay không có font tương ứng để nhúng), khớp chính xác với
+                // nhận diện thương hiệu thay vì chữ in nghiêng gần giống.
+                SvgPicture.asset(
+                  'assets/images/dtc_product_wordmark.svg',
+                  height: 28,
+                  semanticsLabel: 'Product',
+                ),
+              ],
             ),
           ),
           Positioned(
