@@ -173,9 +173,11 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
     SampleStreamType type, {
     int? parameterIndex,
   }) async {
+    final source = await _pickImageSource();
+    if (source == null) return;
     try {
       final image = await _picker.pickImage(
-        source: ImageSource.camera,
+        source: source,
         preferredCameraDevice: CameraDevice.rear,
         imageQuality: 76,
         maxWidth: 1600,
@@ -198,8 +200,34 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
       });
       await _saveDraft();
     } catch (error) {
-      _showMessage('Chưa thể mở camera hoặc lưu ảnh: $error');
+      final action = source == ImageSource.camera ? 'mở camera' : 'chọn ảnh';
+      _showMessage('Chưa thể $action hoặc lưu ảnh: $error');
     }
+  }
+
+  /// Cho phép chọn ảnh từ thư viện, không bắt buộc phải chụp mới bằng camera.
+  Future<ImageSource?> _pickImageSource() {
+    return showModalBottomSheet<ImageSource>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: const Text('Chụp ảnh'),
+              onTap: () => Navigator.pop(sheetContext, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Chọn từ thư viện'),
+              onTap: () => Navigator.pop(sheetContext, ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<(Uint8List, String)> _generatePdfBytesAndName({
