@@ -46,10 +46,21 @@ class SettingsProvider extends ChangeNotifier {
   static const _homeDailyGoalsColorKey = 'home_daily_goals_color';
   static const _homeDailyGoalsItalicKey = 'home_daily_goals_italic';
 
+  // Nhắc nhở cuối ngày cho "Mục tiêu hôm nay" (Phase 3) — 1 giờ nhắc cố định
+  // lặp lại hàng ngày, lên lịch qua DailyGoalNotificationService khi lưu.
+  static const _homeDailyGoalsReminderEnabledKey =
+      'home_daily_goals_reminder_enabled';
+  static const _homeDailyGoalsReminderHourKey =
+      'home_daily_goals_reminder_hour';
+  static const _homeDailyGoalsReminderMinuteKey =
+      'home_daily_goals_reminder_minute';
+
   static const double defaultHomeNameFontSize = 18.0;
   static const double defaultHomeShortTextFontSize = 26.0;
   static const String defaultHomeDailyGoalsTitle = 'Mục tiêu hôm nay';
   static const double defaultHomeDailyGoalsFontSize = 14.5;
+  static const int defaultHomeDailyGoalsReminderHour = 20;
+  static const int defaultHomeDailyGoalsReminderMinute = 0;
 
   final SharedPreferences _prefs;
 
@@ -70,6 +81,9 @@ class SettingsProvider extends ChangeNotifier {
   double _homeDailyGoalsFontSize = defaultHomeDailyGoalsFontSize;
   Color? _homeDailyGoalsColor;
   bool _homeDailyGoalsItalic = false;
+  bool _homeDailyGoalsReminderEnabled = false;
+  int _homeDailyGoalsReminderHour = defaultHomeDailyGoalsReminderHour;
+  int _homeDailyGoalsReminderMinute = defaultHomeDailyGoalsReminderMinute;
 
   ThemeMode get themeMode => _themeMode;
   AppTextScale get textScale => _textScale;
@@ -88,6 +102,9 @@ class SettingsProvider extends ChangeNotifier {
   double get homeDailyGoalsFontSize => _homeDailyGoalsFontSize;
   Color? get homeDailyGoalsColor => _homeDailyGoalsColor;
   bool get homeDailyGoalsItalic => _homeDailyGoalsItalic;
+  bool get homeDailyGoalsReminderEnabled => _homeDailyGoalsReminderEnabled;
+  int get homeDailyGoalsReminderHour => _homeDailyGoalsReminderHour;
+  int get homeDailyGoalsReminderMinute => _homeDailyGoalsReminderMinute;
 
   void _load() {
     final savedMode = _prefs.getString(_themeModeKey);
@@ -129,6 +146,14 @@ class SettingsProvider extends ChangeNotifier {
         ? null
         : Color(dailyGoalsColorValue);
     _homeDailyGoalsItalic = _prefs.getBool(_homeDailyGoalsItalicKey) ?? false;
+    _homeDailyGoalsReminderEnabled =
+        _prefs.getBool(_homeDailyGoalsReminderEnabledKey) ?? false;
+    _homeDailyGoalsReminderHour =
+        _prefs.getInt(_homeDailyGoalsReminderHourKey) ??
+        defaultHomeDailyGoalsReminderHour;
+    _homeDailyGoalsReminderMinute =
+        _prefs.getInt(_homeDailyGoalsReminderMinuteKey) ??
+        defaultHomeDailyGoalsReminderMinute;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -171,6 +196,9 @@ class SettingsProvider extends ChangeNotifier {
     // (giữ nguyên màu cũ) với "chủ động đặt về null" (theo theme).
     bool dailyGoalsColorIsSet = false,
     bool? dailyGoalsItalic,
+    bool? dailyGoalsReminderEnabled,
+    int? dailyGoalsReminderHour,
+    int? dailyGoalsReminderMinute,
   }) async {
     _homePersonalizationEnabled = enabled;
     _homeDisplayName = displayName;
@@ -191,6 +219,15 @@ class SettingsProvider extends ChangeNotifier {
     }
     if (dailyGoalsColorIsSet) _homeDailyGoalsColor = dailyGoalsColor;
     if (dailyGoalsItalic != null) _homeDailyGoalsItalic = dailyGoalsItalic;
+    if (dailyGoalsReminderEnabled != null) {
+      _homeDailyGoalsReminderEnabled = dailyGoalsReminderEnabled;
+    }
+    if (dailyGoalsReminderHour != null) {
+      _homeDailyGoalsReminderHour = dailyGoalsReminderHour;
+    }
+    if (dailyGoalsReminderMinute != null) {
+      _homeDailyGoalsReminderMinute = dailyGoalsReminderMinute;
+    }
     notifyListeners();
     await Future.wait([
       _prefs.setBool(_homePersonalizationEnabledKey, enabled),
@@ -221,6 +258,18 @@ class SettingsProvider extends ChangeNotifier {
           _prefs.setInt(_homeDailyGoalsColorKey, dailyGoalsColor.toARGB32())
         else
           _prefs.remove(_homeDailyGoalsColorKey),
+      if (dailyGoalsReminderEnabled != null)
+        _prefs.setBool(
+          _homeDailyGoalsReminderEnabledKey,
+          dailyGoalsReminderEnabled,
+        ),
+      if (dailyGoalsReminderHour != null)
+        _prefs.setInt(_homeDailyGoalsReminderHourKey, dailyGoalsReminderHour),
+      if (dailyGoalsReminderMinute != null)
+        _prefs.setInt(
+          _homeDailyGoalsReminderMinuteKey,
+          dailyGoalsReminderMinute,
+        ),
     ]);
   }
 
@@ -243,5 +292,8 @@ class SettingsProvider extends ChangeNotifier {
     dailyGoalsColor: null,
     dailyGoalsColorIsSet: true,
     dailyGoalsItalic: false,
+    dailyGoalsReminderEnabled: false,
+    dailyGoalsReminderHour: defaultHomeDailyGoalsReminderHour,
+    dailyGoalsReminderMinute: defaultHomeDailyGoalsReminderMinute,
   );
 }

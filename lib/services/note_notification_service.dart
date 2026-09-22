@@ -22,6 +22,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../features/projects/services/project_notification_service.dart';
 import '../routes/app_routes.dart';
+import 'daily_goal_notification_service.dart';
 
 abstract final class NoteNotificationService {
   static final FlutterLocalNotificationsPlugin _plugin =
@@ -104,6 +105,14 @@ abstract final class NoteNotificationService {
           importance: Importance.high,
         ),
       );
+      await androidPlugin?.createNotificationChannel(
+        const AndroidNotificationChannel(
+          DailyGoalNotificationService.channelId,
+          DailyGoalNotificationService.channelName,
+          description: DailyGoalNotificationService.channelDescription,
+          importance: Importance.high,
+        ),
+      );
       _pluginReady = true;
     } catch (error, stackTrace) {
       developer.log(
@@ -122,6 +131,12 @@ abstract final class NoteNotificationService {
     if (payload.startsWith(ProjectNotificationService.payloadPrefix)) {
       ProjectNotificationService.handleTap(
         payload.substring(ProjectNotificationService.payloadPrefix.length),
+      );
+      return;
+    }
+    if (payload.startsWith(DailyGoalNotificationService.payloadPrefix)) {
+      DailyGoalNotificationService.handleTap(
+        payload.substring(DailyGoalNotificationService.payloadPrefix.length),
       );
       return;
     }

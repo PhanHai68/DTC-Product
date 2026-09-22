@@ -219,4 +219,58 @@ void main() {
     expect(settings.homeDailyGoalsEnabled, isTrue);
     expect(settings.homeDailyGoalsTitle, 'Công việc hôm nay');
   });
+
+  testWidgets('bật "Nhắc nhở cuối ngày" hiện nút chọn giờ với giờ mặc định', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final settings = SettingsProvider(prefs);
+
+    await _pumpApp(tester, settings);
+
+    expect(
+      find.byKey(const Key('daily_goals_reminder_time_button')),
+      findsNothing,
+    );
+
+    await tester.tap(find.byKey(const Key('daily_goals_reminder_switch')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('daily_goals_reminder_time_button')),
+      findsOneWidget,
+    );
+    expect(find.text('20:00'), findsWidgets);
+
+    await tester.tap(find.byKey(const Key('daily_goals_reminder_switch')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('daily_goals_reminder_time_button')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('lưu khi đã bật nhắc nhở ghi đúng giá trị, không lỗi', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final settings = SettingsProvider(prefs);
+
+    await _pumpApp(tester, settings);
+
+    await tester.tap(find.byKey(const Key('daily_goals_enabled_switch')));
+    await tester.tap(find.byKey(const Key('daily_goals_reminder_switch')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Lưu thay đổi'));
+    await tester.pumpAndSettle();
+
+    expect(settings.homeDailyGoalsReminderEnabled, isTrue);
+    expect(settings.homeDailyGoalsReminderHour, 20);
+    expect(settings.homeDailyGoalsReminderMinute, 0);
+    expect(tester.takeException(), isNull);
+  });
 }

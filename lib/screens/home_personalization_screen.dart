@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/settings_provider.dart';
+import '../services/daily_goal_notification_service.dart';
+import '../services/note_notification_service.dart';
 import '../theme/dtc_palette.dart';
 import '../widgets/home_personalization_widget.dart';
 
@@ -49,6 +51,9 @@ class _HomePersonalizationScreenState
   late double _dailyGoalsFontSize;
   late Color? _dailyGoalsColor;
   late bool _dailyGoalsItalic;
+  late bool _dailyGoalsReminderEnabled;
+  late int _dailyGoalsReminderHour;
+  late int _dailyGoalsReminderMinute;
   late final TextEditingController _nameController;
   late final TextEditingController _shortTextController;
   late final TextEditingController _dailyGoalsTitleController;
@@ -68,6 +73,9 @@ class _HomePersonalizationScreenState
     _dailyGoalsFontSize = settings.homeDailyGoalsFontSize;
     _dailyGoalsColor = settings.homeDailyGoalsColor;
     _dailyGoalsItalic = settings.homeDailyGoalsItalic;
+    _dailyGoalsReminderEnabled = settings.homeDailyGoalsReminderEnabled;
+    _dailyGoalsReminderHour = settings.homeDailyGoalsReminderHour;
+    _dailyGoalsReminderMinute = settings.homeDailyGoalsReminderMinute;
     _nameController = TextEditingController(text: settings.homeDisplayName)
       ..addListener(() => setState(() {}));
     _shortTextController =
@@ -87,6 +95,21 @@ class _HomePersonalizationScreenState
   }
 
   Future<void> _save() async {
+    final reminderActive = _dailyGoalsEnabled && _dailyGoalsReminderEnabled;
+    if (reminderActive) {
+      final granted = await NoteNotificationService.requestPermission();
+      if (!mounted) return;
+      if (!granted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Chưa cấp quyền thông báo nên nhắc nhở có thể không hiển thị.',
+            ),
+          ),
+        );
+      }
+    }
+
     await context.read<SettingsProvider>().saveHomePersonalization(
       enabled: _enabled,
       displayName: _nameController.text.trim(),
@@ -103,12 +126,43 @@ class _HomePersonalizationScreenState
       dailyGoalsColor: _dailyGoalsColor,
       dailyGoalsColorIsSet: true,
       dailyGoalsItalic: _dailyGoalsItalic,
+      dailyGoalsReminderEnabled: _dailyGoalsReminderEnabled,
+      dailyGoalsReminderHour: _dailyGoalsReminderHour,
+      dailyGoalsReminderMinute: _dailyGoalsReminderMinute,
     );
+    if (reminderActive) {
+      await DailyGoalNotificationService.scheduleDailyReminder(
+        hour: _dailyGoalsReminderHour,
+        minute: _dailyGoalsReminderMinute,
+      );
+    } else {
+      await DailyGoalNotificationService.cancelDailyReminder();
+    }
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Đã cập nhật trang chủ')),
     );
   }
+
+  Future<void> _pickReminderTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(
+        hour: _dailyGoalsReminderHour,
+        minute: _dailyGoalsReminderMinute,
+      ),
+      helpText: 'Chọn giờ nhắc',
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _dailyGoalsReminderHour = picked.hour;
+      _dailyGoalsReminderMinute = picked.minute;
+    });
+  }
+
+  String _formatReminderTime() =>
+      '${_dailyGoalsReminderHour.toString().padLeft(2, '0')}:'
+      '${_dailyGoalsReminderMinute.toString().padLeft(2, '0')}';
 
   Future<void> _confirmReset() async {
     final confirmed = await showDialog<bool>(
@@ -132,6 +186,7 @@ class _HomePersonalizationScreenState
     );
     if (confirmed != true || !mounted) return;
     await context.read<SettingsProvider>().resetHomePersonalization();
+    await DailyGoalNotificationService.cancelDailyReminder();
     if (!mounted) return;
     setState(() {
       _enabled = false;
@@ -145,6 +200,11 @@ class _HomePersonalizationScreenState
       _dailyGoalsFontSize = SettingsProvider.defaultHomeDailyGoalsFontSize;
       _dailyGoalsColor = null;
       _dailyGoalsItalic = false;
+      _dailyGoalsReminderEnabled = false;
+      _dailyGoalsReminderHour =
+          SettingsProvider.defaultHomeDailyGoalsReminderHour;
+      _dailyGoalsReminderMinute =
+          SettingsProvider.defaultHomeDailyGoalsReminderMinute;
       _nameController.text = '';
       _shortTextController.text = '';
       _dailyGoalsTitleController.text =
@@ -331,6 +391,32 @@ class _HomePersonalizationScreenState
                   onChanged: (value) =>
                       setState(() => _dailyGoalsItalic = value),
                 ),
+                const Divider(height: 28),
+                SwitchListTile(
+                  key: const Key('daily_goals_reminder_switch'),
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Nhắc nhở cuối ngày'),
+                  subtitle: Text(
+                    _dailyGoalsReminderEnabled
+                        ? 'Nhắc lúc ${_formatReminderTime()} mỗi ngày'
+                        : 'Thông báo nhắc kiểm tra mục tiêu vào 1 giờ cố định',
+                  ),
+                  value: _dailyGoalsReminderEnabled,
+                  onChanged: (value) =>
+                      setState(() => _dailyGoalsReminderEnabled = value),
+                ),
+                if (_dailyGoalsReminderEnabled)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.schedule_outlined),
+                    title: const Text('Giờ nhắc'),
+                    subtitle: Text(_formatReminderTime()),
+                    trailing: TextButton(
+                      key: const Key('daily_goals_reminder_time_button'),
+                      onPressed: _pickReminderTime,
+                      child: const Text('Đổi giờ'),
+                    ),
+                  ),
               ],
             ),
           ),
