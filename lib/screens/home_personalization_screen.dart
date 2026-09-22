@@ -44,8 +44,10 @@ class _HomePersonalizationScreenState
   late double _shortTextFontSize;
   late Color? _shortTextColor;
   late bool _shortTextItalic;
+  late bool _dailyGoalsEnabled;
   late final TextEditingController _nameController;
   late final TextEditingController _shortTextController;
+  late final TextEditingController _dailyGoalsTitleController;
 
   @override
   void initState() {
@@ -58,17 +60,22 @@ class _HomePersonalizationScreenState
     _shortTextFontSize = settings.homeShortTextFontSize;
     _shortTextColor = settings.homeShortTextColor;
     _shortTextItalic = settings.homeShortTextItalic;
+    _dailyGoalsEnabled = settings.homeDailyGoalsEnabled;
     _nameController = TextEditingController(text: settings.homeDisplayName)
       ..addListener(() => setState(() {}));
     _shortTextController =
         TextEditingController(text: settings.homeShortText)
           ..addListener(() => setState(() {}));
+    _dailyGoalsTitleController = TextEditingController(
+      text: settings.homeDailyGoalsTitle,
+    );
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _shortTextController.dispose();
+    _dailyGoalsTitleController.dispose();
     super.dispose();
   }
 
@@ -83,6 +90,8 @@ class _HomePersonalizationScreenState
       shortTextFontSize: _shortTextFontSize,
       shortTextColor: _shortTextColor,
       shortTextItalic: _shortTextItalic,
+      dailyGoalsEnabled: _dailyGoalsEnabled,
+      dailyGoalsTitle: _dailyGoalsTitleController.text,
     );
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -121,8 +130,11 @@ class _HomePersonalizationScreenState
       _shortTextFontSize = SettingsProvider.defaultHomeShortTextFontSize;
       _shortTextColor = null;
       _shortTextItalic = false;
+      _dailyGoalsEnabled = false;
       _nameController.text = '';
       _shortTextController.text = '';
+      _dailyGoalsTitleController.text =
+          SettingsProvider.defaultHomeDailyGoalsTitle;
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Đã khôi phục mặc định')),
@@ -243,6 +255,34 @@ class _HomePersonalizationScreenState
                   value: _shortTextItalic,
                   onChanged: (value) =>
                       setState(() => _shortTextItalic = value),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          _Section(
+            label: 'MỤC TIÊU HÔM NAY',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Hiển thị "Mục tiêu hôm nay"'),
+                  subtitle: const Text(
+                    'Tắt chỉ ẩn khỏi trang chủ, không xóa mục tiêu đã tạo',
+                  ),
+                  value: _dailyGoalsEnabled,
+                  onChanged: (value) =>
+                      setState(() => _dailyGoalsEnabled = value),
+                ),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: _dailyGoalsTitleController,
+                  maxLength: 30,
+                  decoration: const InputDecoration(
+                    labelText: 'Tiêu đề hiển thị',
+                    hintText: 'VD: Mục tiêu hôm nay, Công việc hôm nay...',
+                  ),
                 ),
               ],
             ),

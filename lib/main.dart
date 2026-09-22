@@ -24,6 +24,7 @@ import 'providers/maintenance_provider.dart';
 import 'providers/settings_provider.dart';
 import 'providers/notes_provider.dart';
 import 'providers/storage_provider.dart';
+import 'providers/daily_goals_provider.dart';
 import 'services/note_notification_service.dart';
 
 // Projects Module
@@ -209,6 +210,7 @@ class MyApp extends StatelessWidget {
           create: (_) => ProjectProvider(LocalProjectRepository()),
         ),
         ChangeNotifierProvider(create: (_) => StorageProvider()),
+        ChangeNotifierProvider(create: (_) => DailyGoalsProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) {

@@ -1,4 +1,7 @@
+import 'package:dtc_product/models/daily_goal.dart';
+import 'package:dtc_product/providers/daily_goals_provider.dart';
 import 'package:dtc_product/providers/settings_provider.dart';
+import 'package:dtc_product/repositories/daily_goal_repository.dart';
 import 'package:dtc_product/screens/color_sorter_menu_screen.dart';
 import 'package:dtc_product/screens/extensions_screen.dart';
 import 'package:dtc_product/screens/home_screen.dart';
@@ -6,6 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+/// Repository giả rỗng — các test ở đây không quan tâm dữ liệu Mục tiêu hôm
+/// nay, chỉ cần DailyGoalsProvider tồn tại để HomeScreen không lỗi thiếu
+/// provider.
+class _EmptyDailyGoalRepository extends DailyGoalRepository {
+  @override
+  Future<List<DailyGoal>> getGoalsForDate(DateTime date) async => const [];
+}
 
 Future<void> _pumpAtSize(
   WidgetTester tester, {
@@ -17,8 +28,16 @@ Future<void> _pumpAtSize(
   await tester.binding.setSurfaceSize(size);
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    ChangeNotifierProvider<SettingsProvider>(
-      create: (_) => SettingsProvider(prefs),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsProvider>(
+          create: (_) => SettingsProvider(prefs),
+        ),
+        ChangeNotifierProvider<DailyGoalsProvider>(
+          create: (_) =>
+              DailyGoalsProvider(repository: _EmptyDailyGoalRepository()),
+        ),
+      ],
       child: MaterialApp(theme: ThemeData(useMaterial3: true), home: home),
     ),
   );

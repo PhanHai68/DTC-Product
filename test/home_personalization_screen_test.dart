@@ -192,4 +192,33 @@ void main() {
     expect(settings.homeNameItalic, isTrue);
     expect(settings.homeShortTextItalic, isFalse);
   });
+
+  testWidgets('bật "Mục tiêu hôm nay" và đổi tiêu đề rồi lưu áp dụng đúng', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final settings = SettingsProvider(prefs);
+
+    await _pumpApp(tester, settings);
+
+    expect(settings.homeDailyGoalsEnabled, isFalse);
+
+    // Switch cuối cùng trong danh sách = "Hiển thị Mục tiêu hôm nay" (sau
+    // switch Hiển thị trang chủ + 2 switch In nghiêng).
+    await tester.tap(find.byType(SwitchListTile).last);
+    // TextField thứ 3 (index 2) = ô "Tiêu đề hiển thị" của Mục tiêu hôm nay,
+    // sau ô Tên hiển thị (0) và Dòng giới thiệu (1).
+    await tester.enterText(
+      find.byType(TextField).at(2),
+      'Công việc hôm nay',
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Lưu thay đổi'));
+    await tester.pump();
+
+    expect(settings.homeDailyGoalsEnabled, isTrue);
+    expect(settings.homeDailyGoalsTitle, 'Công việc hôm nay');
+  });
 }

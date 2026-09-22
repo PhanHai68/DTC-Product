@@ -19,7 +19,7 @@ class LocalDatabase {
   Future<Database> _initDB(String filePath) async {
     return openLocalDatabase(
       fileName: filePath,
-      version: 3,
+      version: 4,
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -39,6 +39,28 @@ class LocalDatabase {
       )
     ''');
     await _createNotesTables(db);
+    await _createDailyGoalsTable(db);
+  }
+
+  Future<void> _createDailyGoalsTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE daily_goals(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        goalDate TEXT NOT NULL,
+        priority TEXT NOT NULL DEFAULT 'medium',
+        isCompleted INTEGER NOT NULL DEFAULT 0,
+        completedAt TEXT,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        projectId TEXT,
+        taskId TEXT
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_daily_goals_date ON daily_goals(goalDate)',
+    );
   }
 
   Future<void> _createNotesTables(Database db) async {
@@ -76,6 +98,9 @@ class LocalDatabase {
     }
     if (oldVersion < 3) {
       await _createNotesTables(db);
+    }
+    if (oldVersion < 4) {
+      await _createDailyGoalsTable(db);
     }
   }
 

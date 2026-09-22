@@ -8,6 +8,9 @@ import '../screens/settings_screen.dart';
 import '../screens/home_personalization_screen.dart';
 import '../screens/notes/notes_list_screen.dart';
 import '../screens/notes/note_edit_screen.dart';
+import '../screens/daily_goals/daily_goals_screen.dart';
+import '../screens/daily_goals/daily_goal_form_screen.dart';
+import '../models/daily_goal.dart';
 import '../screens/storage/storage_overview_screen.dart';
 import '../screens/storage/stored_pdf_viewer_screen.dart';
 import '../screens/storage/stored_image_viewer_screen.dart';
@@ -126,6 +129,18 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra as Map<String, dynamic>?;
         final noteId = extra?['noteId'] as int?;
         return NoteEditScreen(noteId: noteId);
+      },
+    ),
+    GoRoute(
+      path: '/daily_goals',
+      builder: (context, state) => const DailyGoalsScreen(),
+    ),
+    GoRoute(
+      path: '/daily_goals/form',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        final goal = extra?['goal'] as DailyGoal?;
+        return DailyGoalFormScreen(goal: goal);
       },
     ),
     GoRoute(

@@ -37,8 +37,15 @@ class SettingsProvider extends ChangeNotifier {
   static const _homeShortTextColorKey = 'home_short_text_color';
   static const _homeShortTextItalicKey = 'home_short_text_italic';
 
+  // "Mục tiêu hôm nay" (Daily Goals) trên Home — chỉ cờ bật/tắt + tiêu đề
+  // hiển thị nằm ở đây; dữ liệu mục tiêu thật lưu SQLite (DailyGoalRepository),
+  // tắt chức năng không xóa dữ liệu, chỉ ẩn khỏi Home.
+  static const _homeDailyGoalsEnabledKey = 'home_daily_goals_enabled';
+  static const _homeDailyGoalsTitleKey = 'home_daily_goals_title';
+
   static const double defaultHomeNameFontSize = 18.0;
   static const double defaultHomeShortTextFontSize = 26.0;
+  static const String defaultHomeDailyGoalsTitle = 'Mục tiêu hôm nay';
 
   final SharedPreferences _prefs;
 
@@ -54,6 +61,8 @@ class SettingsProvider extends ChangeNotifier {
   double _homeShortTextFontSize = defaultHomeShortTextFontSize;
   Color? _homeShortTextColor;
   bool _homeShortTextItalic = false;
+  bool _homeDailyGoalsEnabled = false;
+  String _homeDailyGoalsTitle = defaultHomeDailyGoalsTitle;
 
   ThemeMode get themeMode => _themeMode;
   AppTextScale get textScale => _textScale;
@@ -67,6 +76,8 @@ class SettingsProvider extends ChangeNotifier {
   double get homeShortTextFontSize => _homeShortTextFontSize;
   Color? get homeShortTextColor => _homeShortTextColor;
   bool get homeShortTextItalic => _homeShortTextItalic;
+  bool get homeDailyGoalsEnabled => _homeDailyGoalsEnabled;
+  String get homeDailyGoalsTitle => _homeDailyGoalsTitle;
 
   void _load() {
     final savedMode = _prefs.getString(_themeModeKey);
@@ -96,6 +107,10 @@ class SettingsProvider extends ChangeNotifier {
         : Color(shortTextColorValue);
     _homeNameItalic = _prefs.getBool(_homeNameItalicKey) ?? false;
     _homeShortTextItalic = _prefs.getBool(_homeShortTextItalicKey) ?? false;
+    _homeDailyGoalsEnabled =
+        _prefs.getBool(_homeDailyGoalsEnabledKey) ?? false;
+    _homeDailyGoalsTitle =
+        _prefs.getString(_homeDailyGoalsTitleKey) ?? defaultHomeDailyGoalsTitle;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -129,6 +144,8 @@ class SettingsProvider extends ChangeNotifier {
     required double shortTextFontSize,
     required Color? shortTextColor,
     required bool shortTextItalic,
+    bool? dailyGoalsEnabled,
+    String? dailyGoalsTitle,
   }) async {
     _homePersonalizationEnabled = enabled;
     _homeDisplayName = displayName;
@@ -139,6 +156,11 @@ class SettingsProvider extends ChangeNotifier {
     _homeShortTextFontSize = shortTextFontSize;
     _homeShortTextColor = shortTextColor;
     _homeShortTextItalic = shortTextItalic;
+    if (dailyGoalsEnabled != null) _homeDailyGoalsEnabled = dailyGoalsEnabled;
+    final resolvedGoalsTitle = (dailyGoalsTitle ?? '').trim().isEmpty
+        ? defaultHomeDailyGoalsTitle
+        : dailyGoalsTitle!.trim();
+    if (dailyGoalsTitle != null) _homeDailyGoalsTitle = resolvedGoalsTitle;
     notifyListeners();
     await Future.wait([
       _prefs.setBool(_homePersonalizationEnabledKey, enabled),
@@ -156,10 +178,16 @@ class SettingsProvider extends ChangeNotifier {
         _prefs.setInt(_homeShortTextColorKey, shortTextColor.toARGB32())
       else
         _prefs.remove(_homeShortTextColorKey),
+      if (dailyGoalsEnabled != null)
+        _prefs.setBool(_homeDailyGoalsEnabledKey, dailyGoalsEnabled),
+      if (dailyGoalsTitle != null)
+        _prefs.setString(_homeDailyGoalsTitleKey, resolvedGoalsTitle),
     ]);
   }
 
   /// Khôi phục cá nhân hóa trang chủ về mặc định (tắt, xóa toàn bộ nội dung).
+  /// "Mục tiêu hôm nay" cũng tắt hiển thị trên Home, nhưng KHÔNG xóa dữ liệu
+  /// mục tiêu đã tạo (dữ liệu nằm ở SQLite, tách biệt khỏi setting hiển thị).
   Future<void> resetHomePersonalization() => saveHomePersonalization(
     enabled: false,
     displayName: '',
@@ -170,5 +198,7 @@ class SettingsProvider extends ChangeNotifier {
     shortTextFontSize: defaultHomeShortTextFontSize,
     shortTextColor: null,
     shortTextItalic: false,
+    dailyGoalsEnabled: false,
+    dailyGoalsTitle: defaultHomeDailyGoalsTitle,
   );
 }
