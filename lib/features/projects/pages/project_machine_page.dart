@@ -363,6 +363,9 @@ class _MachineEmpty extends StatelessWidget {
   );
 }
 
+/// Mục thông tin trong "Lịch sử máy" — hiện chỉ là nhãn tĩnh (chưa có màn
+/// chi tiết riêng cho từng mục), nên KHÔNG hiện mũi tên ">" để tránh người
+/// dùng hiểu lầm là bấm vào được.
 class _HistorySection extends StatelessWidget {
   const _HistorySection({required this.icon, required this.title});
   final IconData icon;
@@ -370,8 +373,11 @@ class _HistorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListTile(
     contentPadding: EdgeInsets.zero,
-    leading: Icon(icon),
-    title: Text(title),
-    trailing: const Icon(Icons.chevron_right),
+    leading: Icon(icon, color: Theme.of(context).colorScheme.outline),
+    title: Text(
+      title,
+      style: TextStyle(color: Theme.of(context).colorScheme.outline),
+    ),
+    enabled: false,
   );
 }

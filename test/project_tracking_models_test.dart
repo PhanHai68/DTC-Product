@@ -59,9 +59,11 @@ void main() {
 
     test('default workflow and future acceptance fields are present', () {
       expect(defaultProjectStageNames, [
-        'Giao máy',
+        'Giao hàng',
         'Khui thùng',
         'Lắp đặt',
+        'Chạy thử',
+        'Đào tạo',
         'Nghiệm thu',
       ]);
       final now = DateTime(2026, 9, 17);

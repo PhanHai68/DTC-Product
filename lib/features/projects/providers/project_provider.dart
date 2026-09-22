@@ -9,6 +9,7 @@ import '../models/project_machine.dart';
 import '../models/project_stage.dart';
 import '../models/project_stage_submission.dart';
 import '../repositories/project_repository.dart';
+import '../services/project_notification_service.dart';
 
 class ProjectProvider extends ChangeNotifier {
   ProjectProvider(this._repository);
@@ -27,6 +28,9 @@ class ProjectProvider extends ChangeNotifier {
   bool _isSaving = false;
   String? _error;
 
+  Map<String, List<ProjectStage>> _scheduleStages = const {};
+  bool _isLoadingSchedule = false;
+
   List<Project> get projects => _projects;
   Project? get currentProject => _currentProject;
   List<ProjectStage> get stages => _stages;
@@ -38,8 +42,11 @@ class ProjectProvider extends ChangeNotifier {
   bool get isLoadingDetail => _isLoadingDetail;
   bool get isSaving => _isSaving;
   String? get error => _error;
+  bool get isLoadingSchedule => _isLoadingSchedule;
   List<ProjectChecklist> checklistsFor(String stageId) =>
       _checklists[stageId] ?? const [];
+  List<ProjectStage> scheduleStagesFor(String projectId) =>
+      _scheduleStages[projectId] ?? const [];
 
   Future<void> loadProjects() async {
     _isLoadingProjects = true;
@@ -51,6 +58,32 @@ class ProjectProvider extends ChangeNotifier {
       _error = 'Không thể tải danh sách dự án: $error';
     } finally {
       _isLoadingProjects = false;
+      notifyListeners();
+    }
+  }
+
+  /// Tải toàn bộ dự án + toàn bộ giai đoạn của chúng, dùng cho màn Lịch
+  /// trình (xem nhiều dự án cùng lúc theo ngày kế hoạch).
+  Future<void> loadSchedule() async {
+    _isLoadingSchedule = true;
+    _error = null;
+    notifyListeners();
+    try {
+      final results = await Future.wait([
+        _repository.getProjects(),
+        _repository.getAllStages(),
+      ]);
+      _projects = results[0] as List<Project>;
+      final allStages = results[1] as List<ProjectStage>;
+      final grouped = <String, List<ProjectStage>>{};
+      for (final stage in allStages) {
+        (grouped[stage.projectId] ??= []).add(stage);
+      }
+      _scheduleStages = grouped;
+    } catch (error) {
+      _error = 'Không thể tải lịch trình dự án: $error';
+    } finally {
+      _isLoadingSchedule = false;
       notifyListeners();
     }
   }
@@ -158,9 +191,28 @@ class ProjectProvider extends ChangeNotifier {
       (await _saving(() async {
         await _repository.saveStage(stage);
         await _reloadDetail(stage.projectId);
+        await _syncStageReminder(stage);
         return true;
       })) ??
       false;
+
+  /// Lên lịch/huỷ nhắc hạn (plannedEndDate) cho 1 giai đoạn — gọi sau mỗi
+  /// lần lưu để thông báo luôn khớp với ngày kế hoạch và trạng thái mới nhất.
+  Future<void> _syncStageReminder(ProjectStage stage) async {
+    final projectName =
+        _currentProject?.id == stage.projectId
+            ? _currentProject!.projectName
+            : _projects
+                  .where((item) => item.id == stage.projectId)
+                  .map((item) => item.projectName)
+                  .firstOrNull ??
+              '';
+    await ProjectNotificationService.scheduleStageReminder(
+      projectId: stage.projectId,
+      projectName: projectName,
+      stage: stage,
+    );
+  }
 
   Future<bool> addCustomStage(
     String projectId,
@@ -308,18 +360,18 @@ class ProjectProvider extends ChangeNotifier {
             syncStatus: SyncStatus.pending,
           ),
         );
-        await _repository.saveStage(
-          stage.copyWith(
-            status: ProjectStageStatus.completed,
-            completedDate: now,
-            assignedUser: confirmedBy.trim().isEmpty
-                ? stage.assignedUser
-                : confirmedBy.trim(),
-            syncStatus: SyncStatus.pending,
-            updatedAt: now,
-          ),
+        final completedStage = stage.copyWith(
+          status: ProjectStageStatus.completed,
+          completedDate: now,
+          assignedUser: confirmedBy.trim().isEmpty
+              ? stage.assignedUser
+              : confirmedBy.trim(),
+          syncStatus: SyncStatus.pending,
+          updatedAt: now,
         );
+        await _repository.saveStage(completedStage);
         await _reloadDetail(stage.projectId);
+        await _syncStageReminder(completedStage);
         return true;
       })) ??
       false;

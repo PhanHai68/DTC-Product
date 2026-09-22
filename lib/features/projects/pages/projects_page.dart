@@ -46,6 +46,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
         title: const Text('Theo dõi dự án'),
         actions: [
           IconButton(
+            tooltip: 'Lịch trình dự án',
+            onPressed: () => context.push('/projects/schedule'),
+            icon: const Icon(Icons.view_timeline_outlined),
+          ),
+          IconButton(
             tooltip: 'Bộ lọc nâng cao',
             onPressed: () => _showFilters(provider.projects),
             icon: Badge(

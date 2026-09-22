@@ -64,6 +64,7 @@ import '../features/projects/pages/project_detail_page.dart';
 import '../features/projects/pages/project_create_page.dart';
 import '../features/projects/pages/project_machine_page.dart';
 import '../features/projects/pages/project_stage_page.dart';
+import '../features/projects/pages/project_schedule_page.dart';
 import '../screens/packing/machine_catalog_screen.dart';
 import '../screens/packing/compare_screen.dart';
 import '../screens/extensions/maintenance_list_screen.dart';
@@ -416,6 +417,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/projects/create',
       builder: (context, state) => const ProjectCreatePage(),
+    ),
+    GoRoute(
+      path: '/projects/schedule',
+      builder: (context, state) => const ProjectSchedulePage(),
     ),
     GoRoute(
       path: '/projects/:id/machines',

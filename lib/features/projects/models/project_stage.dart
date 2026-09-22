@@ -18,6 +18,10 @@ class ProjectStage {
   final ProjectStageStatus status;
   final DateTime? startDate;
   final DateTime? completedDate;
+  // Ngày kế hoạch (dự kiến) — khác với startDate/completedDate là ngày thực
+  // tế. Dùng cho chức năng Lịch trình dự án (Schedule) và nhắc hạn.
+  final DateTime? plannedStartDate;
+  final DateTime? plannedEndDate;
   final String assignedUser;
   final String notes;
   final SyncStatus syncStatus;
@@ -32,12 +36,21 @@ class ProjectStage {
     this.status = ProjectStageStatus.notStarted,
     this.startDate,
     this.completedDate,
+    this.plannedStartDate,
+    this.plannedEndDate,
     this.assignedUser = '',
     this.notes = '',
     this.syncStatus = SyncStatus.local,
     required this.createdAt,
     required this.updatedAt,
   });
+
+  /// Đã trễ hạn kế hoạch: có `plannedEndDate`, chưa hoàn thành, và hôm nay
+  /// đã qua ngày kế hoạch đó.
+  bool get isOverdue =>
+      plannedEndDate != null &&
+      status != ProjectStageStatus.completed &&
+      DateTime.now().isAfter(plannedEndDate!);
 
   factory ProjectStage.fromJson(Map<String, dynamic> json) => ProjectStage(
     id: json['id'] as String,
@@ -54,6 +67,12 @@ class ProjectStage {
     completedDate: json['completedDate'] == null
         ? null
         : DateTime.parse(json['completedDate'] as String),
+    plannedStartDate: json['plannedStartDate'] == null
+        ? null
+        : DateTime.parse(json['plannedStartDate'] as String),
+    plannedEndDate: json['plannedEndDate'] == null
+        ? null
+        : DateTime.parse(json['plannedEndDate'] as String),
     assignedUser: json['assignedUser'] as String? ?? '',
     notes: json['notes'] as String? ?? '',
     syncStatus: SyncStatus.values.firstWhere(
@@ -72,6 +91,8 @@ class ProjectStage {
     'status': status.name,
     'startDate': startDate?.toIso8601String(),
     'completedDate': completedDate?.toIso8601String(),
+    'plannedStartDate': plannedStartDate?.toIso8601String(),
+    'plannedEndDate': plannedEndDate?.toIso8601String(),
     'assignedUser': assignedUser,
     'notes': notes,
     'syncStatus': syncStatus.name,
@@ -87,6 +108,8 @@ class ProjectStage {
     ProjectStageStatus? status,
     DateTime? startDate,
     DateTime? completedDate,
+    DateTime? plannedStartDate,
+    DateTime? plannedEndDate,
     String? assignedUser,
     String? notes,
     SyncStatus? syncStatus,
@@ -100,6 +123,8 @@ class ProjectStage {
     status: status ?? this.status,
     startDate: startDate ?? this.startDate,
     completedDate: completedDate ?? this.completedDate,
+    plannedStartDate: plannedStartDate ?? this.plannedStartDate,
+    plannedEndDate: plannedEndDate ?? this.plannedEndDate,
     assignedUser: assignedUser ?? this.assignedUser,
     notes: notes ?? this.notes,
     syncStatus: syncStatus ?? this.syncStatus,
@@ -109,8 +134,10 @@ class ProjectStage {
 }
 
 const defaultProjectStageNames = <String>[
-  'Giao máy',
+  'Giao hàng',
   'Khui thùng',
   'Lắp đặt',
+  'Chạy thử',
+  'Đào tạo',
   'Nghiệm thu',
 ];

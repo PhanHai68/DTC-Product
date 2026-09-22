@@ -13,7 +13,7 @@ class ProjectDatabase {
   Future<Database> get database async {
     _database ??= await openLocalDatabase(
       fileName: 'project_tracking.db',
-      version: 3,
+      version: 4,
       onCreate: _create,
       onUpgrade: _upgrade,
     );
@@ -77,6 +77,8 @@ class ProjectDatabase {
         status TEXT NOT NULL,
         startDate TEXT,
         completedDate TEXT,
+        plannedStartDate TEXT,
+        plannedEndDate TEXT,
         assignedUser TEXT NOT NULL DEFAULT '',
         notes TEXT NOT NULL DEFAULT '',
         syncStatus TEXT NOT NULL,
@@ -222,6 +224,134 @@ class ProjectDatabase {
       );
     }
     if (oldVersion < 3) await _migrateSimplifiedWorkflow(db);
+    if (oldVersion < 4) {
+      await db.execute(
+        'ALTER TABLE project_stages ADD COLUMN plannedStartDate TEXT',
+      );
+      await db.execute(
+        'ALTER TABLE project_stages ADD COLUMN plannedEndDate TEXT',
+      );
+      await _migrateExpandedWorkflow(db);
+    }
+  }
+
+  /// v4: chèn thêm 2 giai đoạn "Chạy thử" và "Đào tạo" (yêu cầu tính năng
+  /// "Schedule Project") vào cấu trúc 4 giai đoạn cũ, đổi tên "Giao máy"
+  /// thành "Giao hàng". Dự án đã hoàn tất (Nghiệm thu đã completed) thì 2
+  /// giai đoạn mới cũng được đánh dấu hoàn thành luôn — tránh làm "sống lại"
+  /// việc trên các dự án trong thực tế đã xong. Các giai đoạn tùy chỉnh do
+  /// người dùng tự thêm (`addCustomStage`) không bị đụng tới, chỉ dịch
+  /// stageOrder ra sau để nhường chỗ.
+  Future<void> _migrateExpandedWorkflow(Database db) async {
+    final projects = await db.query('projects', columns: ['id']);
+    for (final projectRow in projects) {
+      final projectId = projectRow['id']! as String;
+      final stages = await db.query(
+        'project_stages',
+        where: 'projectId = ?',
+        whereArgs: [projectId],
+        orderBy: 'stageOrder ASC',
+      );
+
+      Map<String, Object?>? findByName(String name) {
+        for (final row in stages) {
+          if (row['stageName'] == name) return row;
+        }
+        return null;
+      }
+
+      final legacyDelivery = findByName('Giao máy');
+      final unboxing = findByName('Khui thùng');
+      final installation = findByName('Lắp đặt');
+      final acceptance = findByName('Nghiệm thu');
+      final knownIds = {
+        legacyDelivery?['id'],
+        unboxing?['id'],
+        installation?['id'],
+        acceptance?['id'],
+      }..removeWhere((id) => id == null);
+      final customStages = stages
+          .where((row) => !knownIds.contains(row['id']))
+          .toList();
+
+      final now = DateTime.now().toIso8601String();
+      final projectFinished = acceptance?['status'] == 'completed';
+      final newStageStatus = projectFinished ? 'completed' : 'notStarted';
+      final newStageDate = projectFinished
+          ? (acceptance?['completedDate'] as String? ?? now)
+          : null;
+
+      if (legacyDelivery != null) {
+        await db.update(
+          'project_stages',
+          {'stageName': 'Giao hàng', 'stageOrder': 0, 'updatedAt': now},
+          where: 'id = ?',
+          whereArgs: [legacyDelivery['id']],
+        );
+      }
+      if (unboxing != null) {
+        await db.update(
+          'project_stages',
+          {'stageOrder': 1, 'updatedAt': now},
+          where: 'id = ?',
+          whereArgs: [unboxing['id']],
+        );
+      }
+      if (installation != null) {
+        await db.update(
+          'project_stages',
+          {'stageOrder': 2, 'updatedAt': now},
+          where: 'id = ?',
+          whereArgs: [installation['id']],
+        );
+      }
+      await db.insert('project_stages', <String, Object?>{
+        'id': 'stage_v4_testing_$projectId',
+        'projectId': projectId,
+        'stageName': 'Chạy thử',
+        'stageOrder': 3,
+        'status': newStageStatus,
+        'startDate': newStageDate,
+        'completedDate': newStageDate,
+        'assignedUser': '',
+        'notes': '',
+        'syncStatus': 'pending',
+        'createdAt': now,
+        'updatedAt': now,
+      });
+      await db.insert('project_stages', <String, Object?>{
+        'id': 'stage_v4_training_$projectId',
+        'projectId': projectId,
+        'stageName': 'Đào tạo',
+        'stageOrder': 4,
+        'status': newStageStatus,
+        'startDate': newStageDate,
+        'completedDate': newStageDate,
+        'assignedUser': '',
+        'notes': '',
+        'syncStatus': 'pending',
+        'createdAt': now,
+        'updatedAt': now,
+      });
+      if (acceptance != null) {
+        await db.update(
+          'project_stages',
+          {'stageOrder': 5, 'updatedAt': now},
+          where: 'id = ?',
+          whereArgs: [acceptance['id']],
+        );
+      }
+      var customOrder = 6;
+      for (final custom in customStages) {
+        await db.update(
+          'project_stages',
+          {'stageOrder': customOrder, 'updatedAt': now},
+          where: 'id = ?',
+          whereArgs: [custom['id']],
+        );
+        customOrder++;
+      }
+    }
   }
 
   Future<void> _migrateSimplifiedWorkflow(Database db) async {

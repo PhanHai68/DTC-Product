@@ -188,6 +188,15 @@ class LocalProjectRepository implements ProjectRepository {
   }
 
   @override
+  Future<List<ProjectStage>> getAllStages() async {
+    final rows = await _local.query(
+      'project_stages',
+      orderBy: 'projectId ASC, stageOrder ASC',
+    );
+    return rows.map((row) => ProjectStage.fromJson(_map(row))).toList();
+  }
+
+  @override
   Future<void> saveStage(ProjectStage stage) async {
     await _local.insert('project_stages', _stageRow(stage));
     await addActivity(
@@ -208,15 +217,16 @@ class LocalProjectRepository implements ProjectRepository {
       final completed = stages
           .where((item) => item.status == ProjectStageStatus.completed)
           .length;
-      final acceptanceIndex = stages.indexWhere(
-        (item) => item.stageName == 'Nghiệm thu',
-      );
+      // Giai đoạn cuối cùng theo stageOrder (getStages đã sắp xếp tăng dần)
+      // đóng vai trò "nghiệm thu" — không so tên chuỗi cố định, để không vỡ
+      // khi đổi/thêm giai đoạn (VD: Schedule Project mở rộng 4 -> 6 bước).
+      final lastIndex = stages.length - 1;
       final waitingAcceptance =
-          acceptanceIndex > 0 &&
+          lastIndex > 0 &&
           stages
-              .take(acceptanceIndex)
+              .take(lastIndex)
               .every((item) => item.status == ProjectStageStatus.completed) &&
-          stages[acceptanceIndex].status != ProjectStageStatus.completed;
+          stages[lastIndex].status != ProjectStageStatus.completed;
       final status = completed == stages.length
           ? ProjectStatus.completed
           : waitingAcceptance

@@ -82,6 +82,8 @@ class _ProjectStagePageState extends State<ProjectStagePage> {
                 _StageTimeCard(
                   stage: stage,
                   onPickStart: () => _pickStageStart(provider, stage),
+                  onPickPlannedEnd: () =>
+                      _pickPlannedEndDate(provider, stage),
                 ),
                 const SizedBox(height: 12),
                 _buildDailyEditor(provider, stage),
@@ -326,6 +328,21 @@ class _ProjectStagePageState extends State<ProjectStagePage> {
       time.minute,
     );
     await provider.setStageStart(stage, value);
+  }
+
+  Future<void> _pickPlannedEndDate(
+    ProjectProvider provider,
+    ProjectStage stage,
+  ) async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: stage.plannedEndDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+      helpText: 'Chọn hạn kế hoạch',
+    );
+    if (date == null || !mounted) return;
+    await provider.saveStage(stage.copyWith(plannedEndDate: date));
   }
 
   Future<void> _pickWorkDate() async {
@@ -622,57 +639,88 @@ class _ProjectStagePageState extends State<ProjectStagePage> {
 }
 
 class _StageTimeCard extends StatelessWidget {
-  const _StageTimeCard({required this.stage, required this.onPickStart});
+  const _StageTimeCard({
+    required this.stage,
+    required this.onPickStart,
+    required this.onPickPlannedEnd,
+  });
   final ProjectStage stage;
   final VoidCallback onPickStart;
+  final VoidCallback onPickPlannedEnd;
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Thời gian thực hiện',
-                  style: Theme.of(context).textTheme.titleMedium,
+  Widget build(BuildContext context) {
+    final overdue = stage.isOverdue;
+    final errorColor = Theme.of(context).colorScheme.error;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Thời gian thực hiện',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
+                Chip(label: Text(stage.status.label)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(
+                overdue ? Icons.warning_amber_rounded : Icons.event_outlined,
+                color: overdue ? errorColor : null,
               ),
-              Chip(label: Text(stage.status.label)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.play_circle_outline),
-            title: const Text('Bắt đầu'),
-            subtitle: Text(
-              stage.startDate == null
-                  ? 'Chưa nhập'
-                  : _formatDateTime(stage.startDate!),
+              title: const Text('Hạn kế hoạch'),
+              subtitle: Text(
+                stage.plannedEndDate == null
+                    ? 'Chưa đặt hạn'
+                    : overdue
+                    ? '${_formatDate(stage.plannedEndDate!)} — đã trễ hạn'
+                    : _formatDate(stage.plannedEndDate!),
+                style: overdue
+                    ? TextStyle(color: errorColor, fontWeight: FontWeight.w600)
+                    : null,
+              ),
+              trailing: TextButton(
+                onPressed: onPickPlannedEnd,
+                child: Text(stage.plannedEndDate == null ? 'Đặt' : 'Sửa'),
+              ),
             ),
-            trailing: TextButton(
-              onPressed: onPickStart,
-              child: Text(stage.startDate == null ? 'Nhập' : 'Sửa'),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.play_circle_outline),
+              title: const Text('Bắt đầu'),
+              subtitle: Text(
+                stage.startDate == null
+                    ? 'Chưa nhập'
+                    : _formatDateTime(stage.startDate!),
+              ),
+              trailing: TextButton(
+                onPressed: onPickStart,
+                child: Text(stage.startDate == null ? 'Nhập' : 'Sửa'),
+              ),
             ),
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.verified_outlined),
-            title: const Text('Hoàn thành'),
-            subtitle: Text(
-              stage.completedDate == null
-                  ? 'Chưa hoàn thành'
-                  : _formatDateTime(stage.completedDate!),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.verified_outlined),
+              title: const Text('Hoàn thành'),
+              subtitle: Text(
+                stage.completedDate == null
+                    ? 'Chưa hoàn thành'
+                    : _formatDateTime(stage.completedDate!),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _DraftPhotoSection extends StatelessWidget {

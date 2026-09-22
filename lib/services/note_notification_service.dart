@@ -1,6 +1,12 @@
-// Local notification service cho chức năng "Ghi chú & Nhắc hẹn".
+// Local notification service — plugin nền dùng CHUNG cho toàn app (Ghi chú &
+// Nhắc hẹn, và Hạn giai đoạn dự án ở project_notification_service.dart).
+// Dùng chung 1 FlutterLocalNotificationsPlugin/1 lần initialize() vì plugin
+// này chỉ cho đăng ký MỘT callback xử lý khi bấm vào thông báo — nếu mỗi
+// tính năng tự tạo plugin/instance riêng, initialize() gọi sau sẽ ghi đè mất
+// callback của tính năng gọi trước. _onNotificationTapped bên dưới phân loại
+// theo tiền tố payload để điều hướng đúng tính năng.
 //
-// - Notification ID luôn trùng với id của ghi chú trong SQLite nên 1 ghi chú
+// - Notification ID của ghi chú luôn trùng với id trong SQLite nên 1 ghi chú
 //   chỉ bao giờ có tối đa 1 notification đang chờ, tránh trùng lặp.
 // - Dùng AndroidScheduleMode.inexactAllowWhileIdle: đủ chính xác cho nhắc
 //   việc cá nhân và không cần xin quyền "Báo thức & lời nhắc" đặc biệt trên
@@ -14,6 +20,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../features/projects/services/project_notification_service.dart';
 import '../routes/app_routes.dart';
 
 abstract final class NoteNotificationService {
@@ -24,6 +31,12 @@ abstract final class NoteNotificationService {
   static const _channelName = 'Nhắc hẹn ghi chú';
   static const _channelDescription =
       'Thông báo nhắc hẹn từ chức năng Ghi chú & Nhắc hẹn';
+
+  /// Cho phép các service khác (VD: ProjectNotificationService) dùng chung
+  /// plugin/trạng thái khởi tạo thay vì tự tạo instance riêng.
+  static FlutterLocalNotificationsPlugin get sharedPlugin => _plugin;
+  static bool get isReady => _pluginReady;
+  static Future<void> ensureInitialized() => init();
 
   static bool _initialized = false;
 
@@ -83,6 +96,14 @@ abstract final class NoteNotificationService {
           importance: Importance.high,
         ),
       );
+      await androidPlugin?.createNotificationChannel(
+        const AndroidNotificationChannel(
+          ProjectNotificationService.channelId,
+          ProjectNotificationService.channelName,
+          description: ProjectNotificationService.channelDescription,
+          importance: Importance.high,
+        ),
+      );
       _pluginReady = true;
     } catch (error, stackTrace) {
       developer.log(
@@ -96,7 +117,15 @@ abstract final class NoteNotificationService {
   }
 
   static void _onNotificationTapped(NotificationResponse response) {
-    final noteId = int.tryParse(response.payload ?? '');
+    final payload = response.payload;
+    if (payload == null) return;
+    if (payload.startsWith(ProjectNotificationService.payloadPrefix)) {
+      ProjectNotificationService.handleTap(
+        payload.substring(ProjectNotificationService.payloadPrefix.length),
+      );
+      return;
+    }
+    final noteId = int.tryParse(payload);
     if (noteId == null) return;
     appRouter.push('/notes/edit', extra: {'noteId': noteId});
   }

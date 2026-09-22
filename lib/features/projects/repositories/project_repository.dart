@@ -19,6 +19,9 @@ abstract class ProjectRepository {
   Future<void> deleteMachine(String machineId);
 
   Future<List<ProjectStage>> getStages(String projectId);
+  /// Toàn bộ giai đoạn của mọi dự án (dùng cho màn Lịch trình/Gantt) —
+  /// nhóm theo projectId ở tầng gọi, tránh phải query từng dự án một.
+  Future<List<ProjectStage>> getAllStages();
   Future<void> saveStage(ProjectStage stage);
   Future<void> addCustomStage(ProjectStage stage);
   Future<List<ProjectStageSubmission>> getStageSubmissions(String projectId);

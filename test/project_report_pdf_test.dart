@@ -66,7 +66,7 @@ void main() {
     expect(bytes.length, greaterThan(10000));
     expect(String.fromCharCodes(bytes.take(4)), '%PDF');
     final document = PdfDocument(inputBytes: bytes);
-    expect(document.pages.count, 5);
+    expect(document.pages.count, 7);
     document.dispose();
   });
 }
