@@ -37,8 +37,8 @@ class SettingsProvider extends ChangeNotifier {
   static const _homeShortTextColorKey = 'home_short_text_color';
   static const _homeShortTextItalicKey = 'home_short_text_italic';
 
-  static const double defaultHomeNameFontSize = 14.0;
-  static const double defaultHomeShortTextFontSize = 20.0;
+  static const double defaultHomeNameFontSize = 18.0;
+  static const double defaultHomeShortTextFontSize = 26.0;
 
   final SharedPreferences _prefs;
 

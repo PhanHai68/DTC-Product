@@ -8,8 +8,8 @@ import '../widgets/home_personalization_widget.dart';
 const _displayNameMaxLength = 30;
 const _shortTextMaxLength = 60;
 
-const _nameFontSizeRange = (min: 10.0, max: 20.0);
-const _shortTextFontSizeRange = (min: 14.0, max: 30.0);
+const _nameFontSizeRange = (min: 12.0, max: 28.0);
+const _shortTextFontSizeRange = (min: 16.0, max: 40.0);
 
 /// Bảng màu gợi ý cho chữ trên Home — giữ đơn giản (không cần color wheel),
 /// phần tử đầu (null) nghĩa là dùng màu mặc định theo theme sáng/tối.
