@@ -119,7 +119,15 @@ class _BrandHeader extends StatelessWidget {
                   ),
                   TextSpan(
                     text: ' Product',
-                    style: TextStyle(color: Color(0xFF72AD30)),
+                    // Nghiêng + nhẹ tay hơn "DTC" để gợi phong cách chữ viết
+                    // tay của chữ "Product" trong logo app (logo dùng font
+                    // script riêng không có sẵn trong app để nhúng chính
+                    // xác).
+                    style: TextStyle(
+                      color: Color(0xFF72AD30),
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
