@@ -105,4 +105,10 @@ class DailyGoalsProvider extends ChangeNotifier {
 
   Future<List<DailyGoal>> searchGoals(String query) =>
       _repository.searchGoals(query);
+
+  /// Đọc thuần túy toàn bộ mục tiêu trong 1 tháng — dùng cho màn hình Lịch
+  /// sử/Thống kê (Phase 2). KHÔNG đụng tới [selectedDate]/[goals] để không
+  /// làm lệch dữ liệu "hôm nay" mà HomeScreen đang hiển thị.
+  Future<List<DailyGoal>> loadMonth(DateTime month) =>
+      _repository.getGoalsForMonth(month.year, month.month);
 }

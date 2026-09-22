@@ -8,26 +8,46 @@ import '../../providers/daily_goals_provider.dart';
 import '../../theme/dtc_palette.dart';
 import '../../widgets/daily_goals/goal_toggle_confirm.dart';
 
-/// Màn hình chi tiết "Mục tiêu công việc" — hiện tại chỉ quản lý mục tiêu
-/// của ngày đang chọn trong [DailyGoalsProvider] (Phase 1 luôn là hôm nay;
-/// Lịch sử/Lịch theo tháng ở Phase 2 sẽ đổi ngày này rồi mở lại màn này).
+/// Màn hình chi tiết "Mục tiêu công việc" — mặc định quản lý mục tiêu của
+/// hôm nay, hoặc của 1 ngày cụ thể trong quá khứ khi mở từ màn Lịch sử/Lịch
+/// theo tháng (Phase 2) qua [date]. Khi rời màn xem ngày quá khứ, tự khôi
+/// phục [DailyGoalsProvider] về "hôm nay" để HomeScreen luôn hiển thị đúng.
 class DailyGoalsScreen extends StatefulWidget {
-  const DailyGoalsScreen({super.key});
+  const DailyGoalsScreen({super.key, this.date});
+
+  final DateTime? date;
 
   @override
   State<DailyGoalsScreen> createState() => _DailyGoalsScreenState();
 }
 
 class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
+  late final DailyGoalsProvider _provider;
+
+  bool get _isHistoryView =>
+      widget.date != null && !DailyGoal.isSameDate(widget.date!, DateTime.now());
+
   @override
   void initState() {
     super.initState();
+    _provider = context.read<DailyGoalsProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<DailyGoalsProvider>();
-      if (provider.goals.isEmpty && !provider.isLoading) {
-        provider.loadToday();
+      if (widget.date != null) {
+        _provider.loadDate(widget.date!);
+      } else if (_provider.goals.isEmpty && !_provider.isLoading) {
+        _provider.loadToday();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    if (_isHistoryView) {
+      // Không await được trong dispose — chỉ cần bắn yêu cầu tải lại "hôm
+      // nay" để HomeCard/lần mở tiếp theo không còn kẹt ở ngày quá khứ.
+      _provider.loadToday();
+    }
+    super.dispose();
   }
 
   Future<void> _confirmDelete(DailyGoal goal) async {
@@ -59,6 +79,8 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
     }
   }
 
+  String _formatDate(DateTime date) => DateFormat('dd/MM/yyyy').format(date);
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<DailyGoalsProvider>();
@@ -67,7 +89,22 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
     final progress = provider.progress;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Mục tiêu công việc')),
+      appBar: AppBar(
+        title: Text(
+          _isHistoryView
+              ? _formatDate(provider.selectedDate)
+              : 'Mục tiêu công việc',
+        ),
+        actions: [
+          if (widget.date == null)
+            IconButton(
+              key: const Key('daily_goals_calendar_button'),
+              tooltip: 'Lịch sử & thống kê',
+              onPressed: () => context.push('/daily_goals/calendar'),
+              icon: const Icon(Icons.calendar_month_outlined),
+            ),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: () => provider.loadDate(provider.selectedDate),
         child: ListView(
