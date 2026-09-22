@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/home_personalization_widget.dart';
@@ -111,32 +110,11 @@ class _BrandHeader extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           Center(
-            child: Row(
+            child: Image.asset(
+              'assets/images/dtc_product_wordmark_full.png',
               key: const Key('home_brand_wordmark'),
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  'DTC',
-                  style: TextStyle(
-                    color: Color(0xFF138347),
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.8,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                // Vector chữ "Product" tách thẳng từ logo app (đường nét viết
-                // tay không có font tương ứng để nhúng), khớp chính xác với
-                // nhận diện thương hiệu thay vì chữ in nghiêng gần giống.
-                // Giới hạn chiều cao bằng đúng chiều cao chữ "DTC" (~18px ở
-                // cỡ chữ 26 in hoa đậm) để 2 chữ đồng bộ, không lệch cỡ.
-                SvgPicture.asset(
-                  'assets/images/dtc_product_wordmark.svg',
-                  height: 18,
-                  semanticsLabel: 'Product',
-                ),
-              ],
+              height: 32,
+              semanticLabel: 'DTC Product',
             ),
           ),
           Positioned(
