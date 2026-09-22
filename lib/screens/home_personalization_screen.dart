@@ -10,6 +10,7 @@ const _shortTextMaxLength = 60;
 
 const _nameFontSizeRange = (min: 12.0, max: 28.0);
 const _shortTextFontSizeRange = (min: 16.0, max: 40.0);
+const _dailyGoalsFontSizeRange = (min: 12.0, max: 24.0);
 
 /// Bảng màu gợi ý cho chữ trên Home — giữ đơn giản (không cần color wheel),
 /// phần tử đầu (null) nghĩa là dùng màu mặc định theo theme sáng/tối.
@@ -45,6 +46,9 @@ class _HomePersonalizationScreenState
   late Color? _shortTextColor;
   late bool _shortTextItalic;
   late bool _dailyGoalsEnabled;
+  late double _dailyGoalsFontSize;
+  late Color? _dailyGoalsColor;
+  late bool _dailyGoalsItalic;
   late final TextEditingController _nameController;
   late final TextEditingController _shortTextController;
   late final TextEditingController _dailyGoalsTitleController;
@@ -61,6 +65,9 @@ class _HomePersonalizationScreenState
     _shortTextColor = settings.homeShortTextColor;
     _shortTextItalic = settings.homeShortTextItalic;
     _dailyGoalsEnabled = settings.homeDailyGoalsEnabled;
+    _dailyGoalsFontSize = settings.homeDailyGoalsFontSize;
+    _dailyGoalsColor = settings.homeDailyGoalsColor;
+    _dailyGoalsItalic = settings.homeDailyGoalsItalic;
     _nameController = TextEditingController(text: settings.homeDisplayName)
       ..addListener(() => setState(() {}));
     _shortTextController =
@@ -92,6 +99,10 @@ class _HomePersonalizationScreenState
       shortTextItalic: _shortTextItalic,
       dailyGoalsEnabled: _dailyGoalsEnabled,
       dailyGoalsTitle: _dailyGoalsTitleController.text,
+      dailyGoalsFontSize: _dailyGoalsFontSize,
+      dailyGoalsColor: _dailyGoalsColor,
+      dailyGoalsColorIsSet: true,
+      dailyGoalsItalic: _dailyGoalsItalic,
     );
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -131,6 +142,9 @@ class _HomePersonalizationScreenState
       _shortTextColor = null;
       _shortTextItalic = false;
       _dailyGoalsEnabled = false;
+      _dailyGoalsFontSize = SettingsProvider.defaultHomeDailyGoalsFontSize;
+      _dailyGoalsColor = null;
+      _dailyGoalsItalic = false;
       _nameController.text = '';
       _shortTextController.text = '';
       _dailyGoalsTitleController.text =
@@ -266,6 +280,7 @@ class _HomePersonalizationScreenState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SwitchListTile(
+                  key: const Key('daily_goals_enabled_switch'),
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Hiển thị "Mục tiêu hôm nay"'),
                   subtitle: const Text(
@@ -283,6 +298,38 @@ class _HomePersonalizationScreenState
                     labelText: 'Tiêu đề hiển thị',
                     hintText: 'VD: Mục tiêu hôm nay, Công việc hôm nay...',
                   ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Cỡ chữ - Tiêu đề',
+                  style: TextStyle(color: palette.muted, fontSize: 12.5),
+                ),
+                _FontSizeSlider(
+                  value: _dailyGoalsFontSize,
+                  min: _dailyGoalsFontSizeRange.min,
+                  max: _dailyGoalsFontSizeRange.max,
+                  onChanged: (value) =>
+                      setState(() => _dailyGoalsFontSize = value),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Màu chữ - Tiêu đề',
+                  style: TextStyle(color: palette.muted, fontSize: 12.5),
+                ),
+                const SizedBox(height: 8),
+                _ColorSwatchRow(
+                  selected: _dailyGoalsColor,
+                  onChanged: (color) =>
+                      setState(() => _dailyGoalsColor = color),
+                ),
+                SwitchListTile(
+                  key: const Key('daily_goals_italic_switch'),
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  title: const Text('In nghiêng'),
+                  value: _dailyGoalsItalic,
+                  onChanged: (value) =>
+                      setState(() => _dailyGoalsItalic = value),
                 ),
               ],
             ),

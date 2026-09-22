@@ -204,9 +204,7 @@ void main() {
 
     expect(settings.homeDailyGoalsEnabled, isFalse);
 
-    // Switch cuối cùng trong danh sách = "Hiển thị Mục tiêu hôm nay" (sau
-    // switch Hiển thị trang chủ + 2 switch In nghiêng).
-    await tester.tap(find.byType(SwitchListTile).last);
+    await tester.tap(find.byKey(const Key('daily_goals_enabled_switch')));
     // TextField thứ 3 (index 2) = ô "Tiêu đề hiển thị" của Mục tiêu hôm nay,
     // sau ô Tên hiển thị (0) và Dòng giới thiệu (1).
     await tester.enterText(

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../models/daily_goal.dart';
 import '../../providers/daily_goals_provider.dart';
 import '../../theme/dtc_palette.dart';
+import '../../widgets/daily_goals/goal_toggle_confirm.dart';
 
 /// Màn hình chi tiết "Mục tiêu công việc" — hiện tại chỉ quản lý mục tiêu
 /// của ngày đang chọn trong [DailyGoalsProvider] (Phase 1 luôn là hôm nay;
@@ -49,6 +50,13 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
     );
     if (confirmed != true || !mounted) return;
     await context.read<DailyGoalsProvider>().deleteGoal(goal.id!);
+  }
+
+  Future<void> _handleToggle(DailyGoal goal) async {
+    if (await confirmToggleGoal(context, goal)) {
+      if (!mounted) return;
+      await context.read<DailyGoalsProvider>().toggleCompleted(goal);
+    }
   }
 
   @override
@@ -100,7 +108,7 @@ class _DailyGoalsScreenState extends State<DailyGoalsScreen> {
               ...goals.map(
                 (goal) => _GoalTile(
                   goal: goal,
-                  onToggle: () => provider.toggleCompleted(goal),
+                  onToggle: () => _handleToggle(goal),
                   onEdit: () => context.push(
                     '/daily_goals/form',
                     extra: {'goal': goal},

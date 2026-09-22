@@ -152,6 +152,11 @@ void main() {
     await tester.tap(find.byIcon(Icons.radio_button_unchecked_rounded));
     await tester.pumpAndSettle();
 
+    // Yêu cầu xác nhận trước khi tick, tránh bấm nhầm.
+    expect(find.text('Hoàn thành mục tiêu?'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Xác nhận'));
+    await tester.pumpAndSettle();
+
     expect(find.text('1/1 hoàn thành'), findsOneWidget);
     expect(find.text('100%'), findsOneWidget);
   });

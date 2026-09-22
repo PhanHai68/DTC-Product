@@ -42,10 +42,14 @@ class SettingsProvider extends ChangeNotifier {
   // tắt chức năng không xóa dữ liệu, chỉ ẩn khỏi Home.
   static const _homeDailyGoalsEnabledKey = 'home_daily_goals_enabled';
   static const _homeDailyGoalsTitleKey = 'home_daily_goals_title';
+  static const _homeDailyGoalsFontSizeKey = 'home_daily_goals_font_size';
+  static const _homeDailyGoalsColorKey = 'home_daily_goals_color';
+  static const _homeDailyGoalsItalicKey = 'home_daily_goals_italic';
 
   static const double defaultHomeNameFontSize = 18.0;
   static const double defaultHomeShortTextFontSize = 26.0;
   static const String defaultHomeDailyGoalsTitle = 'Mục tiêu hôm nay';
+  static const double defaultHomeDailyGoalsFontSize = 14.5;
 
   final SharedPreferences _prefs;
 
@@ -63,6 +67,9 @@ class SettingsProvider extends ChangeNotifier {
   bool _homeShortTextItalic = false;
   bool _homeDailyGoalsEnabled = false;
   String _homeDailyGoalsTitle = defaultHomeDailyGoalsTitle;
+  double _homeDailyGoalsFontSize = defaultHomeDailyGoalsFontSize;
+  Color? _homeDailyGoalsColor;
+  bool _homeDailyGoalsItalic = false;
 
   ThemeMode get themeMode => _themeMode;
   AppTextScale get textScale => _textScale;
@@ -78,6 +85,9 @@ class SettingsProvider extends ChangeNotifier {
   bool get homeShortTextItalic => _homeShortTextItalic;
   bool get homeDailyGoalsEnabled => _homeDailyGoalsEnabled;
   String get homeDailyGoalsTitle => _homeDailyGoalsTitle;
+  double get homeDailyGoalsFontSize => _homeDailyGoalsFontSize;
+  Color? get homeDailyGoalsColor => _homeDailyGoalsColor;
+  bool get homeDailyGoalsItalic => _homeDailyGoalsItalic;
 
   void _load() {
     final savedMode = _prefs.getString(_themeModeKey);
@@ -111,6 +121,14 @@ class SettingsProvider extends ChangeNotifier {
         _prefs.getBool(_homeDailyGoalsEnabledKey) ?? false;
     _homeDailyGoalsTitle =
         _prefs.getString(_homeDailyGoalsTitleKey) ?? defaultHomeDailyGoalsTitle;
+    _homeDailyGoalsFontSize =
+        _prefs.getDouble(_homeDailyGoalsFontSizeKey) ??
+        defaultHomeDailyGoalsFontSize;
+    final dailyGoalsColorValue = _prefs.getInt(_homeDailyGoalsColorKey);
+    _homeDailyGoalsColor = dailyGoalsColorValue == null
+        ? null
+        : Color(dailyGoalsColorValue);
+    _homeDailyGoalsItalic = _prefs.getBool(_homeDailyGoalsItalicKey) ?? false;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -146,6 +164,13 @@ class SettingsProvider extends ChangeNotifier {
     required bool shortTextItalic,
     bool? dailyGoalsEnabled,
     String? dailyGoalsTitle,
+    double? dailyGoalsFontSize,
+    Color? dailyGoalsColor,
+    // dailyGoalsColor cho phép giá trị null hợp lệ (nghĩa là "theo màu mặc
+    // định theme"), nên cần cờ riêng để phân biệt "không truyền tham số này"
+    // (giữ nguyên màu cũ) với "chủ động đặt về null" (theo theme).
+    bool dailyGoalsColorIsSet = false,
+    bool? dailyGoalsItalic,
   }) async {
     _homePersonalizationEnabled = enabled;
     _homeDisplayName = displayName;
@@ -161,6 +186,11 @@ class SettingsProvider extends ChangeNotifier {
         ? defaultHomeDailyGoalsTitle
         : dailyGoalsTitle!.trim();
     if (dailyGoalsTitle != null) _homeDailyGoalsTitle = resolvedGoalsTitle;
+    if (dailyGoalsFontSize != null) {
+      _homeDailyGoalsFontSize = dailyGoalsFontSize;
+    }
+    if (dailyGoalsColorIsSet) _homeDailyGoalsColor = dailyGoalsColor;
+    if (dailyGoalsItalic != null) _homeDailyGoalsItalic = dailyGoalsItalic;
     notifyListeners();
     await Future.wait([
       _prefs.setBool(_homePersonalizationEnabledKey, enabled),
@@ -182,6 +212,15 @@ class SettingsProvider extends ChangeNotifier {
         _prefs.setBool(_homeDailyGoalsEnabledKey, dailyGoalsEnabled),
       if (dailyGoalsTitle != null)
         _prefs.setString(_homeDailyGoalsTitleKey, resolvedGoalsTitle),
+      if (dailyGoalsFontSize != null)
+        _prefs.setDouble(_homeDailyGoalsFontSizeKey, dailyGoalsFontSize),
+      if (dailyGoalsItalic != null)
+        _prefs.setBool(_homeDailyGoalsItalicKey, dailyGoalsItalic),
+      if (dailyGoalsColorIsSet)
+        if (dailyGoalsColor != null)
+          _prefs.setInt(_homeDailyGoalsColorKey, dailyGoalsColor.toARGB32())
+        else
+          _prefs.remove(_homeDailyGoalsColorKey),
     ]);
   }
 
@@ -200,5 +239,9 @@ class SettingsProvider extends ChangeNotifier {
     shortTextItalic: false,
     dailyGoalsEnabled: false,
     dailyGoalsTitle: defaultHomeDailyGoalsTitle,
+    dailyGoalsFontSize: defaultHomeDailyGoalsFontSize,
+    dailyGoalsColor: null,
+    dailyGoalsColorIsSet: true,
+    dailyGoalsItalic: false,
   );
 }

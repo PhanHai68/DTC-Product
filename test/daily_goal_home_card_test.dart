@@ -125,8 +125,11 @@ void main() {
 
     expect(find.byKey(const Key('daily_goal_home_card')), findsOneWidget);
     expect(find.text('MỤC TIÊU HÔM NAY'), findsOneWidget);
-    expect(find.text('Hôm nay chưa có mục tiêu nào.'), findsOneWidget);
-    expect(find.byKey(const Key('daily_goal_empty_add_button')), findsOneWidget);
+    expect(
+      find.textContaining('Hôm nay chưa có mục tiêu nào.'),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('daily_goal_add_button')), findsOneWidget);
   });
 
   testWidgets('hiện danh sách, tiến độ và tối đa 3 mục tiêu + "Xem thêm"', (
@@ -212,6 +215,11 @@ void main() {
     expect(find.text('0/1'), findsOneWidget);
 
     await tester.tap(find.text('Hoàn thành báo cáo test'));
+    await tester.pumpAndSettle();
+
+    // Yêu cầu xác nhận trước khi tick, tránh bấm nhầm.
+    expect(find.text('Hoàn thành mục tiêu?'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Xác nhận'));
     await tester.pumpAndSettle();
 
     expect(find.text('1/1'), findsOneWidget);

@@ -7,6 +7,7 @@ import '../../models/daily_goal.dart';
 import '../../providers/daily_goals_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../theme/dtc_palette.dart';
+import 'goal_toggle_confirm.dart';
 
 const _maxVisibleGoals = 3;
 
@@ -27,6 +28,15 @@ class _DailyGoalHomeCardState extends State<DailyGoalHomeCard> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => context.read<DailyGoalsProvider>().loadToday(),
     );
+  }
+
+  Future<void> _handleToggle(
+    DailyGoalsProvider goalsProvider,
+    DailyGoal goal,
+  ) async {
+    if (await confirmToggleGoal(context, goal)) {
+      goalsProvider.toggleCompleted(goal);
+    }
   }
 
   @override
@@ -52,45 +62,46 @@ class _DailyGoalHomeCardState extends State<DailyGoalHomeCard> {
               borderRadius: BorderRadius.circular(16),
               side: BorderSide(color: palette.border),
             ),
-            child: InkWell(
+            child: Padding(
               key: const Key('daily_goal_home_card'),
-              borderRadius: BorderRadius.circular(16),
-              onTap: () => context.push('/daily_goals'),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _Header(
-                      title: settings.homeDailyGoalsTitle,
-                      progress: progress,
-                    ),
-                    const SizedBox(height: 12),
-                    if (goalsProvider.isLoading && goals.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        child: Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                      )
-                    else if (goals.isEmpty)
-                      _EmptyState(
-                        onAdd: () => context.push('/daily_goals/form'),
-                      )
-                    else ...[
-                      ...visible.map(
-                        (goal) => _GoalRow(
-                          goal: goal,
-                          onToggle: () =>
-                              goalsProvider.toggleCompleted(goal),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _Header(
+                    title: settings.homeDailyGoalsTitle,
+                    progress: progress,
+                    fontSize: settings.homeDailyGoalsFontSize,
+                    color: settings.homeDailyGoalsColor,
+                    italic: settings.homeDailyGoalsItalic,
+                    onTap: () => context.push('/daily_goals'),
+                    onAdd: () => context.push('/daily_goals/form'),
+                  ),
+                  const SizedBox(height: 12),
+                  if (goalsProvider.isLoading && goals.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         ),
                       ),
-                      if (remaining > 0)
-                        Padding(
+                    )
+                  else if (goals.isEmpty)
+                    const _EmptyState()
+                  else ...[
+                    ...visible.map(
+                      (goal) => _GoalRow(
+                        goal: goal,
+                        onToggle: () => _handleToggle(goalsProvider, goal),
+                      ),
+                    ),
+                    if (remaining > 0)
+                      InkWell(
+                        onTap: () => context.push('/daily_goals'),
+                        child: Padding(
                           padding: const EdgeInsets.only(top: 4, bottom: 8),
                           child: Text(
                             'Xem thêm $remaining mục tiêu',
@@ -101,27 +112,11 @@ class _DailyGoalHomeCardState extends State<DailyGoalHomeCard> {
                             ),
                           ),
                         ),
-                      const SizedBox(height: 4),
-                      _ProgressBar(progress: progress),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton.icon(
-                          key: const Key('daily_goal_add_button'),
-                          onPressed: () =>
-                              context.push('/daily_goals/form'),
-                          icon: const Icon(Icons.add_rounded, size: 18),
-                          label: const Text('Thêm mục tiêu'),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                            ),
-                          ),
-                        ),
                       ),
-                    ],
+                    const SizedBox(height: 4),
+                    _ProgressBar(progress: progress),
                   ],
-                ),
+                ],
               ),
             ),
           ),
@@ -132,41 +127,60 @@ class _DailyGoalHomeCardState extends State<DailyGoalHomeCard> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.title, required this.progress});
+  const _Header({
+    required this.title,
+    required this.progress,
+    required this.fontSize,
+    required this.color,
+    required this.italic,
+    required this.onTap,
+    required this.onAdd,
+  });
 
   final String title;
   final GoalProgress progress;
+  final double fontSize;
+  final Color? color;
+  final bool italic;
+  final VoidCallback onTap;
+  final VoidCallback onAdd;
 
   @override
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
     final today = DateFormat('dd/MM/yyyy').format(DateTime.now());
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title.toUpperCase(),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: palette.navy,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 14.5,
-                  letterSpacing: 0.3,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: color ?? palette.navy,
+                    fontWeight: FontWeight.w800,
+                    fontSize: fontSize,
+                    fontStyle: italic ? FontStyle.italic : FontStyle.normal,
+                    letterSpacing: 0.3,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                today,
-                style: TextStyle(color: palette.muted, fontSize: 12),
-              ),
-            ],
+                const SizedBox(height: 2),
+                Text(
+                  today,
+                  style: TextStyle(color: palette.muted, fontSize: 12),
+                ),
+              ],
+            ),
           ),
         ),
-        if (progress.total > 0)
+        if (progress.total > 0) ...[
           Text(
             '${progress.completed}/${progress.total}',
             style: TextStyle(
@@ -175,6 +189,16 @@ class _Header extends StatelessWidget {
               fontSize: 15,
             ),
           ),
+          const SizedBox(width: 4),
+        ],
+        IconButton(
+          key: const Key('daily_goal_add_button'),
+          onPressed: onAdd,
+          icon: const Icon(Icons.add_circle_rounded),
+          color: palette.cyan,
+          tooltip: 'Thêm mục tiêu',
+          visualDensity: VisualDensity.compact,
+        ),
       ],
     );
   }
@@ -262,31 +286,14 @@ class _ProgressBar extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({required this.onAdd});
-
-  final VoidCallback onAdd;
+  const _EmptyState();
 
   @override
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Hôm nay chưa có mục tiêu nào.',
-          style: TextStyle(color: palette.muted, fontSize: 13.5),
-        ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: FilledButton.tonalIcon(
-            key: const Key('daily_goal_empty_add_button'),
-            onPressed: onAdd,
-            icon: const Icon(Icons.add_rounded, size: 18),
-            label: const Text('Thêm mục tiêu'),
-          ),
-        ),
-      ],
+    return Text(
+      'Hôm nay chưa có mục tiêu nào. Bấm "+" để thêm.',
+      style: TextStyle(color: palette.muted, fontSize: 13.5),
     );
   }
 }
