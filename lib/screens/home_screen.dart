@@ -129,9 +129,11 @@ class _BrandHeader extends StatelessWidget {
                 // Vector chữ "Product" tách thẳng từ logo app (đường nét viết
                 // tay không có font tương ứng để nhúng), khớp chính xác với
                 // nhận diện thương hiệu thay vì chữ in nghiêng gần giống.
+                // Giới hạn chiều cao bằng đúng chiều cao chữ "DTC" (~18px ở
+                // cỡ chữ 26 in hoa đậm) để 2 chữ đồng bộ, không lệch cỡ.
                 SvgPicture.asset(
                   'assets/images/dtc_product_wordmark.svg',
-                  height: 28,
+                  height: 18,
                   semanticsLabel: 'Product',
                 ),
               ],
