@@ -10,7 +10,7 @@ import '../models/stored_file.dart';
 const Map<String, String> _featureLabels = {
   'GhiChu': 'Ghi chú & Nhắc hẹn',
   'LuuMau': 'Lưu mẫu',
-  'Projects': 'Theo dõi dự án',
+  'Projects': 'Project Timeline',
 };
 
 Future<Directory> _savedFilesRoot() async {

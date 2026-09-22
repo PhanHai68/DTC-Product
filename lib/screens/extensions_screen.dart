@@ -28,7 +28,7 @@ class ExtensionsScreen extends StatelessWidget {
         ),
         TechnologyMenuEntry(
           id: 'extension_project_tracking',
-          title: 'Theo Dõi Dự Án',
+          title: 'Project Timeline',
           icon: Icons.engineering_outlined,
           featured: true,
           onTap: () => context.push('/projects'),

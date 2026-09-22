@@ -9,7 +9,7 @@ import '../../services/storage_service.dart'
     if (dart.library.js_interop) '../../services/storage_service_web.dart';
 
 /// Màn hình xem ảnh đã lưu, dùng cùng kiểu InteractiveViewer (zoom/pan) đang
-/// dùng cho ảnh dự án ở tính năng Theo dõi dự án.
+/// dùng cho ảnh dự án ở tính năng Project Timeline.
 class StoredImageViewerScreen extends StatelessWidget {
   const StoredImageViewerScreen({super.key, required this.file});
 

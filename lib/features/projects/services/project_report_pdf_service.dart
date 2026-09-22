@@ -641,7 +641,7 @@ abstract final class ProjectReportPdfService {
     );
     _text(
       page.graphics,
-      'Theo dõi dự án',
+      'Project Timeline',
       fonts.regular(7.2),
       ui.Rect.fromLTWH(24, size.height - 23, size.width - 100, 12),
       color: _muted,

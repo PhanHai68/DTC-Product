@@ -6,10 +6,45 @@ import '../models/project.dart';
 import '../models/project_stage.dart';
 import '../providers/project_provider.dart';
 
+const _colorOnTime = Color(0xFF1E88E5);
+const _colorOverdue = Color(0xFFE53935);
+const _colorDone = Color(0xFF43A047);
+const _colorWarning = Color(0xFFEF6C00);
+
+/// Số ngày lệch giữa 2 mốc, chỉ tính theo NGÀY (bỏ giờ/phút) để tránh sai số
+/// biên khi so sánh "hôm nay" với 1 hạn đặt vào buổi sáng.
+int _daysBetween(DateTime from, DateTime to) {
+  final a = DateTime(from.year, from.month, from.day);
+  final b = DateTime(to.year, to.month, to.day);
+  return b.difference(a).inDays;
+}
+
+({String label, Color color}) _stageStatusInfo(ProjectStage stage) {
+  if (stage.status == ProjectStageStatus.completed) {
+    if (stage.plannedEndDate != null && stage.completedDate != null) {
+      final lateDays = _daysBetween(
+        stage.plannedEndDate!,
+        stage.completedDate!,
+      );
+      if (lateDays > 0) {
+        return (label: 'Hoàn thành trễ $lateDays ngày', color: _colorWarning);
+      }
+    }
+    return (label: 'Hoàn thành đúng hạn', color: _colorDone);
+  }
+  if (stage.plannedEndDate == null) {
+    return (label: stage.status.label, color: Colors.grey);
+  }
+  final diff = _daysBetween(stage.plannedEndDate!, DateTime.now());
+  if (diff > 0) return (label: 'Trễ $diff ngày', color: _colorOverdue);
+  if (diff == 0) return (label: 'Hạn hôm nay', color: _colorWarning);
+  return (label: 'Còn ${-diff} ngày', color: _colorOnTime);
+}
+
 /// Màn hình "Lịch trình dự án" — xem nhanh nhiều dự án cùng lúc theo ngày kế
-/// hoạch của từng giai đoạn (plannedStartDate/plannedEndDate). Mỗi dự án là
-/// 1 dải thời gian riêng (không dùng chung 1 trục ngày toàn màn hình) để giữ
-/// đơn giản — đủ để phát hiện nhanh giai đoạn nào sắp/đã trễ hạn.
+/// hoạch của từng giai đoạn. Mỗi giai đoạn hiển thị dạng dòng có tên + hạn +
+/// trạng thái trễ/còn bao nhiêu ngày — ưu tiên đọc rõ số liệu trên màn hình
+/// điện thoại hơn là vẽ thanh Gantt (quá nhỏ để hiện chữ ở bề rộng này).
 class ProjectSchedulePage extends StatefulWidget {
   const ProjectSchedulePage({super.key});
 
@@ -91,9 +126,10 @@ class _Legend extends StatelessWidget {
       spacing: 16,
       runSpacing: 8,
       children: [
-        dot(const Color(0xFF1E88E5), 'Đúng tiến độ'),
-        dot(const Color(0xFFE53935), 'Trễ hạn'),
-        dot(const Color(0xFF43A047), 'Hoàn thành'),
+        dot(_colorOnTime, 'Còn hạn'),
+        dot(_colorOverdue, 'Trễ hạn'),
+        dot(_colorWarning, 'Hạn hôm nay / hoàn thành trễ'),
+        dot(_colorDone, 'Hoàn thành đúng hạn'),
       ],
     );
   }
@@ -110,14 +146,10 @@ class _ProjectTimelineCard extends StatelessWidget {
   final List<ProjectStage> stages;
   final VoidCallback onTap;
 
-  static const _dayWidth = 26.0;
-  static const _barHeight = 30.0;
-
   @override
   Widget build(BuildContext context) {
-    final dated = stages
-        .where((s) => s.plannedStartDate != null || s.plannedEndDate != null)
-        .toList();
+    final dated = stages.where((s) => s.plannedEndDate != null).toList();
+    final overdueCount = dated.where((s) => s.isOverdue).length;
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -138,6 +170,23 @@ class _ProjectTimelineCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  if (overdueCount > 0) ...[
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      size: 16,
+                      color: _colorOverdue,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$overdueCount trễ hạn',
+                      style: const TextStyle(
+                        color: _colorOverdue,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
                   Chip(
                     label: Text(
                       project.status.label,
@@ -156,104 +205,79 @@ class _ProjectTimelineCard extends StatelessWidget {
                     fontSize: 12.5,
                   ),
                 ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               if (dated.isEmpty)
-                Text(
-                  'Chưa đặt ngày kế hoạch cho giai đoạn nào.',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.outline,
-                    fontSize: 12.5,
-                    fontStyle: FontStyle.italic,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    'Chưa đặt ngày kế hoạch cho giai đoạn nào.',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.outline,
+                      fontSize: 12.5,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 )
               else
-                _buildTimeline(context, dated),
+                ...dated.map((stage) => _StageStatusRow(stage: stage)),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildTimeline(BuildContext context, List<ProjectStage> dated) {
-    final starts = dated.map((s) => s.plannedStartDate ?? s.plannedEndDate!);
-    final ends = dated.map((s) => s.plannedEndDate ?? s.plannedStartDate!);
-    final minDate = starts.reduce((a, b) => a.isBefore(b) ? a : b);
-    final maxDate = ends.reduce((a, b) => a.isAfter(b) ? a : b);
-    final totalDays = maxDate.difference(minDate).inDays + 1;
-    final totalWidth = totalDays * _dayWidth;
-    final today = DateTime.now();
-    final todayOffset = today.isBefore(minDate) || today.isAfter(maxDate)
-        ? null
-        : today.difference(minDate).inDays * _dayWidth;
+class _StageStatusRow extends StatelessWidget {
+  const _StageStatusRow({required this.stage});
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: SizedBox(
-        width: totalWidth,
-        height: dated.length * (_barHeight + 4) + 4,
-        child: Stack(
-          children: [
-            if (todayOffset != null)
-              Positioned(
-                left: todayOffset,
-                top: 0,
-                bottom: 0,
-                child: Container(width: 1.5, color: Colors.black26),
-              ),
-            for (var i = 0; i < dated.length; i++)
-              _buildBar(context, dated[i], minDate, i),
-          ],
-        ),
-      ),
-    );
-  }
+  final ProjectStage stage;
 
-  Widget _buildBar(
-    BuildContext context,
-    ProjectStage stage,
-    DateTime minDate,
-    int index,
-  ) {
-    final start = stage.plannedStartDate ?? stage.plannedEndDate!;
-    final end = stage.plannedEndDate ?? stage.plannedStartDate!;
-    final left = start.difference(minDate).inDays * _dayWidth;
-    final width = ((end.difference(start).inDays + 1) * _dayWidth).clamp(
-      _dayWidth,
-      double.infinity,
-    );
-    final color = stage.status == ProjectStageStatus.completed
-        ? const Color(0xFF43A047)
-        : stage.isOverdue
-        ? const Color(0xFFE53935)
-        : const Color(0xFF1E88E5);
-
-    return Positioned(
-      left: left,
-      top: index * (_barHeight + 4),
-      width: width,
-      height: _barHeight,
-      child: Tooltip(
-        message: stage.stageName,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Text(
-            stage.stageName,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 11.5,
-              fontWeight: FontWeight.w600,
+  @override
+  Widget build(BuildContext context) {
+    final info = _stageStatusInfo(stage);
+    final dateFormat = _shortDate(stage.plannedEndDate!);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            margin: const EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(
+              color: info.color,
+              shape: BoxShape.circle,
             ),
           ),
-        ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  stage.stageName,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  'Hạn: $dateFormat',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            info.label,
+            style: TextStyle(color: info.color, fontWeight: FontWeight.w700),
+          ),
+        ],
       ),
     );
   }
 }
+
+String _shortDate(DateTime value) =>
+    '${value.day.toString().padLeft(2, '0')}/${value.month.toString().padLeft(2, '0')}/${value.year}';

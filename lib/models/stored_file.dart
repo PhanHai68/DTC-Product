@@ -43,7 +43,7 @@ class StoredFile {
   final DateTime modifiedAt;
 
   /// Tên chức năng đã tạo ra file này (suy ra từ thư mục con), ví dụ
-  /// "Ghi chú & Nhắc hẹn", "Lưu mẫu", "Theo dõi dự án".
+  /// "Ghi chú & Nhắc hẹn", "Lưu mẫu", "Project Timeline".
   final String featureLabel;
 }
 

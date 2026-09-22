@@ -65,7 +65,7 @@ class Project {
     final model = machines.isEmpty || machines.first.model.trim().isEmpty
         ? 'Chưa có model'
         : machines.first.model.trim();
-    return 'DTC-Theo dõi dự án $model ${projectName.trim()}';
+    return 'DTC-Project Timeline $model ${projectName.trim()}';
   }
 
   factory Project.fromJson(Map<String, dynamic> json) => Project(

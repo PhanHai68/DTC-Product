@@ -43,7 +43,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     final projects = _filtered(provider.projects);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Theo dõi dự án'),
+        title: const Text('Project Timeline'),
         actions: [
           IconButton(
             tooltip: 'Lịch trình dự án',

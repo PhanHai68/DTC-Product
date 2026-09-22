@@ -53,7 +53,7 @@ void main() {
       expect(decoded.machines.single.serialNumber, 'SX8-2026-001');
       expect(
         decoded.trackingTitle,
-        'DTC-Theo dõi dự án SX8 Phúc Long Factory',
+        'DTC-Project Timeline SX8 Phúc Long Factory',
       );
     });
 
