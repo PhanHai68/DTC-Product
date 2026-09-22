@@ -40,8 +40,10 @@ class _HomePersonalizationScreenState
   late bool _enabled;
   late double _nameFontSize;
   late Color? _nameColor;
+  late bool _nameItalic;
   late double _shortTextFontSize;
   late Color? _shortTextColor;
+  late bool _shortTextItalic;
   late final TextEditingController _nameController;
   late final TextEditingController _shortTextController;
 
@@ -52,8 +54,10 @@ class _HomePersonalizationScreenState
     _enabled = settings.homePersonalizationEnabled;
     _nameFontSize = settings.homeNameFontSize;
     _nameColor = settings.homeNameColor;
+    _nameItalic = settings.homeNameItalic;
     _shortTextFontSize = settings.homeShortTextFontSize;
     _shortTextColor = settings.homeShortTextColor;
+    _shortTextItalic = settings.homeShortTextItalic;
     _nameController = TextEditingController(text: settings.homeDisplayName)
       ..addListener(() => setState(() {}));
     _shortTextController =
@@ -75,8 +79,10 @@ class _HomePersonalizationScreenState
       shortText: _shortTextController.text.trim(),
       nameFontSize: _nameFontSize,
       nameColor: _nameColor,
+      nameItalic: _nameItalic,
       shortTextFontSize: _shortTextFontSize,
       shortTextColor: _shortTextColor,
+      shortTextItalic: _shortTextItalic,
     );
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -111,8 +117,10 @@ class _HomePersonalizationScreenState
       _enabled = false;
       _nameFontSize = SettingsProvider.defaultHomeNameFontSize;
       _nameColor = null;
+      _nameItalic = false;
       _shortTextFontSize = SettingsProvider.defaultHomeShortTextFontSize;
       _shortTextColor = null;
+      _shortTextItalic = false;
       _nameController.text = '';
       _shortTextController.text = '';
     });
@@ -198,6 +206,13 @@ class _HomePersonalizationScreenState
                   selected: _nameColor,
                   onChanged: (color) => setState(() => _nameColor = color),
                 ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  title: const Text('In nghiêng'),
+                  value: _nameItalic,
+                  onChanged: (value) => setState(() => _nameItalic = value),
+                ),
                 const Divider(height: 32),
                 Text(
                   'Cỡ chữ - Dòng giới thiệu',
@@ -220,6 +235,14 @@ class _HomePersonalizationScreenState
                   selected: _shortTextColor,
                   onChanged: (color) =>
                       setState(() => _shortTextColor = color),
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  title: const Text('In nghiêng'),
+                  value: _shortTextItalic,
+                  onChanged: (value) =>
+                      setState(() => _shortTextItalic = value),
                 ),
               ],
             ),
@@ -244,8 +267,10 @@ class _HomePersonalizationScreenState
                       shortText: _shortTextController.text,
                       nameFontSize: _nameFontSize,
                       nameColor: _nameColor,
+                      nameItalic: _nameItalic,
                       shortTextFontSize: _shortTextFontSize,
                       shortTextColor: _shortTextColor,
+                      shortTextItalic: _shortTextItalic,
                     ),
                   ),
           ),

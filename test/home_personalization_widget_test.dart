@@ -38,8 +38,10 @@ void main() {
       shortText: 'DTC Engineer',
       nameFontSize: SettingsProvider.defaultHomeNameFontSize,
       nameColor: null,
+      nameItalic: false,
       shortTextFontSize: SettingsProvider.defaultHomeShortTextFontSize,
       shortTextColor: null,
+      shortTextItalic: false,
     );
 
     await tester.pumpWidget(_wrap(settings));
@@ -64,8 +66,10 @@ void main() {
       shortText: 'Have a productive day',
       nameFontSize: SettingsProvider.defaultHomeNameFontSize,
       nameColor: null,
+      nameItalic: false,
       shortTextFontSize: SettingsProvider.defaultHomeShortTextFontSize,
       shortTextColor: null,
+      shortTextItalic: false,
     );
 
     await tester.pumpWidget(_wrap(settings));
@@ -87,8 +91,10 @@ void main() {
       shortText: '',
       nameFontSize: SettingsProvider.defaultHomeNameFontSize,
       nameColor: null,
+      nameItalic: false,
       shortTextFontSize: SettingsProvider.defaultHomeShortTextFontSize,
       shortTextColor: null,
+      shortTextItalic: false,
     );
 
     await tester.pumpWidget(_wrap(settings));
@@ -106,8 +112,10 @@ void main() {
       shortText: 'B' * 60,
       nameFontSize: SettingsProvider.defaultHomeNameFontSize,
       nameColor: null,
+      nameItalic: false,
       shortTextFontSize: SettingsProvider.defaultHomeShortTextFontSize,
       shortTextColor: null,
+      shortTextItalic: false,
     );
 
     await tester.pumpWidget(_wrap(settings));
@@ -128,8 +136,10 @@ void main() {
       shortText: 'DTC Engineer',
       nameFontSize: 16,
       nameColor: nameColor,
+      nameItalic: false,
       shortTextFontSize: 24,
       shortTextColor: shortTextColor,
+      shortTextItalic: false,
     );
 
     await tester.pumpWidget(_wrap(settings));
@@ -140,5 +150,31 @@ void main() {
     expect(nameWidget.style?.color, nameColor);
     expect(shortTextWidget.style?.fontSize, 24);
     expect(shortTextWidget.style?.color, shortTextColor);
+  });
+
+  testWidgets('bật in nghiêng áp dụng đúng cho từng dòng độc lập', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final settings = SettingsProvider(prefs);
+    await settings.saveHomePersonalization(
+      enabled: true,
+      displayName: 'Kevin',
+      shortText: 'DTC Engineer',
+      nameFontSize: SettingsProvider.defaultHomeNameFontSize,
+      nameColor: null,
+      nameItalic: true,
+      shortTextFontSize: SettingsProvider.defaultHomeShortTextFontSize,
+      shortTextColor: null,
+      shortTextItalic: false,
+    );
+
+    await tester.pumpWidget(_wrap(settings));
+
+    final nameWidget = tester.widget<Text>(find.text('Kevin'));
+    final shortTextWidget = tester.widget<Text>(find.text('DTC Engineer'));
+    expect(nameWidget.style?.fontStyle, FontStyle.italic);
+    expect(shortTextWidget.style?.fontStyle, FontStyle.normal);
   });
 }

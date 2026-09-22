@@ -15,16 +15,20 @@ class HomePersonalizationPreview extends StatelessWidget {
     required this.shortText,
     required this.nameFontSize,
     required this.nameColor,
+    this.nameItalic = false,
     required this.shortTextFontSize,
     required this.shortTextColor,
+    this.shortTextItalic = false,
   });
 
   final String displayName;
   final String shortText;
   final double nameFontSize;
   final Color? nameColor;
+  final bool nameItalic;
   final double shortTextFontSize;
   final Color? shortTextColor;
+  final bool shortTextItalic;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +50,7 @@ class HomePersonalizationPreview extends StatelessWidget {
               fontSize: nameFontSize,
               fontWeight: FontWeight.w600,
               color: nameColor ?? palette.muted,
+              fontStyle: nameItalic ? FontStyle.italic : FontStyle.normal,
             ),
           ),
         if (text.isNotEmpty) ...[
@@ -59,6 +64,7 @@ class HomePersonalizationPreview extends StatelessWidget {
               fontWeight: FontWeight.w800,
               color: shortTextColor ?? palette.ink,
               letterSpacing: -0.2,
+              fontStyle: shortTextItalic ? FontStyle.italic : FontStyle.normal,
             ),
           ),
         ],
@@ -85,8 +91,10 @@ class HomePersonalizationWidget extends StatelessWidget {
         shortText: settings.homeShortText,
         nameFontSize: settings.homeNameFontSize,
         nameColor: settings.homeNameColor,
+        nameItalic: settings.homeNameItalic,
         shortTextFontSize: settings.homeShortTextFontSize,
         shortTextColor: settings.homeShortTextColor,
+        shortTextItalic: settings.homeShortTextItalic,
       ),
     );
   }

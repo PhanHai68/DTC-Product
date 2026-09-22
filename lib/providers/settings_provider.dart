@@ -32,8 +32,10 @@ class SettingsProvider extends ChangeNotifier {
   static const _homeShortTextKey = 'home_short_text';
   static const _homeNameFontSizeKey = 'home_name_font_size';
   static const _homeNameColorKey = 'home_name_color';
+  static const _homeNameItalicKey = 'home_name_italic';
   static const _homeShortTextFontSizeKey = 'home_short_text_font_size';
   static const _homeShortTextColorKey = 'home_short_text_color';
+  static const _homeShortTextItalicKey = 'home_short_text_italic';
 
   static const double defaultHomeNameFontSize = 14.0;
   static const double defaultHomeShortTextFontSize = 20.0;
@@ -48,8 +50,10 @@ class SettingsProvider extends ChangeNotifier {
   String _homeShortText = '';
   double _homeNameFontSize = defaultHomeNameFontSize;
   Color? _homeNameColor;
+  bool _homeNameItalic = false;
   double _homeShortTextFontSize = defaultHomeShortTextFontSize;
   Color? _homeShortTextColor;
+  bool _homeShortTextItalic = false;
 
   ThemeMode get themeMode => _themeMode;
   AppTextScale get textScale => _textScale;
@@ -59,8 +63,10 @@ class SettingsProvider extends ChangeNotifier {
   String get homeShortText => _homeShortText;
   double get homeNameFontSize => _homeNameFontSize;
   Color? get homeNameColor => _homeNameColor;
+  bool get homeNameItalic => _homeNameItalic;
   double get homeShortTextFontSize => _homeShortTextFontSize;
   Color? get homeShortTextColor => _homeShortTextColor;
+  bool get homeShortTextItalic => _homeShortTextItalic;
 
   void _load() {
     final savedMode = _prefs.getString(_themeModeKey);
@@ -88,6 +94,8 @@ class SettingsProvider extends ChangeNotifier {
     _homeShortTextColor = shortTextColorValue == null
         ? null
         : Color(shortTextColorValue);
+    _homeNameItalic = _prefs.getBool(_homeNameItalicKey) ?? false;
+    _homeShortTextItalic = _prefs.getBool(_homeShortTextItalicKey) ?? false;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -117,16 +125,20 @@ class SettingsProvider extends ChangeNotifier {
     required String shortText,
     required double nameFontSize,
     required Color? nameColor,
+    required bool nameItalic,
     required double shortTextFontSize,
     required Color? shortTextColor,
+    required bool shortTextItalic,
   }) async {
     _homePersonalizationEnabled = enabled;
     _homeDisplayName = displayName;
     _homeShortText = shortText;
     _homeNameFontSize = nameFontSize;
     _homeNameColor = nameColor;
+    _homeNameItalic = nameItalic;
     _homeShortTextFontSize = shortTextFontSize;
     _homeShortTextColor = shortTextColor;
+    _homeShortTextItalic = shortTextItalic;
     notifyListeners();
     await Future.wait([
       _prefs.setBool(_homePersonalizationEnabledKey, enabled),
@@ -134,6 +146,8 @@ class SettingsProvider extends ChangeNotifier {
       _prefs.setString(_homeShortTextKey, shortText),
       _prefs.setDouble(_homeNameFontSizeKey, nameFontSize),
       _prefs.setDouble(_homeShortTextFontSizeKey, shortTextFontSize),
+      _prefs.setBool(_homeNameItalicKey, nameItalic),
+      _prefs.setBool(_homeShortTextItalicKey, shortTextItalic),
       if (nameColor != null)
         _prefs.setInt(_homeNameColorKey, nameColor.toARGB32())
       else
@@ -152,7 +166,9 @@ class SettingsProvider extends ChangeNotifier {
     shortText: '',
     nameFontSize: defaultHomeNameFontSize,
     nameColor: null,
+    nameItalic: false,
     shortTextFontSize: defaultHomeShortTextFontSize,
     shortTextColor: null,
+    shortTextItalic: false,
   );
 }

@@ -134,8 +134,10 @@ void main() {
       shortText: 'DTC Engineer',
       nameFontSize: 18,
       nameColor: const Color(0xFFDC2626),
+      nameItalic: true,
       shortTextFontSize: 26,
       shortTextColor: const Color(0xFF7C3AED),
+      shortTextItalic: true,
     );
 
     await _pumpApp(tester, settings);
@@ -155,5 +157,39 @@ void main() {
       SettingsProvider.defaultHomeNameFontSize,
     );
     expect(settings.homeNameColor, isNull);
+    expect(settings.homeNameItalic, isFalse);
+  });
+
+  testWidgets('bật "In nghiêng" cho tên hiển thị áp dụng đúng khi lưu', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final settings = SettingsProvider(prefs);
+
+    await _pumpApp(tester, settings);
+
+    await tester.tap(find.byType(SwitchListTile).first);
+    await tester.enterText(find.byType(TextField).at(0), 'Kevin');
+    await tester.enterText(find.byType(TextField).at(1), 'DTC Engineer');
+    await tester.pumpAndSettle();
+
+    // SwitchListTile thứ 2 = "In nghiêng" của Tên hiển thị (sau switch
+    // "Hiển thị trên trang chủ"), thứ 3 = "In nghiêng" của Dòng giới thiệu.
+    await tester.tap(find.byType(SwitchListTile).at(1));
+    await tester.pumpAndSettle();
+
+    final previewName = tester.widget<Text>(find.text('Kevin').last);
+    expect(previewName.style?.fontStyle, FontStyle.italic);
+    final previewShortText = tester.widget<Text>(
+      find.text('DTC Engineer').last,
+    );
+    expect(previewShortText.style?.fontStyle, FontStyle.normal);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Lưu thay đổi'));
+    await tester.pump();
+
+    expect(settings.homeNameItalic, isTrue);
+    expect(settings.homeShortTextItalic, isFalse);
   });
 }
