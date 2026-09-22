@@ -113,7 +113,7 @@ class _BrandHeader extends StatelessWidget {
             child: Image.asset(
               'assets/images/dtc_product_wordmark_full.png',
               key: const Key('home_brand_wordmark'),
-              height: 32,
+              height: 52,
               semanticLabel: 'DTC Product',
             ),
           ),
