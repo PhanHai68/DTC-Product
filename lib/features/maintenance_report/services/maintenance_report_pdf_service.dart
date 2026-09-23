@@ -110,45 +110,45 @@ abstract final class MaintenanceReportPdfService {
     const margin = 28.0;
     final contentWidth = size.width - margin * 2;
 
-    _header(graphics, size, logo, fonts, 'MAINTENANCE SERVICE REPORT');
+    _header(graphics, size, logo, fonts, 'BÁO CÁO BẢO TRÌ');
 
     var y = 82.0;
-    y = _sectionTitle(graphics, fonts, 'CUSTOMER INFORMATION', y, margin, contentWidth);
+    y = _sectionTitle(graphics, fonts, 'THÔNG TIN KHÁCH HÀNG', y, margin, contentWidth);
     y = _keyValueGrid(graphics, fonts, margin, y, contentWidth, [
-      ('Customer', report.customerName),
-      ('Site', report.factorySite),
-      ('Contact', report.contactPerson),
-      ('Phone', report.contactPhone),
+      ('Khách hàng', report.customerName),
+      ('Địa điểm', report.factorySite),
+      ('Người liên hệ', report.contactPerson),
+      ('Điện thoại', report.contactPhone),
     ]);
 
     y += 10;
-    y = _sectionTitle(graphics, fonts, 'MACHINE INFORMATION', y, margin, contentWidth);
+    y = _sectionTitle(graphics, fonts, 'THÔNG TIN MÁY', y, margin, contentWidth);
     y = _keyValueGrid(graphics, fonts, margin, y, contentWidth, [
-      ('Machine', report.machineName),
+      ('Tên máy', report.machineName),
       ('Model', report.machineModel),
-      ('Serial', report.machineSerial),
-      ('Type', report.machineType),
-      ('Running Hours', report.machineRunningHours),
-      ('Location', report.machineLocation),
+      ('Số serial', report.machineSerial),
+      ('Loại máy', report.machineType),
+      ('Giờ vận hành', report.machineRunningHours),
+      ('Vị trí', report.machineLocation),
     ]);
 
     y += 10;
-    y = _sectionTitle(graphics, fonts, 'MAINTENANCE INFORMATION', y, margin, contentWidth);
+    y = _sectionTitle(graphics, fonts, 'THÔNG TIN BẢO TRÌ', y, margin, contentWidth);
     final dateFormat = DateFormat('dd/MM/yyyy');
     final timeFormat = DateFormat('HH:mm');
     y = _keyValueGrid(graphics, fonts, margin, y, contentWidth, [
-      ('Engineer', report.engineerName),
-      ('Date', dateFormat.format(report.maintenanceDate)),
+      ('Kỹ sư', report.engineerName),
+      ('Ngày', dateFormat.format(report.maintenanceDate)),
       (
-        'Start Time',
+        'Giờ bắt đầu',
         report.startTime == null ? '—' : timeFormat.format(report.startTime!),
       ),
       (
-        'End Time',
+        'Giờ kết thúc',
         report.endTime == null ? '—' : timeFormat.format(report.endTime!),
       ),
-      ('Session ID', report.sessionId ?? '—'),
-      ('Status', report.status.label),
+      ('Mã phiên', report.sessionId ?? '—'),
+      ('Trạng thái', report.status.label),
     ]);
   }
 
@@ -167,7 +167,7 @@ abstract final class MaintenanceReportPdfService {
     _sectionTitle(
       page.graphics,
       fonts,
-      'MAINTENANCE WORK PERFORMED',
+      'CÔNG VIỆC ĐÃ THỰC HIỆN',
       40,
       margin,
       size.width - margin * 2,
@@ -206,7 +206,7 @@ abstract final class MaintenanceReportPdfService {
     _sectionTitle(
       page.graphics,
       fonts,
-      'PARTS USED',
+      'VẬT TƯ ĐÃ SỬ DỤNG',
       40,
       margin,
       size.width - margin * 2,
@@ -229,7 +229,7 @@ abstract final class MaintenanceReportPdfService {
       ..backgroundBrush = PdfSolidBrush(_navy)
       ..textBrush = PdfBrushes.white
       ..font = fonts.bold(8.5);
-    const headings = ['Part Name', 'Part Number', 'Quantity', 'Unit', 'Note'];
+    const headings = ['Tên vật tư', 'Mã vật tư', 'Số lượng', 'Đơn vị', 'Ghi chú'];
     for (var i = 0; i < headings.length; i++) {
       header.cells[i].value = headings[i];
     }
@@ -265,7 +265,7 @@ abstract final class MaintenanceReportPdfService {
     _sectionTitle(
       page.graphics,
       fonts,
-      'FINAL MACHINE CONDITION',
+      'TÌNH TRẠNG MÁY SAU BẢO TRÌ',
       40,
       margin,
       size.width - margin * 2,
@@ -324,7 +324,7 @@ abstract final class MaintenanceReportPdfService {
     );
     _text(
       graphics,
-      'Status: ${item.status.label}',
+      'Trạng thái: ${item.status.label}',
       fonts.regular(9.5),
       ui.Rect.fromLTWH(margin, 50, contentWidth, 16),
       color: _muted,
@@ -335,7 +335,7 @@ abstract final class MaintenanceReportPdfService {
     _drawBeforeAfterCard(
       graphics,
       fonts,
-      'BEFORE',
+      'TRƯỚC',
       before,
       photoBytes,
       ui.Rect.fromLTWH(margin, 76, cardWidth, 230),
@@ -343,7 +343,7 @@ abstract final class MaintenanceReportPdfService {
     _drawBeforeAfterCard(
       graphics,
       fonts,
-      'AFTER',
+      'SAU',
       after,
       photoBytes,
       ui.Rect.fromLTWH(margin + cardWidth + gap, 76, cardWidth, 230),
@@ -353,7 +353,7 @@ abstract final class MaintenanceReportPdfService {
     y = _labelledParagraph(
       graphics,
       fonts,
-      'Finding',
+      'Ghi nhận',
       item.beforeFinding,
       margin,
       y,
@@ -362,7 +362,7 @@ abstract final class MaintenanceReportPdfService {
     y = _labelledParagraph(
       graphics,
       fonts,
-      'Action Taken',
+      'Đã xử lý',
       item.actionTaken,
       margin,
       y + 8,
@@ -371,7 +371,7 @@ abstract final class MaintenanceReportPdfService {
     _labelledParagraph(
       graphics,
       fonts,
-      'Result',
+      'Kết quả',
       item.afterResult,
       margin,
       y + 8,
@@ -421,7 +421,7 @@ abstract final class MaintenanceReportPdfService {
       );
       _text(
         graphics,
-        'No photo',
+        'Chưa có ảnh',
         fonts.regular(9),
         photoArea,
         color: _muted,
@@ -439,7 +439,7 @@ abstract final class MaintenanceReportPdfService {
       );
       _text(
         graphics,
-        photo.verified ? '✓ Verified' : '⚠ Integrity Failed',
+        photo.verified ? '✓ Đã xác thực' : '⚠ Ảnh không toàn vẹn',
         fonts.bold(8.5),
         ui.Rect.fromLTWH(bounds.left + 10, captionY + 15, bounds.width - 20, 14),
         color: photo.verified ? _green : _orange,
@@ -463,7 +463,7 @@ abstract final class MaintenanceReportPdfService {
     const margin = 28.0;
     final contentWidth = size.width - margin * 2;
 
-    var y = _sectionTitle(graphics, fonts, 'FINAL RESULT', 40, margin, contentWidth);
+    var y = _sectionTitle(graphics, fonts, 'KẾT QUẢ CUỐI CÙNG', 40, margin, contentWidth);
     graphics.drawRectangle(
       brush: PdfSolidBrush(_paleGreen),
       pen: PdfPen(_border, width: 0.7),
@@ -471,7 +471,7 @@ abstract final class MaintenanceReportPdfService {
     );
     _text(
       graphics,
-      report.overallResult?.label ?? 'Not set',
+      report.overallResult?.label ?? 'Chưa xác định',
       fonts.bold(11),
       ui.Rect.fromLTWH(margin + 12, y + 4, contentWidth - 24, 18),
       color: _navy,
@@ -480,7 +480,7 @@ abstract final class MaintenanceReportPdfService {
     y = _labelledParagraph(
       graphics,
       fonts,
-      'Final Comment',
+      'Nhận xét',
       report.finalComment,
       margin,
       y,
@@ -489,7 +489,7 @@ abstract final class MaintenanceReportPdfService {
     y = _labelledParagraph(
       graphics,
       fonts,
-      'Recommendation',
+      'Đề xuất',
       report.recommendation,
       margin,
       y + 8,
@@ -500,12 +500,12 @@ abstract final class MaintenanceReportPdfService {
       nextParts.add(DateFormat('dd/MM/yyyy').format(report.nextMaintenanceDate!));
     }
     if (report.nextMaintenanceRunningHours.trim().isNotEmpty) {
-      nextParts.add('${report.nextMaintenanceRunningHours} hours');
+      nextParts.add('${report.nextMaintenanceRunningHours} giờ vận hành');
     }
     y = _labelledParagraph(
       graphics,
       fonts,
-      'Next Maintenance',
+      'Bảo trì tiếp theo',
       nextParts.isEmpty ? '—' : nextParts.join(' / '),
       margin,
       y + 8,
@@ -513,16 +513,16 @@ abstract final class MaintenanceReportPdfService {
     );
 
     y += 16;
-    y = _sectionTitle(graphics, fonts, 'PHOTO VERIFICATION', y, margin, contentWidth);
+    y = _sectionTitle(graphics, fonts, 'XÁC MINH HÌNH ẢNH', y, margin, contentWidth);
     final verifiedCount = photos.where((p) => p.verified).length;
     final lines = [
-      '${photos.length} photographs captured directly using DTC Product.',
-      '$verifiedCount / ${photos.length} original photos passed integrity verification.',
-      if (report.sessionId != null) 'Maintenance Session: ${report.sessionId}',
+      '${photos.length} ảnh được chụp trực tiếp bằng DTC Product.',
+      '$verifiedCount / ${photos.length} ảnh gốc đã được xác minh toàn vẹn.',
+      if (report.sessionId != null) 'Phiên bảo trì: ${report.sessionId}',
       if (report.startTime != null)
-        'Started: ${DateFormat('dd/MM/yyyy HH:mm').format(report.startTime!)}',
+        'Bắt đầu: ${DateFormat('dd/MM/yyyy HH:mm').format(report.startTime!)}',
       if (report.endTime != null)
-        'Completed: ${DateFormat('dd/MM/yyyy HH:mm').format(report.endTime!)}',
+        'Hoàn tất: ${DateFormat('dd/MM/yyyy HH:mm').format(report.endTime!)}',
     ];
     for (final line in lines) {
       _text(

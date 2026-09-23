@@ -149,47 +149,47 @@ class _MaintenanceReportFormScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _isEditing ? 'Edit Report Info' : 'New Maintenance Report',
+          _isEditing ? 'Sửa thông tin báo cáo' : 'Báo cáo bảo trì mới',
         ),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         children: [
           _FormSection(
-            title: 'CUSTOMER INFORMATION',
+            title: 'THÔNG TIN KHÁCH HÀNG',
             children: [
               TextField(
                 controller: _customerNameController,
-                decoration: const InputDecoration(labelText: 'Customer Name'),
+                decoration: const InputDecoration(labelText: 'Tên khách hàng'),
               ),
               TextField(
                 controller: _factorySiteController,
                 decoration: const InputDecoration(
-                  labelText: 'Factory / Site Name',
+                  labelText: 'Tên nhà máy / Địa điểm',
                 ),
               ),
               TextField(
                 controller: _contactPersonController,
-                decoration: const InputDecoration(labelText: 'Contact Person'),
+                decoration: const InputDecoration(labelText: 'Người liên hệ'),
               ),
               TextField(
                 controller: _contactPhoneController,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(labelText: 'Phone Number'),
+                decoration: const InputDecoration(labelText: 'Số điện thoại'),
               ),
             ],
           ),
           const SizedBox(height: 16),
           _FormSection(
-            title: 'MACHINE INFORMATION',
+            title: 'THÔNG TIN MÁY',
             children: [
               TextField(
                 controller: _machineNameController,
-                decoration: const InputDecoration(labelText: 'Machine Name'),
+                decoration: const InputDecoration(labelText: 'Tên máy'),
               ),
               TextField(
                 controller: _machineTypeController,
-                decoration: const InputDecoration(labelText: 'Machine Type'),
+                decoration: const InputDecoration(labelText: 'Loại máy'),
               ),
               TextField(
                 controller: _machineModelController,
@@ -197,33 +197,33 @@ class _MaintenanceReportFormScreenState
               ),
               TextField(
                 controller: _machineSerialController,
-                decoration: const InputDecoration(labelText: 'Serial Number'),
+                decoration: const InputDecoration(labelText: 'Số serial'),
               ),
               TextField(
                 controller: _machineRunningHoursController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Running Hours'),
+                decoration: const InputDecoration(labelText: 'Giờ vận hành'),
               ),
               TextField(
                 controller: _machineLocationController,
                 decoration: const InputDecoration(
-                  labelText: 'Machine Location',
+                  labelText: 'Vị trí lắp đặt',
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
           _FormSection(
-            title: 'MAINTENANCE INFORMATION',
+            title: 'THÔNG TIN BẢO TRÌ',
             children: [
               TextField(
                 controller: _engineerNameController,
-                decoration: const InputDecoration(labelText: 'Engineer Name'),
+                decoration: const InputDecoration(labelText: 'Tên kỹ sư'),
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.event_outlined),
-                title: const Text('Maintenance Date'),
+                title: const Text('Ngày bảo trì'),
                 subtitle: Text(_formatDate(_maintenanceDate)),
                 trailing: TextButton(
                   onPressed: _pickDate,
@@ -242,7 +242,7 @@ class _MaintenanceReportFormScreenState
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : Text(_isEditing ? 'Save Changes' : 'Create Report'),
+                : Text(_isEditing ? 'Lưu thay đổi' : 'Tạo báo cáo'),
           ),
         ],
       ),

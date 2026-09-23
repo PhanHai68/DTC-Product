@@ -66,12 +66,14 @@ Uint8List _applyWatermarkSync(MaintenanceWatermarkRequest request) {
   img.compositeImage(photo, scaledLogo, dstX: logoX, dstY: logoY);
 
   // Dòng thông tin nhỏ, đặt phía TRÊN logo trong cùng góc, có nền mờ để chữ
-  // luôn đọc được bất kể ảnh nền sáng/tối.
+  // luôn đọc được bất kể ảnh nền sáng/tối. Font bitmap của package `image`
+  // chỉ hỗ trợ ký tự ASCII nên chữ tiếng Việt ở đây bỏ dấu (VD "Ma anh")
+  // thay vì hiển thị sai/mất chữ có dấu.
   final lines = <String>[
     request.kindLabel,
     request.dateLabel,
     request.timeLabel,
-    'Photo ID: ${request.photoId}',
+    'Ma anh: ${request.photoId}',
   ];
   final font = img.arial14;
   const lineHeight = 17;

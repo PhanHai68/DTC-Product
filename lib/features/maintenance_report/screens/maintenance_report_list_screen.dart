@@ -97,7 +97,7 @@ class _MaintenanceReportListScreenState
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Chưa có báo cáo bảo trì nào.\nBấm "New Report" để bắt đầu.',
+                      'Chưa có báo cáo bảo trì nào.\nBấm "Báo cáo mới" để bắt đầu.',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: palette.muted, fontSize: 15),
                     ),
@@ -128,7 +128,7 @@ class _MaintenanceReportListScreenState
         key: const Key('maintenance_report_new_button'),
         onPressed: () => context.push('/maintenance_report/new'),
         icon: const Icon(Icons.add_rounded),
-        label: const Text('New Report'),
+        label: const Text('Báo cáo mới'),
       ),
     );
   }
@@ -203,7 +203,7 @@ class _ReportCard extends StatelessWidget {
                   TextButton.icon(
                     onPressed: onGeneratePdf,
                     icon: const Icon(Icons.picture_as_pdf_outlined, size: 17),
-                    label: const Text('PDF & Share'),
+                    label: const Text('PDF & Chia sẻ'),
                   ),
                   IconButton(
                     tooltip: 'Xóa',
@@ -236,7 +236,7 @@ class _StatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        isCompleted ? 'Completed' : 'Draft',
+        isCompleted ? 'Hoàn thành' : 'Nháp',
         style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 11),
       ),
     );

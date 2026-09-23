@@ -34,8 +34,8 @@ Future<void> shareMaintenanceReportPdf({
   return SharePlus.instance.share(
     ShareParams(
       files: [XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName)],
-      title: 'Maintenance Report - ${report.customerName}',
-      text: 'Maintenance Report - ${report.customerName} - ${report.machineName}',
+      title: 'Báo cáo bảo trì - ${report.customerName}',
+      text: 'Báo cáo bảo trì - ${report.customerName} - ${report.machineName}',
       sharePositionOrigin: origin,
       fileNameOverrides: [fileName],
     ),

@@ -1,9 +1,9 @@
 /// Trạng thái của 1 hạng mục bảo trì (Maintenance Item), VD "Air Filter".
 enum MaintenanceItemStatus {
-  normal('Normal'),
-  completed('Completed'),
-  needAttention('Need Attention'),
-  recommendation('Recommendation');
+  normal('Bình thường'),
+  completed('Hoàn thành'),
+  needAttention('Cần chú ý'),
+  recommendation('Khuyến nghị');
 
   const MaintenanceItemStatus(this.label);
   final String label;
@@ -94,14 +94,14 @@ class MaintenanceItem {
 /// Danh sách gợi ý hạng mục bảo trì thường gặp (máy nén khí) — CHỈ để gợi ý
 /// nhanh khi thêm mới, không cố định, người dùng có thể nhập tên khác.
 const List<String> suggestedMaintenanceItemNames = [
-  'Air Filter',
-  'Oil Filter',
-  'Oil Separator',
-  'Compressor Oil',
-  'Cooler',
-  'Electrical Cabinet',
-  'Belt',
-  'Air Leakage',
-  'Drain System',
-  'Other',
+  'Lọc gió',
+  'Lọc dầu',
+  'Tách dầu',
+  'Dầu máy nén',
+  'Giàn giải nhiệt',
+  'Tủ điện',
+  'Dây curoa',
+  'Rò rỉ khí',
+  'Hệ thống xả nước',
+  'Khác',
 ];

@@ -23,7 +23,7 @@ class VerifiedPhotoBadge extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          verified ? 'Verified' : 'Integrity Failed',
+          verified ? 'Đã xác thực' : 'Ảnh lỗi',
           style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 11.5),
         ),
       ],

@@ -46,10 +46,10 @@ class _MaintenanceReportWorkspaceScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Start Maintenance?'),
+        title: const Text('Bắt đầu bảo trì?'),
         content: const Text(
-          'Hệ thống sẽ tạo Maintenance Session ID và bắt đầu tính thời gian '
-          'bảo trì. Mọi ảnh Before/After sau đó đều thuộc phiên này.',
+          'Hệ thống sẽ tạo Mã phiên bảo trì và bắt đầu tính thời gian '
+          'bảo trì. Mọi ảnh Trước/Sau sau đó đều thuộc phiên này.',
         ),
         actions: [
           TextButton(
@@ -58,7 +58,7 @@ class _MaintenanceReportWorkspaceScreenState
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Start'),
+            child: const Text('Bắt đầu'),
           ),
         ],
       ),
@@ -71,10 +71,10 @@ class _MaintenanceReportWorkspaceScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Complete Maintenance?'),
+        title: const Text('Hoàn tất bảo trì?'),
         content: const Text(
-          'Sau khi hoàn tất, ảnh Original đã chụp sẽ không thể thay đổi. '
-          'Bạn vẫn có thể sửa nội dung khác của report sau đó.',
+          'Sau khi hoàn tất, ảnh gốc đã chụp sẽ không thể thay đổi. '
+          'Bạn vẫn có thể sửa nội dung khác của báo cáo sau đó.',
         ),
         actions: [
           TextButton(
@@ -83,7 +83,7 @@ class _MaintenanceReportWorkspaceScreenState
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Complete'),
+            child: const Text('Hoàn tất'),
           ),
         ],
       ),
@@ -139,7 +139,7 @@ class _MaintenanceReportWorkspaceScreenState
         }
         if (report == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Maintenance Report')),
+            appBar: AppBar(title: const Text('Báo cáo bảo trì')),
             body: Center(
               child: Text(provider.detailError ?? 'Không tìm thấy báo cáo.'),
             ),
@@ -152,14 +152,14 @@ class _MaintenanceReportWorkspaceScreenState
           appBar: AppBar(
             title: Text(
               report.customerName.isEmpty
-                  ? 'Maintenance Report'
+                  ? 'Báo cáo bảo trì'
                   : report.customerName,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             actions: [
               IconButton(
-                tooltip: 'Edit Info',
+                tooltip: 'Sửa thông tin',
                 onPressed: () =>
                     context.push('/maintenance_report/${report.id}/edit', extra: report),
                 icon: const Icon(Icons.edit_outlined),
@@ -176,7 +176,7 @@ class _MaintenanceReportWorkspaceScreenState
                   key: const Key('maintenance_start_button'),
                   onPressed: _startMaintenance,
                   icon: const Icon(Icons.play_circle_outline),
-                  label: const Text('Start Maintenance'),
+                  label: const Text('Bắt đầu bảo trì'),
                 )
               else ...[
                 _SessionCard(report: report),
@@ -202,7 +202,7 @@ class _MaintenanceReportWorkspaceScreenState
                     key: const Key('maintenance_complete_button'),
                     onPressed: _completeMaintenance,
                     icon: const Icon(Icons.task_alt_rounded),
-                    label: const Text('Complete Maintenance'),
+                    label: const Text('Hoàn tất bảo trì'),
                   ),
                 const SizedBox(height: 10),
                 FilledButton.icon(
@@ -215,7 +215,7 @@ class _MaintenanceReportWorkspaceScreenState
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.picture_as_pdf_outlined),
-                  label: const Text('Generate PDF & Share'),
+                  label: const Text('Tạo PDF & Chia sẻ'),
                 ),
               ],
             ],
@@ -336,8 +336,8 @@ class _SessionCard extends StatelessWidget {
                   Text(
                     report.startTime == null
                         ? ''
-                        : 'Started ${timeFormat.format(report.startTime!)}'
-                              '${report.endTime == null ? '' : ' — Completed ${timeFormat.format(report.endTime!)}'}',
+                        : 'Bắt đầu ${timeFormat.format(report.startTime!)}'
+                              '${report.endTime == null ? '' : ' — Hoàn tất ${timeFormat.format(report.endTime!)}'}',
                     style: TextStyle(color: palette.muted, fontSize: 11.5),
                   ),
                 ],
@@ -413,17 +413,17 @@ class _ItemsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<MaintenanceReportProvider>();
     return _SectionCard(
-      title: 'MAINTENANCE ITEMS',
+      title: 'HẠNG MỤC BẢO TRÌ',
       trailing: IconButton(
         key: const Key('maintenance_add_item_button'),
         onPressed: () => _addItem(context),
         icon: const Icon(Icons.add_circle_outline),
-        tooltip: 'Add Maintenance Item',
+        tooltip: 'Thêm hạng mục bảo trì',
       ),
       children: [
         if (provider.items.isEmpty)
           Text(
-            'Chưa có hạng mục nào. Bấm "+" để thêm (VD: Air Filter, Oil Filter...).',
+            'Chưa có hạng mục nào. Bấm "+" để thêm (VD: Lọc gió, Lọc dầu...).',
             style: TextStyle(color: DtcPalette.of(context).muted, fontSize: 13),
           ),
         for (final item in provider.items)
@@ -459,7 +459,7 @@ class _AddItemDialogState extends State<_AddItemDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Maintenance Item'),
+      title: const Text('Thêm hạng mục bảo trì'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -468,8 +468,8 @@ class _AddItemDialogState extends State<_AddItemDialog> {
             controller: _controller,
             autofocus: true,
             decoration: const InputDecoration(
-              labelText: 'Item name',
-              hintText: 'VD: Air Filter',
+              labelText: 'Tên hạng mục',
+              hintText: 'VD: Lọc gió',
             ),
           ),
           const SizedBox(height: 12),
@@ -494,7 +494,7 @@ class _AddItemDialogState extends State<_AddItemDialog> {
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, _controller.text),
-          child: const Text('Add'),
+          child: const Text('Thêm'),
         ),
       ],
     );
@@ -678,21 +678,21 @@ class _ItemCardState extends State<_ItemCard> {
             focusNode: _findingFocus,
             readOnly: widget.locked,
             maxLines: 2,
-            decoration: const InputDecoration(labelText: 'Finding'),
+            decoration: const InputDecoration(labelText: 'Ghi nhận'),
           ),
           TextField(
             controller: _actionController,
             focusNode: _actionFocus,
             readOnly: widget.locked,
             maxLines: 2,
-            decoration: const InputDecoration(labelText: 'Action Taken'),
+            decoration: const InputDecoration(labelText: 'Đã xử lý'),
           ),
           TextField(
             controller: _resultController,
             focusNode: _resultFocus,
             readOnly: widget.locked,
             maxLines: 2,
-            decoration: const InputDecoration(labelText: 'Result'),
+            decoration: const InputDecoration(labelText: 'Kết quả'),
           ),
         ],
       ),
@@ -715,7 +715,7 @@ class _ChecklistSection extends StatelessWidget {
     final label = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Add Custom Task'),
+        title: const Text('Thêm công việc'),
         content: TextField(controller: controller, autofocus: true),
         actions: [
           TextButton(
@@ -724,7 +724,7 @@ class _ChecklistSection extends StatelessWidget {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, controller.text),
-            child: const Text('Add'),
+            child: const Text('Thêm'),
           ),
         ],
       ),
@@ -736,11 +736,11 @@ class _ChecklistSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SectionCard(
-      title: 'MAINTENANCE PERFORMED',
+      title: 'CÔNG VIỆC ĐÃ THỰC HIỆN',
       trailing: IconButton(
         onPressed: locked ? null : () => _addTask(context),
         icon: const Icon(Icons.add_circle_outline),
-        tooltip: 'Add Custom Task',
+        tooltip: 'Thêm công việc',
       ),
       children: [
         for (final task in checklist)
@@ -799,11 +799,11 @@ class _PartsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
     return _SectionCard(
-      title: 'PARTS USED',
+      title: 'VẬT TƯ ĐÃ SỬ DỤNG',
       trailing: IconButton(
         onPressed: locked ? null : () => _addPart(context),
         icon: const Icon(Icons.add_circle_outline),
-        tooltip: 'Add Part',
+        tooltip: 'Thêm vật tư',
       ),
       children: [
         if (parts.isEmpty)
@@ -862,7 +862,7 @@ class _AddPartDialogState extends State<_AddPartDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Part'),
+      title: const Text('Thêm vật tư'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -870,11 +870,11 @@ class _AddPartDialogState extends State<_AddPartDialog> {
             TextField(
               controller: _nameController,
               autofocus: true,
-              decoration: const InputDecoration(labelText: 'Part Name'),
+              decoration: const InputDecoration(labelText: 'Tên vật tư'),
             ),
             TextField(
               controller: _numberController,
-              decoration: const InputDecoration(labelText: 'Part Number'),
+              decoration: const InputDecoration(labelText: 'Mã vật tư'),
             ),
             Row(
               children: [
@@ -882,21 +882,21 @@ class _AddPartDialogState extends State<_AddPartDialog> {
                   child: TextField(
                     controller: _quantityController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Quantity'),
+                    decoration: const InputDecoration(labelText: 'Số lượng'),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
                     controller: _unitController,
-                    decoration: const InputDecoration(labelText: 'Unit'),
+                    decoration: const InputDecoration(labelText: 'Đơn vị'),
                   ),
                 ),
               ],
             ),
             TextField(
               controller: _noteController,
-              decoration: const InputDecoration(labelText: 'Note'),
+              decoration: const InputDecoration(labelText: 'Ghi chú'),
             ),
           ],
         ),
@@ -917,7 +917,7 @@ class _AddPartDialogState extends State<_AddPartDialog> {
               'note': _noteController.text,
             });
           },
-          child: const Text('Add'),
+          child: const Text('Thêm'),
         ),
       ],
     );
@@ -951,11 +951,11 @@ class _ParametersSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
     return _SectionCard(
-      title: 'FINAL MACHINE CONDITION',
+      title: 'TÌNH TRẠNG MÁY SAU BẢO TRÌ',
       trailing: IconButton(
         onPressed: locked ? null : () => _addParameter(context),
         icon: const Icon(Icons.add_circle_outline),
-        tooltip: 'Add Parameter',
+        tooltip: 'Thêm thông số',
       ),
       children: [
         if (parameters.isEmpty)
@@ -1009,7 +1009,7 @@ class _AddParameterDialogState extends State<_AddParameterDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Parameter'),
+      title: const Text('Thêm thông số'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1017,21 +1017,21 @@ class _AddParameterDialogState extends State<_AddParameterDialog> {
           TextField(
             controller: _labelController,
             autofocus: true,
-            decoration: const InputDecoration(labelText: 'Parameter'),
+            decoration: const InputDecoration(labelText: 'Thông số'),
           ),
           Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _valueController,
-                  decoration: const InputDecoration(labelText: 'Value'),
+                  decoration: const InputDecoration(labelText: 'Giá trị'),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: TextField(
                   controller: _unitController,
-                  decoration: const InputDecoration(labelText: 'Unit'),
+                  decoration: const InputDecoration(labelText: 'Đơn vị'),
                 ),
               ),
             ],
@@ -1065,7 +1065,7 @@ class _AddParameterDialogState extends State<_AddParameterDialog> {
               'unit': _unitController.text,
             });
           },
-          child: const Text('Add'),
+          child: const Text('Thêm'),
         ),
       ],
     );
@@ -1153,11 +1153,11 @@ class _FinalResultSectionState extends State<_FinalResultSection> {
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
     return _SectionCard(
-      title: 'FINAL RESULT',
+      title: 'KẾT QUẢ CUỐI CÙNG',
       children: [
         DropdownButtonFormField<MaintenanceOverallResult>(
           initialValue: widget.report.overallResult,
-          decoration: const InputDecoration(labelText: 'Overall Result'),
+          decoration: const InputDecoration(labelText: 'Kết quả tổng thể'),
           items: MaintenanceOverallResult.values
               .map(
                 (result) =>
@@ -1175,18 +1175,18 @@ class _FinalResultSectionState extends State<_FinalResultSection> {
           focusNode: _commentFocus,
           readOnly: widget.locked,
           maxLines: 2,
-          decoration: const InputDecoration(labelText: 'Final Comment'),
+          decoration: const InputDecoration(labelText: 'Nhận xét'),
         ),
         TextField(
           controller: _recommendationController,
           focusNode: _recommendationFocus,
           readOnly: widget.locked,
           maxLines: 2,
-          decoration: const InputDecoration(labelText: 'Recommendation'),
+          decoration: const InputDecoration(labelText: 'Đề xuất'),
         ),
         const SizedBox(height: 8),
         Text(
-          'Next Maintenance',
+          'Bảo trì tiếp theo',
           style: TextStyle(color: palette.muted, fontSize: 12.5),
         ),
         Row(
@@ -1197,7 +1197,7 @@ class _FinalResultSectionState extends State<_FinalResultSection> {
                 focusNode: _nextHoursFocus,
                 readOnly: widget.locked,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Running Hours'),
+                decoration: const InputDecoration(labelText: 'Giờ vận hành'),
               ),
             ),
             const SizedBox(width: 8),

@@ -39,11 +39,11 @@ class MaintenanceParameter {
 
 /// Gợi ý nhanh thông số thường ghi nhận sau bảo trì máy nén khí.
 const List<String> suggestedMaintenanceParameterLabels = [
-  'Running Pressure',
-  'Discharge Temperature',
-  'Current',
-  'Voltage',
-  'Running Hours',
-  'Leakage',
-  'Noise',
+  'Áp suất vận hành',
+  'Nhiệt độ khí ra',
+  'Dòng điện',
+  'Điện áp',
+  'Giờ vận hành',
+  'Rò rỉ',
+  'Tiếng ồn',
 ];

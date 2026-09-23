@@ -1,8 +1,8 @@
 /// Trạng thái của 1 báo cáo bảo trì — "Completed" khoá không cho thay đổi
 /// ảnh Original đã chụp (xem MaintenanceReportRepository).
 enum MaintenanceReportStatus {
-  draft('Draft'),
-  completed('Completed');
+  draft('Nháp'),
+  completed('Hoàn thành');
 
   const MaintenanceReportStatus(this.label);
   final String label;
@@ -16,11 +16,11 @@ enum MaintenanceReportStatus {
 
 /// Kết luận cuối cùng sau bảo trì (Overall Result).
 enum MaintenanceOverallResult {
-  normalOperation('Normal Operation'),
-  completed('Completed'),
-  needMonitoring('Need Monitoring'),
-  furtherInspectionRequired('Further Inspection Required'),
-  repairRecommended('Repair Recommended');
+  normalOperation('Hoạt động bình thường'),
+  completed('Đã hoàn thành'),
+  needMonitoring('Cần theo dõi thêm'),
+  furtherInspectionRequired('Cần kiểm tra thêm'),
+  repairRecommended('Đề xuất sửa chữa');
 
   const MaintenanceOverallResult(this.label);
   final String label;

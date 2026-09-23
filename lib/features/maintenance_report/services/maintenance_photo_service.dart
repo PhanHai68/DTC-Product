@@ -71,7 +71,7 @@ class MaintenancePhotoService {
       MaintenanceWatermarkRequest(
         photoBytes: bytes,
         logoBytes: await _loadLogoBytes(),
-        kindLabel: kind == MaintenancePhotoKind.before ? 'BEFORE' : 'AFTER',
+        kindLabel: kind == MaintenancePhotoKind.before ? 'TRUOC' : 'SAU',
         dateLabel: DateFormat('dd/MM/yyyy').format(now),
         timeLabel: DateFormat('HH:mm:ss').format(now),
         photoId: photoId,

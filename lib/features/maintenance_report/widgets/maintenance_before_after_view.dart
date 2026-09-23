@@ -32,7 +32,7 @@ class MaintenanceBeforeAfterView extends StatelessWidget {
       children: [
         Expanded(
           child: _PhotoColumn(
-            label: 'BEFORE',
+            label: 'TRƯỚC',
             photos: beforePhotos,
             onDelete: onDeletePhoto,
             onAdd: onAddBefore,
@@ -41,7 +41,7 @@ class MaintenanceBeforeAfterView extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: _PhotoColumn(
-            label: 'AFTER',
+            label: 'SAU',
             photos: afterPhotos,
             onDelete: onDeletePhoto,
             onAdd: onAddAfter,
@@ -134,7 +134,7 @@ class _EmptySlot extends StatelessWidget {
             Icon(Icons.camera_alt_outlined, color: palette.muted, size: 26),
             const SizedBox(height: 6),
             Text(
-              'Take Verified Photo',
+              'Chụp ảnh xác thực',
               style: TextStyle(color: palette.muted, fontSize: 11.5),
               textAlign: TextAlign.center,
             ),
