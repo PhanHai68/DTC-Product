@@ -18,7 +18,7 @@ const List<Map<String, String>> agroColorSorterSpecs = [
     'voltage_v': '220',
     'frequency_hz': '50',
     'weight_kg': '1850',
-    'dimensions_display_mm': '3289 x 1727 x 2177',
+    'dimensions_display_mm': '3629 x 1816 x 2177',
     'air_compressor': '50 HP',
     'air_tank': '1000 lít',
     'key_features': 'AI Deep Learning; Công nghệ mắt diều hâu 3.0; Công nghệ tích hợp đa điểm ảnh; Công nghệ PLOV; Công nghệ hút bụi độc lập',

@@ -247,17 +247,19 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     }
     if (model == 'h7') {
       return {
-        'modelName': 'H7',
+        // Tiêu đề màn hình 3D dùng tên nội bộ "H8" theo yêu cầu, tách biệt
+        // với tên thương mại "H7" hiển thị ở các nơi khác trong app.
+        'modelName': 'H8',
         'modelPath': 'assets/models/h7.glb',
         'posterPath': 'assets/images/color_sorter/Hinh_anh H7.jpg',
         'dimensions': '${specs['dimensions_display_mm']} mm',
         'configuration': '${specs['chutes_qty']} máng',
         'technology': 'AI · PLOV',
-        // Model H7 bị giản lược lưới khá mạnh (ít tam giác) nên dễ lộ mặt
-        // gãy khúc dưới ánh sáng tương phản cao — tăng exposure và dùng
-        // preset 'legacy' (ánh sáng phẳng, ít đổ bóng gắt) để sáng và mịn
-        // hơn thay vì tối đen như bản neutral mặc định.
-        'exposure': 1.4,
+        // Model đã được xử lý lại: bỏ texture ảnh chụp gốc (tối, nhiễu),
+        // thay bằng màu xám sáng đồng nhất (giống clay-render tham khảo) +
+        // normal đã làm mượt — dùng preset 'legacy' (ánh sáng phẳng) với
+        // exposure vừa phải là đủ sáng, không cần tăng cao như trước.
+        'exposure': 1.0,
         'environmentImage': 'legacy',
       };
     }

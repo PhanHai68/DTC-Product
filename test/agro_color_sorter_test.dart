@@ -18,7 +18,7 @@ void main() {
     expect(specs['chutes_qty'], '7');
     expect(specs['camera_qty'], '14');
     expect(specs['ejector_qty'], '448');
-    expect(specs['dimensions_display_mm'], '3289 x 1727 x 2177');
+    expect(specs['dimensions_display_mm'], '3629 x 1816 x 2177');
   });
 
   testWidgets('màn hình H7 hiển thị ảnh, thông số và nút mô hình 3D', (
