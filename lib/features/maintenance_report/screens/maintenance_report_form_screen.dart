@@ -131,6 +131,11 @@ class _MaintenanceReportFormScreenState
       );
       if (!mounted) return;
       context.pushReplacement('/maintenance_report/${report.id}');
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Chưa thể lưu báo cáo: $error')));
     } finally {
       if (mounted) setState(() => _saving = false);
     }

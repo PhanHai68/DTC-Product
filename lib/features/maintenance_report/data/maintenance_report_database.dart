@@ -25,7 +25,7 @@ class MaintenanceReportDatabase {
   Future<Database> get database async {
     _database ??= await openLocalDatabase(
       fileName: 'maintenance_reports.db',
-      version: 1,
+      version: 2,
       onCreate: _create,
       onUpgrade: _upgrade,
     );
@@ -158,7 +158,32 @@ class MaintenanceReportDatabase {
     ''');
   }
 
-  Future<void> _upgrade(Database db, int oldVersion, int newVersion) async {}
+  /// v2: đơn giản hoá cột của `maintenance_reports` (bỏ contactPerson/
+  /// contactPhone/machineName/machineType/machineSerial/machineLocation,
+  /// thêm machineTagName, đổi engineerName (String) thành engineerNames
+  /// (JSON array)) và bỏ cột isCustom của `maintenance_checklist`. Tính
+  /// năng này chưa từng phát hành rộng rãi (chỉ mới cài bản thử nghiệm),
+  /// nên xoá sạch dữ liệu cũ và tạo lại theo schema mới thay vì viết
+  /// migration ánh xạ từng cột — tránh vướng vì bản v1 cũ có domain dữ
+  /// liệu không map 1-1 sang schema mới (VD Serial/Location không có chỗ
+  /// tương ứng ở Tagname).
+  Future<void> _upgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      for (final table in const [
+        'maintenance_reports',
+        'maintenance_items',
+        'maintenance_photos',
+        'maintenance_checklist',
+        'maintenance_parts',
+        'maintenance_parameters',
+        'maintenance_activity_log',
+        'maintenance_counters',
+      ]) {
+        await db.execute('DROP TABLE IF EXISTS $table');
+      }
+      await _create(db, newVersion);
+    }
+  }
 
   Future<void> close() async {
     await _database?.close();
@@ -166,5 +191,12 @@ class MaintenanceReportDatabase {
   }
 
   /// Creates the current schema on an isolated database used by tests.
-  Future<void> createSchemaForTesting(Database db) => _create(db, 1);
+  Future<void> createSchemaForTesting(Database db) => _create(db, 2);
+
+  /// Runs migrations on an isolated database used by tests.
+  Future<void> upgradeSchemaForTesting(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) => _upgrade(db, oldVersion, newVersion);
 }

@@ -64,7 +64,14 @@ class _MaintenanceReportWorkspaceScreenState
       ),
     );
     if (confirmed != true || !mounted) return;
-    await context.read<MaintenanceReportProvider>().startMaintenance();
+    try {
+      await context.read<MaintenanceReportProvider>().startMaintenance();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Chưa thể bắt đầu bảo trì: $error')));
+    }
   }
 
   Future<void> _completeMaintenance() async {
@@ -89,7 +96,14 @@ class _MaintenanceReportWorkspaceScreenState
       ),
     );
     if (confirmed != true || !mounted) return;
-    await context.read<MaintenanceReportProvider>().completeMaintenance();
+    try {
+      await context.read<MaintenanceReportProvider>().completeMaintenance();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Chưa thể hoàn tất bảo trì: $error')));
+    }
   }
 
   Future<void> _generateAndShare() async {
