@@ -256,11 +256,12 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         'configuration': '${specs['chutes_qty']} máng',
         'technology': 'AI · PLOV',
         // Model đã được xử lý lại: bỏ texture ảnh chụp gốc (tối, nhiễu),
-        // thay bằng màu xám thép đậm hơn (dễ phân biệt hình khối trên nền
-        // sáng của màn 3D) + normal đã làm mượt. Dùng preset 'neutral' (có
-        // đổ bóng theo hướng sáng) để làm rõ đường nét thay vì ánh sáng
-        // phẳng 'legacy' trước đó khiến máy trông bẹt và quá sáng.
-        'exposure': 0.9,
+        // thay bằng màu + metallic/roughness giống hệt SC16 Pro, normal
+        // được làm mượt có "ngưỡng góc gấp" (giữ cạnh sắc, chỉ mượt bề mặt
+        // gần phẳng) để có cảm giác đổ bóng rõ nét giữa các mặt như SC16
+        // Pro thay vì mượt lẫn lộn toàn bộ. exposure/environmentImage lấy
+        // đúng theo giá trị mặc định dùng cho SC16 Pro.
+        'exposure': 0.85,
         'environmentImage': 'neutral',
       };
     }
