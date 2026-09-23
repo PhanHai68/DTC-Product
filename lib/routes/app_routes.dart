@@ -18,6 +18,10 @@ import '../screens/storage/stored_image_viewer_screen.dart';
 import '../screens/storage/stored_model_viewer_screen.dart';
 import '../models/stored_file.dart';
 import '../screens/sample_record/sample_record_screen.dart';
+import '../features/maintenance_report/screens/maintenance_report_list_screen.dart';
+import '../features/maintenance_report/screens/maintenance_report_form_screen.dart';
+import '../features/maintenance_report/screens/maintenance_report_workspace_screen.dart';
+import '../features/maintenance_report/models/maintenance_report.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
 import '../screens/technical_converter/technical_converter_screen.dart';
 import '../screens/color_sorter_categories_screen.dart';
@@ -182,6 +186,26 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/sample_record',
       builder: (context, state) => const SampleRecordScreen(),
+    ),
+    GoRoute(
+      path: '/maintenance_report',
+      builder: (context, state) => const MaintenanceReportListScreen(),
+    ),
+    GoRoute(
+      path: '/maintenance_report/new',
+      builder: (context, state) => const MaintenanceReportFormScreen(),
+    ),
+    GoRoute(
+      path: '/maintenance_report/:id/edit',
+      builder: (context, state) => MaintenanceReportFormScreen(
+        report: state.extra as MaintenanceReport?,
+      ),
+    ),
+    GoRoute(
+      path: '/maintenance_report/:id',
+      builder: (context, state) => MaintenanceReportWorkspaceScreen(
+        reportId: state.pathParameters['id']!,
+      ),
     ),
     GoRoute(
       path: '/productivity_calc',

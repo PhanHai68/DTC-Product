@@ -41,6 +41,13 @@ class ExtensionsScreen extends StatelessWidget {
           onTap: () => context.push('/sample_record'),
         ),
         TechnologyMenuEntry(
+          id: 'extension_maintenance_report',
+          title: 'Báo Cáo Bảo Trì',
+          icon: Icons.build_rounded,
+          featured: true,
+          onTap: () => context.push('/maintenance_report'),
+        ),
+        TechnologyMenuEntry(
           id: 'extension_productivity_calc',
           title: 'Tính Năng Suất',
           icon: Icons.speed_rounded,

@@ -11,6 +11,7 @@ const Map<String, String> _featureLabels = {
   'GhiChu': 'Ghi chú & Nhắc hẹn',
   'LuuMau': 'Lưu mẫu',
   'Projects': 'Project Timeline',
+  'MaintenanceReport': 'Báo cáo bảo trì',
 };
 
 Future<Directory> _savedFilesRoot() async {
