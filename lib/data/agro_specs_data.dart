@@ -9,7 +9,7 @@ const List<Map<String, String>> agroColorSorterSpecs = [
     'capacity_display':
         'Ngũ cốc: 4 - 8 t/h\n'
         'Cà phê: 5.5 - 10.5 t/h',
-    'chutes_qty': '7',
+    'chutes_qty': '8',
     'ejector_qty': '448',
     'ejector_per_chute': '64',
     'camera_qty': '14',
