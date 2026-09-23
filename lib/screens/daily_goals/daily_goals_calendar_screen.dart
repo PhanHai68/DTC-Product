@@ -236,6 +236,16 @@ class _DailyBarChart extends StatelessWidget {
     final maxCompleted = progressByDay.values
         .map((p) => p.total)
         .fold<int>(1, (a, b) => a > b ? a : b);
+    // Trục ngày chỉ đủ chỗ cho vài nhãn — nhét đủ 1..daysInMonth sẽ đè chữ
+    // lên nhau (fl_chart gọi getTitlesWidget cho từng cột chứ không tự giãn
+    // theo interval như biểu đồ đường), nên chỉ hiện nhãn cách đều + ngày
+    // đầu/cuối tháng, các cột còn lại vẫn có cột nhưng không hiện số.
+    final labelStep = daysInMonth > 20 ? 5 : (daysInMonth > 10 ? 3 : 1);
+    final labelDays = <int>{
+      1,
+      for (var d = labelStep; d < daysInMonth; d += labelStep) d,
+      daysInMonth,
+    };
 
     return Card(
       child: Padding(
@@ -274,17 +284,22 @@ class _DailyBarChart extends StatelessWidget {
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 20,
-                        interval: (daysInMonth / 6).ceilToDouble(),
-                        getTitlesWidget: (value, meta) => Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text(
-                            value.toInt().toString(),
-                            style: TextStyle(
-                              color: palette.muted,
-                              fontSize: 10,
+                        getTitlesWidget: (value, meta) {
+                          final day = value.toInt();
+                          if (!labelDays.contains(day)) {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              '$day',
+                              style: TextStyle(
+                                color: palette.muted,
+                                fontSize: 10,
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
                     ),
                   ),
