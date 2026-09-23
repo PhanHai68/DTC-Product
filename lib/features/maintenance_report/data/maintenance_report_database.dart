@@ -25,7 +25,7 @@ class MaintenanceReportDatabase {
   Future<Database> get database async {
     _database ??= await openLocalDatabase(
       fileName: 'maintenance_reports.db',
-      version: 2,
+      version: 3,
       onCreate: _create,
       onUpgrade: _upgrade,
     );
@@ -47,6 +47,7 @@ class MaintenanceReportDatabase {
         sessionId TEXT,
         startTime TEXT,
         endTime TEXT,
+        machineCondition TEXT NOT NULL DEFAULT '',
         overallResult TEXT,
         finalComment TEXT NOT NULL DEFAULT '',
         recommendation TEXT NOT NULL DEFAULT '',
@@ -124,19 +125,6 @@ class MaintenanceReportDatabase {
       'CREATE INDEX idx_maintenance_parts_report ON maintenance_parts(reportId, orderIndex)',
     );
     await db.execute('''
-      CREATE TABLE maintenance_parameters(
-        id TEXT PRIMARY KEY,
-        reportId TEXT NOT NULL,
-        label TEXT NOT NULL,
-        value TEXT NOT NULL DEFAULT '',
-        unit TEXT NOT NULL DEFAULT '',
-        orderIndex INTEGER NOT NULL DEFAULT 0
-      )
-    ''');
-    await db.execute(
-      'CREATE INDEX idx_maintenance_parameters_report ON maintenance_parameters(reportId, orderIndex)',
-    );
-    await db.execute('''
       CREATE TABLE maintenance_activity_log(
         id TEXT PRIMARY KEY,
         reportId TEXT NOT NULL,
@@ -147,15 +135,6 @@ class MaintenanceReportDatabase {
     await db.execute(
       'CREATE INDEX idx_maintenance_activity_report ON maintenance_activity_log(reportId, timestamp)',
     );
-    // Bộ đếm đơn giản, chỉ tăng, dùng sinh Session ID (MNT-yyyyMMdd-####) —
-    // tách bảng riêng để số thứ tự KHÔNG bao giờ bị trùng lại dù report cũ
-    // đã bị xoá (khác với COUNT(*) có thể trùng sau khi xoá).
-    await db.execute('''
-      CREATE TABLE maintenance_counters(
-        name TEXT PRIMARY KEY,
-        value INTEGER NOT NULL DEFAULT 0
-      )
-    ''');
   }
 
   /// v2: đơn giản hoá cột của `maintenance_reports` (bỏ contactPerson/
@@ -182,6 +161,20 @@ class MaintenanceReportDatabase {
         await db.execute('DROP TABLE IF EXISTS $table');
       }
       await _create(db, newVersion);
+      return;
+    }
+    // v3: thêm cột machineCondition (Tình trạng máy sau bảo trì — nay chỉ
+    // còn 1 đoạn văn bản tự do thay vì danh sách thông số Label/Value/Unit),
+    // bỏ bảng maintenance_parameters (không còn dùng) và maintenance_counters
+    // (Session ID đổi sang định dạng TTM-<viết tắt kỹ sư>-<giờ tạo>, không
+    // cần bộ đếm nữa). Giữ nguyên report/items/photos/checklist/parts/
+    // activity_log đã có (khác v1→v2, lần này không cần xoá sạch).
+    if (oldVersion < 3) {
+      await db.execute(
+        "ALTER TABLE maintenance_reports ADD COLUMN machineCondition TEXT NOT NULL DEFAULT ''",
+      );
+      await db.execute('DROP TABLE IF EXISTS maintenance_parameters');
+      await db.execute('DROP TABLE IF EXISTS maintenance_counters');
     }
   }
 
@@ -191,7 +184,7 @@ class MaintenanceReportDatabase {
   }
 
   /// Creates the current schema on an isolated database used by tests.
-  Future<void> createSchemaForTesting(Database db) => _create(db, 2);
+  Future<void> createSchemaForTesting(Database db) => _create(db, 3);
 
   /// Runs migrations on an isolated database used by tests.
   Future<void> upgradeSchemaForTesting(

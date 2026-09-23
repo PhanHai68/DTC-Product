@@ -82,7 +82,8 @@ void main() {
 
     final started = await repository.startMaintenance(report.id);
 
-    expect(started.sessionId, matches(RegExp(r'^MNT-\d{8}-\d{4}$')));
+    // Định dạng TTM-<viết tắt tên kỹ sư>-<thời gian tạo đến phút>.
+    expect(started.sessionId, matches(RegExp(r'^TTM-K-\d{12}$')));
     expect(started.startTime, isNotNull);
 
     final activities = await repository.getActivities(report.id);
@@ -94,6 +95,22 @@ void main() {
     // Gọi lại lần 2 không sinh Session ID mới (đã start rồi).
     final startedAgain = await repository.startMaintenance(report.id);
     expect(startedAgain.sessionId, started.sessionId);
+  });
+
+  test('Session ID viết tắt đúng nhiều kỹ sư, bỏ dấu tiếng Việt an toàn', () async {
+    final report = await createReport(
+      engineerNames: ['Nguyễn Văn An', 'Kevin'],
+    );
+    final started = await repository.startMaintenance(report.id);
+
+    // "Nguyễn Văn An" -> NVA, "Kevin" -> K, nối lại thành NVAK.
+    expect(started.sessionId, startsWith('TTM-NVAK-'));
+
+    final noEngineerReport = await createReport(engineerNames: const []);
+    final startedNoEngineer = await repository.startMaintenance(
+      noEngineerReport.id,
+    );
+    expect(startedNoEngineer.sessionId, startsWith('TTM-XX-'));
   });
 
   test('Session ID tăng dần và không lặp lại giữa các report', () async {
@@ -152,7 +169,7 @@ void main() {
     expect(photos, hasLength(1));
   });
 
-  test('addItem/updateItem/addPart/addParameter lưu và đọc lại đúng', () async {
+  test('addItem/updateItem/addPart/machineCondition lưu và đọc lại đúng', () async {
     final report = await createReport();
 
     final item = await repository.addItem(report.id, 'Lọc gió');
@@ -167,15 +184,11 @@ void main() {
     final parts = await repository.getParts(report.id);
     expect(parts, hasLength(1));
 
-    await repository.addParameter(
-      reportId: report.id,
-      label: 'Áp suất vận hành',
-      value: '7.2',
-      unit: 'bar',
+    await repository.updateReport(
+      report.copyWith(machineCondition: 'Máy chạy êm, áp suất ổn định.'),
     );
-    final parameters = await repository.getParameters(report.id);
-    expect(parameters, hasLength(1));
-    expect(parameters.first.value, '7.2');
+    final reloaded = await repository.getReport(report.id);
+    expect(reloaded!.machineCondition, 'Máy chạy êm, áp suất ổn định.');
   });
 
   test('completeMaintenance chuyển status sang Completed và ghi endTime', () async {

@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import '../models/maintenance_activity.dart';
 import '../models/maintenance_checklist_task.dart';
 import '../models/maintenance_item.dart';
-import '../models/maintenance_parameter.dart';
 import '../models/maintenance_part.dart';
 import '../models/maintenance_photo.dart';
 import '../models/maintenance_report.dart';
@@ -31,7 +30,6 @@ class MaintenanceReportProvider extends ChangeNotifier {
   List<MaintenancePhoto> _photos = const [];
   List<MaintenanceChecklistTask> _checklist = const [];
   List<MaintenancePart> _parts = const [];
-  List<MaintenanceParameter> _parameters = const [];
   List<MaintenanceActivity> _activities = const [];
   bool _isLoadingDetail = false;
   bool _isCapturingPhoto = false;
@@ -46,7 +44,6 @@ class MaintenanceReportProvider extends ChangeNotifier {
   List<MaintenancePhoto> get photos => _photos;
   List<MaintenanceChecklistTask> get checklist => _checklist;
   List<MaintenancePart> get parts => _parts;
-  List<MaintenanceParameter> get parameters => _parameters;
   List<MaintenanceActivity> get activities => _activities;
   bool get isLoadingDetail => _isLoadingDetail;
   bool get isCapturingPhoto => _isCapturingPhoto;
@@ -107,7 +104,6 @@ class MaintenanceReportProvider extends ChangeNotifier {
         _repository.getPhotos(reportId),
         _repository.getChecklist(reportId),
         _repository.getParts(reportId),
-        _repository.getParameters(reportId),
         _repository.getActivities(reportId),
       ]);
       _currentReport = results[0] as MaintenanceReport?;
@@ -115,8 +111,7 @@ class MaintenanceReportProvider extends ChangeNotifier {
       _photos = results[2] as List<MaintenancePhoto>;
       _checklist = results[3] as List<MaintenanceChecklistTask>;
       _parts = results[4] as List<MaintenancePart>;
-      _parameters = results[5] as List<MaintenanceParameter>;
-      _activities = results[6] as List<MaintenanceActivity>;
+      _activities = results[5] as List<MaintenanceActivity>;
     } catch (error) {
       _detailError = 'Không thể tải báo cáo: $error';
     } finally {
@@ -269,27 +264,6 @@ class MaintenanceReportProvider extends ChangeNotifier {
     await _refreshDetail();
   }
 
-  Future<void> addParameter({
-    required String label,
-    String value = '',
-    String unit = '',
-  }) async {
-    final reportId = _currentReport?.id;
-    if (reportId == null || label.trim().isEmpty) return;
-    await _repository.addParameter(
-      reportId: reportId,
-      label: label.trim(),
-      value: value.trim(),
-      unit: unit.trim(),
-    );
-    await _refreshDetail();
-  }
-
-  Future<void> deleteParameter(String parameterId) async {
-    await _repository.deleteParameter(parameterId);
-    await _refreshDetail();
-  }
-
   /// Sinh PDF cho 1 report bất kỳ (không phụ thuộc report đang mở trong
   /// workspace) — dùng cho nút "Generate PDF"/"Share PDF" ngay ở màn danh
   /// sách. Tự đọc lại toàn bộ dữ liệu + bytes ảnh Report Photo cần thiết.
@@ -301,13 +275,11 @@ class MaintenanceReportProvider extends ChangeNotifier {
       _repository.getPhotos(reportId),
       _repository.getChecklist(reportId),
       _repository.getParts(reportId),
-      _repository.getParameters(reportId),
     ]);
     final items = results[0] as List<MaintenanceItem>;
     final photos = results[1] as List<MaintenancePhoto>;
     final checklist = results[2] as List<MaintenanceChecklistTask>;
     final parts = results[3] as List<MaintenancePart>;
-    final parameters = results[4] as List<MaintenanceParameter>;
 
     final photoBytes = <String, Uint8List>{};
     for (final photo in photos) {
@@ -321,7 +293,6 @@ class MaintenanceReportProvider extends ChangeNotifier {
       photos: photos,
       checklist: checklist,
       parts: parts,
-      parameters: parameters,
       photoBytes: photoBytes,
     );
   }

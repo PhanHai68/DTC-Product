@@ -1,6 +1,5 @@
 import 'package:dtc_product/features/maintenance_report/models/maintenance_checklist_task.dart';
 import 'package:dtc_product/features/maintenance_report/models/maintenance_item.dart';
-import 'package:dtc_product/features/maintenance_report/models/maintenance_parameter.dart';
 import 'package:dtc_product/features/maintenance_report/models/maintenance_part.dart';
 import 'package:dtc_product/features/maintenance_report/models/maintenance_photo.dart';
 import 'package:dtc_product/features/maintenance_report/models/maintenance_report.dart';
@@ -23,6 +22,7 @@ void main() {
         sessionId: 'MNT-20260923-0015',
         startTime: now,
         endTime: now.add(const Duration(hours: 2)),
+        machineCondition: 'Máy chạy êm, không rò rỉ.',
         overallResult: MaintenanceOverallResult.completed,
         finalComment: 'Máy chạy tốt',
         recommendation: 'Thay dây curoa lần sau',
@@ -41,6 +41,7 @@ void main() {
       expect(restored.engineerNames, ['Kevin', 'An']);
       expect(restored.sessionId, 'MNT-20260923-0015');
       expect(restored.startTime, now);
+      expect(restored.machineCondition, 'Máy chạy êm, không rò rỉ.');
       expect(restored.overallResult, MaintenanceOverallResult.completed);
       expect(restored.nextMaintenanceDate, DateTime(2026, 12, 23));
       expect(restored.hasStarted, isTrue);
@@ -134,7 +135,7 @@ void main() {
     });
   });
 
-  group('MaintenanceChecklistTask / MaintenancePart / MaintenanceParameter', () {
+  group('MaintenanceChecklistTask / MaintenancePart', () {
     test('toJson / fromJson round-trip', () {
       final task = MaintenanceChecklistTask(
         id: 'task_1',
@@ -159,19 +160,6 @@ void main() {
       final restoredPart = MaintenancePart.fromJson(part.toJson());
       expect(restoredPart.partName, 'Air Filter');
       expect(restoredPart.quantity, 1);
-
-      final parameter = MaintenanceParameter(
-        id: 'param_1',
-        reportId: 'report_1',
-        label: 'Running Pressure',
-        value: '7.2',
-        unit: 'bar',
-      );
-      final restoredParameter = MaintenanceParameter.fromJson(
-        parameter.toJson(),
-      );
-      expect(restoredParameter.value, '7.2');
-      expect(restoredParameter.unit, 'bar');
     });
   });
 }

@@ -62,6 +62,10 @@ class MaintenanceReport {
   final DateTime? startTime;
   final DateTime? endTime;
 
+  // Tình trạng máy sau bảo trì — 1 đoạn văn bản tự do, không còn danh sách
+  // thông số Label/Value/Unit riêng lẻ.
+  final String machineCondition;
+
   // Final Result
   final MaintenanceOverallResult? overallResult;
   final String finalComment;
@@ -85,6 +89,7 @@ class MaintenanceReport {
     this.sessionId,
     this.startTime,
     this.endTime,
+    this.machineCondition = '',
     this.overallResult,
     this.finalComment = '',
     this.recommendation = '',
@@ -117,6 +122,7 @@ class MaintenanceReport {
         endTime: json['endTime'] == null
             ? null
             : DateTime.parse(json['endTime'] as String),
+        machineCondition: json['machineCondition'] as String? ?? '',
         overallResult: MaintenanceOverallResult.parse(
           json['overallResult'] as String?,
         ),
@@ -155,6 +161,7 @@ class MaintenanceReport {
     'sessionId': sessionId,
     'startTime': startTime?.toIso8601String(),
     'endTime': endTime?.toIso8601String(),
+    'machineCondition': machineCondition,
     'overallResult': overallResult?.name,
     'finalComment': finalComment,
     'recommendation': recommendation,
@@ -176,6 +183,7 @@ class MaintenanceReport {
     String? sessionId,
     DateTime? startTime,
     DateTime? endTime,
+    String? machineCondition,
     MaintenanceOverallResult? overallResult,
     bool clearOverallResult = false,
     String? finalComment,
@@ -197,6 +205,7 @@ class MaintenanceReport {
     sessionId: sessionId ?? this.sessionId,
     startTime: startTime ?? this.startTime,
     endTime: endTime ?? this.endTime,
+    machineCondition: machineCondition ?? this.machineCondition,
     overallResult: clearOverallResult
         ? null
         : (overallResult ?? this.overallResult),

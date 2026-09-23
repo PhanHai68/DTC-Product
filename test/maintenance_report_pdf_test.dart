@@ -1,6 +1,5 @@
 import 'package:dtc_product/features/maintenance_report/models/maintenance_checklist_task.dart';
 import 'package:dtc_product/features/maintenance_report/models/maintenance_item.dart';
-import 'package:dtc_product/features/maintenance_report/models/maintenance_parameter.dart';
 import 'package:dtc_product/features/maintenance_report/models/maintenance_part.dart';
 import 'package:dtc_product/features/maintenance_report/models/maintenance_photo.dart';
 import 'package:dtc_product/features/maintenance_report/models/maintenance_report.dart';
@@ -28,9 +27,10 @@ void main() {
       machineRunningHours: '5000',
       maintenanceDate: DateTime(2026, 9, 23),
       engineerNames: const ['Kevin'],
-      sessionId: 'MNT-20260923-0015',
+      sessionId: 'TTM-K-202609230920',
       startTime: now,
       endTime: now.add(const Duration(hours: 2)),
+      machineCondition: 'Máy chạy êm, áp suất ổn định, không rò rỉ.',
       overallResult: MaintenanceOverallResult.completed,
       finalComment: 'Máy chạy tốt sau bảo trì.',
       recommendation: 'Thay dây curoa vào lần bảo trì sau.',
@@ -98,23 +98,12 @@ void main() {
         unit: 'pcs',
       ),
     ];
-    final parameters = [
-      const MaintenanceParameter(
-        id: 'param_1',
-        reportId: 'report_1',
-        label: 'Running Pressure',
-        value: '7.2',
-        unit: 'bar',
-      ),
-    ];
-
     final bytes = await MaintenanceReportPdfService.build(
       report: report,
       items: [item],
       photos: [beforePhoto, afterPhoto],
       checklist: checklist,
       parts: parts,
-      parameters: parameters,
       photoBytes: {
         beforePhoto.id: photo,
         afterPhoto.id: photo,
@@ -140,7 +129,6 @@ void main() {
       photos: const [],
       checklist: const [],
       parts: const [],
-      parameters: const [],
       photoBytes: const {},
     );
 

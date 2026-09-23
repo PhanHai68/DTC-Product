@@ -70,11 +70,13 @@ void main() {
       )
     ''');
 
-    // Chạy đúng migration thật (_upgrade) từ v1 lên v2.
+    // Chạy đúng migration thật (_upgrade) từ v1 lên bản hiện tại (v3) —
+    // nhánh oldVersion < 2 luôn xoá sạch và tạo lại theo schema mới nhất
+    // bất kể newVersion truyền vào là bao nhiêu.
     await MaintenanceReportDatabase.instance.upgradeSchemaForTesting(
       database,
       1,
-      2,
+      3,
     );
 
     final repository = MaintenanceReportRepository(
@@ -102,6 +104,92 @@ void main() {
     // chưa phát hành rộng rãi khi đổi schema.
     final reports = await repository.getReports();
     expect(reports.map((item) => item.id), isNot(contains('old_report')));
+
+    await database.close();
+  });
+
+  test('nâng cấp từ schema v2 (đã đơn giản hoá) lên v3 GIỮ NGUYÊN report cũ', () async {
+    sqfliteFfiInit();
+    final database = await databaseFactoryFfiNoIsolate.openDatabase(
+      inMemoryDatabasePath,
+      options: OpenDatabaseOptions(singleInstance: false),
+    );
+
+    // Tạo lại đúng schema v2 (bản đơn giản hoá vừa phát hành, chưa có
+    // machineCondition, còn bảng maintenance_parameters/maintenance_counters)
+    // để mô phỏng máy đang chạy đúng bản APK trước bản sửa lỗi này.
+    await database.execute('''
+      CREATE TABLE maintenance_reports(
+        id TEXT PRIMARY KEY,
+        status TEXT NOT NULL,
+        customerName TEXT NOT NULL DEFAULT '',
+        factorySite TEXT NOT NULL DEFAULT '',
+        machineModel TEXT NOT NULL DEFAULT '',
+        machineTagName TEXT NOT NULL DEFAULT '',
+        machineRunningHours TEXT NOT NULL DEFAULT '',
+        maintenanceDate TEXT NOT NULL,
+        engineerNames TEXT NOT NULL DEFAULT '[]',
+        sessionId TEXT,
+        startTime TEXT,
+        endTime TEXT,
+        overallResult TEXT,
+        finalComment TEXT NOT NULL DEFAULT '',
+        recommendation TEXT NOT NULL DEFAULT '',
+        nextMaintenanceDate TEXT,
+        nextMaintenanceRunningHours TEXT NOT NULL DEFAULT '',
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL
+      )
+    ''');
+    await database.insert('maintenance_reports', {
+      'id': 'v2_report',
+      'status': 'draft',
+      'customerName': 'Phúc Long',
+      'machineModel': 'DF53Pro',
+      'maintenanceDate': DateTime(2026, 9, 20).toIso8601String(),
+      'engineerNames': '["Kevin"]',
+      'createdAt': DateTime(2026, 9, 20).toIso8601String(),
+      'updatedAt': DateTime(2026, 9, 20).toIso8601String(),
+    });
+    await database.execute('''
+      CREATE TABLE maintenance_parameters(
+        id TEXT PRIMARY KEY,
+        reportId TEXT NOT NULL,
+        label TEXT NOT NULL,
+        value TEXT NOT NULL DEFAULT '',
+        unit TEXT NOT NULL DEFAULT '',
+        orderIndex INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+    await database.execute('''
+      CREATE TABLE maintenance_counters(
+        name TEXT PRIMARY KEY,
+        value INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+
+    await MaintenanceReportDatabase.instance.upgradeSchemaForTesting(
+      database,
+      2,
+      3,
+    );
+
+    final repository = MaintenanceReportRepository(
+      database: MaintenanceReportDatabase.forTesting(database),
+    );
+
+    // Report đã tạo trước khi nâng cấp vẫn còn nguyên (khác nhánh v1→v2 —
+    // lần này KHÔNG xoá dữ liệu vì schema map 1-1 được, chỉ thêm cột).
+    final reloaded = await repository.getReport('v2_report');
+    expect(reloaded, isNotNull);
+    expect(reloaded!.customerName, 'Phúc Long');
+    expect(reloaded.machineCondition, '');
+
+    await repository.updateReport(
+      reloaded.copyWith(machineCondition: 'Máy chạy êm, không rò rỉ.'),
+    );
+    final updated = await repository.getReport('v2_report');
+    expect(updated!.machineCondition, 'Máy chạy êm, không rò rỉ.');
 
     await database.close();
   });

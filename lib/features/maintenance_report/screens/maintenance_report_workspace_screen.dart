@@ -6,13 +6,16 @@ import 'package:provider/provider.dart';
 import '../../../theme/dtc_palette.dart';
 import '../models/maintenance_checklist_task.dart';
 import '../models/maintenance_item.dart';
-import '../models/maintenance_parameter.dart';
 import '../models/maintenance_part.dart';
 import '../models/maintenance_photo.dart';
 import '../models/maintenance_report.dart';
 import '../providers/maintenance_report_provider.dart';
 import '../services/maintenance_report_share.dart';
 import '../widgets/maintenance_before_after_view.dart';
+
+/// Cỡ chữ tiêu đề hộp thoại dùng chung cho toàn bộ tính năng — nhỏ hơn cỡ mặc
+/// định của Material AlertDialog (thường ~22-24sp) cho gọn gàng hơn.
+const _dialogTitleStyle = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
 
 /// Màn hình làm việc chính của 1 Maintenance Report: Start Maintenance →
 /// Maintenance Items (Before/After) → Checklist → Parts → Final Machine
@@ -46,7 +49,7 @@ class _MaintenanceReportWorkspaceScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Bắt đầu bảo trì?'),
+        title: const Text('Bắt đầu bảo trì?', style: _dialogTitleStyle),
         content: const Text(
           'Hệ thống sẽ tạo Mã phiên bảo trì và bắt đầu tính thời gian '
           'bảo trì. Mọi ảnh Trước/Sau sau đó đều thuộc phiên này.',
@@ -78,7 +81,7 @@ class _MaintenanceReportWorkspaceScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Hoàn tất bảo trì?'),
+        title: const Text('Hoàn tất bảo trì?', style: _dialogTitleStyle),
         content: const Text(
           'Sau khi hoàn tất, ảnh gốc đã chụp sẽ không thể thay đổi. '
           'Bạn vẫn có thể sửa nội dung khác của báo cáo sau đó.',
@@ -204,10 +207,7 @@ class _MaintenanceReportWorkspaceScreenState
                 const SizedBox(height: 16),
                 _PartsSection(parts: provider.parts, locked: locked),
                 const SizedBox(height: 16),
-                _ParametersSection(
-                  parameters: provider.parameters,
-                  locked: locked,
-                ),
+                _MachineConditionSection(report: report, locked: locked),
                 const SizedBox(height: 16),
                 _FinalResultSection(report: report, locked: locked),
                 const SizedBox(height: 20),
@@ -473,7 +473,7 @@ class _AddItemDialogState extends State<_AddItemDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Thêm hạng mục bảo trì'),
+      title: const Text('Thêm hạng mục bảo trì', style: _dialogTitleStyle),
       content: TextField(
         controller: _controller,
         autofocus: true,
@@ -572,7 +572,7 @@ class _ItemCardState extends State<_ItemCard> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Xóa hạng mục này?'),
+        title: const Text('Xóa hạng mục này?', style: _dialogTitleStyle),
         content: Text('"${widget.item.name}" và toàn bộ ảnh liên quan sẽ bị xóa.'),
         actions: [
           TextButton(
@@ -710,7 +710,7 @@ class _ChecklistSection extends StatelessWidget {
     final label = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Thêm công việc'),
+        title: const Text('Thêm công việc', style: _dialogTitleStyle),
         content: TextField(controller: controller, autofocus: true),
         actions: [
           TextButton(
@@ -800,7 +800,7 @@ class _PartsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
     return _SectionCard(
-      title: 'VẬT TƯ ĐÃ SỬ DỤNG',
+      title: 'VẬT TƯ THAY THẾ',
       trailing: IconButton(
         onPressed: locked ? null : () => _addPart(context),
         icon: const Icon(Icons.add_circle_outline),
@@ -863,21 +863,25 @@ class _AddPartDialogState extends State<_AddPartDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Thêm vật tư'),
+      title: const Text('Thêm vật tư', style: _dialogTitleStyle),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _nameController,
               autofocus: true,
               decoration: const InputDecoration(labelText: 'Tên vật tư'),
             ),
+            const SizedBox(height: 12),
             TextField(
               controller: _numberController,
               decoration: const InputDecoration(labelText: 'Mã vật tư'),
             ),
+            const SizedBox(height: 12),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: TextField(
@@ -886,7 +890,7 @@ class _AddPartDialogState extends State<_AddPartDialog> {
                     decoration: const InputDecoration(labelText: 'Số lượng'),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
                     controller: _unitController,
@@ -895,6 +899,7 @@ class _AddPartDialogState extends State<_AddPartDialog> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
             TextField(
               controller: _noteController,
               decoration: const InputDecoration(labelText: 'Ghi chú'),
@@ -926,147 +931,59 @@ class _AddPartDialogState extends State<_AddPartDialog> {
 }
 
 // ---------------------------------------------------------------------
-// Final Machine Condition — Parameters
+// Tình trạng máy sau bảo trì — 1 đoạn văn bản tự do, không còn danh sách
+// thông số Label/Value/Unit + gợi ý chọn nhanh.
 // ---------------------------------------------------------------------
 
-class _ParametersSection extends StatelessWidget {
-  const _ParametersSection({required this.parameters, required this.locked});
+class _MachineConditionSection extends StatefulWidget {
+  const _MachineConditionSection({required this.report, required this.locked});
 
-  final List<MaintenanceParameter> parameters;
+  final MaintenanceReport report;
   final bool locked;
 
-  Future<void> _addParameter(BuildContext context) async {
-    final result = await showDialog<Map<String, String>>(
-      context: context,
-      builder: (dialogContext) => const _AddParameterDialog(),
-    );
-    if (result == null || !context.mounted) return;
-    await context.read<MaintenanceReportProvider>().addParameter(
-      label: result['label'] ?? '',
-      value: result['value'] ?? '',
-      unit: result['unit'] ?? '',
-    );
-  }
-
   @override
-  Widget build(BuildContext context) {
-    final palette = DtcPalette.of(context);
-    return _SectionCard(
-      title: 'TÌNH TRẠNG MÁY SAU BẢO TRÌ',
-      trailing: IconButton(
-        onPressed: locked ? null : () => _addParameter(context),
-        icon: const Icon(Icons.add_circle_outline),
-        tooltip: 'Thêm thông số',
-      ),
-      children: [
-        if (parameters.isEmpty)
-          Text('Chưa có thông số nào.', style: TextStyle(color: palette.muted)),
-        for (final parameter in parameters)
-          ListTile(
-            key: ValueKey('param_${parameter.id}'),
-            contentPadding: EdgeInsets.zero,
-            dense: true,
-            title: Text(parameter.label),
-            trailing: locked
-                ? Text('${parameter.value} ${parameter.unit}'.trim())
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('${parameter.value} ${parameter.unit}'.trim()),
-                      IconButton(
-                        icon: const Icon(Icons.close_rounded, size: 18),
-                        onPressed: () => context
-                            .read<MaintenanceReportProvider>()
-                            .deleteParameter(parameter.id),
-                      ),
-                    ],
-                  ),
-          ),
-      ],
-    );
-  }
+  State<_MachineConditionSection> createState() =>
+      _MachineConditionSectionState();
 }
 
-class _AddParameterDialog extends StatefulWidget {
-  const _AddParameterDialog();
+class _MachineConditionSectionState extends State<_MachineConditionSection> {
+  late final TextEditingController _controller;
+  late final FocusNode _focusNode;
 
   @override
-  State<_AddParameterDialog> createState() => _AddParameterDialogState();
-}
-
-class _AddParameterDialogState extends State<_AddParameterDialog> {
-  final _labelController = TextEditingController();
-  final _valueController = TextEditingController();
-  final _unitController = TextEditingController();
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.report.machineCondition);
+    _focusNode = FocusNode()..addListener(_save);
+  }
 
   @override
   void dispose() {
-    _labelController.dispose();
-    _valueController.dispose();
-    _unitController.dispose();
+    _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
+  }
+
+  void _save() {
+    if (_focusNode.hasFocus) return;
+    context.read<MaintenanceReportProvider>().updateReport(
+      widget.report.copyWith(machineCondition: _controller.text),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Thêm thông số'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: _labelController,
-            autofocus: true,
-            decoration: const InputDecoration(labelText: 'Thông số'),
+    return _SectionCard(
+      title: 'TÌNH TRẠNG MÁY SAU BẢO TRÌ',
+      children: [
+        TextField(
+          controller: _controller,
+          focusNode: _focusNode,
+          readOnly: widget.locked,
+          maxLines: 3,
+          decoration: const InputDecoration(
+            hintText: 'VD: Máy chạy êm, áp suất ổn định, không rò rỉ...',
           ),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _valueController,
-                  decoration: const InputDecoration(labelText: 'Giá trị'),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: _unitController,
-                  decoration: const InputDecoration(labelText: 'Đơn vị'),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: suggestedMaintenanceParameterLabels
-                .map(
-                  (label) => ActionChip(
-                    label: Text(label, style: const TextStyle(fontSize: 12)),
-                    onPressed: () => _labelController.text = label,
-                  ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Hủy'),
-        ),
-        FilledButton(
-          onPressed: () {
-            if (_labelController.text.trim().isEmpty) return;
-            Navigator.pop(context, {
-              'label': _labelController.text,
-              'value': _valueController.text,
-              'unit': _unitController.text,
-            });
-          },
-          child: const Text('Thêm'),
         ),
       ],
     );

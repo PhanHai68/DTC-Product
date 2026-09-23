@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:intl/intl.dart';
+
 import '../data/maintenance_report_database.dart';
 import '../models/maintenance_activity.dart';
 import '../models/maintenance_checklist_task.dart';
 import '../models/maintenance_item.dart';
-import '../models/maintenance_parameter.dart';
 import '../models/maintenance_part.dart';
 import '../models/maintenance_photo.dart';
 import '../models/maintenance_report.dart';
@@ -13,8 +14,8 @@ import '../services/maintenance_file_storage.dart'
     if (dart.library.js_interop) '../services/maintenance_file_storage_web.dart';
 
 /// Truy cập dữ liệu cho "Báo cáo bảo trì" — gộp CRUD của report + toàn bộ
-/// bảng con (item/photo/checklist/part/parameter/activity) và các quy tắc
-/// nghiệp vụ đơn giản (sinh Session ID, sinh Photo ID, xác minh SHA-256).
+/// bảng con (item/photo/checklist/part/activity) và các quy tắc nghiệp vụ
+/// đơn giản (sinh Mã phiên bảo trì, sinh Photo ID, xác minh SHA-256).
 class MaintenanceReportRepository {
   MaintenanceReportRepository({MaintenanceReportDatabase? database})
     : _db = database ?? MaintenanceReportDatabase.instance;
@@ -122,11 +123,6 @@ class MaintenanceReportRepository {
       whereArgs: [id],
     );
     await db.delete(
-      'maintenance_parameters',
-      where: 'reportId = ?',
-      whereArgs: [id],
-    );
-    await db.delete(
       'maintenance_activity_log',
       where: 'reportId = ?',
       whereArgs: [id],
@@ -135,21 +131,18 @@ class MaintenanceReportRepository {
     await deleteMaintenanceReportFiles(id);
   }
 
-  /// Bấm "Start Maintenance" — sinh Session ID (MNT-yyyyMMdd-####), ghi
-  /// startTime = hiện tại. Bộ đếm dùng bảng riêng, chỉ tăng, không bao giờ
-  /// lặp lại dù report cũ đã bị xoá.
+  /// Bấm "Start Maintenance" — sinh Mã phiên bảo trì
+  /// (`TTM-{viết tắt tên kỹ sư}-{thời gian tạo đến phút}`), ghi startTime =
+  /// hiện tại.
   Future<MaintenanceReport> startMaintenance(String reportId) async {
     final report = await getReport(reportId);
     if (report == null) throw StateError('Không tìm thấy report.');
     if (report.hasStarted) return report;
 
-    final sequence = await _nextSessionSequence();
     final now = DateTime.now();
-    final datePart =
-        '${now.year.toString().padLeft(4, '0')}'
-        '${now.month.toString().padLeft(2, '0')}'
-        '${now.day.toString().padLeft(2, '0')}';
-    final sessionId = 'MNT-$datePart-${sequence.toString().padLeft(4, '0')}';
+    final initials = _sessionInitials(report.engineerNames);
+    final timePart = DateFormat('yyyyMMddHHmm').format(now);
+    final sessionId = await _uniqueSessionId('TTM-$initials-$timePart');
 
     final updated = report.copyWith(sessionId: sessionId, startTime: now);
     await updateReport(updated);
@@ -157,31 +150,55 @@ class MaintenanceReportRepository {
     return updated;
   }
 
-  Future<int> _nextSessionSequence() async {
+  /// Cùng viết tắt kỹ sư + cùng phút có thể trùng (VD 2 report không ghi kỹ
+  /// sư được Start Maintenance trong cùng 1 phút) — thêm hậu tố "-2", "-3"...
+  /// chỉ khi thật sự trùng, giữ nguyên định dạng gốc ở trường hợp bình thường.
+  Future<String> _uniqueSessionId(String base) async {
     final db = await _db.database;
-    return db.transaction((txn) async {
-      final rows = await txn.query(
-        'maintenance_counters',
-        where: 'name = ?',
-        whereArgs: ['session_seq'],
+    var candidate = base;
+    var suffix = 2;
+    while (true) {
+      final rows = await db.query(
+        'maintenance_reports',
+        where: 'sessionId = ?',
+        whereArgs: [candidate],
+        limit: 1,
       );
-      final current = rows.isEmpty ? 0 : rows.first['value']! as int;
-      final next = current + 1;
-      if (rows.isEmpty) {
-        await txn.insert('maintenance_counters', {
-          'name': 'session_seq',
-          'value': next,
-        });
-      } else {
-        await txn.update(
-          'maintenance_counters',
-          {'value': next},
-          where: 'name = ?',
-          whereArgs: ['session_seq'],
-        );
+      if (rows.isEmpty) return candidate;
+      candidate = '$base-$suffix';
+      suffix++;
+    }
+  }
+
+  /// Viết tắt chữ cái đầu mỗi từ trong tên (các) kỹ sư, bỏ dấu để đảm bảo an
+  /// toàn khi hiển thị trong watermark ảnh (font bitmap chỉ hỗ trợ ASCII).
+  /// VD: ["Nguyễn Văn An"] → "NVA"; ["Kevin", "An"] → "KA".
+  static String _sessionInitials(List<String> engineerNames) {
+    final buffer = StringBuffer();
+    for (final name in engineerNames) {
+      for (final word in name.trim().split(RegExp(r'\s+'))) {
+        if (word.isEmpty) continue;
+        buffer.write(_stripDiacritics(word[0]).toUpperCase());
       }
-      return next;
-    });
+    }
+    return buffer.isEmpty ? 'XX' : buffer.toString();
+  }
+
+  static const _accented =
+      'àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ'
+      'ÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ';
+  static const _plain =
+      'aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd'
+      'AAAAAAAAAAAAAAAAAEEEEEEEEEEEIIIIIOOOOOOOOOOOOOOOOOUUUUUUUUUUUYYYYYD';
+
+  static String _stripDiacritics(String input) {
+    final buffer = StringBuffer();
+    for (final rune in input.runes) {
+      final char = String.fromCharCode(rune);
+      final index = _accented.indexOf(char);
+      buffer.write(index >= 0 ? _plain[index] : char);
+    }
+    return buffer.toString();
   }
 
   /// Bấm "Complete Maintenance" — khoá report (không cho đổi ảnh Original
@@ -432,56 +449,6 @@ class MaintenanceReportRepository {
   Future<void> deletePart(String partId) async {
     final db = await _db.database;
     await db.delete('maintenance_parts', where: 'id = ?', whereArgs: [partId]);
-  }
-
-  // ---------------------------------------------------------------------
-  // Machine Condition Parameters
-  // ---------------------------------------------------------------------
-
-  Future<List<MaintenanceParameter>> getParameters(String reportId) async {
-    final db = await _db.database;
-    final rows = await db.query(
-      'maintenance_parameters',
-      where: 'reportId = ?',
-      whereArgs: [reportId],
-      orderBy: 'orderIndex ASC',
-    );
-    return rows
-        .map((row) => MaintenanceParameter.fromJson(_map(row)))
-        .toList();
-  }
-
-  Future<MaintenanceParameter> addParameter({
-    required String reportId,
-    required String label,
-    String value = '',
-    String unit = '',
-  }) async {
-    final db = await _db.database;
-    final existing = await db.query(
-      'maintenance_parameters',
-      where: 'reportId = ?',
-      whereArgs: [reportId],
-    );
-    final parameter = MaintenanceParameter(
-      id: _id('param'),
-      reportId: reportId,
-      label: label,
-      value: value,
-      unit: unit,
-      orderIndex: existing.length,
-    );
-    await db.insert('maintenance_parameters', parameter.toJson());
-    return parameter;
-  }
-
-  Future<void> deleteParameter(String parameterId) async {
-    final db = await _db.database;
-    await db.delete(
-      'maintenance_parameters',
-      where: 'id = ?',
-      whereArgs: [parameterId],
-    );
   }
 
   // ---------------------------------------------------------------------

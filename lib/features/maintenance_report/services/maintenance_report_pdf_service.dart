@@ -6,7 +6,6 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 import '../models/maintenance_checklist_task.dart';
 import '../models/maintenance_item.dart';
-import '../models/maintenance_parameter.dart';
 import '../models/maintenance_part.dart';
 import '../models/maintenance_photo.dart';
 import '../models/maintenance_report.dart';
@@ -32,7 +31,6 @@ abstract final class MaintenanceReportPdfService {
     required List<MaintenancePhoto> photos,
     required List<MaintenanceChecklistTask> checklist,
     required List<MaintenancePart> parts,
-    required List<MaintenanceParameter> parameters,
     required Map<String, Uint8List> photoBytes,
   }) async {
     final fonts = await _MtPdfFonts.load();
@@ -73,9 +71,6 @@ abstract final class MaintenanceReportPdfService {
         photoBytes,
         fonts,
       );
-    }
-    if (parameters.isNotEmpty) {
-      _drawParametersSection(document, parameters, fonts);
     }
     _drawFinalResultPage(document.pages.add(), report, photos, stamp, fonts);
 
@@ -142,7 +137,7 @@ abstract final class MaintenanceReportPdfService {
         'Giờ kết thúc',
         report.endTime == null ? '—' : timeFormat.format(report.endTime!),
       ),
-      ('Mã phiên', report.sessionId ?? '—'),
+      ('Mã phiên bảo trì', report.sessionId ?? '—'),
       ('Trạng thái', report.status.label),
     ]);
   }
@@ -246,50 +241,6 @@ abstract final class MaintenanceReportPdfService {
   }
 
   // ---------------------------------------------------------------------
-  // Final Machine Condition — bảng tự tràn trang
-  // ---------------------------------------------------------------------
-
-  static void _drawParametersSection(
-    PdfDocument document,
-    List<MaintenanceParameter> parameters,
-    _MtPdfFonts fonts,
-  ) {
-    final page = document.pages.add();
-    final size = page.getClientSize();
-    const margin = 28.0;
-    _sectionTitle(
-      page.graphics,
-      fonts,
-      'TÌNH TRẠNG MÁY SAU BẢO TRÌ',
-      40,
-      margin,
-      size.width - margin * 2,
-    );
-
-    final grid = PdfGrid();
-    grid.columns.add(count: 3);
-    grid.columns[0].width = (size.width - margin * 2) * 0.45;
-    grid.columns[1].width = (size.width - margin * 2) * 0.35;
-    grid.columns[2].width = (size.width - margin * 2) * 0.20;
-    grid.style = PdfGridStyle(
-      font: fonts.regular(9.5),
-      textBrush: PdfSolidBrush(_navy),
-      cellPadding: PdfPaddings(left: 8, right: 8, top: 6, bottom: 6),
-    );
-    for (final parameter in parameters) {
-      final row = grid.rows.add();
-      row.cells[0].value = parameter.label;
-      row.cells[1].value = parameter.value;
-      row.cells[2].value = parameter.unit;
-    }
-    grid.draw(
-      page: page,
-      bounds: ui.Rect.fromLTWH(margin, 68, size.width - margin * 2, size.height - 110),
-      format: PdfLayoutFormat(layoutType: PdfLayoutType.paginate),
-    );
-  }
-
-  // ---------------------------------------------------------------------
   // 1 trang / Maintenance Item — Before | After
   // ---------------------------------------------------------------------
 
@@ -325,7 +276,24 @@ abstract final class MaintenanceReportPdfService {
       color: _muted,
     );
 
+    // Ảnh chụp thực tế là phần quan trọng nhất để khách hàng thấy chi tiết —
+    // tính chiều cao khối Ghi nhận/Đã xử lý/Kết quả TRƯỚC (dựa theo độ dài
+    // nội dung thật), rồi nhường toàn bộ khoảng trống còn lại cho ảnh thay vì
+    // dùng 1 chiều cao cố định nhỏ — ảnh sẽ lớn hơn hẳn khi nội dung ngắn.
+    const cardTop = 76.0;
     const gap = 16.0;
+    const safeBottom = 800.0;
+    final textBlockHeight =
+        _estimateParagraphHeight(item.beforeFinding) +
+        8 +
+        _estimateParagraphHeight(item.actionTaken) +
+        8 +
+        _estimateParagraphHeight(item.afterResult);
+    final cardHeight = (safeBottom - cardTop - gap - textBlockHeight).clamp(
+      240.0,
+      480.0,
+    );
+
     final cardWidth = (contentWidth - gap) / 2;
     _drawBeforeAfterCard(
       graphics,
@@ -333,7 +301,7 @@ abstract final class MaintenanceReportPdfService {
       'TRƯỚC',
       before,
       photoBytes,
-      ui.Rect.fromLTWH(margin, 76, cardWidth, 230),
+      ui.Rect.fromLTWH(margin, cardTop, cardWidth, cardHeight),
     );
     _drawBeforeAfterCard(
       graphics,
@@ -341,10 +309,10 @@ abstract final class MaintenanceReportPdfService {
       'SAU',
       after,
       photoBytes,
-      ui.Rect.fromLTWH(margin + cardWidth + gap, 76, cardWidth, 230),
+      ui.Rect.fromLTWH(margin + cardWidth + gap, cardTop, cardWidth, cardHeight),
     );
 
-    var y = 322.0;
+    var y = cardTop + cardHeight + gap;
     y = _labelledParagraph(
       graphics,
       fonts,
@@ -372,6 +340,13 @@ abstract final class MaintenanceReportPdfService {
       y + 8,
       contentWidth,
     );
+  }
+
+  /// Ước lượng chiều cao (label + nội dung) mà [_labelledParagraph] sẽ chiếm,
+  /// dùng để tính trước khoảng trống dành cho ảnh trên trang Before/After.
+  static double _estimateParagraphHeight(String value) {
+    final lineCount = (value.trim().length / 95).ceil().clamp(1, 6);
+    return 15 + 16.0 * lineCount;
   }
 
   static void _drawBeforeAfterCard(
@@ -475,10 +450,19 @@ abstract final class MaintenanceReportPdfService {
     y = _labelledParagraph(
       graphics,
       fonts,
+      'Tình trạng máy sau bảo trì',
+      report.machineCondition,
+      margin,
+      y,
+      contentWidth,
+    );
+    y = _labelledParagraph(
+      graphics,
+      fonts,
       'Nhận xét',
       report.finalComment,
       margin,
-      y,
+      y + 8,
       contentWidth,
     );
     y = _labelledParagraph(
@@ -509,10 +493,8 @@ abstract final class MaintenanceReportPdfService {
 
     y += 16;
     y = _sectionTitle(graphics, fonts, 'XÁC MINH HÌNH ẢNH', y, margin, contentWidth);
-    final verifiedCount = photos.where((p) => p.verified).length;
     final lines = [
       '${photos.length} ảnh được chụp trực tiếp bằng DTC Product.',
-      '$verifiedCount / ${photos.length} ảnh gốc đã được xác minh toàn vẹn.',
       if (report.sessionId != null) 'Phiên bảo trì: ${report.sessionId}',
       if (report.startTime != null)
         'Bắt đầu: ${DateFormat('dd/MM/yyyy HH:mm').format(report.startTime!)}',
@@ -596,7 +578,9 @@ abstract final class MaintenanceReportPdfService {
     return y + 24;
   }
 
-  /// Vẽ danh sách (label, value) 2 cột, tự xuống dòng, trả về y kế tiếp.
+  /// Vẽ danh sách (label, value) 2 cột — nhãn và giá trị nằm CÙNG 1 hàng
+  /// (không tách 2 dòng), giá trị dùng cùng font thường (không in đậm) để
+  /// đồng nhất với các đoạn văn bản khác trong báo cáo.
   static double _keyValueGrid(
     PdfGraphics graphics,
     _MtPdfFonts fonts,
@@ -605,8 +589,9 @@ abstract final class MaintenanceReportPdfService {
     double width,
     List<(String, String)> pairs,
   ) {
-    const rowHeight = 20.0;
+    const rowHeight = 18.0;
     const columnWidth = 0.5;
+    const labelWidth = 96.0;
     for (var i = 0; i < pairs.length; i++) {
       final column = i % 2;
       final row = i ~/ 2;
@@ -616,20 +601,25 @@ abstract final class MaintenanceReportPdfService {
       _text(
         graphics,
         label,
-        fonts.regular(8),
-        ui.Rect.fromLTWH(columnX, rowY, width * columnWidth - 10, 12),
+        fonts.regular(8.5),
+        ui.Rect.fromLTWH(columnX, rowY, labelWidth, 16),
         color: _muted,
       );
       _text(
         graphics,
         value.trim().isEmpty ? '—' : value,
-        fonts.bold(9.5),
-        ui.Rect.fromLTWH(columnX, rowY + 11, width * columnWidth - 10, 14),
+        fonts.regular(9.5),
+        ui.Rect.fromLTWH(
+          columnX + labelWidth,
+          rowY,
+          width * columnWidth - labelWidth - 10,
+          16,
+        ),
         color: _navy,
       );
     }
     final rows = (pairs.length / 2).ceil();
-    return y + rows * rowHeight + 4;
+    return y + rows * rowHeight + 6;
   }
 
   static double _labelledParagraph(
@@ -675,7 +665,7 @@ abstract final class MaintenanceReportPdfService {
     );
     _text(
       graphics,
-      'DTCGroup · Our Solution, Your Success',
+      'CSKH: 0832 66 67 68',
       fonts.regular(7.5),
       ui.Rect.fromLTWH(28, size.height - 24, size.width - 80, 11),
       color: _muted,
