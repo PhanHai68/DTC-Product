@@ -245,17 +245,6 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         'exposure': 0.25,
       };
     }
-    if (model == 'h7') {
-      return {
-        'modelName': 'H7',
-        'modelPath': 'assets/models/h7.glb',
-        'posterPath': 'assets/images/color_sorter/Hinh_anh H7.jpg',
-        'dimensions': '${specs['dimensions_display_mm']} mm',
-        'configuration': '${specs['chutes_qty']} máng',
-        'technology': 'AI · PLOV',
-        'exposure': 0.25,
-      };
-    }
     return null;
   }
 
