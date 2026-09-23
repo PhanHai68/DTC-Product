@@ -21,7 +21,7 @@ void main() {
     expect(specs['dimensions_display_mm'], '3289 x 1727 x 2177');
   });
 
-  testWidgets('màn hình H7 hiển thị ảnh, thông số và CHƯA có nút mô hình 3D', (
+  testWidgets('màn hình H7 hiển thị ảnh, thông số và nút mô hình 3D', (
     tester,
   ) async {
     await _pumpAtPhoneSize(tester, const AgroColorSorterScreen());
@@ -29,9 +29,7 @@ void main() {
     expect(find.text('H7'), findsWidgets);
     expect(find.text('14'), findsWidgets);
     expect(find.text('448'), findsWidgets);
-    // Chức năng xem 3D đã tạm gỡ (hình ảnh mô hình chưa đạt yêu cầu) —
-    // sẽ bổ sung lại sau khi có bản 3D đúng.
-    expect(find.text('Xem Mô Hình 3D 360°'), findsNothing);
+    expect(find.text('Xem Mô Hình 3D 360°'), findsOneWidget);
     expect(
       find.byWidgetPredicate(
         (widget) =>
