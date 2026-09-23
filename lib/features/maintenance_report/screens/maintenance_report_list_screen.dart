@@ -31,7 +31,7 @@ class _MaintenanceReportListScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Xóa báo cáo bảo trì?'),
+        title: const Text('Xóa báo cáo tình trạng máy?'),
         content: Text(
           'Toàn bộ ảnh, dữ liệu và PDF của "${report.customerName.isEmpty ? report.machineModel : report.customerName}" '
           'sẽ bị xóa vĩnh viễn, không thể hoàn tác.',
@@ -76,7 +76,7 @@ class _MaintenanceReportListScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Báo cáo bảo trì')),
+      appBar: AppBar(title: const Text('Báo cáo tình trạng máy')),
       body: Consumer<MaintenanceReportProvider>(
         builder: (context, provider, _) {
           if (provider.isLoadingList && provider.reports.isEmpty) {
@@ -97,7 +97,7 @@ class _MaintenanceReportListScreenState
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Chưa có báo cáo bảo trì nào.\nBấm "Báo cáo mới" để bắt đầu.',
+                      'Chưa có báo cáo tình trạng máy nào.\nBấm "Báo cáo mới" để bắt đầu.',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: palette.muted, fontSize: 15),
                     ),

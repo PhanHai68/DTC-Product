@@ -42,7 +42,7 @@ class ExtensionsScreen extends StatelessWidget {
         ),
         TechnologyMenuEntry(
           id: 'extension_maintenance_report',
-          title: 'Báo Cáo Bảo Trì',
+          title: 'Báo Cáo Tình Trạng Máy',
           icon: Icons.build_rounded,
           featured: true,
           onTap: () => context.push('/maintenance_report'),

@@ -149,7 +149,7 @@ class _MaintenanceReportFormScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _isEditing ? 'Sửa thông tin báo cáo' : 'Báo cáo bảo trì mới',
+          _isEditing ? 'Sửa thông tin báo cáo' : 'Báo cáo tình trạng máy mới',
         ),
       ),
       body: ListView(

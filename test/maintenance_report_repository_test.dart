@@ -82,8 +82,8 @@ void main() {
 
     final started = await repository.startMaintenance(report.id);
 
-    // Định dạng TTM-<viết tắt tên kỹ sư>-<thời gian tạo đến phút>.
-    expect(started.sessionId, matches(RegExp(r'^TTM-K-\d{12}$')));
+    // Định dạng TTM-<viết tắt tên kỹ sư>-<ngày tạo>.
+    expect(started.sessionId, matches(RegExp(r'^TTM-K-\d{8}$')));
     expect(started.startTime, isNotNull);
 
     final activities = await repository.getActivities(report.id);

@@ -132,8 +132,7 @@ class MaintenanceReportRepository {
   }
 
   /// Bấm "Start Maintenance" — sinh Mã phiên bảo trì
-  /// (`TTM-{viết tắt tên kỹ sư}-{thời gian tạo đến phút}`), ghi startTime =
-  /// hiện tại.
+  /// (`TTM-{viết tắt tên kỹ sư}-{ngày tạo}`), ghi startTime = hiện tại.
   Future<MaintenanceReport> startMaintenance(String reportId) async {
     final report = await getReport(reportId);
     if (report == null) throw StateError('Không tìm thấy report.');
@@ -141,8 +140,8 @@ class MaintenanceReportRepository {
 
     final now = DateTime.now();
     final initials = _sessionInitials(report.engineerNames);
-    final timePart = DateFormat('yyyyMMddHHmm').format(now);
-    final sessionId = await _uniqueSessionId('TTM-$initials-$timePart');
+    final datePart = DateFormat('yyyyMMdd').format(now);
+    final sessionId = await _uniqueSessionId('TTM-$initials-$datePart');
 
     final updated = report.copyWith(sessionId: sessionId, startTime: now);
     await updateReport(updated);
@@ -150,9 +149,10 @@ class MaintenanceReportRepository {
     return updated;
   }
 
-  /// Cùng viết tắt kỹ sư + cùng phút có thể trùng (VD 2 report không ghi kỹ
-  /// sư được Start Maintenance trong cùng 1 phút) — thêm hậu tố "-2", "-3"...
-  /// chỉ khi thật sự trùng, giữ nguyên định dạng gốc ở trường hợp bình thường.
+  /// Cùng viết tắt kỹ sư + cùng ngày có thể trùng (VD 2 report do cùng kỹ sư
+  /// Start Maintenance trong ngày, hoặc nhiều report không ghi kỹ sư) — thêm
+  /// hậu tố "-2", "-3"... chỉ khi thật sự trùng, giữ nguyên định dạng gốc ở
+  /// trường hợp bình thường.
   Future<String> _uniqueSessionId(String base) async {
     final db = await _db.database;
     var candidate = base;

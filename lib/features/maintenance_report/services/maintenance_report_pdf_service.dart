@@ -46,14 +46,11 @@ abstract final class MaintenanceReportPdfService {
       ..size = PdfPageSize.a4
       ..margins.all = 0;
 
-    _drawOverviewPage(document.pages.add(), report, logo, fonts);
+    _drawOverviewPage(document.pages.add(), report, parts, logo, fonts);
 
     final completedTasks = checklist.where((task) => task.isChecked).toList();
     if (completedTasks.isNotEmpty) {
       _drawChecklistSection(document, completedTasks, fonts);
-    }
-    if (parts.isNotEmpty) {
-      _drawPartsSection(document, parts, fonts);
     }
     for (final item in items) {
       final itemPhotos = photos.where((p) => p.itemId == item.id).toList();
@@ -63,16 +60,9 @@ abstract final class MaintenanceReportPdfService {
       final after = itemPhotos
           .where((p) => p.kind == MaintenancePhotoKind.after)
           .toList();
-      _drawItemPage(
-        document.pages.add(),
-        item,
-        before.isEmpty ? null : before.first,
-        after.isEmpty ? null : after.first,
-        photoBytes,
-        fonts,
-      );
+      _drawItemPages(document, item, before, after, photoBytes, fonts);
     }
-    _drawFinalResultPage(document.pages.add(), report, photos, stamp, fonts);
+    _drawFinalResultPage(document.pages.add(), report, stamp, fonts);
 
     for (var i = 0; i < document.pages.count; i++) {
       final current = document.pages[i];
@@ -97,6 +87,7 @@ abstract final class MaintenanceReportPdfService {
   static void _drawOverviewPage(
     PdfPage page,
     MaintenanceReport report,
+    List<MaintenancePart> parts,
     Uint8List logo,
     _MtPdfFonts fonts,
   ) {
@@ -105,7 +96,7 @@ abstract final class MaintenanceReportPdfService {
     const margin = 28.0;
     final contentWidth = size.width - margin * 2;
 
-    _header(graphics, size, logo, fonts, 'BÁO CÁO BẢO TRÌ');
+    _header(graphics, size, logo, fonts, 'BÁO CÁO TÌNH TRẠNG MÁY');
 
     var y = 82.0;
     y = _sectionTitle(graphics, fonts, 'THÔNG TIN KHÁCH HÀNG', y, margin, contentWidth);
@@ -140,6 +131,64 @@ abstract final class MaintenanceReportPdfService {
       ('Mã phiên bảo trì', report.sessionId ?? '—'),
       ('Trạng thái', report.status.label),
     ]);
+
+    if (parts.isNotEmpty) {
+      y += 10;
+      _drawPartsGrid(page, parts, fonts, y, margin, contentWidth);
+    }
+  }
+
+  /// Bảng "Vật tư thay thế" — đặt ngay dưới Thông tin bảo trì trên trang đầu
+  /// thay vì 1 trang riêng (danh sách thường ngắn, tránh để trống cả trang).
+  /// Vẫn dùng `PdfLayoutType.paginate` nên nếu danh sách dài, bảng tự tràn
+  /// sang các trang tiếp theo bình thường.
+  static void _drawPartsGrid(
+    PdfPage page,
+    List<MaintenancePart> parts,
+    _MtPdfFonts fonts,
+    double y,
+    double margin,
+    double contentWidth,
+  ) {
+    final size = page.getClientSize();
+    y = _sectionTitle(page.graphics, fonts, 'VẬT TƯ THAY THẾ', y, margin, contentWidth);
+
+    final grid = PdfGrid();
+    grid.columns.add(count: 5);
+    grid.columns[0].width = contentWidth * 0.32;
+    grid.columns[1].width = contentWidth * 0.20;
+    grid.columns[2].width = contentWidth * 0.12;
+    grid.columns[3].width = contentWidth * 0.12;
+    grid.columns[4].width = contentWidth * 0.24;
+    grid.style = PdfGridStyle(
+      font: fonts.regular(9),
+      textBrush: PdfSolidBrush(_navy),
+      cellPadding: PdfPaddings(left: 8, right: 8, top: 6, bottom: 6),
+    );
+    final header = grid.headers.add(1)[0];
+    header.style
+      ..backgroundBrush = PdfSolidBrush(_navy)
+      ..textBrush = PdfBrushes.white
+      ..font = fonts.bold(8.5);
+    const headings = ['Tên vật tư', 'Mã vật tư', 'Số lượng', 'Đơn vị', 'Ghi chú'];
+    for (var i = 0; i < headings.length; i++) {
+      header.cells[i].value = headings[i];
+    }
+    for (final part in parts) {
+      final row = grid.rows.add();
+      row.cells[0].value = part.partName;
+      row.cells[1].value = part.partNumber.isEmpty ? '—' : part.partNumber;
+      row.cells[2].value = part.quantity == part.quantity.roundToDouble()
+          ? part.quantity.toInt().toString()
+          : part.quantity.toString();
+      row.cells[3].value = part.unit;
+      row.cells[4].value = part.note;
+    }
+    grid.draw(
+      page: page,
+      bounds: ui.Rect.fromLTWH(margin, y, contentWidth, size.height - y - 40),
+      format: PdfLayoutFormat(layoutType: PdfLayoutType.paginate),
+    );
   }
 
   // ---------------------------------------------------------------------
@@ -182,139 +231,78 @@ abstract final class MaintenanceReportPdfService {
   }
 
   // ---------------------------------------------------------------------
-  // Parts Used — bảng tự tràn trang
+  // Maintenance Items — Before | After (có thể nhiều trang cho 1 hạng mục
+  // nếu chụp nhiều hơn 1 ảnh Before/After)
   // ---------------------------------------------------------------------
 
-  static void _drawPartsSection(
+  /// Vẽ TOÀN BỘ ảnh Before/After của 1 hạng mục (có thể nhiều hơn 1 ảnh mỗi
+  /// bên) — ghép theo cặp cùng thứ tự chụp, mỗi cặp 1 khối cỡ lớn. Không ép
+  /// buộc gói gọn trong 1 trang: hết chỗ thì tự sang trang mới (tiêu đề lặp
+  /// lại kèm "(TIẾP THEO)") thay vì chỉ hiển thị ảnh đầu tiên như trước.
+  static void _drawItemPages(
     PdfDocument document,
-    List<MaintenancePart> parts,
-    _MtPdfFonts fonts,
-  ) {
-    final page = document.pages.add();
-    final size = page.getClientSize();
-    const margin = 28.0;
-    _sectionTitle(
-      page.graphics,
-      fonts,
-      'VẬT TƯ ĐÃ SỬ DỤNG',
-      40,
-      margin,
-      size.width - margin * 2,
-    );
-
-    final grid = PdfGrid();
-    grid.columns.add(count: 5);
-    grid.columns[0].width = (size.width - margin * 2) * 0.32;
-    grid.columns[1].width = (size.width - margin * 2) * 0.20;
-    grid.columns[2].width = (size.width - margin * 2) * 0.12;
-    grid.columns[3].width = (size.width - margin * 2) * 0.12;
-    grid.columns[4].width = (size.width - margin * 2) * 0.24;
-    grid.style = PdfGridStyle(
-      font: fonts.regular(9),
-      textBrush: PdfSolidBrush(_navy),
-      cellPadding: PdfPaddings(left: 8, right: 8, top: 6, bottom: 6),
-    );
-    final header = grid.headers.add(1)[0];
-    header.style
-      ..backgroundBrush = PdfSolidBrush(_navy)
-      ..textBrush = PdfBrushes.white
-      ..font = fonts.bold(8.5);
-    const headings = ['Tên vật tư', 'Mã vật tư', 'Số lượng', 'Đơn vị', 'Ghi chú'];
-    for (var i = 0; i < headings.length; i++) {
-      header.cells[i].value = headings[i];
-    }
-    for (final part in parts) {
-      final row = grid.rows.add();
-      row.cells[0].value = part.partName;
-      row.cells[1].value = part.partNumber.isEmpty ? '—' : part.partNumber;
-      row.cells[2].value = part.quantity == part.quantity.roundToDouble()
-          ? part.quantity.toInt().toString()
-          : part.quantity.toString();
-      row.cells[3].value = part.unit;
-      row.cells[4].value = part.note;
-    }
-    grid.draw(
-      page: page,
-      bounds: ui.Rect.fromLTWH(margin, 68, size.width - margin * 2, size.height - 110),
-      format: PdfLayoutFormat(layoutType: PdfLayoutType.paginate),
-    );
-  }
-
-  // ---------------------------------------------------------------------
-  // 1 trang / Maintenance Item — Before | After
-  // ---------------------------------------------------------------------
-
-  static void _drawItemPage(
-    PdfPage page,
     MaintenanceItem item,
-    MaintenancePhoto? before,
-    MaintenancePhoto? after,
+    List<MaintenancePhoto> beforePhotos,
+    List<MaintenancePhoto> afterPhotos,
     Map<String, Uint8List> photoBytes,
     _MtPdfFonts fonts,
   ) {
-    final graphics = page.graphics;
-    final size = page.getClientSize();
     const margin = 28.0;
-    final contentWidth = size.width - margin * 2;
-
-    graphics.drawRectangle(
-      brush: PdfSolidBrush(_green),
-      bounds: ui.Rect.fromLTWH(0, 0, size.width, 7),
-    );
-    _text(
-      graphics,
-      item.name.toUpperCase(),
-      fonts.bold(15),
-      ui.Rect.fromLTWH(margin, 24, contentWidth, 24),
-      color: _navy,
-    );
-    _text(
-      graphics,
-      'Trạng thái: ${item.status.label}',
-      fonts.regular(9.5),
-      ui.Rect.fromLTWH(margin, 50, contentWidth, 16),
-      color: _muted,
-    );
-
-    // Ảnh chụp thực tế là phần quan trọng nhất để khách hàng thấy chi tiết —
-    // tính chiều cao khối Ghi nhận/Đã xử lý/Kết quả TRƯỚC (dựa theo độ dài
-    // nội dung thật), rồi nhường toàn bộ khoảng trống còn lại cho ảnh thay vì
-    // dùng 1 chiều cao cố định nhỏ — ảnh sẽ lớn hơn hẳn khi nội dung ngắn.
-    const cardTop = 76.0;
     const gap = 16.0;
     const safeBottom = 800.0;
+    const pairHeight = 280.0;
+
+    var page = document.pages.add();
+    var y = _drawItemHeader(page, item, fonts, continued: false);
+
+    final pairCount = beforePhotos.length > afterPhotos.length
+        ? beforePhotos.length
+        : afterPhotos.length;
+    final effectivePairCount = pairCount == 0 ? 1 : pairCount;
+
+    for (var i = 0; i < effectivePairCount; i++) {
+      if (y + pairHeight > safeBottom) {
+        page = document.pages.add();
+        y = _drawItemHeader(page, item, fonts, continued: true);
+      }
+      final size = page.getClientSize();
+      final contentWidth = size.width - margin * 2;
+      final cardWidth = (contentWidth - gap) / 2;
+      final before = i < beforePhotos.length ? beforePhotos[i] : null;
+      final after = i < afterPhotos.length ? afterPhotos[i] : null;
+      _drawBeforeAfterCard(
+        page.graphics,
+        fonts,
+        'TRƯỚC',
+        before,
+        photoBytes,
+        ui.Rect.fromLTWH(margin, y, cardWidth, pairHeight),
+      );
+      _drawBeforeAfterCard(
+        page.graphics,
+        fonts,
+        'SAU',
+        after,
+        photoBytes,
+        ui.Rect.fromLTWH(margin + cardWidth + gap, y, cardWidth, pairHeight),
+      );
+      y += pairHeight + gap;
+    }
+
     final textBlockHeight =
         _estimateParagraphHeight(item.beforeFinding) +
         8 +
         _estimateParagraphHeight(item.actionTaken) +
         8 +
         _estimateParagraphHeight(item.afterResult);
-    final cardHeight = (safeBottom - cardTop - gap - textBlockHeight).clamp(
-      240.0,
-      480.0,
-    );
-
-    final cardWidth = (contentWidth - gap) / 2;
-    _drawBeforeAfterCard(
-      graphics,
-      fonts,
-      'TRƯỚC',
-      before,
-      photoBytes,
-      ui.Rect.fromLTWH(margin, cardTop, cardWidth, cardHeight),
-    );
-    _drawBeforeAfterCard(
-      graphics,
-      fonts,
-      'SAU',
-      after,
-      photoBytes,
-      ui.Rect.fromLTWH(margin + cardWidth + gap, cardTop, cardWidth, cardHeight),
-    );
-
-    var y = cardTop + cardHeight + gap;
+    if (y + textBlockHeight > safeBottom) {
+      page = document.pages.add();
+      y = _drawItemHeader(page, item, fonts, continued: true);
+    }
+    final size = page.getClientSize();
+    final contentWidth = size.width - margin * 2;
     y = _labelledParagraph(
-      graphics,
+      page.graphics,
       fonts,
       'Ghi nhận',
       item.beforeFinding,
@@ -323,7 +311,7 @@ abstract final class MaintenanceReportPdfService {
       contentWidth,
     );
     y = _labelledParagraph(
-      graphics,
+      page.graphics,
       fonts,
       'Đã xử lý',
       item.actionTaken,
@@ -332,7 +320,7 @@ abstract final class MaintenanceReportPdfService {
       contentWidth,
     );
     _labelledParagraph(
-      graphics,
+      page.graphics,
       fonts,
       'Kết quả',
       item.afterResult,
@@ -342,8 +330,45 @@ abstract final class MaintenanceReportPdfService {
     );
   }
 
+  /// Vẽ thanh tiêu đề đầu trang cho 1 hạng mục — [continued] = true khi đây
+  /// là trang nối tiếp của cùng 1 hạng mục (chỉ lặp lại tên, không lặp lại
+  /// dòng Trạng thái). Trả về y kế tiếp để bắt đầu vẽ nội dung.
+  static double _drawItemHeader(
+    PdfPage page,
+    MaintenanceItem item,
+    _MtPdfFonts fonts, {
+    required bool continued,
+  }) {
+    final graphics = page.graphics;
+    final size = page.getClientSize();
+    const margin = 28.0;
+    final contentWidth = size.width - margin * 2;
+    graphics.drawRectangle(
+      brush: PdfSolidBrush(_green),
+      bounds: ui.Rect.fromLTWH(0, 0, size.width, 7),
+    );
+    _text(
+      graphics,
+      continued
+          ? '${item.name.toUpperCase()} (TIẾP THEO)'
+          : item.name.toUpperCase(),
+      fonts.bold(15),
+      ui.Rect.fromLTWH(margin, 24, contentWidth, 24),
+      color: _navy,
+    );
+    if (continued) return 58.0;
+    _text(
+      graphics,
+      'Trạng thái: ${item.status.label}',
+      fonts.regular(9.5),
+      ui.Rect.fromLTWH(margin, 50, contentWidth, 16),
+      color: _muted,
+    );
+    return 76.0;
+  }
+
   /// Ước lượng chiều cao (label + nội dung) mà [_labelledParagraph] sẽ chiếm,
-  /// dùng để tính trước khoảng trống dành cho ảnh trên trang Before/After.
+  /// dùng để quyết định có cần sang trang mới trước khi vẽ hay không.
   static double _estimateParagraphHeight(String value) {
     final lineCount = (value.trim().length / 95).ceil().clamp(1, 6);
     return 15 + 16.0 * lineCount;
@@ -424,7 +449,6 @@ abstract final class MaintenanceReportPdfService {
   static void _drawFinalResultPage(
     PdfPage page,
     MaintenanceReport report,
-    List<MaintenancePhoto> photos,
     Uint8List stamp,
     _MtPdfFonts fonts,
   ) {
@@ -494,12 +518,11 @@ abstract final class MaintenanceReportPdfService {
     y += 16;
     y = _sectionTitle(graphics, fonts, 'XÁC MINH HÌNH ẢNH', y, margin, contentWidth);
     final lines = [
-      '${photos.length} ảnh được chụp trực tiếp bằng DTC Product.',
       if (report.sessionId != null) 'Phiên bảo trì: ${report.sessionId}',
       if (report.startTime != null)
-        'Bắt đầu: ${DateFormat('dd/MM/yyyy HH:mm').format(report.startTime!)}',
+        'Bắt đầu bảo trì: ${DateFormat('dd/MM/yyyy HH:mm').format(report.startTime!)}',
       if (report.endTime != null)
-        'Hoàn tất: ${DateFormat('dd/MM/yyyy HH:mm').format(report.endTime!)}',
+        'Hoàn tất bảo trì: ${DateFormat('dd/MM/yyyy HH:mm').format(report.endTime!)}',
     ];
     for (final line in lines) {
       _text(

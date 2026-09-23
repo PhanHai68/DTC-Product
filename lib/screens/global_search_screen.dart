@@ -80,12 +80,12 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       keywords: 'bảo dưỡng lịch máy khách hàng quản lý bảo trì theo dõi',
     ),
     const _SearchItem(
-      title: 'Báo Cáo Bảo Trì',
+      title: 'Báo Cáo Tình Trạng Máy',
       subtitle: 'Chụp ảnh Before/After, xác minh và xuất PDF bảo trì',
       location: '/maintenance_report',
       icon: Icons.build_rounded,
       keywords:
-          'maintenance report bao cao bao tri anh before after verified camera xac minh',
+          'maintenance report bao cao bao tri tinh trang may anh before after verified camera xac minh',
     ),
     const _SearchItem(
       title: 'Phân tích hoàn vốn',

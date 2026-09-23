@@ -15,7 +15,7 @@ import '../widgets/maintenance_before_after_view.dart';
 
 /// Cỡ chữ tiêu đề hộp thoại dùng chung cho toàn bộ tính năng — nhỏ hơn cỡ mặc
 /// định của Material AlertDialog (thường ~22-24sp) cho gọn gàng hơn.
-const _dialogTitleStyle = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
+const _dialogTitleStyle = TextStyle(fontSize: 19, fontWeight: FontWeight.w700);
 
 /// Màn hình làm việc chính của 1 Maintenance Report: Start Maintenance →
 /// Maintenance Items (Before/After) → Checklist → Parts → Final Machine
@@ -156,7 +156,7 @@ class _MaintenanceReportWorkspaceScreenState
         }
         if (report == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Báo cáo bảo trì')),
+            appBar: AppBar(title: const Text('Báo cáo tình trạng máy')),
             body: Center(
               child: Text(provider.detailError ?? 'Không tìm thấy báo cáo.'),
             ),
@@ -169,7 +169,7 @@ class _MaintenanceReportWorkspaceScreenState
           appBar: AppBar(
             title: Text(
               report.customerName.isEmpty
-                  ? 'Báo cáo bảo trì'
+                  ? 'Báo cáo tình trạng máy'
                   : report.customerName,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -437,7 +437,7 @@ class _ItemsSection extends StatelessWidget {
       children: [
         if (provider.items.isEmpty)
           Text(
-            'Chưa có hạng mục nào. Bấm "+" để thêm (VD: Lọc gió, Lọc dầu...).',
+            'Chưa có hạng mục nào. Bấm "+" để thêm.',
             style: TextStyle(color: DtcPalette.of(context).muted, fontSize: 13),
           ),
         for (final item in provider.items)
@@ -477,10 +477,7 @@ class _AddItemDialogState extends State<_AddItemDialog> {
       content: TextField(
         controller: _controller,
         autofocus: true,
-        decoration: const InputDecoration(
-          labelText: 'Tên hạng mục',
-          hintText: 'VD: Lọc gió',
-        ),
+        decoration: const InputDecoration(labelText: 'Tên hạng mục'),
       ),
       actions: [
         TextButton(
@@ -981,9 +978,7 @@ class _MachineConditionSectionState extends State<_MachineConditionSection> {
           focusNode: _focusNode,
           readOnly: widget.locked,
           maxLines: 3,
-          decoration: const InputDecoration(
-            hintText: 'VD: Máy chạy êm, áp suất ổn định, không rò rỉ...',
-          ),
+          decoration: const InputDecoration(),
         ),
       ],
     );
