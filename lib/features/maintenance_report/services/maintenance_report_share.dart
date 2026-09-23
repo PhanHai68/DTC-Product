@@ -11,16 +11,20 @@ String _safeFilePart(String value) => value
     .replaceAll(RegExp(r'\s+'), '')
     .trim();
 
-/// `MaintenanceReport_<Customer>_<Machine>_<yyyyMMdd>.pdf`
+/// Tên file PDF theo đúng quy cách Mã phiên bảo trì:
+/// `TTM-<viết tắt kỹ sư>-<tên khách hàng>-<yyyyMMdd>.pdf`. Report luôn đã có
+/// sessionId ở thời điểm gọi hàm này (nút "Tạo PDF & Chia sẻ" chỉ hiện sau
+/// khi đã Start Maintenance) — nhánh dự phòng dưới đây chỉ để an toàn.
 String maintenanceReportFileName(MaintenanceReport report) {
+  final sessionId = report.sessionId;
+  if (sessionId != null && sessionId.isNotEmpty) {
+    return '$sessionId.pdf';
+  }
   final date = DateFormat('yyyyMMdd').format(report.maintenanceDate);
   final customer = _safeFilePart(
-    report.customerName.isEmpty ? 'Customer' : report.customerName,
+    report.customerName.isEmpty ? 'KH' : report.customerName,
   );
-  final machine = _safeFilePart(
-    report.machineModel.isEmpty ? 'Machine' : report.machineModel,
-  );
-  return 'MaintenanceReport_${customer}_${machine}_$date.pdf';
+  return 'TTM-$customer-$date.pdf';
 }
 
 /// Mở system share sheet (Zalo/Email/Messenger/Drive/Files/...) cho file PDF

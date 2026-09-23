@@ -28,7 +28,7 @@ void main() {
       machineRunningHours: '5000',
       maintenanceDate: DateTime(2026, 9, 23),
       engineerNames: const ['Kevin'],
-      sessionId: 'TTM-K-20260923',
+      sessionId: 'TTM-K-ABCFactory-20260923',
       startTime: now,
       endTime: now.add(const Duration(hours: 2)),
       machineCondition: 'Máy chạy êm, áp suất ổn định, không rò rỉ.',
@@ -113,6 +113,17 @@ void main() {
 
     expect(bytes.length, greaterThan(5000));
     expect(String.fromCharCodes(bytes.take(4)), '%PDF');
+
+    // "Vật tư thay thế" và "Công việc đã thực hiện" phải cùng nằm trên trang
+    // tổng quan (trang 1) ngay dưới nhau, không còn để trống 1 trang riêng
+    // cho checklist như trước.
+    final document = PdfDocument(inputBytes: bytes);
+    final page1Text = PdfTextExtractor(
+      document,
+    ).extractText(startPageIndex: 0, endPageIndex: 0);
+    expect(page1Text, contains('VẬT TƯ THAY THẾ'));
+    expect(page1Text, contains('CÔNG VIỆC ĐÃ THỰC HIỆN'));
+    document.dispose();
   });
 
   test('PDF đưa vào TẤT CẢ ảnh Before/After của 1 hạng mục, không chỉ ảnh đầu tiên', () async {

@@ -82,8 +82,9 @@ void main() {
 
     final started = await repository.startMaintenance(report.id);
 
-    // Định dạng TTM-<viết tắt tên kỹ sư>-<ngày tạo>.
-    expect(started.sessionId, matches(RegExp(r'^TTM-K-\d{8}$')));
+    // Định dạng TTM-<viết tắt tên kỹ sư>-<tên khách hàng>-<ngày tạo>, cũng
+    // chính là quy cách đặt tên file PDF khi xuất ra.
+    expect(started.sessionId, matches(RegExp(r'^TTM-K-ABC-\d{8}$')));
     expect(started.startTime, isNotNull);
 
     final activities = await repository.getActivities(report.id);
@@ -99,18 +100,20 @@ void main() {
 
   test('Session ID viết tắt đúng nhiều kỹ sư, bỏ dấu tiếng Việt an toàn', () async {
     final report = await createReport(
+      customerName: 'Công ty ABC',
       engineerNames: ['Nguyễn Văn An', 'Kevin'],
     );
     final started = await repository.startMaintenance(report.id);
 
-    // "Nguyễn Văn An" -> NVA, "Kevin" -> K, nối lại thành NVAK.
-    expect(started.sessionId, startsWith('TTM-NVAK-'));
+    // "Nguyễn Văn An" -> NVA, "Kevin" -> K, nối lại thành NVAK; tên khách
+    // hàng bỏ dấu + khoảng trắng -> "CongtyABC".
+    expect(started.sessionId, startsWith('TTM-NVAK-CongtyABC-'));
 
     final noEngineerReport = await createReport(engineerNames: const []);
     final startedNoEngineer = await repository.startMaintenance(
       noEngineerReport.id,
     );
-    expect(startedNoEngineer.sessionId, startsWith('TTM-XX-'));
+    expect(startedNoEngineer.sessionId, startsWith('TTM-XX-A-'));
   });
 
   test('Session ID tăng dần và không lặp lại giữa các report', () async {

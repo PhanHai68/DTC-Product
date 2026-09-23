@@ -132,7 +132,9 @@ class MaintenanceReportRepository {
   }
 
   /// Bấm "Start Maintenance" — sinh Mã phiên bảo trì
-  /// (`TTM-{viết tắt tên kỹ sư}-{ngày tạo}`), ghi startTime = hiện tại.
+  /// (`TTM-{viết tắt tên kỹ sư}-{tên khách hàng}-{ngày tạo}`), cũng chính là
+  /// tên file PDF khi xuất ra (xem `maintenanceReportFileName`), ghi
+  /// startTime = hiện tại.
   Future<MaintenanceReport> startMaintenance(String reportId) async {
     final report = await getReport(reportId);
     if (report == null) throw StateError('Không tìm thấy report.');
@@ -140,8 +142,11 @@ class MaintenanceReportRepository {
 
     final now = DateTime.now();
     final initials = _sessionInitials(report.engineerNames);
+    final customerPart = _sessionCustomerPart(report.customerName);
     final datePart = DateFormat('yyyyMMdd').format(now);
-    final sessionId = await _uniqueSessionId('TTM-$initials-$datePart');
+    final sessionId = await _uniqueSessionId(
+      'TTM-$initials-$customerPart-$datePart',
+    );
 
     final updated = report.copyWith(sessionId: sessionId, startTime: now);
     await updateReport(updated);
@@ -182,6 +187,18 @@ class MaintenanceReportRepository {
       }
     }
     return buffer.isEmpty ? 'XX' : buffer.toString();
+  }
+
+  /// Rút gọn tên khách hàng để ghép vào Mã phiên bảo trì / tên file PDF: bỏ
+  /// dấu, bỏ khoảng trắng và ký tự đặc biệt (an toàn cho tên file trên mọi
+  /// hệ điều hành), giới hạn độ dài để Mã phiên không quá dài với khách hàng
+  /// có tên đầy đủ dạng công ty. VD: "ABC Factory" → "ABCFactory".
+  static String _sessionCustomerPart(String customerName) {
+    final cleaned = _stripDiacritics(
+      customerName,
+    ).replaceAll(RegExp(r'[^A-Za-z0-9]+'), '');
+    if (cleaned.isEmpty) return 'KH';
+    return cleaned.length > 24 ? cleaned.substring(0, 24) : cleaned;
   }
 
   static const _accented =

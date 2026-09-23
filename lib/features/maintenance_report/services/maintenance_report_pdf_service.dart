@@ -46,12 +46,17 @@ abstract final class MaintenanceReportPdfService {
       ..size = PdfPageSize.a4
       ..margins.all = 0;
 
-    _drawOverviewPage(document.pages.add(), report, parts, logo, fonts);
-
     final completedTasks = checklist.where((task) => task.isChecked).toList();
-    if (completedTasks.isNotEmpty) {
-      _drawChecklistSection(document, completedTasks, fonts);
-    }
+    _drawOverviewPage(
+      document,
+      document.pages.add(),
+      report,
+      parts,
+      completedTasks,
+      logo,
+      fonts,
+    );
+
     for (final item in items) {
       final itemPhotos = photos.where((p) => p.itemId == item.id).toList();
       final before = itemPhotos
@@ -85,14 +90,16 @@ abstract final class MaintenanceReportPdfService {
   // ---------------------------------------------------------------------
 
   static void _drawOverviewPage(
+    PdfDocument document,
     PdfPage page,
     MaintenanceReport report,
     List<MaintenancePart> parts,
+    List<MaintenanceChecklistTask> completedTasks,
     Uint8List logo,
     _MtPdfFonts fonts,
   ) {
     final graphics = page.graphics;
-    final size = page.getClientSize();
+    var size = page.getClientSize();
     const margin = 28.0;
     final contentWidth = size.width - margin * 2;
 
@@ -134,7 +141,21 @@ abstract final class MaintenanceReportPdfService {
 
     if (parts.isNotEmpty) {
       y += 10;
-      _drawPartsGrid(page, parts, fonts, y, margin, contentWidth);
+      final result = _drawPartsGrid(page, parts, fonts, y, margin, contentWidth)!;
+      page = result.page;
+      size = page.getClientSize();
+      y = result.bounds.bottom + 14;
+    }
+
+    if (completedTasks.isNotEmpty) {
+      if (y > size.height - 90) {
+        page = document.pages.add();
+        size = page.getClientSize();
+        y = 40;
+      } else {
+        y += 10;
+      }
+      _drawChecklistGrid(page, completedTasks, fonts, y, margin, contentWidth);
     }
   }
 
@@ -142,7 +163,7 @@ abstract final class MaintenanceReportPdfService {
   /// thay vì 1 trang riêng (danh sách thường ngắn, tránh để trống cả trang).
   /// Vẫn dùng `PdfLayoutType.paginate` nên nếu danh sách dài, bảng tự tràn
   /// sang các trang tiếp theo bình thường.
-  static void _drawPartsGrid(
+  static PdfLayoutResult? _drawPartsGrid(
     PdfPage page,
     List<MaintenancePart> parts,
     _MtPdfFonts fonts,
@@ -184,7 +205,7 @@ abstract final class MaintenanceReportPdfService {
       row.cells[3].value = part.unit;
       row.cells[4].value = part.note;
     }
-    grid.draw(
+    return grid.draw(
       page: page,
       bounds: ui.Rect.fromLTWH(margin, y, contentWidth, size.height - y - 40),
       format: PdfLayoutFormat(layoutType: PdfLayoutType.paginate),
@@ -195,21 +216,26 @@ abstract final class MaintenanceReportPdfService {
   // Maintenance Work (checklist) — bảng tự tràn trang
   // ---------------------------------------------------------------------
 
-  static void _drawChecklistSection(
-    PdfDocument document,
+  /// Bảng "Công việc đã thực hiện" — đặt ngay dưới "Vật tư thay thế" trên
+  /// trang tổng quan (thay vì 1 trang riêng luôn để trống nhiều) trừ khi
+  /// không còn đủ chỗ, khi đó [_drawOverviewPage] đã tự thêm trang mới và
+  /// truyền [y] = 40 cho hàm này.
+  static void _drawChecklistGrid(
+    PdfPage page,
     List<MaintenanceChecklistTask> tasks,
     _MtPdfFonts fonts,
+    double y,
+    double margin,
+    double contentWidth,
   ) {
-    final page = document.pages.add();
     final size = page.getClientSize();
-    const margin = 28.0;
-    _sectionTitle(
+    y = _sectionTitle(
       page.graphics,
       fonts,
       'CÔNG VIỆC ĐÃ THỰC HIỆN',
-      40,
+      y,
       margin,
-      size.width - margin * 2,
+      contentWidth,
     );
 
     final grid = PdfGrid();
@@ -225,7 +251,7 @@ abstract final class MaintenanceReportPdfService {
     }
     grid.draw(
       page: page,
-      bounds: ui.Rect.fromLTWH(margin, 68, size.width - margin * 2, size.height - 110),
+      bounds: ui.Rect.fromLTWH(margin, y, contentWidth, size.height - y - 40),
       format: PdfLayoutFormat(layoutType: PdfLayoutType.paginate),
     );
   }
