@@ -343,6 +343,8 @@ final GoRouter appRouter = GoRouter(
         final technology = extra?['technology'] ?? 'AI Deep Learning';
         final exposure = extra?['exposure'] ?? 0.85;
         final showHotspots = extra?['showHotspots'] as bool? ?? false;
+        final environmentImage =
+            extra?['environmentImage'] as String? ?? 'neutral';
         return ColorSorter3dScreen(
           modelName: modelName as String,
           modelPath: modelPath as String,
@@ -352,6 +354,7 @@ final GoRouter appRouter = GoRouter(
           technology: technology as String,
           exposure: (exposure as num).toDouble(),
           showHotspots: showHotspots,
+          environmentImage: environmentImage,
         );
       },
     ),

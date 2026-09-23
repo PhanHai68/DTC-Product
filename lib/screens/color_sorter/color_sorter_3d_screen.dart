@@ -14,6 +14,12 @@ class ColorSorter3dScreen extends StatefulWidget {
   final double exposure;
   final bool showHotspots;
 
+  /// Preset ánh sáng môi trường của model-viewer ('neutral' mặc định cho các
+  /// máy đã lên màu chuẩn; 'legacy' cho ánh sáng phẳng, ít đổ bóng gắt hơn —
+  /// dùng cho các model 3D bị lỗi mặt (facet) do giản lược lưới quá mức,
+  /// tránh làm lộ rõ hiệu ứng "giấy bạc nhàu" khi có bóng đổ tương phản cao).
+  final String environmentImage;
+
   const ColorSorter3dScreen({
     super.key,
     this.modelName = 'SC16 Pro',
@@ -24,6 +30,7 @@ class ColorSorter3dScreen extends StatefulWidget {
     this.technology = 'AI Deep Learning',
     this.exposure = 0.85,
     this.showHotspots = false,
+    this.environmentImage = 'neutral',
   });
 
   @override
@@ -285,8 +292,9 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
             touchAction: TouchAction.none,
             interactionPrompt: InteractionPrompt.none,
             interpolationDecay: 80,
-            environmentImage: 'neutral',
+            environmentImage: widget.environmentImage,
             exposure: widget.exposure,
+            shadowIntensity: 0,
             debugLogging: false,
             innerModelViewerHtml: !widget.showHotspots ? '' : '''
               <button class="hotspot" slot="hotspot-1" data-position="-0.202 -1.171 -9.434" data-normal="1.000 0.000 0.000" onclick="if(window.HotspotChannel) window.HotspotChannel.postMessage('Bộ phận 1: Sàng trải liệu');"></button>

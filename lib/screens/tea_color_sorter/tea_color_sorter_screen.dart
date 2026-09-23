@@ -253,7 +253,12 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         'dimensions': '${specs['dimensions_display_mm']} mm',
         'configuration': '${specs['chutes_qty']} máng',
         'technology': 'AI · PLOV',
-        'exposure': 0.25,
+        // Model H7 bị giản lược lưới khá mạnh (ít tam giác) nên dễ lộ mặt
+        // gãy khúc dưới ánh sáng tương phản cao — tăng exposure và dùng
+        // preset 'legacy' (ánh sáng phẳng, ít đổ bóng gắt) để sáng và mịn
+        // hơn thay vì tối đen như bản neutral mặc định.
+        'exposure': 1.4,
+        'environmentImage': 'legacy',
       };
     }
     return null;
