@@ -256,11 +256,12 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         'configuration': '${specs['chutes_qty']} máng',
         'technology': 'AI · PLOV',
         // Model đã được xử lý lại: bỏ texture ảnh chụp gốc (tối, nhiễu),
-        // thay bằng màu xám sáng đồng nhất (giống clay-render tham khảo) +
-        // normal đã làm mượt — dùng preset 'legacy' (ánh sáng phẳng) với
-        // exposure vừa phải là đủ sáng, không cần tăng cao như trước.
-        'exposure': 1.0,
-        'environmentImage': 'legacy',
+        // thay bằng màu xám thép đậm hơn (dễ phân biệt hình khối trên nền
+        // sáng của màn 3D) + normal đã làm mượt. Dùng preset 'neutral' (có
+        // đổ bóng theo hướng sáng) để làm rõ đường nét thay vì ánh sáng
+        // phẳng 'legacy' trước đó khiến máy trông bẹt và quá sáng.
+        'exposure': 0.9,
+        'environmentImage': 'neutral',
       };
     }
     return null;
