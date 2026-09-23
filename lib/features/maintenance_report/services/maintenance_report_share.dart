@@ -18,7 +18,7 @@ String maintenanceReportFileName(MaintenanceReport report) {
     report.customerName.isEmpty ? 'Customer' : report.customerName,
   );
   final machine = _safeFilePart(
-    report.machineName.isEmpty ? 'Machine' : report.machineName,
+    report.machineModel.isEmpty ? 'Machine' : report.machineModel,
   );
   return 'MaintenanceReport_${customer}_${machine}_$date.pdf';
 }
@@ -35,7 +35,7 @@ Future<void> shareMaintenanceReportPdf({
     ShareParams(
       files: [XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName)],
       title: 'Báo cáo bảo trì - ${report.customerName}',
-      text: 'Báo cáo bảo trì - ${report.customerName} - ${report.machineName}',
+      text: 'Báo cáo bảo trì - ${report.customerName} - ${report.machineModel}',
       sharePositionOrigin: origin,
       fileNameOverrides: [fileName],
     ),

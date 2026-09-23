@@ -72,30 +72,20 @@ class MaintenanceReportProvider extends ChangeNotifier {
   Future<MaintenanceReport> createReport({
     required String customerName,
     required String factorySite,
-    required String contactPerson,
-    required String contactPhone,
-    required String machineName,
-    required String machineType,
     required String machineModel,
-    required String machineSerial,
+    required String machineTagName,
     required String machineRunningHours,
-    required String machineLocation,
     required DateTime maintenanceDate,
-    required String engineerName,
+    required List<String> engineerNames,
   }) async {
     final report = await _repository.createReport(
       customerName: customerName,
       factorySite: factorySite,
-      contactPerson: contactPerson,
-      contactPhone: contactPhone,
-      machineName: machineName,
-      machineType: machineType,
       machineModel: machineModel,
-      machineSerial: machineSerial,
+      machineTagName: machineTagName,
       machineRunningHours: machineRunningHours,
-      machineLocation: machineLocation,
       maintenanceDate: maintenanceDate,
-      engineerName: engineerName,
+      engineerNames: engineerNames,
     );
     await loadReports();
     return report;
@@ -237,10 +227,10 @@ class MaintenanceReportProvider extends ChangeNotifier {
     return (verifiedCount, _photos.length);
   }
 
-  Future<void> addCustomTask(String label) async {
+  Future<void> addChecklistTask(String label) async {
     final reportId = _currentReport?.id;
     if (reportId == null || label.trim().isEmpty) return;
-    await _repository.addCustomTask(reportId, label.trim());
+    await _repository.addChecklistTask(reportId, label.trim());
     await _refreshDetail();
   }
 

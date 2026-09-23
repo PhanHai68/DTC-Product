@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Trạng thái của 1 báo cáo bảo trì — "Completed" khoá không cho thay đổi
 /// ảnh Original đã chụp (xem MaintenanceReportRepository).
 enum MaintenanceReportStatus {
@@ -43,23 +45,19 @@ class MaintenanceReport {
   final String id;
   final MaintenanceReportStatus status;
 
-  // Customer Information
+  // Customer Information — chỉ giữ 2 trường thật sự cần khi tạo báo cáo mới.
   final String customerName;
   final String factorySite;
-  final String contactPerson;
-  final String contactPhone;
 
-  // Machine Information
-  final String machineName;
-  final String machineType;
+  // Machine Information — Model + Tagname (định danh máy) + số giờ vận hành.
   final String machineModel;
-  final String machineSerial;
+  final String machineTagName;
   final String machineRunningHours;
-  final String machineLocation;
 
   // Maintenance Information
   final DateTime maintenanceDate;
-  final String engineerName;
+  // Nhiều kỹ sư có thể cùng thực hiện 1 lần bảo trì.
+  final List<String> engineerNames;
   final String? sessionId;
   final DateTime? startTime;
   final DateTime? endTime;
@@ -79,16 +77,11 @@ class MaintenanceReport {
     this.status = MaintenanceReportStatus.draft,
     this.customerName = '',
     this.factorySite = '',
-    this.contactPerson = '',
-    this.contactPhone = '',
-    this.machineName = '',
-    this.machineType = '',
     this.machineModel = '',
-    this.machineSerial = '',
+    this.machineTagName = '',
     this.machineRunningHours = '',
-    this.machineLocation = '',
     required this.maintenanceDate,
-    this.engineerName = '',
+    this.engineerNames = const [],
     this.sessionId,
     this.startTime,
     this.endTime,
@@ -104,6 +97,7 @@ class MaintenanceReport {
   bool get isDraft => status == MaintenanceReportStatus.draft;
   bool get isCompleted => status == MaintenanceReportStatus.completed;
   bool get hasStarted => sessionId != null;
+  String get engineerNamesDisplay => engineerNames.join(', ');
 
   factory MaintenanceReport.fromJson(Map<String, dynamic> json) =>
       MaintenanceReport(
@@ -111,16 +105,11 @@ class MaintenanceReport {
         status: MaintenanceReportStatus.parse(json['status'] as String?),
         customerName: json['customerName'] as String? ?? '',
         factorySite: json['factorySite'] as String? ?? '',
-        contactPerson: json['contactPerson'] as String? ?? '',
-        contactPhone: json['contactPhone'] as String? ?? '',
-        machineName: json['machineName'] as String? ?? '',
-        machineType: json['machineType'] as String? ?? '',
         machineModel: json['machineModel'] as String? ?? '',
-        machineSerial: json['machineSerial'] as String? ?? '',
+        machineTagName: json['machineTagName'] as String? ?? '',
         machineRunningHours: json['machineRunningHours'] as String? ?? '',
-        machineLocation: json['machineLocation'] as String? ?? '',
         maintenanceDate: DateTime.parse(json['maintenanceDate'] as String),
-        engineerName: json['engineerName'] as String? ?? '',
+        engineerNames: _decodeEngineerNames(json['engineerNames']),
         sessionId: json['sessionId'] as String?,
         startTime: json['startTime'] == null
             ? null
@@ -142,21 +131,27 @@ class MaintenanceReport {
         updatedAt: DateTime.parse(json['updatedAt'] as String),
       );
 
+  static List<String> _decodeEngineerNames(Object? value) {
+    if (value is String && value.isNotEmpty) {
+      try {
+        return (jsonDecode(value) as List<dynamic>).cast<String>();
+      } catch (_) {
+        return [value];
+      }
+    }
+    return const [];
+  }
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'status': status.name,
     'customerName': customerName,
     'factorySite': factorySite,
-    'contactPerson': contactPerson,
-    'contactPhone': contactPhone,
-    'machineName': machineName,
-    'machineType': machineType,
     'machineModel': machineModel,
-    'machineSerial': machineSerial,
+    'machineTagName': machineTagName,
     'machineRunningHours': machineRunningHours,
-    'machineLocation': machineLocation,
     'maintenanceDate': maintenanceDate.toIso8601String(),
-    'engineerName': engineerName,
+    'engineerNames': jsonEncode(engineerNames),
     'sessionId': sessionId,
     'startTime': startTime?.toIso8601String(),
     'endTime': endTime?.toIso8601String(),
@@ -173,16 +168,11 @@ class MaintenanceReport {
     MaintenanceReportStatus? status,
     String? customerName,
     String? factorySite,
-    String? contactPerson,
-    String? contactPhone,
-    String? machineName,
-    String? machineType,
     String? machineModel,
-    String? machineSerial,
+    String? machineTagName,
     String? machineRunningHours,
-    String? machineLocation,
     DateTime? maintenanceDate,
-    String? engineerName,
+    List<String>? engineerNames,
     String? sessionId,
     DateTime? startTime,
     DateTime? endTime,
@@ -199,16 +189,11 @@ class MaintenanceReport {
     status: status ?? this.status,
     customerName: customerName ?? this.customerName,
     factorySite: factorySite ?? this.factorySite,
-    contactPerson: contactPerson ?? this.contactPerson,
-    contactPhone: contactPhone ?? this.contactPhone,
-    machineName: machineName ?? this.machineName,
-    machineType: machineType ?? this.machineType,
     machineModel: machineModel ?? this.machineModel,
-    machineSerial: machineSerial ?? this.machineSerial,
+    machineTagName: machineTagName ?? this.machineTagName,
     machineRunningHours: machineRunningHours ?? this.machineRunningHours,
-    machineLocation: machineLocation ?? this.machineLocation,
     maintenanceDate: maintenanceDate ?? this.maintenanceDate,
-    engineerName: engineerName ?? this.engineerName,
+    engineerNames: engineerNames ?? this.engineerNames,
     sessionId: sessionId ?? this.sessionId,
     startTime: startTime ?? this.startTime,
     endTime: endTime ?? this.endTime,

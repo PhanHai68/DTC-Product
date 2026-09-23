@@ -58,43 +58,32 @@ class MaintenanceReportRepository {
     return MaintenanceReport.fromJson(_map(rows.first));
   }
 
-  /// Tạo report mới (status = draft), kèm sẵn checklist mặc định cho máy
-  /// nén khí — người dùng có thể bỏ chọn hoặc xoá bớt sau.
+  /// Tạo report mới (status = draft). Không còn chèn checklist mặc định —
+  /// người dùng tự thêm từng công việc qua "Thêm công việc".
   Future<MaintenanceReport> createReport({
     required String customerName,
     required String factorySite,
-    required String contactPerson,
-    required String contactPhone,
-    required String machineName,
-    required String machineType,
     required String machineModel,
-    required String machineSerial,
+    required String machineTagName,
     required String machineRunningHours,
-    required String machineLocation,
     required DateTime maintenanceDate,
-    required String engineerName,
+    required List<String> engineerNames,
   }) async {
     final now = DateTime.now();
     final report = MaintenanceReport(
       id: _id('report'),
       customerName: customerName,
       factorySite: factorySite,
-      contactPerson: contactPerson,
-      contactPhone: contactPhone,
-      machineName: machineName,
-      machineType: machineType,
       machineModel: machineModel,
-      machineSerial: machineSerial,
+      machineTagName: machineTagName,
       machineRunningHours: machineRunningHours,
-      machineLocation: machineLocation,
       maintenanceDate: maintenanceDate,
-      engineerName: engineerName,
+      engineerNames: engineerNames,
       createdAt: now,
       updatedAt: now,
     );
     final db = await _db.database;
     await db.insert('maintenance_reports', report.toJson());
-    await seedDefaultChecklist(report.id);
     return report;
   }
 
@@ -164,7 +153,7 @@ class MaintenanceReportRepository {
 
     final updated = report.copyWith(sessionId: sessionId, startTime: now);
     await updateReport(updated);
-    await logActivity(reportId, 'Start Maintenance');
+    await logActivity(reportId, 'Bắt đầu bảo trì');
     return updated;
   }
 
@@ -205,7 +194,7 @@ class MaintenanceReportRepository {
       endTime: DateTime.now(),
     );
     await updateReport(updated);
-    await logActivity(reportId, 'Report Completed');
+    await logActivity(reportId, 'Hoàn tất bảo trì');
     return updated;
   }
 
@@ -314,8 +303,8 @@ class MaintenanceReportRepository {
     await db.insert('maintenance_photos', photo.toJson());
     await logActivity(
       photo.reportId,
-      '${photo.kind == MaintenancePhotoKind.before ? "Before" : "After"} '
-      'Photo ${photo.id}',
+      '${photo.kind == MaintenancePhotoKind.before ? "Ảnh Trước" : "Ảnh Sau"} '
+      '${photo.id}',
     );
   }
 
@@ -358,22 +347,7 @@ class MaintenanceReportRepository {
         .toList();
   }
 
-  Future<void> seedDefaultChecklist(String reportId) async {
-    final db = await _db.database;
-    final batch = db.batch();
-    for (var i = 0; i < defaultMaintenanceChecklistLabels.length; i++) {
-      final task = MaintenanceChecklistTask(
-        id: _id('task'),
-        reportId: reportId,
-        label: defaultMaintenanceChecklistLabels[i],
-        orderIndex: i,
-      );
-      batch.insert('maintenance_checklist', task.toJson());
-    }
-    await batch.commit(noResult: true);
-  }
-
-  Future<MaintenanceChecklistTask> addCustomTask(
+  Future<MaintenanceChecklistTask> addChecklistTask(
     String reportId,
     String label,
   ) async {
@@ -387,7 +361,6 @@ class MaintenanceReportRepository {
       id: _id('task'),
       reportId: reportId,
       label: label,
-      isCustom: true,
       orderIndex: existing.length,
     );
     await db.insert('maintenance_checklist', task.toJson());

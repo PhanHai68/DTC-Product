@@ -15,16 +15,11 @@ void main() {
         status: MaintenanceReportStatus.completed,
         customerName: 'ABC Factory',
         factorySite: 'KCN Long An',
-        contactPerson: 'Mr. A',
-        contactPhone: '0900000000',
-        machineName: 'Air Compressor 100 HP',
-        machineType: 'Screw',
         machineModel: 'OPA-75PM',
-        machineSerial: 'SN123',
+        machineTagName: 'SC16PRO-JX26010333',
         machineRunningHours: '5000',
-        machineLocation: 'Xưởng 1',
         maintenanceDate: DateTime(2026, 9, 23),
-        engineerName: 'Kevin',
+        engineerNames: const ['Kevin', 'An'],
         sessionId: 'MNT-20260923-0015',
         startTime: now,
         endTime: now.add(const Duration(hours: 2)),
@@ -42,6 +37,8 @@ void main() {
       expect(restored.id, report.id);
       expect(restored.status, MaintenanceReportStatus.completed);
       expect(restored.customerName, 'ABC Factory');
+      expect(restored.machineTagName, 'SC16PRO-JX26010333');
+      expect(restored.engineerNames, ['Kevin', 'An']);
       expect(restored.sessionId, 'MNT-20260923-0015');
       expect(restored.startTime, now);
       expect(restored.overallResult, MaintenanceOverallResult.completed);
@@ -142,9 +139,8 @@ void main() {
       final task = MaintenanceChecklistTask(
         id: 'task_1',
         reportId: 'report_1',
-        label: 'Replace air filter',
+        label: 'Thay lọc gió',
         isChecked: true,
-        isCustom: false,
         orderIndex: 0,
       );
       expect(

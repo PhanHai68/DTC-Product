@@ -39,16 +39,11 @@ class MaintenanceReportDatabase {
         status TEXT NOT NULL,
         customerName TEXT NOT NULL DEFAULT '',
         factorySite TEXT NOT NULL DEFAULT '',
-        contactPerson TEXT NOT NULL DEFAULT '',
-        contactPhone TEXT NOT NULL DEFAULT '',
-        machineName TEXT NOT NULL DEFAULT '',
-        machineType TEXT NOT NULL DEFAULT '',
         machineModel TEXT NOT NULL DEFAULT '',
-        machineSerial TEXT NOT NULL DEFAULT '',
+        machineTagName TEXT NOT NULL DEFAULT '',
         machineRunningHours TEXT NOT NULL DEFAULT '',
-        machineLocation TEXT NOT NULL DEFAULT '',
         maintenanceDate TEXT NOT NULL,
-        engineerName TEXT NOT NULL DEFAULT '',
+        engineerNames TEXT NOT NULL DEFAULT '[]',
         sessionId TEXT,
         startTime TEXT,
         endTime TEXT,
@@ -107,7 +102,6 @@ class MaintenanceReportDatabase {
         reportId TEXT NOT NULL,
         label TEXT NOT NULL,
         isChecked INTEGER NOT NULL DEFAULT 0,
-        isCustom INTEGER NOT NULL DEFAULT 0,
         orderIndex INTEGER NOT NULL DEFAULT 0
       )
     ''');

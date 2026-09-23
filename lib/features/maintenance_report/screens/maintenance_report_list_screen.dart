@@ -33,7 +33,7 @@ class _MaintenanceReportListScreenState
       builder: (dialogContext) => AlertDialog(
         title: const Text('Xóa báo cáo bảo trì?'),
         content: Text(
-          'Toàn bộ ảnh, dữ liệu và PDF của "${report.customerName.isEmpty ? report.machineName : report.customerName}" '
+          'Toàn bộ ảnh, dữ liệu và PDF của "${report.customerName.isEmpty ? report.machineModel : report.customerName}" '
           'sẽ bị xóa vĩnh viễn, không thể hoàn tác.',
         ),
         actions: [
@@ -183,8 +183,8 @@ class _ReportCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 [
-                  if (report.machineName.isNotEmpty) report.machineName,
                   if (report.machineModel.isNotEmpty) report.machineModel,
+                  if (report.machineTagName.isNotEmpty) report.machineTagName,
                 ].join(' — '),
                 style: TextStyle(color: palette.ink, fontSize: 13.5),
                 maxLines: 1,
@@ -193,7 +193,7 @@ class _ReportCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 '${DateFormat('dd/MM/yyyy').format(report.maintenanceDate)}'
-                '${report.engineerName.isEmpty ? '' : ' · ${report.engineerName}'}',
+                '${report.engineerNames.isEmpty ? '' : ' · ${report.engineerNamesDisplay}'}',
                 style: TextStyle(color: palette.muted, fontSize: 12.5),
               ),
               const SizedBox(height: 8),

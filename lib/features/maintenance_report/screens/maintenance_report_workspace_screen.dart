@@ -244,9 +244,9 @@ class _HeaderCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    report.machineName.isEmpty
-                        ? 'Chưa đặt tên máy'
-                        : report.machineName,
+                    report.machineModel.isEmpty
+                        ? 'Chưa nhập Model'
+                        : report.machineModel,
                     style: TextStyle(
                       color: palette.navy,
                       fontWeight: FontWeight.w800,
@@ -278,9 +278,9 @@ class _HeaderCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (report.machineModel.isNotEmpty)
+            if (report.machineTagName.isNotEmpty)
               Text(
-                report.machineModel,
+                report.machineTagName,
                 style: TextStyle(color: palette.muted, fontSize: 13),
               ),
             const SizedBox(height: 8),
@@ -294,7 +294,7 @@ class _HeaderCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               '${DateFormat('dd/MM/yyyy').format(report.maintenanceDate)}'
-              '${report.engineerName.isEmpty ? '' : ' · ${report.engineerName}'}',
+              '${report.engineerNames.isEmpty ? '' : ' · ${report.engineerNamesDisplay}'}',
               style: TextStyle(color: palette.muted, fontSize: 12.5),
             ),
           ],
@@ -460,32 +460,13 @@ class _AddItemDialogState extends State<_AddItemDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Thêm hạng mục bảo trì'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: _controller,
-            autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'Tên hạng mục',
-              hintText: 'VD: Lọc gió',
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: suggestedMaintenanceItemNames
-                .map(
-                  (name) => ActionChip(
-                    label: Text(name, style: const TextStyle(fontSize: 12)),
-                    onPressed: () => Navigator.pop(context, name),
-                  ),
-                )
-                .toList(),
-          ),
-        ],
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        decoration: const InputDecoration(
+          labelText: 'Tên hạng mục',
+          hintText: 'VD: Lọc gió',
+        ),
       ),
       actions: [
         TextButton(
@@ -730,11 +711,12 @@ class _ChecklistSection extends StatelessWidget {
       ),
     );
     if (label == null || label.trim().isEmpty || !context.mounted) return;
-    await context.read<MaintenanceReportProvider>().addCustomTask(label);
+    await context.read<MaintenanceReportProvider>().addChecklistTask(label);
   }
 
   @override
   Widget build(BuildContext context) {
+    final palette = DtcPalette.of(context);
     return _SectionCard(
       title: 'CÔNG VIỆC ĐÃ THỰC HIỆN',
       trailing: IconButton(
@@ -743,6 +725,11 @@ class _ChecklistSection extends StatelessWidget {
         tooltip: 'Thêm công việc',
       ),
       children: [
+        if (checklist.isEmpty)
+          Text(
+            'Chưa có công việc nào. Bấm "+" để thêm.',
+            style: TextStyle(color: palette.muted, fontSize: 13),
+          ),
         for (final task in checklist)
           CheckboxListTile(
             key: ValueKey('task_${task.id}'),
@@ -756,14 +743,14 @@ class _ChecklistSection extends StatelessWidget {
                 : (checked) => context
                       .read<MaintenanceReportProvider>()
                       .toggleChecklistTask(task.id, checked ?? false),
-            secondary: task.isCustom && !locked
-                ? IconButton(
+            secondary: locked
+                ? null
+                : IconButton(
                     icon: const Icon(Icons.close_rounded, size: 18),
                     onPressed: () => context
                         .read<MaintenanceReportProvider>()
                         .deleteChecklistTask(task.id),
-                  )
-                : null,
+                  ),
           ),
       ],
     );

@@ -6,9 +6,9 @@ import '../models/maintenance_report.dart';
 import '../providers/maintenance_report_provider.dart';
 
 /// Tạo Maintenance Report mới, hoặc sửa thông tin Customer/Machine/
-/// Maintenance của 1 report có sẵn khi truyền [report]. Không bắt buộc nhập
-/// tất cả trường (chỉ Tên khách hàng hoặc Tên máy cần có tối thiểu 1 để dễ
-/// nhận diện report trong danh sách).
+/// Maintenance của 1 report có sẵn khi truyền [report]. Chỉ giữ các trường
+/// thật sự cần khi lập báo cáo tại hiện trường; hỗ trợ nhiều kỹ sư cùng thực
+/// hiện 1 lần bảo trì.
 class MaintenanceReportFormScreen extends StatefulWidget {
   const MaintenanceReportFormScreen({super.key, this.report});
 
@@ -23,15 +23,10 @@ class _MaintenanceReportFormScreenState
     extends State<MaintenanceReportFormScreen> {
   final _customerNameController = TextEditingController();
   final _factorySiteController = TextEditingController();
-  final _contactPersonController = TextEditingController();
-  final _contactPhoneController = TextEditingController();
-  final _machineNameController = TextEditingController();
-  final _machineTypeController = TextEditingController();
   final _machineModelController = TextEditingController();
-  final _machineSerialController = TextEditingController();
+  final _machineTagNameController = TextEditingController();
   final _machineRunningHoursController = TextEditingController();
-  final _machineLocationController = TextEditingController();
-  final _engineerNameController = TextEditingController();
+  final _engineerControllers = <TextEditingController>[];
   DateTime _maintenanceDate = DateTime.now();
   bool _saving = false;
 
@@ -44,16 +39,16 @@ class _MaintenanceReportFormScreenState
     if (report != null) {
       _customerNameController.text = report.customerName;
       _factorySiteController.text = report.factorySite;
-      _contactPersonController.text = report.contactPerson;
-      _contactPhoneController.text = report.contactPhone;
-      _machineNameController.text = report.machineName;
-      _machineTypeController.text = report.machineType;
       _machineModelController.text = report.machineModel;
-      _machineSerialController.text = report.machineSerial;
+      _machineTagNameController.text = report.machineTagName;
       _machineRunningHoursController.text = report.machineRunningHours;
-      _machineLocationController.text = report.machineLocation;
-      _engineerNameController.text = report.engineerName;
       _maintenanceDate = report.maintenanceDate;
+      for (final name in report.engineerNames) {
+        _engineerControllers.add(TextEditingController(text: name));
+      }
+    }
+    if (_engineerControllers.isEmpty) {
+      _engineerControllers.add(TextEditingController());
     }
   }
 
@@ -61,16 +56,21 @@ class _MaintenanceReportFormScreenState
   void dispose() {
     _customerNameController.dispose();
     _factorySiteController.dispose();
-    _contactPersonController.dispose();
-    _contactPhoneController.dispose();
-    _machineNameController.dispose();
-    _machineTypeController.dispose();
     _machineModelController.dispose();
-    _machineSerialController.dispose();
+    _machineTagNameController.dispose();
     _machineRunningHoursController.dispose();
-    _machineLocationController.dispose();
-    _engineerNameController.dispose();
+    for (final controller in _engineerControllers) {
+      controller.dispose();
+    }
     super.dispose();
+  }
+
+  void _addEngineerField() {
+    setState(() => _engineerControllers.add(TextEditingController()));
+  }
+
+  void _removeEngineerField(int index) {
+    setState(() => _engineerControllers.removeAt(index).dispose());
   }
 
   Future<void> _pickDate() async {
@@ -87,14 +87,19 @@ class _MaintenanceReportFormScreenState
 
   Future<void> _save() async {
     if (_customerNameController.text.trim().isEmpty &&
-        _machineNameController.text.trim().isEmpty) {
+        _machineModelController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Vui lòng nhập ít nhất Tên khách hàng hoặc Tên máy.'),
+          content: Text('Vui lòng nhập ít nhất Tên khách hàng hoặc Model.'),
         ),
       );
       return;
     }
+    final engineerNames = _engineerControllers
+        .map((controller) => controller.text.trim())
+        .where((name) => name.isNotEmpty)
+        .toList();
+
     setState(() => _saving = true);
     try {
       final provider = context.read<MaintenanceReportProvider>();
@@ -104,16 +109,11 @@ class _MaintenanceReportFormScreenState
           existing.copyWith(
             customerName: _customerNameController.text.trim(),
             factorySite: _factorySiteController.text.trim(),
-            contactPerson: _contactPersonController.text.trim(),
-            contactPhone: _contactPhoneController.text.trim(),
-            machineName: _machineNameController.text.trim(),
-            machineType: _machineTypeController.text.trim(),
             machineModel: _machineModelController.text.trim(),
-            machineSerial: _machineSerialController.text.trim(),
+            machineTagName: _machineTagNameController.text.trim(),
             machineRunningHours: _machineRunningHoursController.text.trim(),
-            machineLocation: _machineLocationController.text.trim(),
             maintenanceDate: _maintenanceDate,
-            engineerName: _engineerNameController.text.trim(),
+            engineerNames: engineerNames,
           ),
         );
         if (!mounted) return;
@@ -123,16 +123,11 @@ class _MaintenanceReportFormScreenState
       final report = await provider.createReport(
         customerName: _customerNameController.text.trim(),
         factorySite: _factorySiteController.text.trim(),
-        contactPerson: _contactPersonController.text.trim(),
-        contactPhone: _contactPhoneController.text.trim(),
-        machineName: _machineNameController.text.trim(),
-        machineType: _machineTypeController.text.trim(),
         machineModel: _machineModelController.text.trim(),
-        machineSerial: _machineSerialController.text.trim(),
+        machineTagName: _machineTagNameController.text.trim(),
         machineRunningHours: _machineRunningHoursController.text.trim(),
-        machineLocation: _machineLocationController.text.trim(),
         maintenanceDate: _maintenanceDate,
-        engineerName: _engineerNameController.text.trim(),
+        engineerNames: engineerNames,
       );
       if (!mounted) return;
       context.pushReplacement('/maintenance_report/${report.id}');
@@ -164,18 +159,7 @@ class _MaintenanceReportFormScreenState
               ),
               TextField(
                 controller: _factorySiteController,
-                decoration: const InputDecoration(
-                  labelText: 'Tên nhà máy / Địa điểm',
-                ),
-              ),
-              TextField(
-                controller: _contactPersonController,
-                decoration: const InputDecoration(labelText: 'Người liên hệ'),
-              ),
-              TextField(
-                controller: _contactPhoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(labelText: 'Số điện thoại'),
+                decoration: const InputDecoration(labelText: 'Địa điểm'),
               ),
             ],
           ),
@@ -184,31 +168,17 @@ class _MaintenanceReportFormScreenState
             title: 'THÔNG TIN MÁY',
             children: [
               TextField(
-                controller: _machineNameController,
-                decoration: const InputDecoration(labelText: 'Tên máy'),
-              ),
-              TextField(
-                controller: _machineTypeController,
-                decoration: const InputDecoration(labelText: 'Loại máy'),
-              ),
-              TextField(
                 controller: _machineModelController,
                 decoration: const InputDecoration(labelText: 'Model'),
               ),
               TextField(
-                controller: _machineSerialController,
-                decoration: const InputDecoration(labelText: 'Số serial'),
+                controller: _machineTagNameController,
+                decoration: const InputDecoration(labelText: 'Tagname'),
               ),
               TextField(
                 controller: _machineRunningHoursController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Giờ vận hành'),
-              ),
-              TextField(
-                controller: _machineLocationController,
-                decoration: const InputDecoration(
-                  labelText: 'Vị trí lắp đặt',
-                ),
+                decoration: const InputDecoration(labelText: 'Số giờ vận hành'),
               ),
             ],
           ),
@@ -216,9 +186,36 @@ class _MaintenanceReportFormScreenState
           _FormSection(
             title: 'THÔNG TIN BẢO TRÌ',
             children: [
-              TextField(
-                controller: _engineerNameController,
-                decoration: const InputDecoration(labelText: 'Tên kỹ sư'),
+              for (var i = 0; i < _engineerControllers.length; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _engineerControllers[i],
+                          decoration: InputDecoration(
+                            labelText: i == 0
+                                ? 'Tên kỹ sư'
+                                : 'Tên kỹ sư ${i + 1}',
+                          ),
+                        ),
+                      ),
+                      if (_engineerControllers.length > 1)
+                        IconButton(
+                          onPressed: () => _removeEngineerField(i),
+                          icon: const Icon(Icons.close_rounded, size: 18),
+                        ),
+                    ],
+                  ),
+                ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: _addEngineerField,
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: const Text('Thêm kỹ sư'),
+                ),
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,

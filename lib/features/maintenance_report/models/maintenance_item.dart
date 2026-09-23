@@ -90,18 +90,3 @@ class MaintenanceItem {
     updatedAt: updatedAt ?? this.updatedAt,
   );
 }
-
-/// Danh sách gợi ý hạng mục bảo trì thường gặp (máy nén khí) — CHỈ để gợi ý
-/// nhanh khi thêm mới, không cố định, người dùng có thể nhập tên khác.
-const List<String> suggestedMaintenanceItemNames = [
-  'Lọc gió',
-  'Lọc dầu',
-  'Tách dầu',
-  'Dầu máy nén',
-  'Giàn giải nhiệt',
-  'Tủ điện',
-  'Dây curoa',
-  'Rò rỉ khí',
-  'Hệ thống xả nước',
-  'Khác',
-];

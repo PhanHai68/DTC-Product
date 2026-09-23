@@ -117,19 +117,14 @@ abstract final class MaintenanceReportPdfService {
     y = _keyValueGrid(graphics, fonts, margin, y, contentWidth, [
       ('Khách hàng', report.customerName),
       ('Địa điểm', report.factorySite),
-      ('Người liên hệ', report.contactPerson),
-      ('Điện thoại', report.contactPhone),
     ]);
 
     y += 10;
     y = _sectionTitle(graphics, fonts, 'THÔNG TIN MÁY', y, margin, contentWidth);
     y = _keyValueGrid(graphics, fonts, margin, y, contentWidth, [
-      ('Tên máy', report.machineName),
       ('Model', report.machineModel),
-      ('Số serial', report.machineSerial),
-      ('Loại máy', report.machineType),
+      ('Tagname', report.machineTagName),
       ('Giờ vận hành', report.machineRunningHours),
-      ('Vị trí', report.machineLocation),
     ]);
 
     y += 10;
@@ -137,7 +132,7 @@ abstract final class MaintenanceReportPdfService {
     final dateFormat = DateFormat('dd/MM/yyyy');
     final timeFormat = DateFormat('HH:mm');
     y = _keyValueGrid(graphics, fonts, margin, y, contentWidth, [
-      ('Kỹ sư', report.engineerName),
+      ('Kỹ sư', report.engineerNamesDisplay),
       ('Ngày', dateFormat.format(report.maintenanceDate)),
       (
         'Giờ bắt đầu',
