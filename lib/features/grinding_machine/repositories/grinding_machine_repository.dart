@@ -8,35 +8,10 @@ import '../models/grinding_material.dart';
 import '../models/grinding_material_series_map.dart';
 import '../models/grinding_selection_tag.dart';
 import '../models/grinding_series.dart';
+import '../models/grinding_database_snapshot.dart';
+import '../services/grinding_database_validator.dart';
 
-/// Toàn bộ dữ liệu đã parse từ 1 lần import (Excel/JSON) — dùng để nạp/nạp
-/// lại database qua [GrindingMachineRepository.importSnapshot]. Cùng 1 cấu
-/// trúc này phục vụ cả file JSON seed đóng gói sẵn (Phase 1) lẫn import từ
-/// Excel chọn trong app (Phase 5) — UI/Repository không cần biết dữ liệu đến
-/// từ nguồn nào.
-class GrindingDatabaseSnapshot {
-  final String databaseVersion;
-  final String? sourceDocument;
-  final List<GrindingSeries> series;
-  final List<GrindingMachine> machines;
-  final List<GrindingExtraSpec> extraSpecs;
-  final List<GrindingSelectionTag> selectionTags;
-  final List<GrindingMaterial> materials;
-  final List<GrindingMaterialSeriesMap> materialSeriesMap;
-  final List<GrindingAiConfig> aiConfig;
-
-  const GrindingDatabaseSnapshot({
-    required this.databaseVersion,
-    this.sourceDocument,
-    required this.series,
-    required this.machines,
-    required this.extraSpecs,
-    required this.selectionTags,
-    required this.materials,
-    required this.materialSeriesMap,
-    required this.aiConfig,
-  });
-}
+export '../models/grinding_database_snapshot.dart';
 
 /// Repository duy nhất cho module "Máy nghiền" — UI/Provider KHÔNG được
 /// truy vấn `GrindingMachineDatabase` trực tiếp, luôn đi qua đây.
@@ -73,9 +48,54 @@ class GrindingMachineRepository {
   /// (source of truth bên ngoài), không phải dữ liệu người dùng tự tạo, nên
   /// replace-all là đúng và an toàn hơn merge từng dòng. Chạy trong 1
   /// transaction để không bao giờ để database ở trạng thái nạp dở.
-  Future<void> importSnapshot(GrindingDatabaseSnapshot snapshot) async {
+  Future<Map<String, String?>> getImportMetadata() async {
+    final db = await _db.database;
+    final rows = await db.query('grinding_db_meta');
+    return {for (final r in rows) r['key'] as String: r['value'] as String?};
+  }
+
+  Future<void> importSnapshot(
+    GrindingDatabaseSnapshot snapshot, {
+    String origin = 'file',
+    String? fileName,
+    String? expectedRevision,
+    bool checkRevision = false,
+  }) async {
+    // Chặn cả caller bỏ qua UI/parser. Validate trước khi xóa bất kỳ bảng nào.
+    final validation = GrindingDatabaseValidator.validate(snapshot.toJson());
+    if (!validation.canImport) {
+      throw FormatException(
+        validation.issues.where((i) => i.isError).join('\n'),
+      );
+    }
+    snapshot = validation.snapshot!;
     final db = await _db.database;
     await db.transaction((txn) async {
+      final metaRows = await txn.query('grinding_db_meta');
+      final meta = {
+        for (final r in metaRows) r['key'] as String: r['value'] as String?,
+      };
+      if (checkRevision && meta['importedAt'] != expectedRevision) {
+        throw StateError(
+          'Database đã thay đổi. Hãy chọn và kiểm tra lại file.',
+        );
+      }
+      final currentVersion = meta['databaseVersion'];
+      if (currentVersion != null) {
+        if (!GrindingDatabaseValidator.validVersion(currentVersion) ||
+            GrindingDatabaseValidator.compareVersions(
+                  snapshot.databaseVersion,
+                  currentVersion,
+                ) <
+                0) {
+          throw StateError(
+            'Không thể cập nhật bằng phiên bản thấp hơn database hiện tại.',
+          );
+        }
+      }
+      if (origin == 'seed' && meta['importOrigin'] == 'file') {
+        throw StateError('Không dùng seed để ghi đè catalog đã import.');
+      }
       for (final table in const [
         'grinding_series',
         'grinding_machines',
@@ -115,23 +135,24 @@ class GrindingMachineRepository {
       // grinding_db_meta không bị xoá sạch ở bước trên (chỉ các bảng catalog
       // mới cần replace-all) — dùng `replace` để lần import sau ghi đè đúng
       // key thay vì đụng UNIQUE constraint.
-      await txn.insert(
-        'grinding_db_meta',
-        {'key': 'databaseVersion', 'value': snapshot.databaseVersion},
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      if (snapshot.sourceDocument != null) {
-        await txn.insert(
-          'grinding_db_meta',
-          {'key': 'sourceDocument', 'value': snapshot.sourceDocument},
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
+      await txn.insert('grinding_db_meta', {
+        'key': 'databaseVersion',
+        'value': snapshot.databaseVersion,
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+      for (final entry in {
+        'sourceDocument': snapshot.sourceDocument,
+        'importOrigin': origin,
+        'fileName': fileName,
+      }.entries) {
+        await txn.insert('grinding_db_meta', {
+          'key': entry.key,
+          'value': entry.value,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
       }
-      await txn.insert(
-        'grinding_db_meta',
-        {'key': 'importedAt', 'value': DateTime.now().toIso8601String()},
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      await txn.insert('grinding_db_meta', {
+        'key': 'importedAt',
+        'value': DateTime.now().toIso8601String(),
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
     });
   }
 
@@ -260,9 +281,7 @@ class GrindingMachineRepository {
       whereArgs: [seriesCode],
       orderBy: 'tag ASC',
     );
-    return rows
-        .map((row) => GrindingSelectionTag.fromJson(_map(row)))
-        .toList();
+    return rows.map((row) => GrindingSelectionTag.fromJson(_map(row))).toList();
   }
 
   /// Toàn bộ tag duy nhất trong database — dùng để dựng danh sách filter

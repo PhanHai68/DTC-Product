@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dtc_product/features/grinding_machine/data/grinding_machine_database.dart';
 import 'package:dtc_product/features/grinding_machine/repositories/grinding_machine_repository.dart';
 import 'package:dtc_product/features/grinding_machine/services/grinding_machine_importer.dart';
@@ -122,5 +124,49 @@ void main() {
 
     final machines = await repository.getAllMachines();
     expect(machines, hasLength(57));
+  });
+
+  Future<GrindingDatabaseSnapshot> changedSnapshot({String version = '1.2', String? model}) async {
+    final root = jsonDecode(await rootBundle.loadString('assets/database/grinding_machine_seed.json')) as Map<String, dynamic>;
+    root['databaseVersion'] = version;
+    root['sourceDocument'] = null;
+    if (model != null) root['models'][0]['model'] = model;
+    return GrindingMachineImporter.parse(jsonEncode(root));
+  }
+
+  test('Rollback toàn bộ catalog và metadata khi SQLite lỗi giữa transaction', () async {
+    final before = await repository.getImportMetadata();
+    await database.execute("CREATE TRIGGER fail_import BEFORE INSERT ON grinding_machines WHEN NEW.model = 'FAIL' BEGIN SELECT RAISE(ABORT, 'test failure'); END");
+    final snapshot = await changedSnapshot(model: 'FAIL');
+    await expectLater(repository.importSnapshot(snapshot), throwsA(isA<DatabaseException>()));
+    expect(await repository.getImportMetadata(), before);
+    expect(await repository.getAllMachines(), hasLength(57));
+    expect(await repository.getMachineByModel('ASC-200'), isNotNull);
+    expect(await repository.getMachineByModel('FAIL'), isNull);
+  });
+
+  test('Không ghi đè khi revision xem trước đã cũ', () async {
+    final revision = (await repository.getImportMetadata())['importedAt'];
+    final snapshot = await changedSnapshot();
+    await repository.importSnapshot(snapshot);
+    await expectLater(repository.importSnapshot(snapshot, expectedRevision: revision, checkRevision: true), throwsStateError);
+    expect(await repository.getImportedDatabaseVersion(), '1.2');
+  });
+
+  test('Chặn hạ version ở repository và xóa metadata nguồn cũ khi nguồn mới null', () async {
+    await repository.importSnapshot(await changedSnapshot(), fileName: 'new.json');
+    final meta = await repository.getImportMetadata();
+    expect(meta['sourceDocument'], isNull);
+    expect(meta['fileName'], 'new.json');
+    expect(meta['importOrigin'], 'file');
+    await expectLater(repository.importSnapshot(await changedSnapshot(version: '1.1')), throwsStateError);
+    expect(await repository.getImportedDatabaseVersion(), '1.2');
+  });
+
+  test('Snapshot rỗng qua API trực tiếp không xóa dữ liệu', () async {
+    const empty = GrindingDatabaseSnapshot(databaseVersion: '1.2', series: [], machines: [], extraSpecs: [], selectionTags: [], materials: [], materialSeriesMap: [], aiConfig: []);
+    await expectLater(repository.importSnapshot(empty), throwsFormatException);
+    expect(await repository.getAllMachines(), hasLength(57));
+    expect(await repository.getImportedDatabaseVersion(), '1.1');
   });
 }

@@ -23,6 +23,7 @@ import '../features/maintenance_report/screens/maintenance_report_form_screen.da
 import '../features/maintenance_report/screens/maintenance_report_workspace_screen.dart';
 import '../features/maintenance_report/models/maintenance_report.dart';
 import '../features/grinding_machine/screens/grinding_machine_home_screen.dart';
+import '../features/grinding_machine/screens/grinding_database_update_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_search_screen.dart';
 import '../features/grinding_machine/screens/grinding_series_machines_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_detail_screen.dart';
@@ -223,6 +224,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/grinding_machine/search',
       builder: (context, state) => const GrindingMachineSearchScreen(),
+    ),
+    GoRoute(
+      path: '/grinding_machine/database_update',
+      builder: (context, state) => const GrindingDatabaseUpdateScreen(),
     ),
     GoRoute(
       path: '/grinding_machine/series',

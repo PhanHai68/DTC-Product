@@ -34,6 +34,12 @@ class _GrindingMachineHomeScreenState
         title: const Text('Máy nghiền'),
         actions: [
           IconButton(
+            key: const Key('grinding_machine_update_button'),
+            tooltip: 'Cập nhật database',
+            icon: const Icon(Icons.upload_file_outlined),
+            onPressed: () => context.push('/grinding_machine/database_update'),
+          ),
+          IconButton(
             key: const Key('grinding_machine_filter_button'),
             tooltip: 'Bộ lọc',
             icon: const Icon(Icons.tune_rounded),
