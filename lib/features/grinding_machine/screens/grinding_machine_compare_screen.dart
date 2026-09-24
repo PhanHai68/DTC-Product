@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../theme/dtc_palette.dart';
+import '../models/grinding_extra_spec.dart';
 import '../models/grinding_machine.dart';
 import '../models/grinding_series.dart';
 import '../providers/grinding_machine_provider.dart';
@@ -10,8 +11,15 @@ import '../widgets/grinding_machine_picker_sheet.dart';
 
 /// So sánh tối đa 3 model — yêu cầu mục 9. Chỉ hiển thị dữ liệu có trong
 /// database, ô thiếu dữ liệu hiển thị "—", KHÔNG tự điền.
+///
+/// [initialMachineIds] (Phase 7, mục 10) — preset sẵn 2-3 model (VD từ
+/// Machine Selector) để người dùng không phải chọn lại thủ công. Optional,
+/// mặc định `null`/rỗng -> HÀNH VI CŨ giữ nguyên 100% (route/test cũ không
+/// truyền tham số này vẫn hoạt động y hệt trước).
 class GrindingMachineCompareScreen extends StatefulWidget {
-  const GrindingMachineCompareScreen({super.key});
+  const GrindingMachineCompareScreen({super.key, this.initialMachineIds});
+
+  final List<String>? initialMachineIds;
 
   @override
   State<GrindingMachineCompareScreen> createState() =>
@@ -23,6 +31,45 @@ class _GrindingMachineCompareScreenState
   static const _maxSlots = 3;
   final List<GrindingMachine?> _slots = List.filled(_maxSlots, null);
   final Map<String, GrindingSeries> _seriesByCode = {};
+  final Map<String, List<GrindingExtraSpec>> _extraSpecsByMachineId = {};
+
+  @override
+  void initState() {
+    super.initState();
+    final ids = widget.initialMachineIds;
+    if (ids != null && ids.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _loadPreset(ids));
+    }
+  }
+
+  Future<void> _loadPreset(List<String> machineIds) async {
+    final provider = context.read<GrindingMachineProvider>();
+    var slot = 0;
+    for (final machineId in machineIds.take(_maxSlots)) {
+      final machine = await provider.getMachine(machineId);
+      if (!mounted) return;
+      if (machine == null) continue; // Máy không còn trong database -> bỏ qua, không crash.
+      await _cacheMachineData(provider, machine);
+      if (!mounted) return;
+      setState(() => _slots[slot] = machine);
+      slot++;
+    }
+  }
+
+  Future<void> _cacheMachineData(
+    GrindingMachineProvider provider,
+    GrindingMachine machine,
+  ) async {
+    if (!_seriesByCode.containsKey(machine.seriesCode)) {
+      final series = await provider.getSeries(machine.seriesCode);
+      if (series != null) _seriesByCode[machine.seriesCode] = series;
+    }
+    if (!_extraSpecsByMachineId.containsKey(machine.machineId)) {
+      _extraSpecsByMachineId[machine.machineId] = await provider.getExtraSpecs(
+        machine.machineId,
+      );
+    }
+  }
 
   Future<void> _pickForSlot(int index) async {
     final excluded = _slots
@@ -35,12 +82,8 @@ class _GrindingMachineCompareScreenState
     );
     if (picked == null || !mounted) return;
 
-    if (!_seriesByCode.containsKey(picked.seriesCode)) {
-      final series = await context.read<GrindingMachineProvider>().getSeries(
-        picked.seriesCode,
-      );
-      if (series != null) _seriesByCode[picked.seriesCode] = series;
-    }
+    final provider = context.read<GrindingMachineProvider>();
+    await _cacheMachineData(provider, picked);
     if (!mounted) return;
     setState(() => _slots[index] = picked);
   }
@@ -87,7 +130,11 @@ class _GrindingMachineCompareScreenState
               ),
             )
           else
-            _CompareTable(machines: selected, seriesByCode: _seriesByCode),
+            _CompareTable(
+              machines: selected,
+              seriesByCode: _seriesByCode,
+              extraSpecsByMachineId: _extraSpecsByMachineId,
+            ),
         ],
       ),
     );
@@ -167,10 +214,15 @@ class _SlotCard extends StatelessWidget {
 }
 
 class _CompareTable extends StatelessWidget {
-  const _CompareTable({required this.machines, required this.seriesByCode});
+  const _CompareTable({
+    required this.machines,
+    required this.seriesByCode,
+    required this.extraSpecsByMachineId,
+  });
 
   final List<GrindingMachine> machines;
   final Map<String, GrindingSeries> seriesByCode;
+  final Map<String, List<GrindingExtraSpec>> extraSpecsByMachineId;
 
   @override
   Widget build(BuildContext context) {
@@ -205,6 +257,7 @@ class _CompareTable extends StatelessWidget {
             .map((m) => m.weightKg == null ? null : '${_num(m.weightKg!)} kg')
             .toList(),
       ),
+      ..._extraSpecRows(),
     ];
 
     return Container(
@@ -243,6 +296,42 @@ class _CompareTable extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Gộp toàn bộ specKey xuất hiện ở BẤT KỲ model nào đang so sánh thành 1
+  /// hàng — model không có key đó hiện "—" (`_CompareRow` đã tự làm việc
+  /// này với `null`), KHÔNG tự quy đổi giá trị/đơn vị. Sắp theo alphabet để
+  /// thứ tự ổn định giữa các lần build (test deterministic), không phụ
+  /// thuộc thứ tự người dùng chọn model.
+  List<(String, List<String?>)> _extraSpecRows() {
+    final byMachineAndKey = <String, Map<String, String>>{};
+    final allKeys = <String>{};
+    for (final machine in machines) {
+      final specs = extraSpecsByMachineId[machine.machineId] ?? const [];
+      final byKey = <String, String>{};
+      for (final spec in specs) {
+        if (spec.displayValue.isEmpty) continue;
+        byKey[spec.specKey] = spec.displayValue;
+        allKeys.add(spec.specKey);
+      }
+      byMachineAndKey[machine.machineId] = byKey;
+    }
+    final sortedKeys = allKeys.toList()..sort();
+    return [
+      for (final key in sortedKeys)
+        (
+          _humanizeSpecKey(key),
+          machines
+              .map((m) => byMachineAndKey[m.machineId]?[key])
+              .toList(),
+        ),
+    ];
+  }
+
+  static String _humanizeSpecKey(String key) {
+    final withSpaces = key.replaceAll('_', ' ');
+    if (withSpaces.isEmpty) return withSpaces;
+    return withSpaces[0].toUpperCase() + withSpaces.substring(1);
   }
 
   static String _num(double v) =>

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../models/grinding_extra_spec.dart';
 import '../models/grinding_machine.dart';
 import '../models/grinding_material.dart';
+import '../models/grinding_material_series_map.dart';
 import '../models/grinding_recommendation.dart';
 import '../models/grinding_selection_request.dart';
 import '../models/grinding_series.dart';
@@ -297,6 +298,15 @@ class GrindingMachineProvider extends ChangeNotifier {
     return _repository.getAllDistinctTags();
   }
 
+  /// Toàn bộ Selection Tags gộp theo seriesCode (mục 3, 9 Phase 6) — proxy
+  /// 1:1 sang method Repository sẵn có (đã dùng nội bộ trong [recommend]),
+  /// để màn hình danh sách dựng chỉ mục search/filter 1 lần trong RAM thay
+  /// vì gọi lại `getSelectionTags` cho từng series.
+  Future<Map<String, Set<String>>> getAllSelectionTagsGrouped() async {
+    await _ready();
+    return _repository.getAllSelectionTagsGrouped();
+  }
+
   /// Danh sách seriesCode tương thích với [materialId] theo dữ liệu ĐÃ XÁC
   /// MINH (`status == 'Verified'`) trong Material_Series_Map — không suy
   /// đoán tương thích cho nguyên liệu chưa có dòng map nào.
@@ -304,6 +314,18 @@ class GrindingMachineProvider extends ChangeNotifier {
     await _ready();
     final maps = await _repository.getMaterialSeriesMapFor(materialId);
     return maps.where((m) => m.isVerified).map((m) => m.seriesCode).toSet();
+  }
+
+  /// Toàn bộ dòng Material_Series_Map (mọi status) cho [materialId] — proxy
+  /// 1:1 sang Repository. Khác [getCompatibleSeriesCodes] (đã rút gọn thành
+  /// tập hợp seriesCode "tương thích"), dùng cho
+  /// GrindingMachineSelectionService (Phase 6) vì cần biết cả dấu
+  /// `scoreAdjustment` để phân biệt MATCH/NOT_MATCH thay vì chỉ 1 tập hợp.
+  Future<List<GrindingMaterialSeriesMap>> getMaterialSeriesMapFor(
+    String materialId,
+  ) async {
+    await _ready();
+    return _repository.getMaterialSeriesMapFor(materialId);
   }
 
   /// Tập hợp toàn bộ dữ liệu cần cho Selection Engine (mục 7-8) rồi chấm

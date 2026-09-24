@@ -31,7 +31,15 @@ import '../features/grinding_machine/screens/grinding_machine_filter_screen.dart
 import '../features/grinding_machine/screens/grinding_machine_compare_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_selection_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_recommendation_screen.dart';
+import '../features/grinding_machine/screens/grinding_machine_list_screen.dart';
+import '../features/grinding_machine/screens/grinding_machine_selector_screen.dart';
+import '../features/grinding_machine/screens/grinding_selection_project_list_screen.dart';
+import '../features/grinding_machine/screens/grinding_selection_project_detail_screen.dart';
+import '../features/grinding_machine/screens/grinding_proposal_editor_screen.dart';
+import '../features/grinding_machine/screens/grinding_project_dashboard_screen.dart';
+import '../features/grinding_machine/screens/grinding_backup_restore_screen.dart';
 import '../features/grinding_machine/models/grinding_selection_request.dart';
+import '../features/grinding_machine/models/grinding_selection_project.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
 import '../screens/technical_converter/technical_converter_screen.dart';
 import '../screens/color_sorter_categories_screen.dart';
@@ -246,9 +254,69 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/grinding_machine/compare',
-      builder: (context, state) => const GrindingMachineCompareScreen(),
+      // Phase 7 mục 10: extra có thể là List<String> machineId để preset
+      // sẵn slot (VD từ Selector/Project Detail) — không truyền vẫn hoạt
+      // động y hệt trước (route/test cũ không đổi).
+      builder: (context, state) => GrindingMachineCompareScreen(
+        initialMachineIds: state.extra is List<String>
+            ? state.extra as List<String>
+            : null,
+      ),
     ),
     GoRoute(
+      path: '/grinding_machine/list',
+      builder: (context, state) => const GrindingMachineListScreen(),
+    ),
+    GoRoute(
+      path: '/grinding_machine/selector',
+      // Phase 7 mục 8: extra là int (projectId) -> mở ở chế độ sửa hồ sơ đã
+      // lưu; không truyền -> tạo hồ sơ mới (mặc định, y hệt Phase 6).
+      builder: (context, state) => GrindingMachineSelectorScreen(
+        existingProjectId: state.extra is int ? state.extra as int : null,
+      ),
+    ),
+    GoRoute(
+      path: '/grinding_machine/projects',
+      // Phase 10 mục 21: extra có thể là GrindingProjectStatus để preset
+      // filter khi mở từ Dashboard — không truyền vẫn hoạt động y hệt trước
+      // (hiện toàn bộ, route/test cũ không đổi).
+      builder: (context, state) => GrindingSelectionProjectListScreen(
+        initialStatusFilter: state.extra is GrindingProjectStatus
+            ? state.extra as GrindingProjectStatus
+            : null,
+      ),
+    ),
+    GoRoute(
+      path: '/grinding_machine/dashboard',
+      builder: (context, state) => const GrindingProjectDashboardScreen(),
+    ),
+    GoRoute(
+      path: '/grinding_machine/backup',
+      builder: (context, state) => const GrindingBackupRestoreScreen(),
+    ),
+    GoRoute(
+      path: '/grinding_machine/projects/:id',
+      builder: (context, state) => GrindingSelectionProjectDetailScreen(
+        projectId: int.parse(state.pathParameters['id']!),
+      ),
+    ),
+    GoRoute(
+      path: '/grinding_machine/projects/:id/proposals/new',
+      builder: (context, state) => GrindingProposalEditorScreen(
+        projectId: int.parse(state.pathParameters['id']!),
+      ),
+    ),
+    GoRoute(
+      path: '/grinding_machine/projects/:id/proposals/:proposalId',
+      builder: (context, state) => GrindingProposalEditorScreen(
+        projectId: int.parse(state.pathParameters['id']!),
+        proposalId: int.parse(state.pathParameters['proposalId']!),
+      ),
+    ),
+    GoRoute(
+      // Giữ lại để tránh regression (Phase 4) — Home không còn liên kết tới
+      // route này, đã thay bằng /grinding_machine/selector (Phase 6) để
+      // tránh 2 chức năng "chọn máy" gần giống nhau cùng hiện trên Home.
       path: '/grinding_machine/selection',
       builder: (context, state) => const GrindingMachineSelectionScreen(),
     ),

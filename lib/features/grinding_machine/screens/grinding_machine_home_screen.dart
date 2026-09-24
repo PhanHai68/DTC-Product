@@ -40,6 +40,12 @@ class _GrindingMachineHomeScreenState
             onPressed: () => context.push('/grinding_machine/database_update'),
           ),
           IconButton(
+            key: const Key('grinding_machine_list_button'),
+            tooltip: 'Danh sách máy nghiền',
+            icon: const Icon(Icons.view_list_rounded),
+            onPressed: () => context.push('/grinding_machine/list'),
+          ),
+          IconButton(
             key: const Key('grinding_machine_filter_button'),
             tooltip: 'Bộ lọc',
             icon: const Icon(Icons.tune_rounded),
@@ -50,6 +56,12 @@ class _GrindingMachineHomeScreenState
             tooltip: 'So sánh model',
             icon: const Icon(Icons.compare_arrows_rounded),
             onPressed: () => context.push('/grinding_machine/compare'),
+          ),
+          IconButton(
+            key: const Key('grinding_machine_backup_button'),
+            tooltip: 'Backup & Restore',
+            icon: const Icon(Icons.backup_outlined),
+            onPressed: () => context.push('/grinding_machine/backup'),
           ),
         ],
       ),
@@ -78,13 +90,46 @@ class _GrindingMachineHomeScreenState
               ),
               const SizedBox(height: 12),
               FilledButton.icon(
+                // Trỏ sang Machine Selector (Phase 6, minh bạch MATCH/
+                // NOT_MATCH/UNKNOWN theo từng tiêu chí) — route Phase 4 cũ
+                // vẫn còn (/grinding_machine/selection) để tránh regression,
+                // chỉ không còn nút riêng trên Home để tránh 2 chức năng
+                // chọn máy gần giống nhau.
                 key: const Key('grinding_machine_selection_button'),
-                onPressed: () => context.push('/grinding_machine/selection'),
+                onPressed: () => context.push('/grinding_machine/selector'),
                 icon: const Icon(Icons.auto_awesome_rounded),
                 label: const Text('Chọn máy phù hợp'),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 13),
                 ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      key: const Key('grinding_machine_projects_button'),
+                      onPressed: () => context.push('/grinding_machine/projects'),
+                      icon: const Icon(Icons.folder_outlined),
+                      label: const Text('Saved Projects'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      key: const Key('grinding_machine_dashboard_button'),
+                      onPressed: () => context.push('/grinding_machine/dashboard'),
+                      icon: const Icon(Icons.dashboard_outlined),
+                      label: const Text('Dashboard'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 18),
               Row(

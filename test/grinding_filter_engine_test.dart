@@ -11,6 +11,8 @@ GrindingMachine _machine({
   double? finenessMin,
   double? finenessMax,
   String? finenessUnit,
+  double? mainMotorKwMin,
+  double? mainMotorKwMax,
 }) => GrindingMachine(
   machineId: id,
   seriesCode: seriesCode,
@@ -20,6 +22,8 @@ GrindingMachine _machine({
   finenessMin: finenessMin,
   finenessMax: finenessMax,
   finenessUnit: finenessUnit,
+  mainMotorKwMin: mainMotorKwMin,
+  mainMotorKwMax: mainMotorKwMax,
 );
 
 void main() {
@@ -131,6 +135,83 @@ void main() {
         compatibleSeriesCodes: {},
       );
       expect(result, isEmpty);
+    });
+  });
+
+  group('GrindingFilterEngine — Series / Motor / kết hợp', () {
+    test('lọc theo 1 hoặc nhiều series', () {
+      final machineA = _machine(id: 'A', seriesCode: 'BS_ROLLER');
+      final machineB = _machine(id: 'B', seriesCode: 'BSK_JET');
+      final machineC = _machine(id: 'C', seriesCode: 'BSC_COARSE');
+      final result = GrindingFilterEngine.apply(
+        [machineA, machineB, machineC],
+        const GrindingFilterCriteria(seriesCodes: {'BS_ROLLER', 'BSK_JET'}),
+      );
+      expect(result, [machineA, machineB]);
+    });
+
+    test('lọc công suất động cơ tối đa, model thiếu dữ liệu bị loại (không suy đoán)', () {
+      final ok = _machine(id: 'OK', mainMotorKwMax: 50);
+      final tooStrong = _machine(id: 'STRONG', mainMotorKwMax: 90);
+      final unknown = _machine(id: 'UNKNOWN');
+      final result = GrindingFilterEngine.apply(
+        [ok, tooStrong, unknown],
+        const GrindingFilterCriteria(maxMotorKw: 75),
+      );
+      expect(result, [ok]);
+    });
+
+    test('kết hợp nhiều điều kiện: chỉ giữ model đáp ứng ĐỒNG THỜI tất cả', () {
+      final matches = _machine(
+        id: 'MATCH',
+        seriesCode: 'BS_ROLLER',
+        capacityMinKgH: 200,
+        capacityMaxKgH: 400,
+        mainMotorKwMax: 30,
+      );
+      final wrongSeries = _machine(
+        id: 'WRONG_SERIES',
+        seriesCode: 'BSK_JET',
+        capacityMinKgH: 200,
+        capacityMaxKgH: 400,
+        mainMotorKwMax: 30,
+      );
+      final motorTooStrong = _machine(
+        id: 'MOTOR_STRONG',
+        seriesCode: 'BS_ROLLER',
+        capacityMinKgH: 200,
+        capacityMaxKgH: 400,
+        mainMotorKwMax: 90,
+      );
+      final result = GrindingFilterEngine.apply(
+        [matches, wrongSeries, motorTooStrong],
+        const GrindingFilterCriteria(
+          seriesCodes: {'BS_ROLLER'},
+          capacityBucket: GrindingCapacityBucket.r300to500,
+          maxMotorKw: 75,
+        ),
+      );
+      expect(result, [matches]);
+    });
+
+    test('reset (GrindingFilterCriteria rỗng) trả lại toàn bộ danh sách không lọc', () {
+      final machineA = _machine(id: 'A');
+      final machineB = _machine(id: 'B');
+      const empty = GrindingFilterCriteria();
+      expect(empty.isEmpty, isTrue);
+      expect(empty.activeCount, 0);
+      final result = GrindingFilterEngine.apply([machineA, machineB], empty);
+      expect(result, [machineA, machineB]);
+    });
+
+    test('activeCount đếm đúng số điều kiện đang bật', () {
+      const criteria = GrindingFilterCriteria(
+        seriesCodes: {'BS_ROLLER'},
+        maxMotorKw: 75,
+        finenessUnit: 'mesh',
+        finenessValue: 50,
+      );
+      expect(criteria.activeCount, 3);
     });
   });
 

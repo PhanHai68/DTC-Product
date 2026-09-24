@@ -13,6 +13,11 @@ class GrindingMachineDatabase {
   GrindingMachineDatabase._();
   static final GrindingMachineDatabase instance = GrindingMachineDatabase._();
 
+  /// Nguồn duy nhất cho version DB hiện tại — dùng lại ở [database] VÀ ở
+  /// nơi cần hiển thị/so sánh (VD Backup Screen, Phase 11) thay vì hard-code
+  /// số `5` thêm 1 chỗ nữa.
+  static const currentVersion = 5;
+
   /// Bọc quanh 1 Database đã mở sẵn (VD sqflite_common_ffi in-memory) — chỉ
   /// dùng cho test.
   GrindingMachineDatabase.forTesting(Database database) : _database = database;
@@ -22,7 +27,7 @@ class GrindingMachineDatabase {
   Future<Database> get database async {
     _database ??= await openLocalDatabase(
       fileName: 'grinding_machines.db',
-      version: 1,
+      version: currentVersion,
       onCreate: _create,
       onUpgrade: _upgrade,
     );
@@ -167,11 +172,222 @@ class GrindingMachineDatabase {
         value TEXT
       )
     ''');
+
+    await _createProjectTables(db);
+    await _createProposalTables(db);
+  }
+
+  /// Bảng cho workflow "Engineering Project" (Phase 7) — domain RIÊNG với
+  /// catalog máy nghiền ở trên, KHÔNG bị xóa/ghi đè khi `importSnapshot`
+  /// replace-all catalog (xem GrindingMachineRepository.importSnapshot: chỉ
+  /// delete 7 bảng catalog, không đụng 2 bảng này).
+  Future<void> _createProjectTables(Database db) async {
+    // Đã gồm sẵn cột follow-up (Phase 10, mục 15) ngay từ đầu — cài mới từ
+    // v5 KHÔNG cần ALTER TABLE, chỉ database đang ở v2-v4 thật (đã có bảng
+    // này TRƯỚC khi 2 cột này tồn tại) mới cần `_addProjectFollowUpColumns`.
+    await db.execute('''
+      CREATE TABLE grinding_selection_projects(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        projectName TEXT NOT NULL,
+        customerName TEXT,
+        contactName TEXT,
+        contactInfo TEXT,
+        materialId TEXT,
+        materialName TEXT,
+        requiredCapacityKgH REAL,
+        requiredFinenessValue REAL,
+        requiredFinenessUnit TEXT,
+        feedSizeMm REAL,
+        maxMotorKw REAL,
+        application TEXT,
+        notes TEXT,
+        status TEXT NOT NULL DEFAULT 'draft',
+        nextFollowUpAt TEXT,
+        followUpNote TEXT,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE grinding_selection_project_machines(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        projectId INTEGER NOT NULL,
+        machineId TEXT NOT NULL,
+        role TEXT NOT NULL,
+        addedAt TEXT NOT NULL
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_grinding_selection_project_machines_project '
+      'ON grinding_selection_project_machines(projectId)',
+    );
+  }
+
+  /// Bảng cho "Technical Proposal / Quotation" (Phase 8) — domain RIÊNG với
+  /// cả catalog máy LẪN Engineering Project (chỉ tham chiếu qua
+  /// `projectId`). `technicalSnapshotJson` chỉ được ghi 1 LẦN tại thời điểm
+  /// Finalize — không bị đụng bởi `importSnapshot` replace-all catalog phía
+  /// trên, đúng yêu cầu "Final Proposal không đổi khi database máy update".
+  Future<void> _createProposalTables(Database db) async {
+    // Đã gồm sẵn cột revision chain (Phase 9, mục 3-4) ngay từ đầu — cài mới
+    // từ v4 KHÔNG cần ALTER TABLE, chỉ database đang ở v3 thật (đã có bảng
+    // này TRƯỚC khi các cột này tồn tại) mới cần `_addProposalRevisionColumns`.
+    // `proposalNumber` KHÔNG còn UNIQUE (khác Phase 8) vì mọi revision trong
+    // 1 chain (R0, R1, R2...) dùng CHUNG 1 proposalNumber (mục 3) — tính duy
+    // nhất thật sự nằm ở UNIQUE(rootProposalId, revision) bên dưới.
+    await db.execute('''
+      CREATE TABLE grinding_proposals(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        projectId INTEGER NOT NULL,
+        proposalNumber TEXT,
+        status TEXT NOT NULL DEFAULT 'draft',
+        currency TEXT NOT NULL DEFAULT 'VND',
+        machineId TEXT,
+        machineUnitPrice REAL,
+        machineQuantity REAL,
+        discount REAL,
+        vatPercent REAL,
+        notes TEXT,
+        technicalSnapshotJson TEXT,
+        rootProposalId INTEGER,
+        revision INTEGER NOT NULL DEFAULT 0,
+        validityDays INTEGER,
+        deliveryTime TEXT,
+        warranty TEXT,
+        paymentTerms TEXT,
+        sentAt TEXT,
+        acceptedAt TEXT,
+        rejectedAt TEXT,
+        responseNote TEXT,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        finalizedAt TEXT
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_grinding_proposals_project ON grinding_proposals(projectId)',
+    );
+    await _createProposalChainIndex(db);
+
+    await db.execute('''
+      CREATE TABLE grinding_proposal_line_items(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        proposalId INTEGER NOT NULL,
+        kind TEXT NOT NULL,
+        name TEXT NOT NULL,
+        quantity REAL,
+        unitPrice REAL,
+        note TEXT,
+        sortOrder INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_grinding_proposal_line_items_proposal '
+      'ON grinding_proposal_line_items(proposalId)',
+    );
+  }
+
+  /// Chặn 2 revision trùng số trong cùng chain (Phase 9, mục 32) — Repository
+  /// vẫn tự tính `MAX(revision)+1` trong transaction, index này chỉ là lưới
+  /// an toàn cuối nếu có race.
+  Future<void> _createProposalChainIndex(Database db) async {
+    await db.execute(
+      'CREATE UNIQUE INDEX idx_grinding_proposals_chain_revision '
+      'ON grinding_proposals(rootProposalId, revision)',
+    );
+  }
+
+  /// Database ĐÃ ở v3 thật (bảng `grinding_proposals` tồn tại từ TRƯỚC khi
+  /// các cột revision chain được thêm, VÀ có UNIQUE constraint cũ trên
+  /// `proposalNumber`) — ALTER TABLE ADD COLUMN không bỏ được UNIQUE constraint
+  /// đã có sẵn trên cột, nên phải rebuild bảng theo đúng quy trình chuẩn của
+  /// SQLite: tạo bảng mới đúng schema v4 (không UNIQUE proposalNumber), copy
+  /// toàn bộ dữ liệu cũ sang kèm backfill `rootProposalId = id` (mỗi proposal
+  /// Phase 8 cũ là R0 độc lập của chính nó — mục 30), xoá bảng cũ, đổi tên.
+  Future<void> _addProposalRevisionColumns(Database db) async {
+    await db.execute(
+      'ALTER TABLE grinding_proposals RENAME TO grinding_proposals_old',
+    );
+    await db.execute('''
+      CREATE TABLE grinding_proposals(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        projectId INTEGER NOT NULL,
+        proposalNumber TEXT,
+        status TEXT NOT NULL DEFAULT 'draft',
+        currency TEXT NOT NULL DEFAULT 'VND',
+        machineId TEXT,
+        machineUnitPrice REAL,
+        machineQuantity REAL,
+        discount REAL,
+        vatPercent REAL,
+        notes TEXT,
+        technicalSnapshotJson TEXT,
+        rootProposalId INTEGER,
+        revision INTEGER NOT NULL DEFAULT 0,
+        validityDays INTEGER,
+        deliveryTime TEXT,
+        warranty TEXT,
+        paymentTerms TEXT,
+        sentAt TEXT,
+        acceptedAt TEXT,
+        rejectedAt TEXT,
+        responseNote TEXT,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        finalizedAt TEXT
+      )
+    ''');
+    await db.execute('''
+      INSERT INTO grinding_proposals (
+        id, projectId, proposalNumber, status, currency, machineId,
+        machineUnitPrice, machineQuantity, discount, vatPercent, notes,
+        technicalSnapshotJson, rootProposalId, revision, createdAt, updatedAt,
+        finalizedAt
+      )
+      SELECT
+        id, projectId, proposalNumber, status, currency, machineId,
+        machineUnitPrice, machineQuantity, discount, vatPercent, notes,
+        technicalSnapshotJson, id, revision, createdAt, updatedAt, finalizedAt
+      FROM grinding_proposals_old
+    ''');
+    await db.execute('DROP TABLE grinding_proposals_old');
+    await db.execute(
+      'CREATE INDEX idx_grinding_proposals_project ON grinding_proposals(projectId)',
+    );
+    await _createProposalChainIndex(db);
+  }
+
+  /// Database ĐÃ ở v2-v4 thật (bảng `grinding_selection_projects` tồn tại từ
+  /// TRƯỚC khi 2 cột follow-up được thêm) — ALTER TABLE ADD COLUMN đơn giản,
+  /// không có UNIQUE constraint nào cần rebuild (khác trường hợp
+  /// `proposalNumber` ở Phase 9).
+  Future<void> _addProjectFollowUpColumns(Database db) async {
+    await db.execute(
+      'ALTER TABLE grinding_selection_projects ADD COLUMN nextFollowUpAt TEXT',
+    );
+    await db.execute(
+      'ALTER TABLE grinding_selection_projects ADD COLUMN followUpNote TEXT',
+    );
   }
 
   Future<void> _upgrade(Database db, int oldVersion, int newVersion) async {
-    // Chưa có phiên bản cũ nào để migrate — để sẵn cho các lần nâng schema
-    // sau này (thêm cột/bảng mới khi database Excel mở rộng).
+    if (oldVersion < 2) {
+      // Bảng chưa từng tồn tại -> tạo thẳng với schema v5 đầy đủ, không cần
+      // ALTER TABLE nữa.
+      await _createProjectTables(db);
+    } else if (oldVersion < 5) {
+      // Bảng đã tồn tại từ 1 lần cài v2-v4 thật (thiếu cột follow-up).
+      await _addProjectFollowUpColumns(db);
+    }
+    if (oldVersion < 3) {
+      // Bảng chưa từng tồn tại -> tạo thẳng với schema v4 đầy đủ, không cần
+      // ALTER TABLE nữa.
+      await _createProposalTables(db);
+    } else if (oldVersion < 4) {
+      // Bảng đã tồn tại từ 1 lần cài v3 thật (thiếu cột revision chain).
+      await _addProposalRevisionColumns(db);
+    }
   }
 
   Future<void> close() async {

@@ -23,26 +23,106 @@ abstract final class GrindingExcelParser {
     }
   }
 
+  static const _mainNs =
+      'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+
+  /// Một số công cụ xuất workbook gắn prefix (vd. `x:`) cho namespace
+  /// spreadsheetml chính thay vì để mặc định không-prefix. `package:excel`
+  /// 4.x tra phần tử bằng `findAllElements('sheet'|'row'|'c'|...)` không xét
+  /// namespace, nên gặp file dạng này sẽ không tìm thấy sheet/row/cell nào
+  /// (báo "Corrupted Excel file."). Bỏ prefix đó trong bản sao RAM (không
+  /// đổi giá trị ô) để `package:excel` đọc được đúng cấu trúc.
+  static String _stripMainNamespacePrefix(String xml) {
+    if (!xml.contains(_mainNs)) return xml;
+    final doc = XmlDocument.parse(xml);
+    String? prefix;
+    for (final element in doc.descendants.whereType<XmlElement>()) {
+      for (final attribute in element.attributes) {
+        if (attribute.name.prefix == 'xmlns' && attribute.value == _mainNs) {
+          prefix = attribute.name.local;
+        }
+      }
+    }
+    if (prefix == null) return xml;
+    return xml
+        .replaceAll('<$prefix:', '<')
+        .replaceAll('</$prefix:', '</')
+        .replaceAll(' xmlns:$prefix="$_mainNs"', ' xmlns="$_mainNs"');
+  }
+
   /// excel 4.x ghép 'xl/' vào Target ngay cả khi Target đã là '/xl/...'.
-  /// Chỉ chuẩn hóa relationship trong bản sao RAM, giữ nguyên mọi giá trị ô.
+  static String _fixAbsoluteRelationshipTargets(String xml) {
+    final doc = XmlDocument.parse(xml);
+    for (final relation in doc.descendants.whereType<XmlElement>()) {
+      if (relation.name.local != 'Relationship') continue;
+      final target = relation.getAttribute('Target');
+      if (target != null && target.startsWith('/xl/')) {
+        relation.setAttribute('Target', target.substring(4));
+      }
+    }
+    return doc.toXmlString();
+  }
+
+  static final _worksheetFile = RegExp(r'^xl/worksheets/sheet\d+\.xml$');
+
+  /// `t="str"` đúng nghĩa OOXML là kết quả (dạng text) của một công thức,
+  /// nhưng một số công cụ xuất workbook lại gắn nó cho text thường — kể cả ô
+  /// rỗng hợp lệ (đúng rule "không suy đoán dữ liệu" của module này). Do
+  /// `package:excel` 4.x luôn coi `t="str"` là công thức và đọc `<v>` bằng
+  /// `.first` không kiểm tra rỗng, một ô `t="str"` không có `<v>` (ô rỗng)
+  /// làm nó crash cứng thay vì trả về giá trị null. Viết lại các cell này
+  /// trực tiếp trên XML — có `<v>` thì chuyển thành `inlineStr` (giữ nguyên
+  /// text gốc), không có `<v>` thì bỏ hẳn `t` để `package:excel` đọc thành ô
+  /// rỗng — trước khi đưa cho `package:excel`, không đụng ô nào khác.
+  static String _normalizeStrCells(String xml) {
+    if (!xml.contains('t="str"')) return xml;
+    final doc = XmlDocument.parse(xml);
+    final cells = doc.descendants
+        .whereType<XmlElement>()
+        .where((e) => e.name.local == 'c' && e.getAttribute('t') == 'str')
+        .toList();
+    for (final cell in cells) {
+      final values = cell.children
+          .whereType<XmlElement>()
+          .where((e) => e.name.local == 'v')
+          .toList();
+      if (values.isEmpty) {
+        cell.removeAttribute('t');
+        continue;
+      }
+      final text = values.first.innerText;
+      for (final v in values) {
+        v.remove();
+      }
+      cell.setAttribute('t', 'inlineStr');
+      cell.children.add(
+        XmlElement(XmlName('is'), [], [
+          XmlElement(XmlName('t'), [], [XmlText(text)]),
+        ]),
+      );
+    }
+    return doc.toXmlString();
+  }
+
+  /// Chỉ chuẩn hóa cấu trúc XML trong bản sao RAM, giữ nguyên mọi giá trị ô.
   static Excel decodeWorkbook(List<int> bytes) {
     final source = ZipDecoder().decodeBytes(bytes);
     final normalized = Archive();
     for (final file in source.files) {
-      if (file.name == 'xl/_rels/workbook.xml.rels') {
-        final xml = XmlDocument.parse(utf8.decode(file.content as List<int>));
-        for (final relation in xml.descendants.whereType<XmlElement>()) {
-          if (relation.name.local != 'Relationship') continue;
-          final target = relation.getAttribute('Target');
-          if (target != null && target.startsWith('/xl/')) {
-            relation.setAttribute('Target', target.substring(4));
-          }
-        }
-        final content = utf8.encode(xml.toXmlString());
-        normalized.addFile(ArchiveFile(file.name, content.length, content));
-      } else {
+      if (!file.name.endsWith('.xml') && !file.name.endsWith('.rels')) {
         normalized.addFile(file);
+        continue;
       }
+      var content = _stripMainNamespacePrefix(
+        utf8.decode(file.content as List<int>),
+      );
+      if (file.name == 'xl/_rels/workbook.xml.rels') {
+        content = _fixAbsoluteRelationshipTargets(content);
+      } else if (_worksheetFile.hasMatch(file.name)) {
+        content = _normalizeStrCells(content);
+      }
+      final encoded = utf8.encode(content);
+      normalized.addFile(ArchiveFile(file.name, encoded.length, encoded));
     }
     return Excel.decodeBytes(ZipEncoder().encode(normalized)!);
   }

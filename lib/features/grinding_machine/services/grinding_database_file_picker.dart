@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 
 class GrindingImportFile {
   const GrindingImportFile(this.name, this.bytes);
@@ -12,17 +12,12 @@ class GrindingDatabaseFilePicker {
   const GrindingDatabaseFilePicker();
 
   Future<GrindingImportFile?> pick() async {
-    final result = await FilePicker.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['xlsx', 'json'],
-      withData: true,
-      dialogTitle: 'Chọn database Máy nghiền',
+    final typeGroup = XTypeGroup(
+      label: 'Database',
+      extensions: ['xlsx', 'json'],
     );
-    if (result == null || result.files.isEmpty) return null;
-    final file = result.files.single;
-    return GrindingImportFile(
-      file.name,
-      file.bytes ?? await file.xFile.readAsBytes(),
-    );
+    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+    if (file == null) return null;
+    return GrindingImportFile(file.name, await file.readAsBytes());
   }
 }

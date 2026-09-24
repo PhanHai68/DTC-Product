@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Công cụ Lấy Tọa Độ Hotspot 3D</title>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  <style>
+    body { margin: 0; padding: 0; background: #e0e0e0; font-family: sans-serif; overflow: hidden; }
+    model-viewer { width: 100vw; height: 100vh; background-color: #f1f5f9; }
+    #overlay {
+      position: absolute; top: 20px; left: 20px; 
+      background: rgba(255, 255, 255, 0.95); padding: 20px; 
+      border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      max-width: 450px;
+    }
+    .hotspot {
+      display: block; width: 24px; height: 24px; border-radius: 12px; border: 2px solid white;
+      background-color: #2196F3; box-sizing: border-box; pointer-events: none;
+    }
+    #result { 
+      margin-top: 15px; font-family: monospace; font-size: 13px; white-space: pre-wrap; 
+      word-break: break-all; background: #263238; color: #80cbc4; padding: 15px; 
+      border-radius: 6px; border: 1px solid #1c252a; max-height: 250px; overflow-y: auto;
+    }
+    input[type=file] { margin-top: 10px; margin-bottom: 10px; width: 100%; }
+    .btn-copy { margin-top: 10px; width: 100%; padding: 8px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-copy:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+  <model-viewer id="mv" camera-controls auto-rotate shadow-intensity="1"></model-viewer>
+  
+  <div id="overlay">
+    <h3 style="margin-top: 0; color: #1976D2;">📍 CÔNG CỤ LẤY TỌA ĐỘ HOTSPOT</h3>
+    
+    <p style="font-size: 14px;"><b>Bước 1:</b> Tải file mô hình 3D (VD: <i>sc16_pro.glb</i>) từ máy tính lên đây:</p>
+    <input type="file" id="fileInput" accept=".glb,.gltf">
+    
+    <hr style="border-top: 1px solid #ccc; margin: 15px 0;">
+
+    <p style="font-size: 14px;"><b>Bước 2:</b> Dùng chuột xoay mô hình, sau đó <b>Click Đúp (Double-click)</b> vào bộ phận bạn muốn ghim Hotspot.</p>
+    
+    <div id="result">Chưa có dữ liệu... (Hãy tải file và click đúp vào mô hình)</div>
+    <button class="btn-copy" onclick="copyData()">Sao chép kết quả gửi Agent</button>
+  </div>
+
+  <script>
+    const mv = document.getElementById('mv');
+    const fileInput = document.getElementById('fileInput');
+    const resultBox = document.getElementById('result');
+    let count = 1;
+
+    // Load file local bằng object URL
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const objectUrl = URL.createObjectURL(file);
+        mv.src = objectUrl;
+        resultBox.innerHTML = `Đã tải xong mô hình: ${file.name}\nBây giờ hãy click đúp vào mô hình!`;
+        count = 1; // reset đếm
+        // Xóa các hotspot cũ
+        mv.querySelectorAll('.hotspot').forEach(h => h.remove());
+      }
+    });
+
+    mv.addEventListener('dblclick', (event) => {
+      if (!mv.src) return alert("Vui lòng tải file mô hình 3D lên trước!");
+
+      const { clientX, clientY } = event;
+      const hit = mv.positionAndNormalFromPoint(clientX, clientY);
+      
+      if (hit != null) {
+        const { position, normal } = hit;
+        const posStr = `${position.x.toFixed(3)} ${position.y.toFixed(3)} ${position.z.toFixed(3)}`;
+        const normStr = `${normal.x.toFixed(3)} ${normal.y.toFixed(3)} ${normal.z.toFixed(3)}`;
+        
+        // Thêm hotspot vào để nhìn thấy ngay
+        const btn = document.createElement('button');
+        btn.slot = `hotspot-${count}`;
+        btn.className = 'hotspot';
+        btn.dataset.position = posStr;
+        btn.dataset.normal = normStr;
+        mv.appendChild(btn);
+
+        const dataStr = `Điểm ${count}:\nposition: "${posStr}"\nnormal: "${normStr}"\n\n`;
+        
+        if (count === 1) resultBox.innerHTML = '';
+        resultBox.innerHTML += dataStr;
+        
+        // Cuộn xuống cuối
+        resultBox.scrollTop = resultBox.scrollHeight;
+        count++;
+      }
+    });
+
+    window.copyData = function() {
+      const text = resultBox.innerText;
+      if (text.includes("Chưa có dữ liệu") || text.includes("Đã tải xong")) {
+        alert("Chưa có tọa độ nào để copy!");
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Đã copy dữ liệu! Hãy dán vào khung chat gửi cho Agent.");
+      });
+    }
+  </script>
+</body>
+</html>

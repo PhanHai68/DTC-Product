@@ -26,6 +26,7 @@ class _GrindingMachineDetailScreenState
   GrindingMachine? _machine;
   GrindingSeries? _series;
   List<GrindingExtraSpec> _extraSpecs = const [];
+  Set<String> _selectionTags = const {};
   bool _isLoading = true;
   String? _error;
 
@@ -49,11 +50,13 @@ class _GrindingMachineDetailScreenState
       }
       final series = await provider.getSeries(machine.seriesCode);
       final extraSpecs = await provider.getExtraSpecs(machine.machineId);
+      final tagsBySeries = await provider.getAllSelectionTagsGrouped();
       if (!mounted) return;
       setState(() {
         _machine = machine;
         _series = series;
         _extraSpecs = extraSpecs;
+        _selectionTags = tagsBySeries[machine.seriesCode] ?? const {};
         _isLoading = false;
       });
     } catch (error) {
@@ -88,6 +91,7 @@ class _GrindingMachineDetailScreenState
               machine: _machine!,
               series: _series,
               extraSpecs: _extraSpecs,
+              selectionTags: _selectionTags,
             ),
     );
   }
@@ -98,11 +102,13 @@ class _DetailBody extends StatelessWidget {
     required this.machine,
     required this.series,
     required this.extraSpecs,
+    required this.selectionTags,
   });
 
   final GrindingMachine machine;
   final GrindingSeries? series;
   final List<GrindingExtraSpec> extraSpecs;
+  final Set<String> selectionTags;
 
   @override
   Widget build(BuildContext context) {
@@ -165,6 +171,39 @@ class _DetailBody extends StatelessWidget {
                     value: spec.displayValue.isEmpty ? '—' : spec.displayValue,
                   ),
               ],
+            ),
+          ),
+        ],
+        if (selectionTags.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _SectionCard(
+            title: 'Selection Tags',
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: (selectionTags.toList()..sort())
+                  .map(
+                    (tag) => Container(
+                      key: Key('grinding_detail_tag_$tag'),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: palette.cyan.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        GrindingFormat.tagLabel(tag),
+                        style: TextStyle(
+                          color: palette.navy,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
         ],

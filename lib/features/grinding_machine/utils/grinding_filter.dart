@@ -25,6 +25,8 @@ class GrindingFilterCriteria {
     this.capacityBucket,
     this.finenessUnit,
     this.finenessValue,
+    this.seriesCodes = const {},
+    this.maxMotorKw,
   });
 
   final String? materialId;
@@ -34,8 +36,28 @@ class GrindingFilterCriteria {
   final String? finenessUnit;
   final double? finenessValue;
 
+  /// Lọc theo 1 hoặc nhiều dòng máy (Series) — rỗng nghĩa là không áp dụng.
+  final Set<String> seriesCodes;
+
+  /// Công suất động cơ tối đa cho phép (kW) — so với
+  /// `mainMotorKwMax ?? mainMotorKwMin` của model.
+  final double? maxMotorKw;
+
   bool get isEmpty =>
-      materialId == null && capacityBucket == null && finenessValue == null;
+      materialId == null &&
+      capacityBucket == null &&
+      finenessValue == null &&
+      seriesCodes.isEmpty &&
+      maxMotorKw == null;
+
+  /// Số điều kiện đang áp dụng — dùng hiển thị badge "Filter (N)".
+  int get activeCount => [
+    materialId != null,
+    capacityBucket != null,
+    finenessValue != null,
+    seriesCodes.isNotEmpty,
+    maxMotorKw != null,
+  ].where((v) => v).length;
 
   GrindingFilterCriteria copyWith({
     String? materialId,
@@ -45,6 +67,9 @@ class GrindingFilterCriteria {
     String? finenessUnit,
     double? finenessValue,
     bool clearFineness = false,
+    Set<String>? seriesCodes,
+    double? maxMotorKw,
+    bool clearMaxMotorKw = false,
   }) {
     return GrindingFilterCriteria(
       materialId: clearMaterialId ? null : (materialId ?? this.materialId),
@@ -55,6 +80,8 @@ class GrindingFilterCriteria {
       finenessValue: clearFineness
           ? null
           : (finenessValue ?? this.finenessValue),
+      seriesCodes: seriesCodes ?? this.seriesCodes,
+      maxMotorKw: clearMaxMotorKw ? null : (maxMotorKw ?? this.maxMotorKw),
     );
   }
 }
@@ -90,8 +117,25 @@ abstract final class GrindingFilterEngine {
           return false;
         }
       }
+      if (criteria.seriesCodes.isNotEmpty &&
+          !criteria.seriesCodes.contains(machine.seriesCode)) {
+        return false;
+      }
+      if (criteria.maxMotorKw != null &&
+          !_matchesMotor(machine, criteria.maxMotorKw!)) {
+        return false;
+      }
       return true;
     }).toList();
+  }
+
+  /// `null` nghĩa là database chưa có dữ liệu công suất động cơ — loại khỏi
+  /// kết quả lọc cứng (khác Selection Service: filter chỉ trả model chắc
+  /// chắn đạt điều kiện, còn Selector hiển thị cả UNKNOWN để kỹ sư tự xem).
+  static bool _matchesMotor(GrindingMachine machine, double maxMotorKw) {
+    final actual = machine.mainMotorKwMax ?? machine.mainMotorKwMin;
+    if (actual == null) return false;
+    return actual <= maxMotorKw;
   }
 
   static bool _matchesCapacity(

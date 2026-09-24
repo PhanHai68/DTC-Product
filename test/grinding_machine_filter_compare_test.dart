@@ -147,4 +147,112 @@ void main() {
       expect(find.text('100 - 800 kg/h'), findsOneWidget);
     },
   );
+
+  Future<void> pickIntoSlot(
+    WidgetTester tester,
+    int index,
+    String query,
+    String exactTile,
+  ) async {
+    await tester.tap(find.byKey(Key('grinding_compare_slot_$index')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const Key('grinding_picker_search_field')),
+      query,
+    );
+    await tester.runAsync(() async {
+      await tester.pump(const Duration(milliseconds: 300));
+      await Future.delayed(const Duration(milliseconds: 100));
+    });
+    await tester.pump();
+    await tester.tap(find.byKey(Key(exactTile)));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('Compare 3 model hiển thị đủ 3 cột', (tester) async {
+    final provider = await _seededProvider(tester);
+    await _pumpScreen(tester, provider, const GrindingMachineCompareScreen());
+
+    await pickIntoSlot(
+      tester,
+      0,
+      'ASC-200',
+      'grinding_machine_tile_BSC_COARSE__ASC-200',
+    );
+    await pickIntoSlot(
+      tester,
+      1,
+      'ASC-300',
+      'grinding_machine_tile_BSC_COARSE__ASC-300',
+    );
+    await pickIntoSlot(
+      tester,
+      2,
+      'ASP-350',
+      'grinding_machine_tile_BSP_ULTRAFINE__ASP-350',
+    );
+
+    // Tên model xuất hiện ở cả slot đã chọn lẫn header bảng so sánh.
+    expect(find.text('ASC-200'), findsWidgets);
+    expect(find.text('ASC-300'), findsWidgets);
+    expect(find.text('ASP-350'), findsWidgets);
+  });
+
+  testWidgets(
+    'Compare gộp extraSpecs khác nhau giữa các model, thứ tự ổn định, model thiếu key hiện —',
+    (tester) async {
+      final provider = await _seededProvider(tester);
+      await _pumpScreen(
+        tester,
+        provider,
+        const GrindingMachineCompareScreen(),
+      );
+
+      const machineA = 'BSC_COARSE__ASC-200';
+      const machineB = 'BSP_ULTRAFINE__ASP-350';
+      late final Set<String> unionKeys;
+      await tester.runAsync(() async {
+        final specsA = await provider.getExtraSpecs(machineA);
+        final specsB = await provider.getExtraSpecs(machineB);
+        unionKeys = {
+          for (final s in [...specsA, ...specsB])
+            if (s.displayValue.isNotEmpty) s.specKey,
+        };
+      });
+      // 2 dòng máy khác công nghệ (nghiền thô vs siêu mịn) chắc chắn có
+      // Extra_Specs khác nhau trong database thật — nếu rỗng nghĩa là dữ
+      // liệu test đã đổi, cần xem lại thay vì giả định.
+      expect(unionKeys, isNotEmpty);
+
+      await pickIntoSlot(
+        tester,
+        0,
+        'ASC-200',
+        'grinding_machine_tile_$machineA',
+      );
+      await pickIntoSlot(
+        tester,
+        1,
+        'ASP-350',
+        'grinding_machine_tile_$machineB',
+      );
+
+      String humanize(String key) {
+        final withSpaces = key.replaceAll('_', ' ');
+        return withSpaces.isEmpty
+            ? withSpaces
+            : withSpaces[0].toUpperCase() + withSpaces.substring(1);
+      }
+
+      for (final key in unionKeys) {
+        expect(
+          find.text(humanize(key)),
+          findsOneWidget,
+          reason: 'Thiếu hàng cho specKey "$key" trong bảng so sánh.',
+        );
+      }
+      // Model không có key tương ứng phải hiện "—", không được để trống.
+      expect(find.text('—'), findsWidgets);
+    },
+  );
 }
