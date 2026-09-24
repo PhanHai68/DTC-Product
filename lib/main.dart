@@ -27,6 +27,7 @@ import 'providers/storage_provider.dart';
 import 'providers/daily_goals_provider.dart';
 import 'services/note_notification_service.dart';
 import 'features/maintenance_report/providers/maintenance_report_provider.dart';
+import 'features/grinding_machine/providers/grinding_machine_provider.dart';
 
 // Projects Module
 import 'features/projects/providers/project_provider.dart';
@@ -213,6 +214,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StorageProvider()),
         ChangeNotifierProvider(create: (_) => DailyGoalsProvider()),
         ChangeNotifierProvider(create: (_) => MaintenanceReportProvider()),
+        ChangeNotifierProvider(create: (_) => GrindingMachineProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) {

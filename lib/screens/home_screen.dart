@@ -25,6 +25,11 @@ class HomeScreen extends StatelessWidget {
       route: '/acomp_menu',
     ),
     _HomeAction(
+      title: 'Máy nghiền',
+      icon: Icons.blender_outlined,
+      route: '/grinding_machine',
+    ),
+    _HomeAction(
       title: 'Công cụ & Tiện ích',
       icon: Icons.dashboard_customize_outlined,
       route: '/extensions',

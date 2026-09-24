@@ -88,6 +88,14 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
           'maintenance report bao cao bao tri tinh trang may anh before after verified camera xac minh',
     ),
     const _SearchItem(
+      title: 'Máy nghiền',
+      subtitle: 'Tra cứu, so sánh và chọn máy nghiền phù hợp',
+      location: '/grinding_machine',
+      icon: Icons.blender_outlined,
+      keywords:
+          'may nghien grinding mill bsp bsz asp asz bsc asc bsg asg bsu asu bsf bsdf pin jet roller hammer cong suat do min mesh micron',
+    ),
+    const _SearchItem(
       title: 'Phân tích hoàn vốn',
       subtitle: 'Điện, lợi nhuận và biểu đồ hoàn vốn',
       location: '/payback_analysis',

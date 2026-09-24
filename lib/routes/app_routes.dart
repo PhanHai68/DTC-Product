@@ -22,6 +22,10 @@ import '../features/maintenance_report/screens/maintenance_report_list_screen.da
 import '../features/maintenance_report/screens/maintenance_report_form_screen.dart';
 import '../features/maintenance_report/screens/maintenance_report_workspace_screen.dart';
 import '../features/maintenance_report/models/maintenance_report.dart';
+import '../features/grinding_machine/screens/grinding_machine_home_screen.dart';
+import '../features/grinding_machine/screens/grinding_machine_search_screen.dart';
+import '../features/grinding_machine/screens/grinding_series_machines_screen.dart';
+import '../features/grinding_machine/screens/grinding_machine_detail_screen.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
 import '../screens/technical_converter/technical_converter_screen.dart';
 import '../screens/color_sorter_categories_screen.dart';
@@ -205,6 +209,25 @@ final GoRouter appRouter = GoRouter(
       path: '/maintenance_report/:id',
       builder: (context, state) => MaintenanceReportWorkspaceScreen(
         reportId: state.pathParameters['id']!,
+      ),
+    ),
+    GoRoute(
+      path: '/grinding_machine',
+      builder: (context, state) => const GrindingMachineHomeScreen(),
+    ),
+    GoRoute(
+      path: '/grinding_machine/search',
+      builder: (context, state) => const GrindingMachineSearchScreen(),
+    ),
+    GoRoute(
+      path: '/grinding_machine/series',
+      builder: (context, state) =>
+          GrindingSeriesMachinesScreen(seriesCode: state.extra as String),
+    ),
+    GoRoute(
+      path: '/grinding_machine/detail/:machineId',
+      builder: (context, state) => GrindingMachineDetailScreen(
+        machineId: state.pathParameters['machineId']!,
       ),
     ),
     GoRoute(

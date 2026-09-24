@@ -57,6 +57,7 @@ void main() {
     expect(find.text('Máy tách màu'), findsOneWidget);
     expect(find.text('Máy nén khí'), findsOneWidget);
     expect(find.text('Cân đóng gói'), findsOneWidget);
+    expect(find.text('Máy nghiền'), findsOneWidget);
     expect(find.text('Công cụ & Tiện ích'), findsOneWidget);
     expect(find.text('DTCGroup'), findsOneWidget);
     expect(find.text('Tra cứu model hoặc chức năng'), findsOneWidget);
@@ -76,19 +77,30 @@ void main() {
       findsOneWidget,
     );
     expect(
+      find.byKey(const ValueKey('home_solution_/grinding_machine')),
+      findsOneWidget,
+    );
+    expect(
       find.byKey(const ValueKey('home_solution_/extensions')),
       findsOneWidget,
     );
     final compressorCard = tester.getRect(
       find.byKey(const ValueKey('home_solution_/acomp_menu')),
     );
+    final grindingMachineCard = tester.getRect(
+      find.byKey(const ValueKey('home_solution_/grinding_machine')),
+    );
     final extensionsCard = tester.getRect(
       find.byKey(const ValueKey('home_solution_/extensions')),
     );
-    expect(compressorCard.top, extensionsCard.top);
-    expect(compressorCard.size, extensionsCard.size);
-    expect(compressorCard.left, lessThan(extensionsCard.left));
-    expect(extensionsCard.right, lessThanOrEqualTo(372));
+    // Lưới 2 cột trên điện thoại: 5 mục -> "Máy nén khí" + "Máy nghiền" (mục
+    // thứ 3-4) cùng hàng, "Công cụ & Tiện ích" (mục thứ 5, lẻ) xuống hàng
+    // riêng bên dưới.
+    expect(compressorCard.top, grindingMachineCard.top);
+    expect(compressorCard.size, grindingMachineCard.size);
+    expect(compressorCard.left, lessThan(grindingMachineCard.left));
+    expect(grindingMachineCard.right, lessThanOrEqualTo(372));
+    expect(extensionsCard.top, greaterThan(compressorCard.top));
     expect(
       tester.getCenter(find.byKey(const Key('home_brand_wordmark'))).dx,
       closeTo(195, 1),
