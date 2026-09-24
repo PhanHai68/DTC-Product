@@ -255,11 +255,15 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         'dimensions': '${specs['dimensions_display_mm']} mm',
         'configuration': '${specs['chutes_qty']} máng',
         'technology': 'AI · PLOV',
-        // Hình học dựng từ nguồn Meshy AI (đã giản lược + làm mượt normal
-        // có "ngưỡng góc gấp", giữ cạnh sắc, chỉ mượt bề mặt gần phẳng).
-        // Texture màu của Meshy AI bị lỗi vân camo vàng-đen (không dùng
-        // được) nên đã bỏ hẳn, thay bằng đúng màu + metallic/roughness của
-        // material SC16 Pro để đồng nhất chất liệu giữa 2 model.
+        // Model đã được xử lý lại: bỏ texture ảnh chụp gốc (tối, nhiễu),
+        // thay bằng màu + metallic/roughness giống hệt SC16 Pro, normal
+        // được làm mượt có "ngưỡng góc gấp" (giữ cạnh sắc, chỉ mượt bề mặt
+        // gần phẳng) để có cảm giác đổ bóng rõ nét giữa các mặt như SC16
+        // Pro thay vì mượt lẫn lộn toàn bộ. Đã thử nguồn Meshy AI mới
+        // nhưng texture bị lỗi camo và hình học bị méo khi giản lược sâu
+        // để vừa dung lượng — quay lại bản dựng từ ảnh quét này vì ổn định
+        // hơn. exposure/environmentImage lấy đúng giá trị mặc định của
+        // SC16 Pro.
         'exposure': 0.85,
         'environmentImage': 'neutral',
       };
