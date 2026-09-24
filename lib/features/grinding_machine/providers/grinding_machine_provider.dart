@@ -3,6 +3,7 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import '../models/grinding_extra_spec.dart';
 import '../models/grinding_machine.dart';
+import '../models/grinding_material.dart';
 import '../models/grinding_series.dart';
 import '../repositories/grinding_machine_repository.dart';
 import '../services/grinding_machine_importer.dart';
@@ -71,4 +72,15 @@ class GrindingMachineProvider extends ChangeNotifier {
 
   Future<List<GrindingExtraSpec>> getExtraSpecs(String machineId) =>
       _repository.getExtraSpecs(machineId);
+
+  Future<List<GrindingMaterial>> getAllMaterials() =>
+      _repository.getAllMaterials();
+
+  /// Danh sách seriesCode tương thích với [materialId] theo dữ liệu ĐÃ XÁC
+  /// MINH (`status == 'Verified'`) trong Material_Series_Map — không suy
+  /// đoán tương thích cho nguyên liệu chưa có dòng map nào.
+  Future<Set<String>> getCompatibleSeriesCodes(String materialId) async {
+    final maps = await _repository.getMaterialSeriesMapFor(materialId);
+    return maps.where((m) => m.isVerified).map((m) => m.seriesCode).toSet();
+  }
 }

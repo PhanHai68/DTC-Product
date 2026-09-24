@@ -26,6 +26,8 @@ import '../features/grinding_machine/screens/grinding_machine_home_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_search_screen.dart';
 import '../features/grinding_machine/screens/grinding_series_machines_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_detail_screen.dart';
+import '../features/grinding_machine/screens/grinding_machine_filter_screen.dart';
+import '../features/grinding_machine/screens/grinding_machine_compare_screen.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
 import '../screens/technical_converter/technical_converter_screen.dart';
 import '../screens/color_sorter_categories_screen.dart';
@@ -229,6 +231,14 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => GrindingMachineDetailScreen(
         machineId: state.pathParameters['machineId']!,
       ),
+    ),
+    GoRoute(
+      path: '/grinding_machine/filter',
+      builder: (context, state) => const GrindingMachineFilterScreen(),
+    ),
+    GoRoute(
+      path: '/grinding_machine/compare',
+      builder: (context, state) => const GrindingMachineCompareScreen(),
     ),
     GoRoute(
       path: '/productivity_calc',

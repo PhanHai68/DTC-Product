@@ -30,7 +30,23 @@ class _GrindingMachineHomeScreenState
     final palette = DtcPalette.of(context);
     return Scaffold(
       backgroundColor: palette.canvas,
-      appBar: AppBar(title: const Text('Máy nghiền')),
+      appBar: AppBar(
+        title: const Text('Máy nghiền'),
+        actions: [
+          IconButton(
+            key: const Key('grinding_machine_filter_button'),
+            tooltip: 'Bộ lọc',
+            icon: const Icon(Icons.tune_rounded),
+            onPressed: () => context.push('/grinding_machine/filter'),
+          ),
+          IconButton(
+            key: const Key('grinding_machine_compare_button'),
+            tooltip: 'So sánh model',
+            icon: const Icon(Icons.compare_arrows_rounded),
+            onPressed: () => context.push('/grinding_machine/compare'),
+          ),
+        ],
+      ),
       body: Consumer<GrindingMachineProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading && provider.series.isEmpty) {
