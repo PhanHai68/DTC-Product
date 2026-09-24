@@ -255,15 +255,13 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         'dimensions': '${specs['dimensions_display_mm']} mm',
         'configuration': '${specs['chutes_qty']} máng',
         'technology': 'AI · PLOV',
-        // Model đã được xử lý lại: bỏ texture ảnh chụp gốc (tối, nhiễu),
-        // thay bằng màu + metallic/roughness giống hệt SC16 Pro, normal
-        // được làm mượt có "ngưỡng góc gấp" (giữ cạnh sắc, chỉ mượt bề mặt
-        // gần phẳng) để có cảm giác đổ bóng rõ nét giữa các mặt như SC16
-        // Pro thay vì mượt lẫn lộn toàn bộ. Đã thử nguồn Meshy AI mới
-        // nhưng texture bị lỗi camo và hình học bị méo khi giản lược sâu
-        // để vừa dung lượng — quay lại bản dựng từ ảnh quét này vì ổn định
-        // hơn. exposure/environmentImage lấy đúng giá trị mặc định của
-        // SC16 Pro.
+        // Hình học dựng từ nguồn Meshy AI, giản lược NHẸ (6.73 triệu ->
+        // ~401K tam giác, chỉ giảm ~17 lần thay vì 100 lần như lần thử đầu
+        // — lần đó giản lược quá tay làm méo panel) rồi làm mượt normal có
+        // "ngưỡng góc gấp" (giữ cạnh sắc thật, chỉ mượt bề mặt gần phẳng).
+        // Texture màu của Meshy AI bị lỗi vân camo nên đã bỏ hẳn, thay
+        // bằng đúng màu + metallic/roughness của SC16 Pro — không giữ
+        // texture nên có thể giữ mesh dày hơn nhiều mà vẫn dưới 4MB.
         'exposure': 0.85,
         'environmentImage': 'neutral',
       };
