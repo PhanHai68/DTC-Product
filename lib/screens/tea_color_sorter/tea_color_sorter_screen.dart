@@ -245,30 +245,11 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         'exposure': 0.25,
       };
     }
-    if (model == 'h7') {
-      return {
-        // Tiêu đề màn hình 3D dùng tên nội bộ "H8" theo yêu cầu, tách biệt
-        // với tên thương mại "H7" hiển thị ở các nơi khác trong app.
-        'modelName': 'H8',
-        'modelPath': 'assets/models/h7.glb',
-        'posterPath': 'assets/images/color_sorter/Hinh_anh H7.jpg',
-        'dimensions': '${specs['dimensions_display_mm']} mm',
-        'configuration': '${specs['chutes_qty']} máng',
-        'technology': 'AI · PLOV',
-        // Model đã được xử lý lại: bỏ texture ảnh chụp gốc (tối, nhiễu),
-        // thay bằng màu + metallic/roughness giống hệt SC16 Pro, normal
-        // được làm mượt có "ngưỡng góc gấp" (giữ cạnh sắc, chỉ mượt bề mặt
-        // gần phẳng) để có cảm giác đổ bóng rõ nét giữa các mặt như SC16
-        // Pro thay vì mượt lẫn lộn toàn bộ. ĐÃ THỬ nguồn Meshy AI (cả bản
-        // giản lược mạnh lẫn nhẹ) nhưng bản thân dữ liệu AI dựng sai hình
-        // (méo/chảy xệ) ở vùng panel phức tạp — lỗi nằm trong chính dữ
-        // liệu gốc, không phải do xử lý mesh, nên đã quay hẳn lại bản dựng
-        // từ ảnh quét này vì ổn định. exposure/environmentImage lấy đúng
-        // giá trị mặc định của SC16 Pro.
-        'exposure': 0.85,
-        'environmentImage': 'neutral',
-      };
-    }
+    // Model H7/H8: đã thử nhiều nguồn dữ liệu 3D (ảnh quét, Meshy AI) nhưng
+    // đều không đạt chất lượng hiển thị chấp nhận được (bề mặt vỡ facet,
+    // hoặc dữ liệu AI dựng sai hình/méo ở vùng panel phức tạp) — tạm gỡ
+    // chức năng xem 3D cho model này cho đến khi có nguồn 3D đúng (VD file
+    // CAD/STEP gốc như đang dùng cho SC16 Pro).
     return null;
   }
 
