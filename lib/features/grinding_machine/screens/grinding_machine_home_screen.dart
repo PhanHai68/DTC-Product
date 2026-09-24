@@ -70,6 +70,16 @@ class _GrindingMachineHomeScreenState
               _SearchBar(
                 onTap: () => context.push('/grinding_machine/search'),
               ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                key: const Key('grinding_machine_selection_button'),
+                onPressed: () => context.push('/grinding_machine/selection'),
+                icon: const Icon(Icons.auto_awesome_rounded),
+                label: const Text('Chọn máy phù hợp'),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                ),
+              ),
               const SizedBox(height: 18),
               Row(
                 children: [

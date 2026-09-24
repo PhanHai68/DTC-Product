@@ -53,4 +53,48 @@ abstract final class GrindingFormat {
     }
     return null;
   }
+
+  /// Nhãn tiếng Việt ngắn cho 1 Selection Tag (mục 7 "Yêu cầu đặc biệt") —
+  /// chỉ các tag THẬT SỰ có trong database mới hiển thị (không hard-code
+  /// danh sách tag). Tag không có trong bảng dịch thì hiển thị nguyên văn đã
+  /// thay "_" bằng khoảng trắng, không tự bịa nhãn sai nghĩa.
+  static String tagLabel(String tag) {
+    const labels = {
+      'food': 'Thực phẩm',
+      'chemical': 'Hóa chất',
+      'pharma': 'Dược phẩm',
+      'fibrous': 'Nguyên liệu giàu xơ',
+      'hard_material': 'Nguyên liệu cứng',
+      'heat_sensitive': 'Nhạy nhiệt',
+      'low_heat': 'Sinh nhiệt thấp',
+      'cryogenic': 'Làm lạnh sâu (nitơ lỏng)',
+      'liquid_nitrogen': 'Cần nitơ lỏng',
+      'nitrogen_optional': 'Có thể dùng nitơ lỏng',
+      'wet': 'Nguyên liệu ẩm',
+      'sticky': 'Nguyên liệu dính',
+      'paste': 'Dạng nhão',
+      'oily': 'Nguyên liệu dầu',
+      'crystalline': 'Dạng kết tinh',
+      'brittle': 'Giòn/dễ vỡ',
+      'ultrafine': 'Bột siêu mịn',
+      'ultrafine_um': 'Bột siêu mịn (µm)',
+      'powder': 'Dạng bột',
+      'low_fineness': 'Độ mịn thấp',
+      'coarse': 'Nghiền thô',
+      'pre_crushing': 'Nghiền sơ cấp',
+      'large_input': 'Đầu vào kích thước lớn',
+      'small_capacity': 'Công suất nhỏ',
+      'continuous': 'Vận hành liên tục',
+      'variable_speed': 'Tốc độ điều chỉnh được',
+      'easy_clean': 'Dễ vệ sinh',
+      'energy_saving': 'Tiết kiệm điện',
+      'dust_control': 'Kiểm soát bụi',
+      'dust_collection': 'Thu gom bụi',
+      'dust_filter': 'Lọc bụi',
+      'compressed_air': 'Cần khí nén',
+      'screenless': 'Không dùng lưới lọc',
+      'universal': 'Đa năng',
+    };
+    return labels[tag] ?? tag.replaceAll('_', ' ');
+  }
 }

@@ -4,9 +4,12 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../models/grinding_extra_spec.dart';
 import '../models/grinding_machine.dart';
 import '../models/grinding_material.dart';
+import '../models/grinding_recommendation.dart';
+import '../models/grinding_selection_request.dart';
 import '../models/grinding_series.dart';
 import '../repositories/grinding_machine_repository.dart';
 import '../services/grinding_machine_importer.dart';
+import '../services/grinding_selection_engine.dart';
 
 /// Đường dẫn asset chứa dữ liệu seed (convert 1 lần từ file Excel
 /// DTC_Grinding_Machine_Database_AI_Ready.xlsx) — xem README trong
@@ -76,11 +79,47 @@ class GrindingMachineProvider extends ChangeNotifier {
   Future<List<GrindingMaterial>> getAllMaterials() =>
       _repository.getAllMaterials();
 
+  Future<List<String>> getAllDistinctTags() =>
+      _repository.getAllDistinctTags();
+
   /// Danh sách seriesCode tương thích với [materialId] theo dữ liệu ĐÃ XÁC
   /// MINH (`status == 'Verified'`) trong Material_Series_Map — không suy
   /// đoán tương thích cho nguyên liệu chưa có dòng map nào.
   Future<Set<String>> getCompatibleSeriesCodes(String materialId) async {
     final maps = await _repository.getMaterialSeriesMapFor(materialId);
     return maps.where((m) => m.isVerified).map((m) => m.seriesCode).toSet();
+  }
+
+  /// Tập hợp toàn bộ dữ liệu cần cho Selection Engine (mục 7-8) rồi chấm
+  /// điểm — trả về tối đa 3 đề xuất tốt nhất, danh sách rỗng nếu không có
+  /// model nào đạt các hard filter (capacity/fineness/input/tag).
+  Future<List<GrindingRecommendation>> recommend(
+    GrindingSelectionRequest request, {
+    required String materialName,
+  }) async {
+    final maps = await _repository.getMaterialSeriesMapFor(request.materialId);
+    final materialScoreAdjustments = {
+      for (final m in maps.where((m) => m.isVerified))
+        m.seriesCode: m.scoreAdjustment,
+    };
+    final seriesTags = await _repository.getAllSelectionTagsGrouped();
+    final aiConfig = await _repository.getAllAiConfig();
+    final weights = {
+      for (final c in aiConfig)
+        if (c.asNum != null) c.key: c.asNum!,
+    };
+    final seriesByCode = {for (final s in _series) s.seriesCode: s};
+
+    return GrindingSelectionEngine.recommend(
+      context: GrindingSelectionContext(
+        machines: _machines,
+        seriesByCode: seriesByCode,
+        seriesTags: seriesTags,
+        materialScoreAdjustments: materialScoreAdjustments,
+        materialName: materialName,
+        weights: weights,
+      ),
+      request: request,
+    );
   }
 }

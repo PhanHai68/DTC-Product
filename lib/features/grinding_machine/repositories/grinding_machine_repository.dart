@@ -275,6 +275,20 @@ class GrindingMachineRepository {
     return rows.map((row) => row['tag'] as String).toList();
   }
 
+  /// Toàn bộ Selection Tags, gộp theo seriesCode — dùng 1 lần cho Selection
+  /// Engine thay vì query riêng từng series.
+  Future<Map<String, Set<String>>> getAllSelectionTagsGrouped() async {
+    final db = await _db.database;
+    final rows = await db.query('grinding_selection_tags');
+    final grouped = <String, Set<String>>{};
+    for (final row in rows) {
+      final seriesCode = row['seriesCode'] as String;
+      final tag = row['tag'] as String;
+      (grouped[seriesCode] ??= {}).add(tag);
+    }
+    return grouped;
+  }
+
   // ---------------------------------------------------------------------
   // Materials
   // ---------------------------------------------------------------------

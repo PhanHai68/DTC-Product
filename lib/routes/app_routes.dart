@@ -28,6 +28,9 @@ import '../features/grinding_machine/screens/grinding_series_machines_screen.dar
 import '../features/grinding_machine/screens/grinding_machine_detail_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_filter_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_compare_screen.dart';
+import '../features/grinding_machine/screens/grinding_machine_selection_screen.dart';
+import '../features/grinding_machine/screens/grinding_machine_recommendation_screen.dart';
+import '../features/grinding_machine/models/grinding_selection_request.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
 import '../screens/technical_converter/technical_converter_screen.dart';
 import '../screens/color_sorter_categories_screen.dart';
@@ -239,6 +242,20 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/grinding_machine/compare',
       builder: (context, state) => const GrindingMachineCompareScreen(),
+    ),
+    GoRoute(
+      path: '/grinding_machine/selection',
+      builder: (context, state) => const GrindingMachineSelectionScreen(),
+    ),
+    GoRoute(
+      path: '/grinding_machine/recommendation',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return GrindingMachineRecommendationScreen(
+          request: extra['request'] as GrindingSelectionRequest,
+          materialName: extra['materialName'] as String,
+        );
+      },
     ),
     GoRoute(
       path: '/productivity_calc',
