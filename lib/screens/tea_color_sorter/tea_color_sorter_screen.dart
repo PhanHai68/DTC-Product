@@ -255,12 +255,11 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         'dimensions': '${specs['dimensions_display_mm']} mm',
         'configuration': '${specs['chutes_qty']} máng',
         'technology': 'AI · PLOV',
-        // Model dựng từ nguồn Meshy AI (có texture màu/normal/metallic-
-        // roughness thật, không phải màu phẳng như các bản trước) — đã
-        // giản lược mesh + làm mượt normal có "ngưỡng góc gấp" (giữ cạnh
-        // sắc, chỉ mượt bề mặt gần phẳng) và nén Draco + texture 2048px để
-        // vừa dưới 4MB. exposure/environmentImage lấy theo mặc định dùng
-        // cho SC16 Pro làm mức khởi điểm hợp lý.
+        // Hình học dựng từ nguồn Meshy AI (đã giản lược + làm mượt normal
+        // có "ngưỡng góc gấp", giữ cạnh sắc, chỉ mượt bề mặt gần phẳng).
+        // Texture màu của Meshy AI bị lỗi vân camo vàng-đen (không dùng
+        // được) nên đã bỏ hẳn, thay bằng đúng màu + metallic/roughness của
+        // material SC16 Pro để đồng nhất chất liệu giữa 2 model.
         'exposure': 0.85,
         'environmentImage': 'neutral',
       };
