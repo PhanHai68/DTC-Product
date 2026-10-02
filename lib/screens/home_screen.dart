@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/daily_goals/daily_goal_home_card.dart';
+import '../features/sales_goal/widgets/sales_goal_home_card.dart';
 import '../widgets/home_personalization_widget.dart';
 import '../widgets/technology_menu.dart';
+
+const _homeLabelFontSize = 14.0;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,7 +29,8 @@ class HomeScreen extends StatelessWidget {
     ),
     _HomeAction(
       title: 'Máy nghiền',
-      icon: Icons.blender_outlined,
+      imagePath: 'assets/images/home_grinding_machine_asp350.png',
+      visualScale: 0.82,
       route: '/grinding_machine',
     ),
     _HomeAction(
@@ -47,6 +51,7 @@ class HomeScreen extends StatelessWidget {
             const SliverToBoxAdapter(child: _BrandHeader()),
             const SliverToBoxAdapter(child: HomePersonalizationWidget()),
             const SliverToBoxAdapter(child: DailyGoalHomeCard()),
+            const SliverToBoxAdapter(child: SalesGoalHomeCard()),
             const SliverToBoxAdapter(child: _QuickSearchBar()),
             SliverToBoxAdapter(
               child: Center(
@@ -60,18 +65,20 @@ class HomeScreen extends StatelessWidget {
                             ? 1
                             : constraints.maxWidth >= 900
                             ? 4
+                            : constraints.maxWidth >= 620
+                            ? 3
                             : 2;
-                        final spacing = constraints.maxWidth >= 900
-                            ? 18.0
-                            : 12.0;
+                        final spacing = constraints.maxWidth >= 620
+                            ? 14.0
+                            : 8.0;
                         final cardWidth =
                             (constraints.maxWidth - spacing * (columns - 1)) /
                             columns;
                         final cardHeight = columns == 1
-                            ? 190.0
+                            ? 168.0
                             : cardWidth >= 230
-                            ? 258.0
-                            : 198.0;
+                            ? 192.0
+                            : (cardWidth * 0.82).clamp(130.0, 142.0);
 
                         return Wrap(
                           spacing: spacing,
@@ -143,12 +150,14 @@ class _HomeAction {
   final String title;
   final String? imagePath;
   final IconData? icon;
+  final double visualScale;
   final String route;
 
   const _HomeAction({
     required this.title,
     this.imagePath,
     this.icon,
+    this.visualScale = 0.90,
     required this.route,
   });
 }
@@ -191,32 +200,34 @@ class _HomeActionCard extends StatelessWidget {
             key: ValueKey('home_solution_${action.route}'),
             onTap: onTap,
             child: Padding(
-              padding: EdgeInsets.all(compact ? 9 : 11),
+              padding: EdgeInsets.all(compact ? 6 : 8),
               child: Column(
                 children: [
                   Expanded(
                     child: Container(
+                      key: ValueKey('home_solution_visual_${action.route}'),
                       width: double.infinity,
-                      padding: EdgeInsets.all(compact ? 8 : 12),
+                      padding: EdgeInsets.all(compact ? 2 : 6),
                       decoration: BoxDecoration(
                         color: palette.canvas,
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: _ActionVisual(action: action, compact: compact),
                     ),
                   ),
-                  SizedBox(height: compact ? 9 : 11),
+                  SizedBox(height: compact ? 4 : 6),
                   ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: compact ? 33 : 38),
+                    constraints: BoxConstraints(minHeight: compact ? 26 : 30),
                     child: Center(
                       child: Text(
                         action.title,
+                        key: ValueKey('home_solution_title_${action.route}'),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: palette.ink,
-                          fontSize: compact ? 15.5 : 17,
+                          color: palette.muted,
+                          fontSize: _homeLabelFontSize,
                           height: 1.12,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.25,
@@ -268,6 +279,7 @@ class _QuickSearchBar extends StatelessWidget {
                         'Tra cứu model hoặc chức năng',
                         style: TextStyle(
                           color: palette.muted,
+                          fontSize: _homeLabelFontSize,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -300,8 +312,8 @@ class _ActionVisual extends StatelessWidget {
       // ~150-280px) — giới hạn cacheWidth để Flutter giải mã ảnh ở độ phân
       // giải phù hợp thay vì decode nguyên ảnh gốc rồi mới thu nhỏ, giảm
       // thời gian và bộ nhớ khi vẽ Home.
-      final cacheWidth =
-          (280 * MediaQuery.of(context).devicePixelRatio).round();
+      final cacheWidth = (280 * MediaQuery.of(context).devicePixelRatio)
+          .round();
       final image = Image.asset(
         imagePath,
         fit: BoxFit.contain,
@@ -314,21 +326,29 @@ class _ActionVisual extends StatelessWidget {
       );
       // Chỉ áp filter làm dịu ảnh ở chế độ sáng; ở chế độ tối filter multiply
       // với nền tối sẽ làm ảnh gần như biến mất nên bỏ qua, giữ ảnh gốc.
-      if (isDark) return image;
-      return ColorFiltered(
-        colorFilter: const ColorFilter.mode(
-          Color(0xFFF5F7F8),
-          BlendMode.multiply,
+      final filteredImage = isDark
+          ? image
+          : ColorFiltered(
+              colorFilter: const ColorFilter.mode(
+                Color(0xFFF5F7F8),
+                BlendMode.multiply,
+              ),
+              child: image,
+            );
+      return Align(
+        child: FractionallySizedBox(
+          widthFactor: action.visualScale,
+          heightFactor: action.visualScale,
+          child: filteredImage,
         ),
-        child: image,
       );
     }
     return Padding(
-      padding: EdgeInsets.all(compact ? 4.0 : 8.0),
+      padding: EdgeInsets.all(compact ? 2.0 : 5.0),
       child: Center(
         child: Icon(
           action.icon ?? Icons.extension_outlined,
-          size: compact ? 72.0 : 96.0,
+          size: compact ? 56.0 : 76.0,
           color: const Color(0xFF168052),
           shadows: const [
             Shadow(

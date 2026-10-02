@@ -54,7 +54,7 @@ void main() {
             createdAt: now,
             updatedAt: now,
           ),
-          primaryMachineId: 'BSP_ULTRAFINE__ASP-350',
+          primaryMachineId: 'ASP_ULTRAFINE__ASP-350',
         );
       });
 
@@ -88,7 +88,7 @@ void main() {
       await tester.pump();
 
       // Đang Draft -> badge DRAFT, field giá còn sửa được.
-      expect(find.text('DRAFT'), findsOneWidget);
+      expect(find.text('BẢN NHÁP'), findsOneWidget);
       expect(
         find.byKey(const Key('grinding_proposal_machine_price_field')),
         findsOneWidget,
@@ -114,9 +114,9 @@ void main() {
       await tester.tap(find.byKey(const Key('grinding_proposal_finalize_button')));
       await tester.pumpAndSettle();
       // Dialog confirm Finalize.
-      await tester.tap(find.text('Finalize').last);
+      await tester.tap(find.text('Chốt báo giá').last);
       await tester.runAsync(() async {
-        for (var i = 0; i < 50 && find.text('FINAL').evaluate().isEmpty; i++) {
+        for (var i = 0; i < 50 && find.text('ĐÃ CHỐT').evaluate().isEmpty; i++) {
           await Future.delayed(const Duration(milliseconds: 100));
           await tester.pump();
         }
@@ -124,7 +124,7 @@ void main() {
       await tester.pump();
 
       // Sau Finalize: badge FINAL, field nhập giá KHÔNG còn hiện (chỉ đọc).
-      expect(find.text('FINAL'), findsOneWidget);
+      expect(find.text('ĐÃ CHỐT'), findsOneWidget);
       expect(
         find.byKey(const Key('grinding_proposal_machine_price_field')),
         findsNothing,

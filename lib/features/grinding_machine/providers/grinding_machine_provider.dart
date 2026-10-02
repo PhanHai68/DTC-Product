@@ -60,8 +60,19 @@ class GrindingMachineProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  List<GrindingMachine> machinesOf(String seriesCode) =>
-      _machines.where((m) => m.seriesCode == seriesCode).toList();
+  List<GrindingMachine> machinesOf(String seriesCode) {
+    final machines = _machines
+        .where((machine) => machine.seriesCode == seriesCode)
+        .toList();
+    if (seriesCode != 'ASP_ULTRAFINE') return machines;
+
+    // SQLite sắp xếp model dạng chuỗi nên ASP-1000 đứng trước ASP-250.
+    // Danh sách ASP cần giữ thứ tự hiện có nhưng chuyển ASP-1000 xuống cuối.
+    return [
+      ...machines.where((machine) => machine.model != 'ASP-1000'),
+      ...machines.where((machine) => machine.model == 'ASP-1000'),
+    ];
+  }
 
   int machineCountOf(String seriesCode) =>
       _machines.where((m) => m.seriesCode == seriesCode).length;
@@ -77,25 +88,30 @@ class GrindingMachineProvider extends ChangeNotifier {
     try {
       final meta = await _repository.getImportMetadata();
       final importedVersion = meta['databaseVersion'];
-      // Metadata cũ chưa có importOrigin: giữ dữ liệu hiện có. Chỉ tự nâng
-      // seed khi biết chắc catalog trước đó cũng đến từ seed.
-      if (importedVersion == null || meta['importOrigin'] == 'seed') {
-        final seedJson = await rootBundle.loadString(_seedAssetPath);
-        final snapshot = GrindingMachineImporter.parse(seedJson);
-        if (importedVersion == null ||
-            (GrindingDatabaseValidator.validVersion(importedVersion) &&
-                GrindingDatabaseValidator.compareVersions(
-                      snapshot.databaseVersion,
-                      importedVersion,
-                    ) >
-                    0)) {
-          await _repository.importSnapshot(
-            snapshot,
-            origin: 'seed',
-            expectedRevision: meta['importedAt'],
-            checkRevision: true,
-          );
-        }
+      // LUÔN so sánh version với seed đóng gói, bất kể `importOrigin` hiện
+      // tại là gì — module không còn chức năng cho người dùng tự import file
+      // catalog (đã gỡ ở Phase "Database Update"), nên không còn kịch bản
+      // "bảo vệ catalog người dùng tự nạp" cần tôn trọng `importOrigin`
+      // riêng nữa. Trước đây gate theo `importOrigin == 'seed'` khiến thiết
+      // bị nào từng có `importOrigin` khác 'seed' (từ lần import thủ công
+      // cũ, trước khi màn hình đó bị gỡ) không bao giờ nhận được bản seed
+      // mới dù `databaseVersion` đóng gói đã tăng — chỉ so sánh version là
+      // đủ và đúng.
+      final seedJson = await rootBundle.loadString(_seedAssetPath);
+      final snapshot = GrindingMachineImporter.parse(seedJson);
+      if (importedVersion == null ||
+          (GrindingDatabaseValidator.validVersion(importedVersion) &&
+              GrindingDatabaseValidator.compareVersions(
+                    snapshot.databaseVersion,
+                    importedVersion,
+                  ) >
+                  0)) {
+        await _repository.importSnapshot(
+          snapshot,
+          origin: 'seed',
+          expectedRevision: meta['importedAt'],
+          checkRevision: true,
+        );
       }
       await _reload();
     } catch (error) {

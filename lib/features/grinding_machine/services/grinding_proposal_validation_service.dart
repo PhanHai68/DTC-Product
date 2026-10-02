@@ -21,13 +21,13 @@ abstract final class GrindingProposalValidationService {
     final errors = <String>[];
 
     if (proposal.machineQuantity != null && proposal.machineQuantity! <= 0) {
-      errors.add('Quantity phải lớn hơn 0.');
+      errors.add('Số lượng phải lớn hơn 0.');
     }
     if (proposal.machineUnitPrice != null && proposal.machineUnitPrice! < 0) {
-      errors.add('Unit price không được âm.');
+      errors.add('Đơn giá không được âm.');
     }
     if (proposal.discount != null && proposal.discount! < 0) {
-      errors.add('Discount không được âm.');
+      errors.add('Giảm giá không được âm.');
     }
     if (proposal.vatPercent != null &&
         (proposal.vatPercent! < 0 || proposal.vatPercent! > 100)) {
@@ -37,10 +37,10 @@ abstract final class GrindingProposalValidationService {
     for (final item in lineItems) {
       final label = item.name.isEmpty ? 'dòng chưa đặt tên' : item.name;
       if (item.quantity != null && item.quantity! <= 0) {
-        errors.add('Quantity của "$label" phải lớn hơn 0.');
+        errors.add('Số lượng của "$label" phải lớn hơn 0.');
       }
       if (item.unitPrice != null && item.unitPrice! < 0) {
-        errors.add('Unit price của "$label" không được âm.');
+        errors.add('Đơn giá của "$label" không được âm.');
       }
     }
 

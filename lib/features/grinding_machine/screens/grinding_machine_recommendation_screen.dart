@@ -112,7 +112,7 @@ class _InsufficientDataView extends StatelessWidget {
             Icon(Icons.search_off_rounded, size: 48, color: palette.muted),
             const SizedBox(height: 14),
             Text(
-              'Insufficient data',
+              'Chưa đủ dữ liệu',
               style: TextStyle(
                 color: palette.ink,
                 fontSize: 16,
@@ -121,7 +121,7 @@ class _InsufficientDataView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Không có model nào trong database đạt đủ yêu cầu kỹ thuật '
+              'Không có model nào trong cơ sở dữ liệu đạt đủ yêu cầu kỹ thuật '
               '(công suất ${request.capacityKgH.toStringAsFixed(0)} kg/h, độ mịn '
               '${request.finenessValue} ${request.finenessUnit}'
               '${request.inputSizeMm != null ? ', đầu vào ${request.inputSizeMm} mm' : ''}). '

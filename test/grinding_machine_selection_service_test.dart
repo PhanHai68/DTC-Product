@@ -150,11 +150,11 @@ void main() {
     test('Verified, scoreAdjustment >= 0 -> MATCH', () {
       final results = GrindingMachineSelectionService.evaluate(
         criteria: const GrindingSelectionCriteria(materialId: 'SESAME'),
-        machines: [_machine(seriesCode: 'BS_ROLLER')],
+        machines: [_machine(seriesCode: 'AS_ROLLER')],
         materialSeriesMap: const [
           GrindingMaterialSeriesMap(
             materialId: 'SESAME',
-            seriesCode: 'BS_ROLLER',
+            seriesCode: 'AS_ROLLER',
             scoreAdjustment: 10,
             status: 'Verified',
           ),
@@ -166,11 +166,11 @@ void main() {
     test('Verified, scoreAdjustment âm -> NOT_MATCH', () {
       final results = GrindingMachineSelectionService.evaluate(
         criteria: const GrindingSelectionCriteria(materialId: 'SESAME'),
-        machines: [_machine(seriesCode: 'BS_ROLLER')],
+        machines: [_machine(seriesCode: 'AS_ROLLER')],
         materialSeriesMap: const [
           GrindingMaterialSeriesMap(
             materialId: 'SESAME',
-            seriesCode: 'BS_ROLLER',
+            seriesCode: 'AS_ROLLER',
             scoreAdjustment: -20,
             status: 'Verified',
           ),
@@ -185,11 +185,11 @@ void main() {
     test('Chưa Verified (Needs validation) -> UNKNOWN, không suy đoán', () {
       final results = GrindingMachineSelectionService.evaluate(
         criteria: const GrindingSelectionCriteria(materialId: 'SESAME'),
-        machines: [_machine(seriesCode: 'BS_ROLLER')],
+        machines: [_machine(seriesCode: 'AS_ROLLER')],
         materialSeriesMap: const [
           GrindingMaterialSeriesMap(
             materialId: 'SESAME',
-            seriesCode: 'BS_ROLLER',
+            seriesCode: 'AS_ROLLER',
             scoreAdjustment: 10,
             status: 'Needs validation',
           ),
@@ -204,7 +204,7 @@ void main() {
     test('Không có dòng map nào cho series -> UNKNOWN', () {
       final results = GrindingMachineSelectionService.evaluate(
         criteria: const GrindingSelectionCriteria(materialId: 'PEPPER'),
-        machines: [_machine(seriesCode: 'BS_ROLLER')],
+        machines: [_machine(seriesCode: 'AS_ROLLER')],
         materialSeriesMap: const [],
       );
       expect(

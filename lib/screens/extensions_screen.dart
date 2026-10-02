@@ -48,6 +48,27 @@ class ExtensionsScreen extends StatelessWidget {
           onTap: () => context.push('/maintenance_report'),
         ),
         TechnologyMenuEntry(
+          id: 'extension_sales_goal',
+          title: 'Mục Tiêu Doanh Số',
+          icon: Icons.flag_circle_outlined,
+          featured: true,
+          onTap: () => context.push('/sales-goal'),
+        ),
+        TechnologyMenuEntry(
+          id: 'extension_site_layout',
+          title: 'Bố trí mặt bằng',
+          icon: Icons.architecture_rounded,
+          featured: true,
+          onTap: () => context.push('/site-layout'),
+        ),
+        TechnologyMenuEntry(
+          id: 'extension_factory_location',
+          title: 'Vị Trí Nhà Máy',
+          icon: Icons.factory_outlined,
+          featured: true,
+          onTap: () => context.push('/factory-locations'),
+        ),
+        TechnologyMenuEntry(
           id: 'extension_productivity_calc',
           title: 'Tính Năng Suất',
           icon: Icons.speed_rounded,

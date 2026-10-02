@@ -49,7 +49,7 @@ void main() {
       final now = DateTime(2026, 9, 24);
       projectId = await projectRepository.createProject(
         GrindingSelectionProject(projectName: 'Dự án double-submit', createdAt: now, updatedAt: now),
-        primaryMachineId: 'BSP_ULTRAFINE__ASP-350',
+        primaryMachineId: 'ASP_ULTRAFINE__ASP-350',
       );
     });
 

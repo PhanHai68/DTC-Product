@@ -54,7 +54,7 @@ void main() {
             createdAt: now,
             updatedAt: now,
           ),
-          primaryMachineId: 'BSP_ULTRAFINE__ASP-350',
+          primaryMachineId: 'ASP_ULTRAFINE__ASP-350',
         );
       });
 
@@ -95,7 +95,7 @@ void main() {
       await tester.pump();
       await waitFor(tester, const Key('grinding_proposal_save_draft_button'));
 
-      expect(find.text('DRAFT'), findsOneWidget);
+      expect(find.text('BẢN NHÁP'), findsOneWidget);
       await tester.enterText(
         find.byKey(const Key('grinding_proposal_machine_price_field')),
         '400000000',
@@ -108,8 +108,8 @@ void main() {
 
       await tester.tap(find.byKey(const Key('grinding_proposal_finalize_button')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Finalize').last);
-      await waitForText(tester, 'FINAL');
+      await tester.tap(find.text('Chốt báo giá').last);
+      await waitForText(tester, 'ĐÃ CHỐT');
 
       // Final: có Mark as Sent + Create Revision, KHÔNG có Save Draft/Finalize/Delete.
       expect(find.byKey(const Key('grinding_proposal_mark_sent_button')), findsOneWidget);
@@ -123,10 +123,10 @@ void main() {
       await tester.tap(find.byKey(const Key('grinding_proposal_create_revision_button')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Xác nhận').last);
-      await waitForText(tester, 'DRAFT');
+      await waitForText(tester, 'BẢN NHÁP');
 
       // R1 Draft: prefill đúng giá của R0, badge DRAFT, title có "R1".
-      expect(find.textContaining(' R1'), findsWidgets);
+      expect(find.textContaining('lần 1'), findsWidgets);
       final priceField = tester.widget<TextFormField>(
         find.byKey(const Key('grinding_proposal_machine_price_field')),
       );
@@ -141,14 +141,14 @@ void main() {
 
       await tester.tap(find.byKey(const Key('grinding_proposal_finalize_button')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Finalize').last);
-      await waitForText(tester, 'FINAL');
+      await tester.tap(find.text('Chốt báo giá').last);
+      await waitForText(tester, 'ĐÃ CHỐT');
 
       // --- Mark as Sent trên R1 ---
       await tester.tap(find.byKey(const Key('grinding_proposal_mark_sent_button')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Xác nhận').last);
-      await waitForText(tester, 'SENT');
+      await waitForText(tester, 'ĐÃ GỬI');
 
       expect(find.byKey(const Key('grinding_proposal_mark_accepted_button')), findsOneWidget);
       expect(find.byKey(const Key('grinding_proposal_mark_rejected_button')), findsOneWidget);
@@ -159,7 +159,7 @@ void main() {
       await tester.tap(find.byKey(const Key('grinding_proposal_mark_accepted_button')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Xác nhận').last);
-      await waitForText(tester, 'ACCEPTED');
+      await waitForText(tester, 'ĐÃ CHẤP NHẬN');
 
       // Accepted: KHÔNG còn Create Revision/Mark Sent/Mark Accepted/Mark Rejected/Delete.
       expect(find.byKey(const Key('grinding_proposal_create_revision_button')), findsNothing);

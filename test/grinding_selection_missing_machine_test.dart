@@ -108,7 +108,7 @@ void main() {
       // thông báo, KHÔNG tự chọn máy khác thay thế.
       expect(find.byKey(const Key('grinding_project_machine_unavailable')), findsOneWidget);
       expect(
-        find.text('Machine no longer available in current database'),
+        find.text('Máy không còn trong cơ sở dữ liệu hiện tại'),
         findsOneWidget,
       );
       expect(find.byKey(const Key('grinding_project_view_machine_button')), findsNothing);

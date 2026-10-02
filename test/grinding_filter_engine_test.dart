@@ -117,18 +117,18 @@ void main() {
 
   group('GrindingFilterEngine — Material (compatibleSeriesCodes)', () {
     test('chỉ giữ model thuộc series đã xác minh tương thích nguyên liệu', () {
-      final machineA = _machine(id: 'A', seriesCode: 'BS_ROLLER');
-      final machineB = _machine(id: 'B', seriesCode: 'BSK_JET');
+      final machineA = _machine(id: 'A', seriesCode: 'AS_ROLLER');
+      final machineB = _machine(id: 'B', seriesCode: 'ASK_JET');
       final result = GrindingFilterEngine.apply(
         [machineA, machineB],
         const GrindingFilterCriteria(materialId: 'SESAME'),
-        compatibleSeriesCodes: {'BS_ROLLER'},
+        compatibleSeriesCodes: {'AS_ROLLER'},
       );
       expect(result, [machineA]);
     });
 
     test('trả rỗng khi nguyên liệu chưa có series nào được xác minh', () {
-      final machineA = _machine(id: 'A', seriesCode: 'BS_ROLLER');
+      final machineA = _machine(id: 'A', seriesCode: 'AS_ROLLER');
       final result = GrindingFilterEngine.apply(
         [machineA],
         const GrindingFilterCriteria(materialId: 'PEPPER'),
@@ -140,12 +140,12 @@ void main() {
 
   group('GrindingFilterEngine — Series / Motor / kết hợp', () {
     test('lọc theo 1 hoặc nhiều series', () {
-      final machineA = _machine(id: 'A', seriesCode: 'BS_ROLLER');
-      final machineB = _machine(id: 'B', seriesCode: 'BSK_JET');
-      final machineC = _machine(id: 'C', seriesCode: 'BSC_COARSE');
+      final machineA = _machine(id: 'A', seriesCode: 'AS_ROLLER');
+      final machineB = _machine(id: 'B', seriesCode: 'ASK_JET');
+      final machineC = _machine(id: 'C', seriesCode: 'ASC_COARSE');
       final result = GrindingFilterEngine.apply(
         [machineA, machineB, machineC],
-        const GrindingFilterCriteria(seriesCodes: {'BS_ROLLER', 'BSK_JET'}),
+        const GrindingFilterCriteria(seriesCodes: {'AS_ROLLER', 'ASK_JET'}),
       );
       expect(result, [machineA, machineB]);
     });
@@ -164,21 +164,21 @@ void main() {
     test('kết hợp nhiều điều kiện: chỉ giữ model đáp ứng ĐỒNG THỜI tất cả', () {
       final matches = _machine(
         id: 'MATCH',
-        seriesCode: 'BS_ROLLER',
+        seriesCode: 'AS_ROLLER',
         capacityMinKgH: 200,
         capacityMaxKgH: 400,
         mainMotorKwMax: 30,
       );
       final wrongSeries = _machine(
         id: 'WRONG_SERIES',
-        seriesCode: 'BSK_JET',
+        seriesCode: 'ASK_JET',
         capacityMinKgH: 200,
         capacityMaxKgH: 400,
         mainMotorKwMax: 30,
       );
       final motorTooStrong = _machine(
         id: 'MOTOR_STRONG',
-        seriesCode: 'BS_ROLLER',
+        seriesCode: 'AS_ROLLER',
         capacityMinKgH: 200,
         capacityMaxKgH: 400,
         mainMotorKwMax: 90,
@@ -186,7 +186,7 @@ void main() {
       final result = GrindingFilterEngine.apply(
         [matches, wrongSeries, motorTooStrong],
         const GrindingFilterCriteria(
-          seriesCodes: {'BS_ROLLER'},
+          seriesCodes: {'AS_ROLLER'},
           capacityBucket: GrindingCapacityBucket.r300to500,
           maxMotorKw: 75,
         ),
@@ -206,7 +206,7 @@ void main() {
 
     test('activeCount đếm đúng số điều kiện đang bật', () {
       const criteria = GrindingFilterCriteria(
-        seriesCodes: {'BS_ROLLER'},
+        seriesCodes: {'AS_ROLLER'},
         maxMotorKw: 75,
         finenessUnit: 'mesh',
         finenessValue: 50,

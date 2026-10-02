@@ -2,7 +2,6 @@ import 'package:dtc_product/features/grinding_machine/data/grinding_machine_data
 import 'package:dtc_product/features/grinding_machine/models/grinding_proposal.dart';
 import 'package:dtc_product/features/grinding_machine/models/grinding_selection_project.dart';
 import 'package:dtc_product/features/grinding_machine/models/grinding_technical_snapshot.dart';
-import 'package:dtc_product/features/grinding_machine/providers/grinding_dashboard_provider.dart';
 import 'package:dtc_product/features/grinding_machine/providers/grinding_machine_provider.dart';
 import 'package:dtc_product/features/grinding_machine/providers/grinding_proposal_provider.dart';
 import 'package:dtc_product/features/grinding_machine/providers/grinding_selection_project_provider.dart';
@@ -10,7 +9,6 @@ import 'package:dtc_product/features/grinding_machine/repositories/grinding_mach
 import 'package:dtc_product/features/grinding_machine/repositories/grinding_proposal_repository.dart';
 import 'package:dtc_product/features/grinding_machine/repositories/grinding_selection_project_repository.dart';
 import 'package:dtc_product/features/grinding_machine/screens/grinding_machine_home_screen.dart';
-import 'package:dtc_product/features/grinding_machine/screens/grinding_project_dashboard_screen.dart';
 import 'package:dtc_product/features/grinding_machine/screens/grinding_selection_project_detail_screen.dart';
 import 'package:dtc_product/features/grinding_machine/screens/grinding_selection_project_list_screen.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +24,6 @@ void main() {
   late GrindingMachineProvider machineProvider;
   late GrindingSelectionProjectProvider projectProvider;
   late GrindingProposalProvider proposalProvider;
-  late GrindingDashboardProvider dashboardProvider;
   late GrindingSelectionProjectRepository projectRepository;
   late GrindingProposalRepository proposalRepository;
 
@@ -37,10 +34,6 @@ void main() {
         GoRoute(
           path: '/grinding_machine',
           builder: (_, _) => const GrindingMachineHomeScreen(),
-        ),
-        GoRoute(
-          path: '/grinding_machine/dashboard',
-          builder: (_, _) => const GrindingProjectDashboardScreen(),
         ),
         GoRoute(
           path: '/grinding_machine/projects',
@@ -63,7 +56,6 @@ void main() {
         ChangeNotifierProvider<GrindingMachineProvider>.value(value: machineProvider),
         ChangeNotifierProvider<GrindingSelectionProjectProvider>.value(value: projectProvider),
         ChangeNotifierProvider<GrindingProposalProvider>.value(value: proposalProvider),
-        ChangeNotifierProvider<GrindingDashboardProvider>.value(value: dashboardProvider),
       ],
       child: MaterialApp.router(routerConfig: router),
     );
@@ -89,22 +81,17 @@ void main() {
       database: GrindingMachineDatabase.forTesting(database),
     );
     proposalProvider = GrindingProposalProvider(repository: proposalRepository);
-    dashboardProvider = GrindingDashboardProvider(
-      projectRepository: projectRepository,
-      proposalRepository: proposalRepository,
-    );
   });
 
   tearDown(() async {
     machineProvider.dispose();
     projectProvider.dispose();
     proposalProvider.dispose();
-    dashboardProvider.dispose();
     await database.close();
   });
 
   testWidgets(
-    'Grinding Home -> Dashboard -> thấy KPI/Sent/Follow-Up -> tap project -> mở đúng Project Detail',
+    'Trang Máy nghiền không còn Dashboard và vẫn mở được Dự án đã lưu',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(390, 6000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -123,12 +110,12 @@ void main() {
             createdAt: now,
             updatedAt: now,
           ),
-          primaryMachineId: 'BSP_ULTRAFINE__ASP-350',
+          primaryMachineId: 'ASP_ULTRAFINE__ASP-350',
         );
         final proposalId = await proposalRepository.createProposal(
           GrindingProposal(
             projectId: projectId,
-            machineId: 'BSP_ULTRAFINE__ASP-350',
+            machineId: 'ASP_ULTRAFINE__ASP-350',
             machineUnitPrice: 100000000,
             machineQuantity: 1,
             vatPercent: 10,
@@ -147,40 +134,26 @@ void main() {
       await tester.pumpWidget(wrap());
       await tester.pump();
 
-      // Home -> tap Dashboard.
-      await tester.tap(find.byKey(const Key('grinding_machine_dashboard_button')));
-      await tester.pumpAndSettle();
-
-      await tester.runAsync(() async {
-        for (
-          var i = 0;
-          i < 50 && find.byKey(const Key('grinding_dashboard_list')).evaluate().isEmpty;
-          i++
-        ) {
-          await Future.delayed(const Duration(milliseconds: 100));
-          await tester.pump();
-        }
-      });
-      await tester.pump();
-
-      expect(find.byKey(const Key('grinding_dashboard_list')), findsOneWidget);
-      // KPI Proposal Pipeline: Sent phải hiện 1 (chain latest = Sent).
-      expect(find.text('Sent'), findsWidgets);
-      // Follow-up section hiện đúng project (nextFollowUpAt=now -> Due Today).
       expect(
-        find.byKey(Key('grinding_dashboard_followup_$projectId')),
-        findsOneWidget,
+        find.byKey(const Key('grinding_machine_dashboard_button')),
+        findsNothing,
       );
-      expect(find.textContaining('ABC Tea Factory'), findsWidgets);
+      expect(find.text('Dashboard'), findsNothing);
+      expect(
+        find.byKey(const Key('grinding_machine_backup_button')),
+        findsNothing,
+      );
+      expect(find.text('Backup & Restore'), findsNothing);
 
-      // Tap follow-up item -> mở đúng Project Detail.
-      await tester.tap(find.byKey(Key('grinding_dashboard_followup_$projectId')));
+      await tester.tap(
+        find.byKey(const Key('grinding_machine_projects_button')),
+      );
       await tester.pumpAndSettle();
       await tester.runAsync(() async {
         for (
           var i = 0;
           i < 50 &&
-              find.byKey(const Key('grinding_project_export_button')).evaluate().isEmpty;
+              find.byKey(Key('grinding_project_card_$projectId')).evaluate().isEmpty;
           i++
         ) {
           await Future.delayed(const Duration(milliseconds: 100));
@@ -189,8 +162,8 @@ void main() {
       });
       await tester.pump();
 
-      expect(find.byKey(const Key('grinding_project_export_button')), findsOneWidget);
-      expect(find.textContaining('ABC Tea Factory'), findsWidgets);
+      expect(find.text('Dự án đã lưu'), findsOneWidget);
+      expect(find.byKey(Key('grinding_project_card_$projectId')), findsOneWidget);
     },
   );
 }
@@ -199,7 +172,7 @@ void main() {
 /// máy thật.
 abstract final class GrindingTechnicalSnapshotStub {
   static GrindingTechnicalSnapshot fake() => GrindingTechnicalSnapshot(
-    machineId: 'BSP_ULTRAFINE__ASP-350',
+    machineId: 'ASP_ULTRAFINE__ASP-350',
     model: 'ASP-350',
     capturedAt: DateTime(2026, 9, 24),
   );

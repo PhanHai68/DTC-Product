@@ -90,7 +90,7 @@ void main() {
         find.byKey(const Key('grinding_selection_fineness_field')),
         '20',
       );
-      // Chọn thêm tag "roller" (chỉ riêng BS_ROLLER có) để tránh kết quả bị
+      // Chọn thêm tag "roller" (chỉ riêng AS_ROLLER có) để tránh kết quả bị
       // các dòng máy khác điểm bằng nhau (cùng chạm mốc điểm tối đa) chiếm
       // hết top 3 trước khi tới model cần kiểm tra.
       await tester.tap(find.byKey(const Key('grinding_selection_tag_roller')));
@@ -105,7 +105,7 @@ void main() {
 
       expect(find.textContaining('model phù hợp nhất'), findsOneWidget);
       expect(
-        find.byKey(const Key('grinding_recommendation_card_BS_ROLLER__AS500-3')),
+        find.byKey(const Key('grinding_recommendation_card_AS_ROLLER__AS500-3')),
         findsOneWidget,
       );
       expect(find.textContaining('Vừng'), findsWidgets);

@@ -142,7 +142,7 @@ class _GrindingMachineFilterScreenState
               if (hasMaterialFilterNoData) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Database chưa có dữ liệu tương thích đã xác minh cho nguyên liệu này.',
+                  'Cơ sở dữ liệu chưa có thông tin tương thích đã xác minh cho nguyên liệu này.',
                   style: TextStyle(color: palette.muted, fontSize: 12),
                 ),
               ],
@@ -239,7 +239,7 @@ class _GrindingMachineFilterScreenState
                     padding: const EdgeInsets.symmetric(vertical: 24),
                     child: Center(
                       child: Text(
-                        'Không có model nào khớp điều kiện lọc trong database.',
+                        'Không có model nào khớp điều kiện lọc trong cơ sở dữ liệu.',
                         textAlign: TextAlign.center,
                         style: TextStyle(color: palette.muted),
                       ),

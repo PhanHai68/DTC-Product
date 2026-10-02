@@ -38,8 +38,7 @@ class HomePersonalizationScreen extends StatefulWidget {
       _HomePersonalizationScreenState();
 }
 
-class _HomePersonalizationScreenState
-    extends State<HomePersonalizationScreen> {
+class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
   late bool _enabled;
   late double _nameFontSize;
   late Color? _nameColor;
@@ -54,6 +53,7 @@ class _HomePersonalizationScreenState
   late bool _dailyGoalsReminderEnabled;
   late int _dailyGoalsReminderHour;
   late int _dailyGoalsReminderMinute;
+  late bool _salesGoalEnabled;
   late final TextEditingController _nameController;
   late final TextEditingController _shortTextController;
   late final TextEditingController _dailyGoalsTitleController;
@@ -76,11 +76,11 @@ class _HomePersonalizationScreenState
     _dailyGoalsReminderEnabled = settings.homeDailyGoalsReminderEnabled;
     _dailyGoalsReminderHour = settings.homeDailyGoalsReminderHour;
     _dailyGoalsReminderMinute = settings.homeDailyGoalsReminderMinute;
+    _salesGoalEnabled = settings.homeSalesGoalEnabled;
     _nameController = TextEditingController(text: settings.homeDisplayName)
       ..addListener(() => setState(() {}));
-    _shortTextController =
-        TextEditingController(text: settings.homeShortText)
-          ..addListener(() => setState(() {}));
+    _shortTextController = TextEditingController(text: settings.homeShortText)
+      ..addListener(() => setState(() {}));
     _dailyGoalsTitleController = TextEditingController(
       text: settings.homeDailyGoalsTitle,
     );
@@ -129,6 +129,7 @@ class _HomePersonalizationScreenState
       dailyGoalsReminderEnabled: _dailyGoalsReminderEnabled,
       dailyGoalsReminderHour: _dailyGoalsReminderHour,
       dailyGoalsReminderMinute: _dailyGoalsReminderMinute,
+      salesGoalEnabled: _salesGoalEnabled,
     );
     if (reminderActive) {
       await DailyGoalNotificationService.scheduleDailyReminder(
@@ -139,9 +140,8 @@ class _HomePersonalizationScreenState
       await DailyGoalNotificationService.cancelDailyReminder();
     }
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã cập nhật trang chủ')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Đã cập nhật trang chủ')));
   }
 
   Future<void> _pickReminderTime() async {
@@ -205,14 +205,14 @@ class _HomePersonalizationScreenState
           SettingsProvider.defaultHomeDailyGoalsReminderHour;
       _dailyGoalsReminderMinute =
           SettingsProvider.defaultHomeDailyGoalsReminderMinute;
+      _salesGoalEnabled = false;
       _nameController.text = '';
       _shortTextController.text = '';
       _dailyGoalsTitleController.text =
           SettingsProvider.defaultHomeDailyGoalsTitle;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã khôi phục mặc định')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Đã khôi phục mặc định')));
   }
 
   @override
@@ -319,8 +319,7 @@ class _HomePersonalizationScreenState
                 const SizedBox(height: 8),
                 _ColorSwatchRow(
                   selected: _shortTextColor,
-                  onChanged: (color) =>
-                      setState(() => _shortTextColor = color),
+                  onChanged: (color) => setState(() => _shortTextColor = color),
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
@@ -422,6 +421,20 @@ class _HomePersonalizationScreenState
           ),
           const SizedBox(height: 16),
           _Section(
+            label: 'MỤC TIÊU DOANH SỐ',
+            child: SwitchListTile(
+              key: const Key('sales_goal_home_enabled_switch'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Hiển thị mục tiêu doanh số trên trang chủ'),
+              subtitle: const Text(
+                'Tắt chỉ ẩn thẻ khỏi trang chủ, không xóa dữ liệu doanh số',
+              ),
+              value: _salesGoalEnabled,
+              onChanged: (value) => setState(() => _salesGoalEnabled = value),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _Section(
             label: 'XEM TRƯỚC',
             child: !_enabled
                 ? Text(
@@ -448,10 +461,7 @@ class _HomePersonalizationScreenState
                   ),
           ),
           const SizedBox(height: 20),
-          FilledButton(
-            onPressed: _save,
-            child: const Text('Lưu thay đổi'),
-          ),
+          FilledButton(onPressed: _save, child: const Text('Lưu thay đổi')),
           const SizedBox(height: 8),
           Center(
             child: TextButton(

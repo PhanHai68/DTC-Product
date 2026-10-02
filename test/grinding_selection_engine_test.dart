@@ -72,17 +72,17 @@ void main() {
         ),
       );
 
-      // ASC-200/300/400 (BSC_COARSE, đơn vị fineness là "mm") phải bị loại
+      // ASC-200/300/400 (ASC_COARSE, đơn vị fineness là "mm") phải bị loại
       // hoàn toàn dù công suất có thể khớp — sai đơn vị độ mịn là hard
       // filter theo đúng sheet Selection_Rules (TECH_FINENESS).
       expect(
-        results.any((r) => r.machine.machineId.startsWith('BSC_COARSE__')),
+        results.any((r) => r.machine.machineId.startsWith('ASC_COARSE__')),
         isFalse,
       );
 
       expect(results, hasLength(3)); // tối đa 3 đề xuất theo mục 7.
       for (final r in results) {
-        expect(r.machine.seriesCode, 'BSG_UNIVERSAL_SYSTEM');
+        expect(r.machine.seriesCode, 'ASG_UNIVERSAL_SYSTEM');
         expect(r.score, 100);
         expect(r.isStrongCandidate, isTrue);
         // PEPPER chưa có dòng Material_Series_Map đã xác minh -> phải có
@@ -101,7 +101,7 @@ void main() {
       final context = _contextFor(snapshot, 'SESAME');
       // maxResults lớn để lấy hết ứng viên hợp lệ, tránh bị các model điểm
       // trùng (cùng chạm mốc 100 vì technical score đã đạt tối đa) chiếm hết
-      // top 3 trước khi tới BS_ROLLER — mục tiêu bài test là xác nhận điểm/
+      // top 3 trước khi tới AS_ROLLER — mục tiêu bài test là xác nhận điểm/
       // lý do đúng, không phải thứ hạng giữa các model điểm bằng nhau.
       final results = GrindingSelectionEngine.recommend(
         context: context,
@@ -115,7 +115,7 @@ void main() {
       );
 
       final rollerResult = results
-          .where((r) => r.machine.seriesCode == 'BS_ROLLER')
+          .where((r) => r.machine.seriesCode == 'AS_ROLLER')
           .toList();
       expect(rollerResult, isNotEmpty);
       expect(rollerResult.first.score, 100); // technical 100 + material +20, giới hạn 100.
@@ -154,7 +154,7 @@ void main() {
       ),
     );
     expect(
-      resultsOk.any((r) => r.machine.machineId == 'BSC_COARSE__ASC-200'),
+      resultsOk.any((r) => r.machine.machineId == 'ASC_COARSE__ASC-200'),
       isTrue,
     );
 
@@ -169,7 +169,7 @@ void main() {
       ),
     );
     expect(
-      resultsTooBig.any((r) => r.machine.machineId == 'BSC_COARSE__ASC-200'),
+      resultsTooBig.any((r) => r.machine.machineId == 'ASC_COARSE__ASC-200'),
       isFalse,
     );
   });

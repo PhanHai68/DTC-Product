@@ -13,7 +13,7 @@ void main() {
     expect(report.canImport, isTrue, reason: report.issues.join('\n'));
     final expected = GrindingMachineImporter.parse(File('assets/database/grinding_machine_seed.json').readAsStringSync());
     expect(report.snapshot!.toJson(), expected.toJson());
-    expect(report.snapshot!.databaseVersion, '1.1'); // Update_Log có 2.0.
+    expect(report.snapshot!.databaseVersion, '2.2.3'); // README đã cập nhật theo Update_Log.
   });
 
   test('Workbook hỏng và thiếu sheet bị chặn', () {

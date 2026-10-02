@@ -5,10 +5,14 @@ import 'package:dtc_product/models/sample_record.dart';
 import 'package:dtc_product/services/sample_record_pdf_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+const media = 'build/analysis/sample_workbook_media/FORM LUU MAU GAO';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  test('generate classification preview', () async {
-    const media = 'build/analysis/sample_workbook_media/FORM LUU MAU GAO';
+  // Công cụ tạo PDF xem trước từ ảnh mẫu cục bộ (không nằm trong repo):
+  // bỏ qua khi máy chạy test không có thư mục ảnh.
+  final hasMedia = Directory(media).existsSync();
+  test('generate classification preview', skip: hasMedia ? false : 'Thiếu ảnh mẫu tại $media', () async {
     SampleStreamData stream(
       SampleStreamType type,
       double kg,

@@ -13,7 +13,7 @@ void main() {
 
     // Số dòng phải khớp CHÍNH XÁC với số dòng trong Excel gốc (57 model,
     // 11 dòng máy...) — không được rơi rớt hay bịa thêm dòng nào khi parse.
-    expect(snapshot.databaseVersion, '1.1');
+    expect(snapshot.databaseVersion, '2.2.3');
     expect(snapshot.sourceDocument, 'DTC-C-MayNghien-250426-demo4.pdf');
     expect(snapshot.series, hasLength(11));
     expect(snapshot.machines, hasLength(57));
@@ -31,7 +31,7 @@ void main() {
     final snapshot = GrindingMachineImporter.parse(jsonSource);
 
     final asc200 = snapshot.machines.firstWhere(
-      (m) => m.machineId == 'BSC_COARSE__ASC-200',
+      (m) => m.machineId == 'ASC_COARSE__ASC-200',
     );
     expect(asc200.capacityMinKgH, 80);
     expect(asc200.capacityMaxKgH, 300);

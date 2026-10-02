@@ -76,8 +76,8 @@ void main() {
   test('deleteProject xóa cả project lẫn quan hệ máy', () async {
     final id = await repository.createProject(
       _project(),
-      primaryMachineId: 'BSP_ULTRAFINE__ASP-350',
-      shortlistMachineIds: const ['BSC_COARSE__ASC-200'],
+      primaryMachineId: 'ASP_ULTRAFINE__ASP-350',
+      shortlistMachineIds: const ['ASC_COARSE__ASC-200'],
     );
     await repository.deleteProject(id);
 
@@ -90,37 +90,37 @@ void main() {
   test('Quan hệ selected machine (primary) + shortlist lưu và đọc đúng', () async {
     final id = await repository.createProject(
       _project(),
-      primaryMachineId: 'BSP_ULTRAFINE__ASP-350',
+      primaryMachineId: 'ASP_ULTRAFINE__ASP-350',
       shortlistMachineIds: const [
-        'BSC_COARSE__ASC-200',
-        'BSC_COARSE__ASC-300',
+        'ASC_COARSE__ASC-200',
+        'ASC_COARSE__ASC-300',
       ],
     );
     final machines = await repository.getProjectMachines(id);
 
-    expect(machines.primaryMachineId, 'BSP_ULTRAFINE__ASP-350');
+    expect(machines.primaryMachineId, 'ASP_ULTRAFINE__ASP-350');
     expect(machines.shortlistMachineIds, [
-      'BSC_COARSE__ASC-200',
-      'BSC_COARSE__ASC-300',
+      'ASC_COARSE__ASC-200',
+      'ASC_COARSE__ASC-300',
     ]);
   });
 
   test('updateProject thay đổi primary/shortlist -> quan hệ cũ bị thay hoàn toàn', () async {
     final id = await repository.createProject(
       _project(),
-      primaryMachineId: 'BSP_ULTRAFINE__ASP-350',
-      shortlistMachineIds: const ['BSC_COARSE__ASC-200'],
+      primaryMachineId: 'ASP_ULTRAFINE__ASP-350',
+      shortlistMachineIds: const ['ASC_COARSE__ASC-200'],
     );
     final loaded = (await repository.getProject(id))!;
 
     await repository.updateProject(
       loaded,
-      primaryMachineId: 'BSC_COARSE__ASC-300',
+      primaryMachineId: 'ASC_COARSE__ASC-300',
       shortlistMachineIds: const [],
     );
     final machines = await repository.getProjectMachines(id);
 
-    expect(machines.primaryMachineId, 'BSC_COARSE__ASC-300');
+    expect(machines.primaryMachineId, 'ASC_COARSE__ASC-300');
     expect(machines.shortlistMachineIds, isEmpty);
   });
 

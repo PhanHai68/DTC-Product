@@ -93,9 +93,16 @@ class GrindingMachineRepository {
           );
         }
       }
-      if (origin == 'seed' && meta['importOrigin'] == 'file') {
-        throw StateError('Không dùng seed để ghi đè catalog đã import.');
-      }
+      // KHÔNG còn chặn `origin == 'seed'` ghi đè catalog có `importOrigin ==
+      // 'file'` — rule đó tồn tại khi màn hình "Database Update" còn cho
+      // người dùng tự import file trên điện thoại (Phase 5), để tránh seed
+      // đóng gói âm thầm ghi đè catalog người dùng cố ý nạp. Màn hình đó đã
+      // bị gỡ hoàn toàn khỏi UI production — chỉ còn version check phía trên
+      // là đủ và đúng. Giữ rule cũ sẽ khiến thiết bị nào từng có
+      // `importOrigin = 'file'` (từ trước khi gỡ màn hình) bị KẸT VĨNH VIỄN,
+      // không bao giờ nhận được bản seed mới dù `databaseVersion` đóng gói
+      // đã tăng — đây chính là bug thật đã xảy ra (xem
+      // `grinding_machine_provider_test.dart`).
       for (final table in const [
         'grinding_series',
         'grinding_machines',

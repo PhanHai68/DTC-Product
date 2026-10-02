@@ -244,7 +244,7 @@ class _GrindingMachineSelectorScreenState
     var name = _projectNameController.text.trim();
     if (name.isEmpty) {
       // Chỉ dùng thời điểm THỰC (DateTime.now()), không hard-code (mục 5).
-      name = 'Grinding Project ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())}';
+      name = 'Dự án máy nghiền ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}';
     }
     setState(() => _isSaving = true);
     final now = DateTime.now();
@@ -367,7 +367,7 @@ class _GrindingMachineSelectorScreenState
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     isDense: true,
-                    hintText: 'Chọn từ database',
+                    hintText: 'Chọn từ cơ sở dữ liệu',
                   ),
                   items: [
                     const DropdownMenuItem<GrindingMaterial?>(
@@ -405,34 +405,33 @@ class _GrindingMachineSelectorScreenState
             ),
           ),
           const SizedBox(height: 12),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: TextFormField(
-                  key: const Key('grinding_selector_fineness_field'),
-                  controller: _finenessController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    labelText: 'Độ mịn yêu cầu',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              DropdownButton<String>(
-                key: const Key('grinding_selector_fineness_unit'),
-                value: _finenessUnit,
-                items: const [
-                  DropdownMenuItem(value: 'mm', child: Text('mm')),
-                  DropdownMenuItem(value: 'mesh', child: Text('mesh')),
-                  DropdownMenuItem(value: 'µm', child: Text('µm')),
-                ],
-                onChanged: (value) =>
-                    setState(() => _finenessUnit = value ?? 'µm'),
-              ),
+          TextFormField(
+            key: const Key('grinding_selector_fineness_field'),
+            controller: _finenessController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+              labelText: 'Độ mịn yêu cầu',
+              border: OutlineInputBorder(),
+              isDense: true,
+            ),
+          ),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            key: const Key('grinding_selector_fineness_unit'),
+            initialValue: _finenessUnit,
+            isExpanded: true,
+            decoration: const InputDecoration(
+              labelText: 'Đơn vị độ mịn',
+              border: OutlineInputBorder(),
+              isDense: true,
+            ),
+            items: const [
+              DropdownMenuItem(value: 'mm', child: Text('mm')),
+              DropdownMenuItem(value: 'mesh', child: Text('mesh')),
+              DropdownMenuItem(value: 'µm', child: Text('µm')),
             ],
+            onChanged: (value) =>
+                setState(() => _finenessUnit = value ?? 'µm'),
           ),
           const SizedBox(height: 12),
           TextFormField(
@@ -440,7 +439,7 @@ class _GrindingMachineSelectorScreenState
             controller: _feedSizeController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: const InputDecoration(
-              labelText: 'Kích thước đầu vào (mm) — tuỳ chọn',
+              labelText: 'Kích thước đầu vào (mm)',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -451,7 +450,7 @@ class _GrindingMachineSelectorScreenState
             controller: _motorController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: const InputDecoration(
-              labelText: 'Công suất động cơ tối đa (kW) — tuỳ chọn',
+              labelText: 'Động cơ tối đa (kW)',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -461,7 +460,7 @@ class _GrindingMachineSelectorScreenState
             key: const Key('grinding_selector_application_field'),
             controller: _applicationController,
             decoration: const InputDecoration(
-              labelText: 'Ứng dụng / quy trình — tuỳ chọn',
+              labelText: 'Ứng dụng / quy trình',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -472,7 +471,7 @@ class _GrindingMachineSelectorScreenState
             controller: _notesController,
             maxLines: 2,
             decoration: const InputDecoration(
-              labelText: 'Ghi chú — tuỳ chọn',
+              labelText: 'Ghi chú',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -482,7 +481,7 @@ class _GrindingMachineSelectorScreenState
             key: const Key('grinding_selector_submit_button'),
             onPressed: _isSearching ? null : _submit,
             icon: const Icon(Icons.auto_awesome_rounded),
-            label: Text(isEditMode ? 'Re-evaluate' : 'Tìm máy phù hợp'),
+            label: Text(isEditMode ? 'Đánh giá lại' : 'Tìm máy phù hợp'),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 13),
             ),
@@ -497,7 +496,7 @@ class _GrindingMachineSelectorScreenState
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                'Selected: $_primaryMachineId',
+                'Đã chọn: $_primaryMachineId',
                 style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
               ),
             ),
@@ -574,7 +573,7 @@ class _ProjectInfoSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Project Information',
+            'Thông tin dự án',
             style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 10),
@@ -582,7 +581,7 @@ class _ProjectInfoSection extends StatelessWidget {
             key: const Key('grinding_selector_project_name_field'),
             controller: projectNameController,
             decoration: const InputDecoration(
-              labelText: 'Project name — để trống sẽ tự đặt theo thời gian',
+              labelText: 'Tên dự án (tự đặt nếu để trống)',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -592,7 +591,7 @@ class _ProjectInfoSection extends StatelessWidget {
             key: const Key('grinding_selector_customer_name_field'),
             controller: customerNameController,
             decoration: const InputDecoration(
-              labelText: 'Customer name — tuỳ chọn',
+              labelText: 'Tên khách hàng',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -602,7 +601,7 @@ class _ProjectInfoSection extends StatelessWidget {
             key: const Key('grinding_selector_contact_name_field'),
             controller: contactNameController,
             decoration: const InputDecoration(
-              labelText: 'Contact person — tuỳ chọn',
+              labelText: 'Người liên hệ',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -612,7 +611,7 @@ class _ProjectInfoSection extends StatelessWidget {
             key: const Key('grinding_selector_contact_info_field'),
             controller: contactInfoController,
             decoration: const InputDecoration(
-              labelText: 'Contact info (SĐT/email) — tuỳ chọn',
+              labelText: 'Liên hệ (SĐT/email)',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -621,14 +620,18 @@ class _ProjectInfoSection extends StatelessWidget {
           DropdownButtonFormField<GrindingProjectStatus>(
             key: const Key('grinding_selector_status_field'),
             initialValue: status,
+            isExpanded: true,
             decoration: const InputDecoration(
-              labelText: 'Status',
+              labelText: 'Trạng thái',
               border: OutlineInputBorder(),
               isDense: true,
             ),
             items: GrindingProjectStatus.values
                 .map(
-                  (s) => DropdownMenuItem(value: s, child: Text(s.value)),
+                  (s) => DropdownMenuItem(
+                    value: s,
+                    child: Text(_projectStatusLabel(s)),
+                  ),
                 )
                 .toList(),
             onChanged: (v) {
@@ -662,7 +665,7 @@ class _ResultsSection extends StatelessWidget {
     if (results.isEmpty) {
       return Center(
         child: Text(
-          'Database chưa có model nào để đối chiếu.',
+          'Cơ sở dữ liệu chưa có model nào để đối chiếu.',
           style: TextStyle(color: palette.muted),
         ),
       );
@@ -675,7 +678,7 @@ class _ResultsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          hasExactMatch ? 'Recommended Machines' : 'Không tìm thấy máy khớp hoàn toàn',
+          hasExactMatch ? 'Máy được đề xuất' : 'Không tìm thấy máy khớp hoàn toàn',
           key: const Key('grinding_selector_results_title'),
           style: TextStyle(
             color: palette.ink,
@@ -728,9 +731,9 @@ class _MatchCard extends StatelessWidget {
     final palette = DtcPalette.of(context);
     final errorColor = Theme.of(context).colorScheme.error;
     final (labelText, labelColor) = switch (match.label) {
-      GrindingMatchLabel.strong => ('Strong Match', palette.cyan),
-      GrindingMatchLabel.possible => ('Possible Match', palette.navy),
-      GrindingMatchLabel.closest => ('Insufficient Data', errorColor),
+      GrindingMatchLabel.strong => ('Phù hợp cao', palette.cyan),
+      GrindingMatchLabel.possible => ('Có thể phù hợp', palette.navy),
+      GrindingMatchLabel.closest => ('Chưa đủ dữ liệu', errorColor),
     };
 
     return Container(
@@ -843,7 +846,7 @@ class _MatchCard extends StatelessWidget {
                     isShortlisted ? Icons.star_rounded : Icons.star_border_rounded,
                     size: 18,
                   ),
-                  label: const Text('Shortlist'),
+                  label: const Text('Danh sách cân nhắc'),
                 ),
               ),
             ],
@@ -874,3 +877,10 @@ class _MatchCard extends StatelessWidget {
     );
   }
 }
+
+String _projectStatusLabel(GrindingProjectStatus status) => switch (status) {
+  GrindingProjectStatus.draft => 'Bản nháp',
+  GrindingProjectStatus.evaluating => 'Đang đánh giá',
+  GrindingProjectStatus.selected => 'Đã chọn máy',
+  GrindingProjectStatus.completed => 'Hoàn tất',
+};

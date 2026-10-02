@@ -116,7 +116,9 @@ class _GrindingProposalEditorScreenState
 
     if (widget.proposalId == null) {
       // Tạo mới -> lấy máy chính của Project (nếu có) làm mặc định.
-      final machines = await projectProvider.getProjectMachines(widget.projectId);
+      final machines = await projectProvider.getProjectMachines(
+        widget.projectId,
+      );
       _machineId = machines.primaryMachineId;
     } else {
       final proposal = await proposalProvider.getProposal(widget.proposalId!);
@@ -157,7 +159,9 @@ class _GrindingProposalEditorScreenState
           items.where((i) => i.kind == GrindingProposalLineItemKind.accessory),
         );
         _additionalCosts.addAll(
-          items.where((i) => i.kind == GrindingProposalLineItemKind.additionalCost),
+          items.where(
+            (i) => i.kind == GrindingProposalLineItemKind.additionalCost,
+          ),
         );
         if (_rootProposalId != null) {
           _revisions = await proposalProvider.getRevisions(_rootProposalId!);
@@ -197,7 +201,9 @@ class _GrindingProposalEditorScreenState
       machineQuantity: _parse(_machineQuantityController.text),
       discount: _parse(_discountController.text),
       vatPercent: _parse(_vatController.text),
-      notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+      notes: _notesController.text.trim().isEmpty
+          ? null
+          : _notesController.text.trim(),
       technicalSnapshot: _snapshot,
       rootProposalId: _rootProposalId,
       revision: _revision,
@@ -221,7 +227,10 @@ class _GrindingProposalEditorScreenState
     );
   }
 
-  List<GrindingProposalLineItem> get _allLineItems => [..._accessories, ..._additionalCosts];
+  List<GrindingProposalLineItem> get _allLineItems => [
+    ..._accessories,
+    ..._additionalCosts,
+  ];
 
   /// Chặn Save/Finalize từ tầng UI khi dữ liệu thương mại không hợp lệ
   /// (mục 19-21, Phase 11) — KHÔNG để input sai đi tới Repository. Trả
@@ -229,11 +238,13 @@ class _GrindingProposalEditorScreenState
   /// SnackBar liệt kê lỗi đầu tiên).
   bool _validateBeforeSave() {
     final proposal = _buildProposal();
-    final errors = GrindingProposalValidationService.validate(proposal, _allLineItems);
-    if (errors.isEmpty) return true;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(errors.first)),
+    final errors = GrindingProposalValidationService.validate(
+      proposal,
+      _allLineItems,
     );
+    if (errors.isEmpty) return true;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(errors.first)));
     return false;
   }
 
@@ -265,15 +276,13 @@ class _GrindingProposalEditorScreenState
         setState(() => _isSaving = false);
       }
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã lưu Proposal (Draft).')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Đã lưu báo giá nháp.')));
     } catch (error) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không thể lưu: $error')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Không thể lưu: $error')));
     }
   }
 
@@ -287,10 +296,10 @@ class _GrindingProposalEditorScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Finalize this proposal?'),
+        title: const Text('Chốt báo giá này?'),
         content: const Text(
-          'Thông số kỹ thuật của máy sẽ được đóng băng (Technical Snapshot). '
-          'Sau khi Finalize, Proposal sẽ ở chế độ chỉ đọc.',
+          'Thông số kỹ thuật của máy sẽ được lưu cố định. '
+          'Sau khi chốt, báo giá sẽ chuyển sang chế độ chỉ đọc.',
         ),
         actions: [
           TextButton(
@@ -299,7 +308,7 @@ class _GrindingProposalEditorScreenState
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Finalize'),
+            child: const Text('Chốt báo giá'),
           ),
         ],
       ),
@@ -308,7 +317,9 @@ class _GrindingProposalEditorScreenState
 
     if (_currentMachine == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Chưa có máy hợp lệ để chụp Technical Snapshot.')),
+        const SnackBar(
+          content: Text('Chưa có máy hợp lệ để lưu thông số kỹ thuật.'),
+        ),
       );
       return;
     }
@@ -317,7 +328,10 @@ class _GrindingProposalEditorScreenState
     final snapshot = await _captureSnapshotFromCurrentMachine();
 
     // Lưu draft mới nhất trước rồi mới Finalize để không mất chỉnh sửa dang dở.
-    await proposalProvider.updateProposal(_buildProposal(), lineItems: _allLineItems);
+    await proposalProvider.updateProposal(
+      _buildProposal(),
+      lineItems: _allLineItems,
+    );
     await proposalProvider.finalizeProposal(
       _proposalDbId!,
       projectId: widget.projectId,
@@ -332,13 +346,17 @@ class _GrindingProposalEditorScreenState
       _isSaving = false;
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã Finalize — Technical Snapshot đã được lưu.')),
+      const SnackBar(
+        content: Text('Đã chốt báo giá và lưu thông số kỹ thuật.'),
+      ),
     );
   }
 
   Future<GrindingTechnicalSnapshot> _captureSnapshotFromCurrentMachine() async {
     final grindingProvider = context.read<GrindingMachineProvider>();
-    final extraSpecs = await grindingProvider.getExtraSpecs(_currentMachine!.machineId);
+    final extraSpecs = await grindingProvider.getExtraSpecs(
+      _currentMachine!.machineId,
+    );
     return GrindingTechnicalSnapshot(
       machineId: _currentMachine!.machineId,
       model: _currentMachine!.model,
@@ -353,7 +371,12 @@ class _GrindingProposalEditorScreenState
           : '${_fmt(_currentMachine!.weightKg!)} kg',
       extraSpecs: extraSpecs
           .where((s) => s.displayValue.isNotEmpty)
-          .map((s) => GrindingSnapshotExtraSpec(label: s.specKey, value: s.displayValue))
+          .map(
+            (s) => GrindingSnapshotExtraSpec(
+              label: s.specKey,
+              value: s.displayValue,
+            ),
+          )
           .toList(),
       capturedAt: DateTime.now(),
     );
@@ -366,22 +389,27 @@ class _GrindingProposalEditorScreenState
   Future<void> _refreshTechnicalData() async {
     if (_isSaving || _currentMachine == null) return;
     final confirmed = await _confirmDialog(
-      title: 'Refresh Technical Data?',
+      title: 'Cập nhật thông số kỹ thuật?',
       message:
-          'Thay thông số kỹ thuật đang dùng (copy từ revision trước) bằng '
-          'thông số MỚI NHẤT từ catalog máy hiện tại. Chỉ áp dụng cho bản '
-          'Draft đang chỉnh sửa này — không ảnh hưởng các revision khác.',
+          'Thay thông số kỹ thuật đang dùng (sao chép từ phiên bản trước) bằng '
+          'thông số mới nhất từ danh mục máy hiện tại. Chỉ áp dụng cho bản '
+          'nháp đang chỉnh sửa này — không ảnh hưởng các phiên bản khác.',
     );
     if (confirmed != true || !mounted) return;
     final snapshot = await _captureSnapshotFromCurrentMachine();
     if (!mounted) return;
     setState(() => _snapshot = snapshot);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã cập nhật Technical Data từ catalog hiện tại.')),
+      const SnackBar(
+        content: Text('Đã cập nhật thông số kỹ thuật từ danh mục hiện tại.'),
+      ),
     );
   }
 
-  Future<bool?> _confirmDialog({required String title, required String message}) {
+  Future<bool?> _confirmDialog({
+    required String title,
+    required String message,
+  }) {
     return showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -457,9 +485,9 @@ class _GrindingProposalEditorScreenState
   Future<void> _markSent() async {
     if (_isSaving || _proposalDbId == null) return;
     final confirmed = await _confirmDialog(
-      title: 'Mark as Sent?',
+      title: 'Đánh dấu đã gửi?',
       message:
-          'Đánh dấu proposal đã gửi cho khách hàng. Ứng dụng KHÔNG gửi email '
+          'Đánh dấu báo giá đã gửi cho khách hàng. Ứng dụng không gửi email '
           'tự động — chỉ ghi lại thời điểm gửi.',
     );
     if (confirmed != true || !mounted) return;
@@ -475,20 +503,20 @@ class _GrindingProposalEditorScreenState
       });
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Đã chuyển sang Sent.')));
+      ).showSnackBar(const SnackBar(content: Text('Đã đánh dấu là đã gửi.')));
     } catch (error) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Không thể chuyển Sent: $error')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể đánh dấu đã gửi: $error')),
+      );
     }
   }
 
   Future<void> _markAccepted() async {
     if (_isSaving || _proposalDbId == null) return;
     final note = await _confirmWithNoteDialog(
-      title: 'Mark Accepted?',
+      title: 'Đánh dấu đã chấp nhận?',
       message: 'Khách hàng đã đồng ý báo giá này.',
       noteLabel: 'Ghi chú phản hồi — tuỳ chọn',
     );
@@ -511,24 +539,24 @@ class _GrindingProposalEditorScreenState
         SnackBar(
           content: Text(
             ok
-                ? 'Đã đánh dấu Accepted.'
-                : 'Another revision is already marked Accepted.',
+                ? 'Đã đánh dấu là đã chấp nhận.'
+                : 'Một phiên bản khác đã được đánh dấu là đã chấp nhận.',
           ),
         ),
       );
     } catch (error) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Không thể Accept: $error')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể đánh dấu đã chấp nhận: $error')),
+      );
     }
   }
 
   Future<void> _markRejected() async {
     if (_isSaving || _proposalDbId == null) return;
     final note = await _confirmWithNoteDialog(
-      title: 'Mark Rejected?',
+      title: 'Đánh dấu đã từ chối?',
       message: 'Khách hàng đã từ chối báo giá này.',
       noteLabel: 'Ghi chú phản hồi — tuỳ chọn',
     );
@@ -547,25 +575,25 @@ class _GrindingProposalEditorScreenState
         if (reloaded != null) _applyReloaded(reloaded);
         _isSaving = false;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Đã đánh dấu Rejected.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Đã đánh dấu là đã từ chối.')),
+      );
     } catch (error) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Không thể Reject: $error')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể đánh dấu đã từ chối: $error')),
+      );
     }
   }
 
   Future<void> _createRevision() async {
     if (_isSaving || _proposalDbId == null) return;
     final confirmed = await _confirmDialog(
-      title: 'Create Revision?',
+      title: 'Tạo phiên bản mới?',
       message:
-          'Tạo bản Draft mới (revision kế tiếp) từ proposal này — sao chép '
-          'dữ liệu thương mại, line items và Technical Snapshot làm điểm '
+          'Tạo bản nháp mới (phiên bản kế tiếp) từ báo giá này — sao chép '
+          'dữ liệu thương mại, các hạng mục và thông số kỹ thuật làm điểm '
           'khởi đầu. Bản hiện tại (R$_revision) KHÔNG bị thay đổi.',
     );
     if (confirmed != true || !mounted) return;
@@ -590,7 +618,7 @@ class _GrindingProposalEditorScreenState
       if (!mounted) return;
       setState(() => _isSaving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không thể tạo Revision: $error')),
+        SnackBar(content: Text('Không thể tạo phiên bản mới: $error')),
       );
     }
   }
@@ -598,22 +626,24 @@ class _GrindingProposalEditorScreenState
   Future<void> _deleteDraft() async {
     if (_isSaving || _proposalDbId == null) return;
     final confirmed = await _confirmDialog(
-      title: 'Delete this draft?',
-      message: 'Xoá proposal Draft này — không thể hoàn tác.',
+      title: 'Xoá bản nháp này?',
+      message: 'Xoá bản báo giá nháp này — không thể hoàn tác.',
     );
     if (confirmed != true || !mounted) return;
     setState(() => _isSaving = true);
     try {
       final provider = context.read<GrindingProposalProvider>();
-      await provider.deleteProposal(_proposalDbId!, projectId: widget.projectId);
+      await provider.deleteProposal(
+        _proposalDbId!,
+        projectId: widget.projectId,
+      );
       if (!mounted) return;
       Navigator.of(context).pop();
     } catch (error) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Không thể xoá: $error')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Không thể xoá: $error')));
     }
   }
 
@@ -644,20 +674,21 @@ class _GrindingProposalEditorScreenState
       );
       if (!mounted) return;
       final fileName =
-          '${_proposalNumber ?? 'Proposal'}-${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf';
+          '${_proposalNumber ?? 'BaoGia'}-${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf';
       await SharePlus.instance.share(
         ShareParams(
-          files: [XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName)],
-          title: 'Grinding Machine Technical Proposal',
+          files: [
+            XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName),
+          ],
+          title: 'Tính toán chi phí lắp đặt máy nghiền',
           text: _proposalNumber ?? _project?.projectName ?? '',
           fileNameOverrides: [fileName],
         ),
       );
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không thể xuất PDF: $error')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Không thể xuất PDF: $error')));
     } finally {
       if (mounted) setState(() => _isExporting = false);
     }
@@ -672,13 +703,16 @@ class _GrindingProposalEditorScreenState
     if (_isLoading) {
       return Scaffold(
         backgroundColor: palette.canvas,
-        appBar: AppBar(title: const Text('Proposal')),
+        appBar: AppBar(title: const Text('Chi phí lắp đặt')),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     final proposal = _buildProposal();
-    final totals = GrindingProposalCalculator.calculate(proposal, _allLineItems);
+    final totals = GrindingProposalCalculator.calculate(
+      proposal,
+      _allLineItems,
+    );
     final expiresAt = proposal.expiresAt;
     final expired = proposal.isExpired();
 
@@ -686,12 +720,14 @@ class _GrindingProposalEditorScreenState
       backgroundColor: palette.canvas,
       appBar: AppBar(
         title: Text(
-          _proposalNumber == null ? 'New Proposal' : '$_proposalNumber R$_revision',
+          _proposalNumber == null
+              ? 'Tính toán chi phí lắp đặt'
+              : '$_proposalNumber - lần $_revision',
         ),
         actions: [
           IconButton(
             key: const Key('grinding_proposal_export_button'),
-            tooltip: isEditable ? 'Preview' : 'Export PDF / Share',
+            tooltip: isEditable ? 'Xem trước' : 'Xuất hoặc chia sẻ PDF',
             icon: _isExporting
                 ? const SizedBox(
                     width: 18,
@@ -712,9 +748,12 @@ class _GrindingProposalEditorScreenState
               if (_machineUnavailable) ...[
                 const SizedBox(width: 8),
                 Text(
-                  'Current machine no longer exists in database',
+                  'Máy hiện tại không còn trong cơ sở dữ liệu',
                   key: const Key('grinding_proposal_machine_unavailable'),
-                  style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 11.5),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontSize: 11.5,
+                  ),
                 ),
               ],
             ],
@@ -723,25 +762,33 @@ class _GrindingProposalEditorScreenState
             const SizedBox(height: 6),
             Text(
               expired
-                  ? 'Expired'
-                  : 'Valid until: ${DateFormat('dd/MM/yyyy').format(expiresAt)}',
+                  ? 'Đã hết hiệu lực'
+                  : 'Có hiệu lực đến: ${DateFormat('dd/MM/yyyy').format(expiresAt)}',
               key: const Key('grinding_proposal_expiry_text'),
               style: TextStyle(
-                color: expired ? Theme.of(context).colorScheme.error : palette.muted,
+                color: expired
+                    ? Theme.of(context).colorScheme.error
+                    : palette.muted,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ],
           const SizedBox(height: 14),
-          Text('Currency', style: TextStyle(color: palette.navy, fontWeight: FontWeight.w700)),
+          Text(
+            'Đơn vị tiền tệ',
+            style: TextStyle(color: palette.navy, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 6),
           !isEditable
               ? Text(_currency, style: TextStyle(color: palette.ink))
               : DropdownButtonFormField<String>(
                   key: const Key('grinding_proposal_currency_field'),
                   initialValue: _currency,
-                  decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
                   items: const [
                     DropdownMenuItem(value: 'VND', child: Text('VND')),
                     DropdownMenuItem(value: 'USD', child: Text('USD')),
@@ -761,7 +808,7 @@ class _GrindingProposalEditorScreenState
               key: const Key('grinding_proposal_refresh_technical_button'),
               onPressed: _isSaving ? null : _refreshTechnicalData,
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Refresh Technical Data'),
+              label: const Text('Cập nhật thông số kỹ thuật'),
             ),
             const SizedBox(height: 12),
           ],
@@ -769,17 +816,19 @@ class _GrindingProposalEditorScreenState
             _ReadOnlyMoneyRows(
               currency: _currency,
               rows: [
-                ('Unit price', proposal.machineUnitPrice),
-                ('Quantity', proposal.machineQuantity),
+                ('Đơn giá', proposal.machineUnitPrice),
+                ('Số lượng', proposal.machineQuantity),
               ],
             )
           else ...[
             TextFormField(
               key: const Key('grinding_proposal_machine_price_field'),
               controller: _machineUnitPriceController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(
-                labelText: 'Machine unit price',
+                labelText: 'Đơn giá máy',
                 border: OutlineInputBorder(),
                 isDense: true,
               ),
@@ -788,9 +837,11 @@ class _GrindingProposalEditorScreenState
             TextFormField(
               key: const Key('grinding_proposal_machine_quantity_field'),
               controller: _machineQuantityController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(
-                labelText: 'Quantity',
+                labelText: 'Số lượng',
                 border: OutlineInputBorder(),
                 isDense: true,
               ),
@@ -798,7 +849,7 @@ class _GrindingProposalEditorScreenState
           ],
           const SizedBox(height: 20),
           _LineItemSection(
-            title: 'Accessories / Options',
+            title: 'Phụ kiện / Tuỳ chọn',
             addKey: const Key('grinding_proposal_add_accessory'),
             items: _accessories,
             readOnly: !isEditable,
@@ -816,7 +867,7 @@ class _GrindingProposalEditorScreenState
           ),
           const SizedBox(height: 16),
           _LineItemSection(
-            title: 'Additional Costs (Shipping/Installation/Training/Other)',
+            title: 'Chi phí bổ sung (vận chuyển/lắp đặt/đào tạo/khác)',
             addKey: const Key('grinding_proposal_add_cost'),
             items: _additionalCosts,
             readOnly: !isEditable,
@@ -837,7 +888,7 @@ class _GrindingProposalEditorScreenState
             _ReadOnlyMoneyRows(
               currency: _currency,
               rows: [
-                ('Discount', proposal.discount),
+                ('Giảm giá', proposal.discount),
                 ('VAT (%)', proposal.vatPercent),
               ],
             )
@@ -845,10 +896,12 @@ class _GrindingProposalEditorScreenState
             TextFormField(
               key: const Key('grinding_proposal_discount_field'),
               controller: _discountController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               onChanged: (_) => setState(() {}),
               decoration: const InputDecoration(
-                labelText: 'Discount (amount) — tuỳ chọn',
+                labelText: 'Giảm giá (số tiền) — tuỳ chọn',
                 border: OutlineInputBorder(),
                 isDense: true,
               ),
@@ -857,7 +910,9 @@ class _GrindingProposalEditorScreenState
             TextFormField(
               key: const Key('grinding_proposal_vat_field'),
               controller: _vatController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               onChanged: (_) => setState(() {}),
               decoration: const InputDecoration(
                 labelText: 'VAT (%) — tuỳ chọn',
@@ -873,7 +928,7 @@ class _GrindingProposalEditorScreenState
             readOnly: !isEditable,
             maxLines: 2,
             decoration: const InputDecoration(
-              labelText: 'Notes — tuỳ chọn',
+              labelText: 'Ghi chú — tuỳ chọn',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -894,14 +949,14 @@ class _GrindingProposalEditorScreenState
               key: const Key('grinding_proposal_save_draft_button'),
               onPressed: _isSaving ? null : _saveDraft,
               icon: const Icon(Icons.save_outlined),
-              label: const Text('Save Draft'),
+              label: const Text('Lưu bản nháp'),
             ),
             const SizedBox(height: 10),
             OutlinedButton.icon(
               key: const Key('grinding_proposal_finalize_button'),
               onPressed: _isSaving ? null : _finalize,
               icon: const Icon(Icons.lock_outline_rounded),
-              label: const Text('Finalize'),
+              label: const Text('Chốt báo giá'),
             ),
             if (_proposalDbId != null) ...[
               const SizedBox(height: 10),
@@ -909,7 +964,7 @@ class _GrindingProposalEditorScreenState
                 key: const Key('grinding_proposal_delete_button'),
                 onPressed: _isSaving ? null : _deleteDraft,
                 icon: const Icon(Icons.delete_outline_rounded),
-                label: const Text('Delete'),
+                label: const Text('Xoá'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.error,
                 ),
@@ -921,14 +976,14 @@ class _GrindingProposalEditorScreenState
               key: const Key('grinding_proposal_mark_sent_button'),
               onPressed: _isSaving ? null : _markSent,
               icon: const Icon(Icons.send_outlined),
-              label: const Text('Mark as Sent'),
+              label: const Text('Đánh dấu đã gửi'),
             ),
             const SizedBox(height: 10),
             OutlinedButton.icon(
               key: const Key('grinding_proposal_create_revision_button'),
               onPressed: _isSaving ? null : _createRevision,
               icon: const Icon(Icons.difference_outlined),
-              label: const Text('Create Revision'),
+              label: const Text('Tạo phiên bản mới'),
             ),
           ],
           if (_status == GrindingProposalStatus.sent) ...[
@@ -936,14 +991,14 @@ class _GrindingProposalEditorScreenState
               key: const Key('grinding_proposal_mark_accepted_button'),
               onPressed: _isSaving ? null : _markAccepted,
               icon: const Icon(Icons.check_circle_outline_rounded),
-              label: const Text('Mark Accepted'),
+              label: const Text('Đánh dấu đã chấp nhận'),
             ),
             const SizedBox(height: 10),
             OutlinedButton.icon(
               key: const Key('grinding_proposal_mark_rejected_button'),
               onPressed: _isSaving ? null : _markRejected,
               icon: const Icon(Icons.cancel_outlined),
-              label: const Text('Mark Rejected'),
+              label: const Text('Đánh dấu đã từ chối'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.error,
               ),
@@ -953,7 +1008,7 @@ class _GrindingProposalEditorScreenState
               key: const Key('grinding_proposal_create_revision_button'),
               onPressed: _isSaving ? null : _createRevision,
               icon: const Icon(Icons.difference_outlined),
-              label: const Text('Create Revision'),
+              label: const Text('Tạo phiên bản mới'),
             ),
           ],
           if (_status == GrindingProposalStatus.rejected) ...[
@@ -961,7 +1016,7 @@ class _GrindingProposalEditorScreenState
               key: const Key('grinding_proposal_create_revision_button'),
               onPressed: _isSaving ? null : _createRevision,
               icon: const Icon(Icons.difference_outlined),
-              label: const Text('Create Revision'),
+              label: const Text('Tạo phiên bản mới'),
             ),
           ],
           if (_revisions.length > 1) ...[
@@ -993,11 +1048,11 @@ class _StatusBadge extends StatelessWidget {
       GrindingProposalStatus.rejected => Theme.of(context).colorScheme.error,
     };
     final label = switch (status) {
-      GrindingProposalStatus.draft => 'DRAFT',
-      GrindingProposalStatus.final_ => 'FINAL',
-      GrindingProposalStatus.sent => 'SENT',
-      GrindingProposalStatus.accepted => 'ACCEPTED',
-      GrindingProposalStatus.rejected => 'REJECTED',
+      GrindingProposalStatus.draft => 'BẢN NHÁP',
+      GrindingProposalStatus.final_ => 'ĐÃ CHỐT',
+      GrindingProposalStatus.sent => 'ĐÃ GỬI',
+      GrindingProposalStatus.accepted => 'ĐÃ CHẤP NHẬN',
+      GrindingProposalStatus.rejected => 'ĐÃ TỪ CHỐI',
     };
     return Container(
       key: const Key('grinding_proposal_status_badge'),
@@ -1008,7 +1063,11 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w800),
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }
@@ -1034,11 +1093,11 @@ class _TermsSection extends StatelessWidget {
     final palette = DtcPalette.of(context);
     if (!editable) {
       final rows = [
-        ('Delivery time', deliveryTimeController.text),
-        ('Warranty', warrantyController.text),
-        ('Payment terms', paymentTermsController.text),
+        ('Thời gian giao hàng', deliveryTimeController.text),
+        ('Bảo hành', warrantyController.text),
+        ('Điều khoản thanh toán', paymentTermsController.text),
         (
-          'Validity',
+          'Thời hạn hiệu lực',
           validityDaysController.text.isEmpty
               ? ''
               : '${validityDaysController.text} ngày',
@@ -1055,7 +1114,13 @@ class _TermsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Terms', style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800)),
+            Text(
+              'Điều khoản',
+              style: TextStyle(
+                color: palette.navy,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
             const SizedBox(height: 8),
             for (final (label, value) in rows)
               if (value.isNotEmpty)
@@ -1073,13 +1138,16 @@ class _TermsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Terms — tuỳ chọn', style: TextStyle(color: palette.navy, fontWeight: FontWeight.w700)),
+        Text(
+          'Điều khoản — tuỳ chọn',
+          style: TextStyle(color: palette.navy, fontWeight: FontWeight.w700),
+        ),
         const SizedBox(height: 8),
         TextFormField(
           key: const Key('grinding_proposal_delivery_time_field'),
           controller: deliveryTimeController,
           decoration: const InputDecoration(
-            labelText: 'Delivery time',
+            labelText: 'Thời gian giao hàng',
             border: OutlineInputBorder(),
             isDense: true,
           ),
@@ -1089,7 +1157,7 @@ class _TermsSection extends StatelessWidget {
           key: const Key('grinding_proposal_warranty_field'),
           controller: warrantyController,
           decoration: const InputDecoration(
-            labelText: 'Warranty',
+            labelText: 'Bảo hành',
             border: OutlineInputBorder(),
             isDense: true,
           ),
@@ -1099,7 +1167,7 @@ class _TermsSection extends StatelessWidget {
           key: const Key('grinding_proposal_payment_terms_field'),
           controller: paymentTermsController,
           decoration: const InputDecoration(
-            labelText: 'Payment terms',
+            labelText: 'Điều khoản thanh toán',
             border: OutlineInputBorder(),
             isDense: true,
           ),
@@ -1110,7 +1178,7 @@ class _TermsSection extends StatelessWidget {
           controller: validityDaysController,
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            labelText: 'Validity (số ngày)',
+            labelText: 'Thời hạn hiệu lực (số ngày)',
             border: OutlineInputBorder(),
             isDense: true,
           ),
@@ -1132,11 +1200,11 @@ class _RevisionHistorySection extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   static String _statusLabel(GrindingProposalStatus status) => switch (status) {
-    GrindingProposalStatus.draft => 'Draft',
-    GrindingProposalStatus.final_ => 'Final',
-    GrindingProposalStatus.sent => 'Sent',
-    GrindingProposalStatus.accepted => 'Accepted',
-    GrindingProposalStatus.rejected => 'Rejected',
+    GrindingProposalStatus.draft => 'Bản nháp',
+    GrindingProposalStatus.final_ => 'Đã chốt',
+    GrindingProposalStatus.sent => 'Đã gửi',
+    GrindingProposalStatus.accepted => 'Đã chấp nhận',
+    GrindingProposalStatus.rejected => 'Đã từ chối',
   };
 
   @override
@@ -1153,7 +1221,10 @@ class _RevisionHistorySection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Revision History', style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800)),
+          Text(
+            'Lịch sử phiên bản',
+            style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
+          ),
           const SizedBox(height: 8),
           for (final revision in revisions)
             InkWell(
@@ -1169,8 +1240,12 @@ class _RevisionHistorySection extends StatelessWidget {
                     Text(
                       'R${revision.revision}',
                       style: TextStyle(
-                        color: revision.id == currentId ? palette.navy : palette.ink,
-                        fontWeight: revision.id == currentId ? FontWeight.w800 : FontWeight.w600,
+                        color: revision.id == currentId
+                            ? palette.navy
+                            : palette.ink,
+                        fontWeight: revision.id == currentId
+                            ? FontWeight.w800
+                            : FontWeight.w600,
                       ),
                     ),
                     Text(
@@ -1184,7 +1259,11 @@ class _RevisionHistorySection extends StatelessWidget {
                     if (revision.id == currentId)
                       Text(
                         '(đang xem)',
-                        style: TextStyle(color: palette.muted, fontSize: 11.5, fontStyle: FontStyle.italic),
+                        style: TextStyle(
+                          color: palette.muted,
+                          fontSize: 11.5,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                   ],
                 ),
@@ -1222,16 +1301,30 @@ class _MachineSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Selected Machine', style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800)),
+          Text(
+            'Máy đã chọn',
+            style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
+          ),
           const SizedBox(height: 8),
           if (machine != null) ...[
-            Text(machine!.model, style: TextStyle(color: palette.ink, fontWeight: FontWeight.w800, fontSize: 15)),
-            if (series != null) Text(series!.nameVi, style: TextStyle(color: palette.muted, fontSize: 12)),
+            Text(
+              machine!.model,
+              style: TextStyle(
+                color: palette.ink,
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+              ),
+            ),
+            if (series != null)
+              Text(
+                series!.nameVi,
+                style: TextStyle(color: palette.muted, fontSize: 12),
+              ),
           ] else if (!hasMachineId)
-            Text('No machine selected', style: TextStyle(color: palette.muted))
+            Text('Chưa chọn máy', style: TextStyle(color: palette.muted))
           else
             Text(
-              'Current machine no longer exists in database',
+              'Máy hiện tại không còn trong cơ sở dữ liệu',
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
         ],
@@ -1255,7 +1348,7 @@ class _ReadOnlyMoneyRows extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 3),
             child: Text(
-              '$label: ${value == null ? 'Not specified' : '${_fmtNum(value)} $currency'}',
+              '$label: ${value == null ? 'Chưa có thông tin' : '${_fmtNum(value)} $currency'}',
               style: TextStyle(color: palette.ink, fontSize: 13),
             ),
           ),
@@ -1304,7 +1397,13 @@ class _LineItemSection extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(title, style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800)),
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: palette.navy,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
               if (!readOnly)
                 IconButton(
@@ -1315,7 +1414,10 @@ class _LineItemSection extends StatelessWidget {
             ],
           ),
           if (items.isEmpty)
-            Text('Chưa có dòng nào.', style: TextStyle(color: palette.muted, fontSize: 12.5))
+            Text(
+              'Chưa có dòng nào.',
+              style: TextStyle(color: palette.muted, fontSize: 12.5),
+            )
           else
             for (var i = 0; i < items.length; i++)
               _LineItemRow(
@@ -1364,7 +1466,8 @@ class _LineItemRowState extends State<_LineItemRow> {
     text: widget.item.unitPrice == null ? '' : _num(widget.item.unitPrice!),
   );
 
-  static String _num(double v) => v == v.roundToDouble() ? v.toInt().toString() : v.toString();
+  static String _num(double v) =>
+      v == v.roundToDouble() ? v.toInt().toString() : v.toString();
 
   @override
   void dispose() {
@@ -1395,8 +1498,8 @@ class _LineItemRowState extends State<_LineItemRow> {
         padding: const EdgeInsets.symmetric(vertical: 6),
         child: Text(
           '${widget.item.name}: ${widget.item.quantity == null ? '—' : _num(widget.item.quantity!)} × '
-          '${widget.item.unitPrice == null ? 'Not specified' : '${_num(widget.item.unitPrice!)} ${widget.currency}'}'
-          ' = ${total == null ? 'Not specified' : '${_num(total)} ${widget.currency}'}',
+          '${widget.item.unitPrice == null ? 'Chưa có thông tin' : '${_num(widget.item.unitPrice!)} ${widget.currency}'}'
+          ' = ${total == null ? 'Chưa có thông tin' : '${_num(total)} ${widget.currency}'}',
           style: TextStyle(color: palette.ink, fontSize: 12.5),
         ),
       );
@@ -1409,7 +1512,9 @@ class _LineItemRowState extends State<_LineItemRow> {
           Expanded(
             flex: 3,
             child: TextField(
-              key: Key('grinding_proposal_item_name_${widget.index}_${widget.key}'),
+              key: Key(
+                'grinding_proposal_item_name_${widget.index}_${widget.key}',
+              ),
               controller: _nameController,
               onChanged: (_) => _emit(),
               decoration: const InputDecoration(hintText: 'Tên', isDense: true),
@@ -1419,7 +1524,9 @@ class _LineItemRowState extends State<_LineItemRow> {
           Expanded(
             child: TextField(
               controller: _quantityController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               onChanged: (_) => _emit(),
               decoration: const InputDecoration(hintText: 'SL', isDense: true),
             ),
@@ -1429,9 +1536,14 @@ class _LineItemRowState extends State<_LineItemRow> {
             flex: 2,
             child: TextField(
               controller: _priceController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               onChanged: (_) => _emit(),
-              decoration: const InputDecoration(hintText: 'Đơn giá', isDense: true),
+              decoration: const InputDecoration(
+                hintText: 'Đơn giá',
+                isDense: true,
+              ),
             ),
           ),
           IconButton(
@@ -1452,7 +1564,8 @@ class _CalculationSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
-    String money(double? v) => v == null ? 'Not specified' : '${_num(v)} $currency';
+    String money(double? v) =>
+        v == null ? 'Chưa có thông tin' : '${_num(v)} $currency';
     return Container(
       key: const Key('grinding_proposal_calculation_summary'),
       padding: const EdgeInsets.all(14),
@@ -1464,20 +1577,29 @@ class _CalculationSummary extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Calculation', style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800)),
+          Text(
+            'Tính toán',
+            style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
+          ),
           const SizedBox(height: 8),
-          _row(palette, 'Machine subtotal', money(totals.machineSubtotal)),
-          _row(palette, 'Accessories subtotal', money(totals.accessoriesSubtotal)),
-          _row(palette, 'Additional costs subtotal', money(totals.additionalCostsSubtotal)),
-          _row(palette, 'Subtotal', money(totals.subtotal)),
-          _row(palette, 'After discount', money(totals.afterDiscount)),
+          _row(palette, 'Tiền máy', money(totals.machineSubtotal)),
+          _row(palette, 'Tổng phụ kiện', money(totals.accessoriesSubtotal)),
+          _row(
+            palette,
+            'Tổng chi phí bổ sung',
+            money(totals.additionalCostsSubtotal),
+          ),
+          _row(palette, 'Tạm tính', money(totals.subtotal)),
+          _row(palette, 'Sau giảm giá', money(totals.afterDiscount)),
           _row(
             palette,
             'VAT',
-            totals.vatPercent == null ? 'Not specified' : '${_num(totals.vatPercent!)}% (${money(totals.vatAmount)})',
+            totals.vatPercent == null
+                ? 'Chưa có thông tin'
+                : '${_num(totals.vatPercent!)}% (${money(totals.vatAmount)})',
           ),
           const Divider(),
-          _row(palette, 'Grand Total', money(totals.grandTotal), bold: true),
+          _row(palette, 'Tổng cộng', money(totals.grandTotal), bold: true),
           if (totals.hasIncompleteData) ...[
             const SizedBox(height: 6),
             Text(
@@ -1490,11 +1612,21 @@ class _CalculationSummary extends StatelessWidget {
     );
   }
 
-  Widget _row(DtcPaletteData palette, String label, String value, {bool bold = false}) => Padding(
+  Widget _row(
+    DtcPaletteData palette,
+    String label,
+    String value, {
+    bool bold = false,
+  }) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 3),
     child: Row(
       children: [
-        Expanded(child: Text(label, style: TextStyle(color: palette.muted, fontSize: 12.5))),
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(color: palette.muted, fontSize: 12.5),
+          ),
+        ),
         Text(
           value,
           style: TextStyle(
@@ -1507,5 +1639,6 @@ class _CalculationSummary extends StatelessWidget {
     ),
   );
 
-  static String _num(double v) => v == v.roundToDouble() ? v.toInt().toString() : v.toString();
+  static String _num(double v) =>
+      v == v.roundToDouble() ? v.toInt().toString() : v.toString();
 }

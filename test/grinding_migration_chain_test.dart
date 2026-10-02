@@ -238,14 +238,14 @@ Future<void> _createV4ProposalTables(Database db) async {
 
 Future<void> _seedCatalogMachine(Database db) async {
   await db.insert('grinding_series', {
-    'seriesCode': 'BSP_ULTRAFINE',
-    'displayCode': 'BSP',
+    'seriesCode': 'ASP_ULTRAFINE',
+    'displayCode': 'ASP',
     'nameVi': 'Siêu mịn',
     'nameEn': 'Ultrafine',
   });
   await db.insert('grinding_machines', {
     'machineId': 'M1',
-    'seriesCode': 'BSP_ULTRAFINE',
+    'seriesCode': 'ASP_ULTRAFINE',
     'model': 'ASP-350',
   });
 }

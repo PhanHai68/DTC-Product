@@ -26,6 +26,7 @@ import '../features/grinding_machine/screens/grinding_machine_home_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_search_screen.dart';
 import '../features/grinding_machine/screens/grinding_series_machines_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_detail_screen.dart';
+import '../features/grinding_machine/screens/grinding_asp_3d_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_filter_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_compare_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_selection_screen.dart';
@@ -35,8 +36,6 @@ import '../features/grinding_machine/screens/grinding_machine_selector_screen.da
 import '../features/grinding_machine/screens/grinding_selection_project_list_screen.dart';
 import '../features/grinding_machine/screens/grinding_selection_project_detail_screen.dart';
 import '../features/grinding_machine/screens/grinding_proposal_editor_screen.dart';
-import '../features/grinding_machine/screens/grinding_project_dashboard_screen.dart';
-import '../features/grinding_machine/screens/grinding_backup_restore_screen.dart';
 import '../features/grinding_machine/models/grinding_selection_request.dart';
 import '../features/grinding_machine/models/grinding_selection_project.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
@@ -95,6 +94,24 @@ import '../screens/packing/compare_screen.dart';
 import '../screens/extensions/maintenance_list_screen.dart';
 import '../screens/extensions/maintenance_form_screen.dart';
 import '../models/maintenance_record.dart';
+import '../features/sales_goal/models/sales_entry.dart';
+import '../features/sales_goal/models/sales_opportunity.dart';
+import '../features/sales_goal/screens/sales_goal_dashboard_screen.dart';
+import '../features/sales_goal/screens/sales_target_form_screen.dart';
+import '../features/sales_goal/screens/sales_entry_list_screen.dart';
+import '../features/sales_goal/screens/sales_entry_form_screen.dart';
+import '../features/sales_goal/screens/sales_pipeline_screen.dart';
+import '../features/sales_goal/screens/sales_opportunity_form_screen.dart';
+import '../features/sales_goal/screens/sales_goal_history_screen.dart';
+import '../features/site_layout/screens/site_layout_home_screen.dart';
+import '../features/site_layout/screens/site_project_form_screen.dart';
+import '../features/site_layout/screens/site_layout_editor_screen.dart';
+import '../features/site_layout/screens/site_photo_gallery_screen.dart';
+import '../features/site_layout/screens/site_layout_export_screen.dart';
+import '../features/site_layout/screens/site_elevation_screen.dart';
+import '../features/factory_location/models/factory_location.dart';
+import '../features/factory_location/screens/factory_location_list_screen.dart';
+import '../features/factory_location/screens/factory_location_form_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -201,6 +218,77 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const ExtensionsScreen(),
     ),
     GoRoute(
+      path: '/sales-goal',
+      builder: (context, state) => const SalesGoalDashboardScreen(),
+    ),
+    GoRoute(
+      path: '/sales-goal/targets',
+      builder: (context, state) => const SalesTargetFormScreen(),
+    ),
+    GoRoute(
+      path: '/sales-goal/entries',
+      builder: (context, state) => const SalesEntryListScreen(),
+    ),
+    GoRoute(
+      path: '/sales-goal/entries/form',
+      builder: (context, state) =>
+          SalesEntryFormScreen(entry: state.extra as SalesEntry?),
+    ),
+    GoRoute(
+      path: '/sales-goal/pipeline',
+      builder: (context, state) => const SalesPipelineScreen(),
+    ),
+    GoRoute(
+      path: '/sales-goal/pipeline/form',
+      builder: (context, state) => SalesOpportunityFormScreen(
+        opportunity: state.extra as SalesOpportunity?,
+      ),
+    ),
+    GoRoute(
+      path: '/sales-goal/history',
+      builder: (context, state) => const SalesGoalHistoryScreen(),
+    ),
+    GoRoute(
+      path: '/factory-locations',
+      builder: (context, state) => const FactoryLocationListScreen(),
+    ),
+    GoRoute(
+      path: '/factory-locations/form',
+      builder: (context, state) => FactoryLocationFormScreen(
+        location: state.extra is FactoryLocation
+            ? state.extra as FactoryLocation
+            : null,
+      ),
+    ),
+    GoRoute(
+      path: '/site-layout',
+      builder: (context, state) => const SiteLayoutHomeScreen(),
+    ),
+    GoRoute(
+      path: '/site-layout/project/new',
+      builder: (context, state) => const SiteProjectFormScreen(),
+    ),
+    GoRoute(
+      path: '/site-layout/project/:projectId/photos',
+      builder: (context, state) =>
+          SitePhotoGalleryScreen(projectId: state.pathParameters['projectId']!),
+    ),
+    GoRoute(
+      path: '/site-layout/project/:projectId/export',
+      builder: (context, state) =>
+          SiteLayoutExportScreen(projectId: state.pathParameters['projectId']!),
+    ),
+    GoRoute(
+      path: '/site-layout/project/:projectId/layout/:layoutId/elevation/:machineId',
+      builder: (context, state) =>
+          SiteElevationScreen(machineId: state.pathParameters['machineId']!),
+    ),
+    GoRoute(
+      path: '/site-layout/project/:projectId',
+      builder: (context, state) =>
+          SiteLayoutEditorScreen(projectId: state.pathParameters['projectId']!),
+    ),
+    GoRoute(
       path: '/sample_record',
       builder: (context, state) => const SampleRecordScreen(),
     ),
@@ -244,6 +332,10 @@ final GoRouter appRouter = GoRouter(
       ),
     ),
     GoRoute(
+      path: '/grinding_machine/asp-3d',
+      builder: (context, state) => const GrindingAsp3dScreen(),
+    ),
+    GoRoute(
       path: '/grinding_machine/filter',
       builder: (context, state) => const GrindingMachineFilterScreen(),
     ),
@@ -280,14 +372,6 @@ final GoRouter appRouter = GoRouter(
             ? state.extra as GrindingProjectStatus
             : null,
       ),
-    ),
-    GoRoute(
-      path: '/grinding_machine/dashboard',
-      builder: (context, state) => const GrindingProjectDashboardScreen(),
-    ),
-    GoRoute(
-      path: '/grinding_machine/backup',
-      builder: (context, state) => const GrindingBackupRestoreScreen(),
     ),
     GoRoute(
       path: '/grinding_machine/projects/:id',

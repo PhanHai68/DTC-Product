@@ -110,12 +110,12 @@ class _GrindingSelectionProjectListScreenState
 
     return Scaffold(
       backgroundColor: palette.canvas,
-      appBar: AppBar(title: const Text('Saved Projects')),
+      appBar: AppBar(title: const Text('Dự án đã lưu')),
       floatingActionButton: FloatingActionButton.extended(
         key: const Key('grinding_project_create_fab'),
         onPressed: () => context.push('/grinding_machine/selector'),
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Create Project'),
+        label: const Text('Tạo dự án'),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -129,7 +129,7 @@ class _GrindingSelectionProjectListScreenState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'No saved projects yet',
+                            'Chưa có dự án nào được lưu',
                             style: TextStyle(
                               color: palette.muted,
                               fontWeight: FontWeight.w700,
@@ -141,7 +141,7 @@ class _GrindingSelectionProjectListScreenState
                             onPressed: () =>
                                 context.push('/grinding_machine/selector'),
                             icon: const Icon(Icons.add_rounded),
-                            label: const Text('Create Project'),
+                            label: const Text('Tạo dự án'),
                           ),
                         ],
                       ),
@@ -159,7 +159,7 @@ class _GrindingSelectionProjectListScreenState
                         controller: _controller,
                         onChanged: _onQueryChanged,
                         decoration: InputDecoration(
-                          hintText: 'Tìm project, customer, nguyên liệu, model...',
+                          hintText: 'Tìm dự án, khách hàng, nguyên liệu, model...',
                           prefixIcon: const Icon(Icons.search_rounded),
                           isDense: true,
                           border: OutlineInputBorder(
@@ -176,14 +176,14 @@ class _GrindingSelectionProjectListScreenState
                         children: [
                           ChoiceChip(
                             key: const Key('grinding_project_status_filter_all'),
-                            label: const Text('All'),
+                            label: const Text('Tất cả'),
                             selected: _statusFilter == null,
                             onSelected: (_) => setState(() => _statusFilter = null),
                           ),
                           for (final status in GrindingProjectStatus.values)
                             ChoiceChip(
                               key: Key('grinding_project_status_filter_${status.value}'),
-                              label: Text(status.value),
+                              label: Text(_projectStatusLabel(status)),
                               selected: _statusFilter == status,
                               onSelected: (_) => setState(() => _statusFilter = status),
                             ),
@@ -316,8 +316,8 @@ class _ProjectCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       machineDisplay == null
-                          ? 'No machine selected'
-                          : 'Selected: $machineDisplay',
+                          ? 'Chưa chọn máy'
+                          : 'Đã chọn: $machineDisplay',
                       style: TextStyle(
                         color: machineDisplay == null ? palette.muted : palette.cyan,
                         fontSize: 12,
@@ -326,7 +326,7 @@ class _ProjectCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Updated ${DateFormat('yyyy-MM-dd HH:mm').format(project.updatedAt)}',
+                      'Cập nhật ${DateFormat('dd/MM/yyyy HH:mm').format(project.updatedAt)}',
                       style: TextStyle(color: palette.muted, fontSize: 11),
                     ),
                   ],
@@ -365,9 +365,16 @@ class _StatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        status.value,
+        _projectStatusLabel(status),
         style: TextStyle(color: color, fontSize: 10.5, fontWeight: FontWeight.w800),
       ),
     );
   }
 }
+
+String _projectStatusLabel(GrindingProjectStatus status) => switch (status) {
+  GrindingProjectStatus.draft => 'Bản nháp',
+  GrindingProjectStatus.evaluating => 'Đang đánh giá',
+  GrindingProjectStatus.selected => 'Đã chọn máy',
+  GrindingProjectStatus.completed => 'Hoàn tất',
+};

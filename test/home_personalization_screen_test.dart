@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// build các phần tử trong vùng nhìn thấy), nên cần phóng to bề mặt test để
 /// mọi khu vực (Xem trước, nút Lưu/Khôi phục) đều được build và tìm thấy.
 Future<void> _pumpApp(WidgetTester tester, SettingsProvider settings) async {
-  await tester.binding.setSurfaceSize(const Size(390, 2000));
+  await tester.binding.setSurfaceSize(const Size(390, 2300));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
     ChangeNotifierProvider<SettingsProvider>.value(
@@ -21,6 +21,22 @@ Future<void> _pumpApp(WidgetTester tester, SettingsProvider settings) async {
 }
 
 void main() {
+  testWidgets('bật thẻ Sales Goal rồi lưu áp dụng đúng trên Home', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final settings = SettingsProvider(prefs);
+
+    await _pumpApp(tester, settings);
+    await tester.tap(find.byKey(const Key('sales_goal_home_enabled_switch')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Lưu thay đổi'));
+    await tester.pump();
+
+    expect(settings.homeSalesGoalEnabled, isTrue);
+  });
+
   testWidgets('mặc định tắt hiển thị thông báo "Đang tắt" ở phần Xem trước', (
     tester,
   ) async {
@@ -36,31 +52,32 @@ void main() {
     );
   });
 
-  testWidgets('bật switch, nhập tên và text -> Xem trước hiện đúng nội dung, không thêm lời chào', (
-    tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({});
-    final prefs = await SharedPreferences.getInstance();
-    final settings = SettingsProvider(prefs);
+  testWidgets(
+    'bật switch, nhập tên và text -> Xem trước hiện đúng nội dung, không thêm lời chào',
+    (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final settings = SettingsProvider(prefs);
 
-    await _pumpApp(tester, settings);
+      await _pumpApp(tester, settings);
 
-    await tester.tap(find.byType(SwitchListTile).first);
-    await tester.pumpAndSettle();
+      await tester.tap(find.byType(SwitchListTile).first);
+      await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextField).at(0), 'Kevin');
-    await tester.enterText(find.byType(TextField).at(1), 'DTC Engineer');
-    await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).at(0), 'Kevin');
+      await tester.enterText(find.byType(TextField).at(1), 'DTC Engineer');
+      await tester.pumpAndSettle();
 
-    // Xuất hiện 2 lần: trong ô nhập và trong khu vực Xem trước.
-    expect(find.text('Kevin'), findsNWidgets(2));
-    expect(find.text('DTC Engineer'), findsNWidgets(2));
-    expect(find.textContaining('Xin chào'), findsNothing);
-    expect(find.textContaining('👋'), findsNothing);
-    // Chưa bấm "Lưu thay đổi" nên provider chưa thay đổi.
-    expect(settings.homePersonalizationEnabled, isFalse);
-    expect(settings.homeDisplayName, isEmpty);
-  });
+      // Xuất hiện 2 lần: trong ô nhập và trong khu vực Xem trước.
+      expect(find.text('Kevin'), findsNWidgets(2));
+      expect(find.text('DTC Engineer'), findsNWidgets(2));
+      expect(find.textContaining('Xin chào'), findsNothing);
+      expect(find.textContaining('👋'), findsNothing);
+      // Chưa bấm "Lưu thay đổi" nên provider chưa thay đổi.
+      expect(settings.homePersonalizationEnabled, isFalse);
+      expect(settings.homeDisplayName, isEmpty);
+    },
+  );
 
   testWidgets('kéo cỡ chữ và chọn màu cập nhật ngay ở Xem trước', (
     tester,
@@ -152,10 +169,7 @@ void main() {
     expect(settings.homePersonalizationEnabled, isFalse);
     expect(settings.homeDisplayName, isEmpty);
     expect(settings.homeShortText, isEmpty);
-    expect(
-      settings.homeNameFontSize,
-      SettingsProvider.defaultHomeNameFontSize,
-    );
+    expect(settings.homeNameFontSize, SettingsProvider.defaultHomeNameFontSize);
     expect(settings.homeNameColor, isNull);
     expect(settings.homeNameItalic, isFalse);
   });
@@ -207,10 +221,7 @@ void main() {
     await tester.tap(find.byKey(const Key('daily_goals_enabled_switch')));
     // TextField thứ 3 (index 2) = ô "Tiêu đề hiển thị" của Mục tiêu hôm nay,
     // sau ô Tên hiển thị (0) và Dòng giới thiệu (1).
-    await tester.enterText(
-      find.byType(TextField).at(2),
-      'Công việc hôm nay',
-    );
+    await tester.enterText(find.byType(TextField).at(2), 'Công việc hôm nay');
     await tester.pumpAndSettle();
 
     await tester.tap(find.widgetWithText(FilledButton, 'Lưu thay đổi'));

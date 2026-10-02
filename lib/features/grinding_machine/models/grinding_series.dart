@@ -1,4 +1,4 @@
-/// 1 dòng máy nghiền (VD "BSP_ULTRAFINE" = Bộ nghiền bột siêu mịn/Air
+/// 1 dòng máy nghiền (VD "ASP_ULTRAFINE" = Bộ nghiền bột siêu mịn/Air
 /// Classifier Mill) — dữ liệu lấy nguyên từ sheet `Series` của
 /// DTC_Grinding_Machine_Database_AI_Ready.xlsx, KHÔNG tự suy diễn thêm.
 class GrindingSeries {

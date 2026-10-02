@@ -74,7 +74,7 @@ void main() {
     expect(find.textContaining('Auxiliary'), findsNothing);
   });
 
-  testWidgets('Khoáng sản dùng icon khối đá thay cho kim cương', (
+  testWidgets('Khoáng sản dùng ảnh khoáng sản, không dùng icon kim cương', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -86,7 +86,13 @@ void main() {
     expect(
       find.descendant(
         of: mineralCard,
-        matching: find.byIcon(Icons.terrain_rounded),
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Image &&
+              widget.image is AssetImage &&
+              (widget.image as AssetImage).assetName ==
+                  'assets/images/icon_mineral.jpg',
+        ),
       ),
       findsOneWidget,
     );

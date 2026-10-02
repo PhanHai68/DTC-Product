@@ -25,7 +25,10 @@ import '../services/grinding_selection_export_service.dart';
 /// longer available in current database", KHÔNG crash, KHÔNG tự chọn máy
 /// khác (mục 18).
 class GrindingSelectionProjectDetailScreen extends StatefulWidget {
-  const GrindingSelectionProjectDetailScreen({super.key, required this.projectId});
+  const GrindingSelectionProjectDetailScreen({
+    super.key,
+    required this.projectId,
+  });
 
   final int projectId;
 
@@ -72,11 +75,15 @@ class _GrindingSelectionProjectDetailScreenState
     GrindingSeries? selectedSeries;
     var unavailable = false;
     if (machines.primaryMachineId != null) {
-      selectedMachine = await grindingProvider.getMachine(machines.primaryMachineId!);
+      selectedMachine = await grindingProvider.getMachine(
+        machines.primaryMachineId!,
+      );
       if (selectedMachine == null) {
         unavailable = true;
       } else {
-        selectedSeries = await grindingProvider.getSeries(selectedMachine.seriesCode);
+        selectedSeries = await grindingProvider.getSeries(
+          selectedMachine.seriesCode,
+        );
       }
     }
 
@@ -102,7 +109,7 @@ class _GrindingSelectionProjectDetailScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Delete this project?'),
+        title: const Text('Xóa dự án này?'),
         content: const Text('Hành động này không thể hoàn tác.'),
         actions: [
           TextButton(
@@ -120,7 +127,9 @@ class _GrindingSelectionProjectDetailScreenState
       ),
     );
     if (confirmed != true || !mounted) return;
-    await context.read<GrindingSelectionProjectProvider>().deleteProject(widget.projectId);
+    await context.read<GrindingSelectionProjectProvider>().deleteProject(
+      widget.projectId,
+    );
     if (!mounted) return;
     context.pop();
   }
@@ -136,19 +145,21 @@ class _GrindingSelectionProjectDetailScreenState
       // TẠI (mục 9/13) — không dùng dữ liệu cũ/đoán, PDF phản ánh đúng
       // database lúc xuất.
       List<GrindingMachineMatch> recommendations = const [];
+      final seriesByCode = {
+        for (final s in grindingProvider.series) s.seriesCode: s,
+      };
       if (project.requiredCapacityKgH != null ||
           project.requiredFinenessValue != null ||
           project.maxMotorKw != null ||
           project.feedSizeMm != null ||
           project.materialId != null ||
           project.application != null) {
-        final seriesByCode = {
-          for (final s in grindingProvider.series) s.seriesCode: s,
-        };
         final seriesTags = await grindingProvider.getAllSelectionTagsGrouped();
         final materialSeriesMap = project.materialId == null
             ? const <dynamic>[]
-            : await grindingProvider.getMaterialSeriesMapFor(project.materialId!);
+            : await grindingProvider.getMaterialSeriesMapFor(
+                project.materialId!,
+              );
         recommendations = GrindingMachineSelectionService.evaluate(
           criteria: GrindingSelectionCriteria(
             materialId: project.materialId,
@@ -173,23 +184,25 @@ class _GrindingSelectionProjectDetailScreenState
         selectedMachine: _selectedMachine,
         selectedSeries: _selectedSeries,
         comparisonMachines: _shortlistMachines,
+        seriesByCode: seriesByCode,
       );
       if (!mounted) return;
       final fileName =
-          'GrindingSelection-${project.id}-${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf';
+          'BaoCaoLuaChonMayNghien-${project.id}-${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf';
       await SharePlus.instance.share(
         ShareParams(
-          files: [XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName)],
-          title: 'Grinding Machine Selection Report',
+          files: [
+            XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName),
+          ],
+          title: 'Báo cáo lựa chọn máy nghiền',
           text: project.projectName,
           fileNameOverrides: [fileName],
         ),
       );
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không thể xuất PDF: $error')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Không thể xuất PDF: $error')));
     } finally {
       if (mounted) setState(() => _isExporting = false);
     }
@@ -236,7 +249,7 @@ class _GrindingSelectionProjectDetailScreenState
           if (project != null) ...[
             IconButton(
               key: const Key('grinding_project_export_button'),
-              tooltip: 'Export PDF',
+              tooltip: 'Xuất PDF',
               icon: _isExporting
                   ? const SizedBox(
                       width: 18,
@@ -248,7 +261,7 @@ class _GrindingSelectionProjectDetailScreenState
             ),
             IconButton(
               key: const Key('grinding_project_delete_button'),
-              tooltip: 'Delete',
+              tooltip: 'Xóa',
               icon: const Icon(Icons.delete_outline_rounded),
               onPressed: _confirmDelete,
             ),
@@ -275,7 +288,9 @@ class _GrindingSelectionProjectDetailScreenState
               onCompare: _shortlistMachines.length >= 2
                   ? () => context.push(
                       '/grinding_machine/compare',
-                      extra: _shortlistMachines.map((m) => m.machineId).toList(),
+                      extra: _shortlistMachines
+                          .map((m) => m.machineId)
+                          .toList(),
                     )
                   : null,
               onSetFollowUp: _setFollowUp,
@@ -317,21 +332,33 @@ class _DetailBody extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
       children: [
         _Section(
-          title: 'Project',
+          title: 'Dự án',
           rows: [
-            ('Project name', project.projectName),
-            ('Customer', project.customerName),
-            ('Contact', [project.contactName, project.contactInfo].whereType<String>().join(' · ')),
-            ('Status', project.status.value),
+            ('Tên dự án', project.projectName),
+            ('Khách hàng', project.customerName),
             (
-              'Follow-up',
+              'Liên hệ',
+              [
+                project.contactName,
+                project.contactInfo,
+              ].whereType<String>().join(' · '),
+            ),
+            ('Trạng thái', _projectStatusLabel(project.status)),
+            (
+              'Liên hệ lại',
               project.nextFollowUpAt == null
                   ? null
                   : '${DateFormat('dd/MM/yyyy').format(project.nextFollowUpAt!)}'
                         '${project.followUpNote == null ? '' : ' — ${project.followUpNote}'}',
             ),
-            ('Created', DateFormat('yyyy-MM-dd HH:mm').format(project.createdAt)),
-            ('Updated', DateFormat('yyyy-MM-dd HH:mm').format(project.updatedAt)),
+            (
+              'Ngày tạo',
+              DateFormat('dd/MM/yyyy HH:mm').format(project.createdAt),
+            ),
+            (
+              'Cập nhật',
+              DateFormat('dd/MM/yyyy HH:mm').format(project.updatedAt),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -339,35 +366,43 @@ class _DetailBody extends StatelessWidget {
           key: const Key('grinding_project_set_followup_button'),
           onPressed: onSetFollowUp,
           icon: const Icon(Icons.event_available_outlined),
-          label: Text(project.nextFollowUpAt == null ? 'Set Follow-up' : 'Update Follow-up'),
+          label: Text(
+            project.nextFollowUpAt == null
+                ? 'Đặt lịch liên hệ lại'
+                : 'Cập nhật lịch liên hệ lại',
+          ),
         ),
         const SizedBox(height: 12),
         _Section(
-          title: 'Customer Requirement',
+          title: 'Yêu cầu khách hàng',
           rows: [
-            ('Material', project.materialName),
+            ('Nguyên liệu', project.materialName),
             (
-              'Capacity',
+              'Năng suất',
               project.requiredCapacityKgH == null
                   ? null
                   : '${_num(project.requiredCapacityKgH!)} kg/h',
             ),
             (
-              'Fineness',
+              'Độ mịn',
               project.requiredFinenessValue == null
                   ? null
                   : '${_num(project.requiredFinenessValue!)} ${project.requiredFinenessUnit ?? ''}',
             ),
             (
-              'Feed size',
-              project.feedSizeMm == null ? null : '${_num(project.feedSizeMm!)} mm',
+              'Kích thước đầu vào',
+              project.feedSizeMm == null
+                  ? null
+                  : '${_num(project.feedSizeMm!)} mm',
             ),
             (
-              'Max motor',
-              project.maxMotorKw == null ? null : '${_num(project.maxMotorKw!)} kW',
+              'Động cơ tối đa',
+              project.maxMotorKw == null
+                  ? null
+                  : '${_num(project.maxMotorKw!)} kW',
             ),
-            ('Application', project.application),
-            ('Notes', project.notes),
+            ('Ứng dụng', project.application),
+            ('Ghi chú', project.notes),
           ],
         ),
         const SizedBox(height: 12),
@@ -383,8 +418,11 @@ class _DetailBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Selected Machines',
-                style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
+                'Máy đã chọn',
+                style: TextStyle(
+                  color: palette.navy,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               const SizedBox(height: 10),
               if (selectedMachine != null) ...[
@@ -410,7 +448,7 @@ class _DetailBody extends StatelessWidget {
                         onPressed: () => context.push(
                           '/grinding_machine/detail/${selectedMachine!.machineId}',
                         ),
-                        child: const Text('View Machine'),
+                        child: const Text('Xem máy'),
                       ),
                     ),
                     if (onCompare != null) ...[
@@ -419,7 +457,7 @@ class _DetailBody extends StatelessWidget {
                         child: OutlinedButton(
                           key: const Key('grinding_project_compare_button'),
                           onPressed: onCompare,
-                          child: const Text('Compare'),
+                          child: const Text('So sánh'),
                         ),
                       ),
                     ],
@@ -427,13 +465,13 @@ class _DetailBody extends StatelessWidget {
                 ),
               ] else if (selectedMachineUnavailable) ...[
                 Text(
-                  'Machine no longer available in current database',
+                  'Máy không còn trong cơ sở dữ liệu hiện tại',
                   key: const Key('grinding_project_machine_unavailable'),
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ] else ...[
                 Text(
-                  'No machine selected',
+                  'Chưa chọn máy',
                   key: const Key('grinding_project_no_machine'),
                   style: TextStyle(color: palette.muted),
                 ),
@@ -441,8 +479,12 @@ class _DetailBody extends StatelessWidget {
               if (shortlistMachines.isNotEmpty) ...[
                 const SizedBox(height: 14),
                 Text(
-                  'Shortlist (${shortlistMachines.length})',
-                  style: TextStyle(color: palette.navy, fontWeight: FontWeight.w700, fontSize: 12.5),
+                  'Danh sách cân nhắc (${shortlistMachines.length})',
+                  style: TextStyle(
+                    color: palette.navy,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.5,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Wrap(
@@ -451,14 +493,21 @@ class _DetailBody extends StatelessWidget {
                   children: shortlistMachines
                       .map(
                         (m) => Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: palette.cyan.withValues(alpha: 0.10),
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
                             m.model,
-                            style: TextStyle(color: palette.navy, fontSize: 11.5, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                              color: palette.navy,
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       )
@@ -477,7 +526,7 @@ class _DetailBody extends StatelessWidget {
           key: const Key('grinding_project_edit_button'),
           onPressed: onEdit,
           icon: const Icon(Icons.edit_outlined),
-          label: const Text('Edit Project'),
+          label: const Text('Sửa dự án'),
         ),
       ],
     );
@@ -506,7 +555,10 @@ class _Section extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800)),
+          Text(
+            title,
+            style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
+          ),
           const SizedBox(height: 8),
           for (final (label, value) in rows)
             if (value != null && value.isNotEmpty)
@@ -517,12 +569,19 @@ class _Section extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 120,
-                      child: Text(label, style: TextStyle(color: palette.muted, fontSize: 12.5)),
+                      child: Text(
+                        label,
+                        style: TextStyle(color: palette.muted, fontSize: 12.5),
+                      ),
                     ),
                     Expanded(
                       child: Text(
                         value,
-                        style: TextStyle(color: palette.ink, fontSize: 13, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          color: palette.ink,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -551,26 +610,29 @@ class _CommercialSummarySection extends StatelessWidget {
     final totals = <String, double>{};
     for (final chain in chains) {
       final latest = chain.last;
-      if (latest.status == GrindingProposalStatus.rejected || latest.id == null) {
+      if (latest.status == GrindingProposalStatus.rejected ||
+          latest.id == null) {
         continue;
       }
       final items = await provider.getLineItems(latest.id!);
       final calc = GrindingProposalCalculator.calculate(latest, items);
       if (calc.hasIncompleteData) continue;
-      totals[latest.currency] = (totals[latest.currency] ?? 0) + calc.grandTotal;
+      totals[latest.currency] =
+          (totals[latest.currency] ?? 0) + calc.grandTotal;
     }
     return totals;
   }
 
   static String _statusLabel(GrindingProposalStatus status) => switch (status) {
-    GrindingProposalStatus.draft => 'Draft',
-    GrindingProposalStatus.final_ => 'Final',
-    GrindingProposalStatus.sent => 'Sent',
-    GrindingProposalStatus.accepted => 'Accepted',
-    GrindingProposalStatus.rejected => 'Rejected',
+    GrindingProposalStatus.draft => 'Bản nháp',
+    GrindingProposalStatus.final_ => 'Đã chốt',
+    GrindingProposalStatus.sent => 'Đã gửi',
+    GrindingProposalStatus.accepted => 'Đã chấp nhận',
+    GrindingProposalStatus.rejected => 'Đã từ chối',
   };
 
-  static String _money(double v) => NumberFormat.decimalPattern('vi_VN').format(v);
+  static String _money(double v) =>
+      NumberFormat.decimalPattern('vi_VN').format(v);
 
   @override
   Widget build(BuildContext context) {
@@ -603,31 +665,39 @@ class _CommercialSummarySection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Commercial Summary',
-                    style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
+                    'Tóm tắt thương mại',
+                    style: TextStyle(
+                      color: palette.navy,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  _row(palette, 'Proposal chains', '${chains.length}'),
+                  _row(palette, 'Chuỗi báo giá', '${chains.length}'),
                   _row(
                     palette,
-                    'Latest proposal',
+                    'Báo giá mới nhất',
                     '${latest.proposalNumber ?? '—'} R${latest.revision} · ${_statusLabel(latest.status)}',
                   ),
                   _row(
                     palette,
-                    'Accepted',
+                    'Đã chấp nhận',
                     accepted.isEmpty
-                        ? 'None'
+                        ? 'Không có'
                         : accepted
-                              .map((p) => '${p.proposalNumber ?? '—'} R${p.revision}')
+                              .map(
+                                (p) =>
+                                    '${p.proposalNumber ?? '—'} R${p.revision}',
+                              )
                               .join(', '),
                   ),
                   _row(
                     palette,
-                    'Total latest value',
+                    'Tổng giá trị mới nhất',
                     totals.isEmpty
                         ? '—'
-                        : totals.entries.map((e) => '${_money(e.value)} ${e.key}').join(' · '),
+                        : totals.entries
+                              .map((e) => '${_money(e.value)} ${e.key}')
+                              .join(' · '),
                   ),
                 ],
               ),
@@ -643,11 +713,21 @@ class _CommercialSummarySection extends StatelessWidget {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(width: 120, child: Text(label, style: TextStyle(color: palette.muted, fontSize: 12.5))),
+        SizedBox(
+          width: 120,
+          child: Text(
+            label,
+            style: TextStyle(color: palette.muted, fontSize: 12.5),
+          ),
+        ),
         Expanded(
           child: Text(
             value,
-            style: TextStyle(color: palette.ink, fontSize: 13, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: palette.ink,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],
@@ -656,9 +736,14 @@ class _CommercialSummarySection extends StatelessWidget {
 }
 
 class _FollowUpDialogResult {
-  const _FollowUpDialogResult._({required this.clear, this.date, this.note = ''});
+  const _FollowUpDialogResult._({
+    required this.clear,
+    this.date,
+    this.note = '',
+  });
 
-  factory _FollowUpDialogResult.clear() => const _FollowUpDialogResult._(clear: true);
+  factory _FollowUpDialogResult.clear() =>
+      const _FollowUpDialogResult._(clear: true);
   factory _FollowUpDialogResult.save(DateTime date, String note) =>
       _FollowUpDialogResult._(clear: false, date: date, note: note);
 
@@ -677,7 +762,9 @@ class _FollowUpDialog extends StatefulWidget {
 
 class _FollowUpDialogState extends State<_FollowUpDialog> {
   DateTime? _date;
-  late final _noteController = TextEditingController(text: widget.initial.followUpNote ?? '');
+  late final _noteController = TextEditingController(
+    text: widget.initial.followUpNote ?? '',
+  );
 
   @override
   void initState() {
@@ -704,7 +791,7 @@ class _FollowUpDialogState extends State<_FollowUpDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Set Follow-up'),
+      title: const Text('Đặt lịch liên hệ lại'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -713,7 +800,11 @@ class _FollowUpDialogState extends State<_FollowUpDialog> {
             key: const Key('grinding_project_followup_date_button'),
             onPressed: _pickDate,
             icon: const Icon(Icons.calendar_today_outlined, size: 16),
-            label: Text(_date == null ? 'Chọn ngày' : DateFormat('dd/MM/yyyy').format(_date!)),
+            label: Text(
+              _date == null
+                  ? 'Chọn ngày'
+                  : DateFormat('dd/MM/yyyy').format(_date!),
+            ),
           ),
           const SizedBox(height: 12),
           TextField(
@@ -721,7 +812,7 @@ class _FollowUpDialogState extends State<_FollowUpDialog> {
             controller: _noteController,
             maxLines: 2,
             decoration: const InputDecoration(
-              labelText: 'Note — tuỳ chọn',
+              labelText: 'Ghi chú — tuỳ chọn',
               border: OutlineInputBorder(),
               isDense: true,
             ),
@@ -732,8 +823,9 @@ class _FollowUpDialogState extends State<_FollowUpDialog> {
         if (widget.initial.nextFollowUpAt != null)
           TextButton(
             key: const Key('grinding_project_followup_clear_button'),
-            onPressed: () => Navigator.pop(context, _FollowUpDialogResult.clear()),
-            child: const Text('Clear'),
+            onPressed: () =>
+                Navigator.pop(context, _FollowUpDialogResult.clear()),
+            child: const Text('Xóa lịch'),
           ),
         TextButton(
           onPressed: () => Navigator.pop(context, null),
@@ -745,9 +837,12 @@ class _FollowUpDialogState extends State<_FollowUpDialog> {
               ? null
               : () => Navigator.pop(
                   context,
-                  _FollowUpDialogResult.save(_date!, _noteController.text.trim()),
+                  _FollowUpDialogResult.save(
+                    _date!,
+                    _noteController.text.trim(),
+                  ),
                 ),
-          child: const Text('Save'),
+          child: const Text('Lưu'),
         ),
       ],
     );
@@ -766,28 +861,33 @@ class _ProposalsSection extends StatelessWidget {
   final int projectId;
 
   static String _statusLabel(GrindingProposalStatus status) => switch (status) {
-    GrindingProposalStatus.draft => 'DRAFT',
-    GrindingProposalStatus.final_ => 'FINAL',
-    GrindingProposalStatus.sent => 'SENT',
-    GrindingProposalStatus.accepted => 'ACCEPTED',
-    GrindingProposalStatus.rejected => 'REJECTED',
+    GrindingProposalStatus.draft => 'BẢN NHÁP',
+    GrindingProposalStatus.final_ => 'ĐÃ CHỐT',
+    GrindingProposalStatus.sent => 'ĐÃ GỬI',
+    GrindingProposalStatus.accepted => 'ĐÃ CHẤP NHẬN',
+    GrindingProposalStatus.rejected => 'ĐÃ TỪ CHỐI',
   };
 
-  static Color _statusColor(DtcPaletteData palette, Color errorColor, GrindingProposalStatus status) =>
-      switch (status) {
-        GrindingProposalStatus.draft => palette.muted,
-        GrindingProposalStatus.final_ => palette.navy,
-        GrindingProposalStatus.sent => palette.navy,
-        GrindingProposalStatus.accepted => Colors.green.shade700,
-        GrindingProposalStatus.rejected => errorColor,
-      };
+  static Color _statusColor(
+    DtcPaletteData palette,
+    Color errorColor,
+    GrindingProposalStatus status,
+  ) => switch (status) {
+    GrindingProposalStatus.draft => palette.muted,
+    GrindingProposalStatus.final_ => palette.navy,
+    GrindingProposalStatus.sent => palette.navy,
+    GrindingProposalStatus.accepted => Colors.green.shade700,
+    GrindingProposalStatus.rejected => errorColor,
+  };
 
   /// Nhóm [proposals] (đã load qua `provider.proposals`, phẳng) theo
   /// `rootProposalId` — mỗi chain sắp revision TĂNG DẦN; các chain sắp theo
   /// hoạt động gần nhất trước, y hệt `Repository.getProposalChainsByProject`
   /// nhưng làm đồng bộ tại chỗ để khớp ngay với Consumer, không cần gọi lại
   /// DB.
-  static List<List<GrindingProposal>> _groupByChain(List<GrindingProposal> proposals) {
+  static List<List<GrindingProposal>> _groupByChain(
+    List<GrindingProposal> proposals,
+  ) {
     final byRoot = <int, List<GrindingProposal>>{};
     for (final p in proposals) {
       final rootId = p.rootProposalId ?? p.id;
@@ -820,12 +920,16 @@ class _ProposalsSection extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
                 children: [
-                  Expanded(
-                    child: Text(
-                      'Proposals',
-                      style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
+                  Text(
+                    'Chi phí lắp đặt',
+                    style: TextStyle(
+                      color: palette.navy,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   TextButton.icon(
@@ -834,7 +938,7 @@ class _ProposalsSection extends StatelessWidget {
                       '/grinding_machine/projects/$projectId/proposals/new',
                     ),
                     icon: const Icon(Icons.add_rounded, size: 18),
-                    label: const Text('Create Proposal'),
+                    label: const Text('Tính toán chi phí lắp đặt'),
                   ),
                 ],
               ),
@@ -842,18 +946,21 @@ class _ProposalsSection extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Text(
-                    'Chưa có Proposal nào.',
+                    'Chưa có bảng tính chi phí lắp đặt.',
                     style: TextStyle(color: palette.muted, fontSize: 12.5),
                   ),
                 )
               else
                 for (final chain in chains)
                   _ProposalChainTile(
-                    key: Key('grinding_project_proposal_chain_${chain.first.rootProposalId ?? chain.first.id}'),
+                    key: Key(
+                      'grinding_project_proposal_chain_${chain.first.rootProposalId ?? chain.first.id}',
+                    ),
                     projectId: projectId,
                     chain: chain,
                     statusLabel: _statusLabel,
-                    statusColor: (status) => _statusColor(palette, errorColor, status),
+                    statusColor: (status) =>
+                        _statusColor(palette, errorColor, status),
                   ),
             ],
           );
@@ -881,10 +988,11 @@ class _ProposalChainTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
     final latest = chain.last;
-    final hasAccepted = chain.any((p) => p.status == GrindingProposalStatus.accepted);
-    void openRevision(GrindingProposal p) => context.push(
-      '/grinding_machine/projects/$projectId/proposals/${p.id}',
+    final hasAccepted = chain.any(
+      (p) => p.status == GrindingProposalStatus.accepted,
     );
+    void openRevision(GrindingProposal p) =>
+        context.push('/grinding_machine/projects/$projectId/proposals/${p.id}');
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -912,18 +1020,26 @@ class _ProposalChainTile extends StatelessWidget {
                     Expanded(
                       child: Text(
                         latest.proposalNumber ?? '—',
-                        style: TextStyle(color: palette.ink, fontWeight: FontWeight.w700, fontSize: 13),
+                        style: TextStyle(
+                          color: palette.ink,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                     Text(
-                      'Latest: R${latest.revision}',
+                      'Mới nhất: R${latest.revision}',
                       style: TextStyle(color: palette.muted, fontSize: 11),
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
-                        color: statusColor(latest.status).withValues(alpha: 0.12),
+                        color: statusColor(latest.status)
+                            .withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
@@ -943,16 +1059,25 @@ class _ProposalChainTile extends StatelessWidget {
                     spacing: 6,
                     runSpacing: 4,
                     children: [
-                      Text('History:', style: TextStyle(color: palette.muted, fontSize: 11)),
+                      Text(
+                        'Lịch sử:',
+                        style: TextStyle(color: palette.muted, fontSize: 11),
+                      ),
                       for (final revision in chain)
                         InkWell(
-                          key: Key('grinding_project_proposal_history_${revision.id}'),
+                          key: Key(
+                            'grinding_project_proposal_history_${revision.id}',
+                          ),
                           onTap: () => openRevision(revision),
                           borderRadius: BorderRadius.circular(999),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
-                              color: statusColor(revision.status).withValues(alpha: 0.10),
+                              color: statusColor(revision.status)
+                                  .withValues(alpha: 0.10),
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
@@ -976,3 +1101,10 @@ class _ProposalChainTile extends StatelessWidget {
     );
   }
 }
+
+String _projectStatusLabel(GrindingProjectStatus status) => switch (status) {
+  GrindingProjectStatus.draft => 'Bản nháp',
+  GrindingProjectStatus.evaluating => 'Đang đánh giá',
+  GrindingProjectStatus.selected => 'Đã chọn máy',
+  GrindingProjectStatus.completed => 'Hoàn tất',
+};

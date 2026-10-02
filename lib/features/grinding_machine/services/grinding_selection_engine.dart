@@ -128,13 +128,13 @@ abstract final class GrindingSelectionEngine {
           'Đáp ứng yêu cầu đặc biệt đã chọn.',
       ];
 
-      if (machine.seriesCode == 'BSK_JET') {
+      if (machine.seriesCode == 'ASK_JET') {
         warnings.add(
           'Dòng máy này cần hệ thống khí nén — vui lòng xác minh yêu cầu áp '
           'suất/lưu lượng khí nén trước khi lắp đặt.',
         );
       }
-      if (machine.seriesCode == 'BS_CRYOGENIC') {
+      if (machine.seriesCode == 'AS_CRYOGENIC') {
         warnings.add(
           'Dòng máy này cần nitơ lỏng để vận hành — vui lòng xác nhận điều '
           'kiện cấp nitơ lỏng tại nhà máy.',

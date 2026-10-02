@@ -226,7 +226,7 @@ class _GrindingMachineListScreenState extends State<GrindingMachineListScreen> {
                     child: Row(
                       children: [
                         Text(
-                          'Filter (${_criteria.activeCount})',
+                          'Bộ lọc (${_criteria.activeCount})',
                           style: TextStyle(
                             color: palette.cyan,
                             fontWeight: FontWeight.w800,
@@ -240,7 +240,7 @@ class _GrindingMachineListScreenState extends State<GrindingMachineListScreen> {
                             _criteria = const GrindingFilterCriteria();
                             _compatibleSeriesCodes = null;
                           }),
-                          child: const Text('Reset'),
+                          child: const Text('Đặt lại'),
                         ),
                       ],
                     ),
@@ -260,7 +260,7 @@ class _GrindingMachineListScreenState extends State<GrindingMachineListScreen> {
                   child: machines.isEmpty
                       ? Center(
                           child: Text(
-                            'Không tìm thấy model phù hợp trong database.',
+                            'Không tìm thấy model phù hợp trong cơ sở dữ liệu.',
                             style: TextStyle(color: palette.muted),
                           ),
                         )
@@ -466,7 +466,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   key: const Key('grinding_list_filter_sheet_reset'),
                   onPressed: () =>
                       setState(() => _draft = const GrindingFilterCriteria()),
-                  child: const Text('Reset'),
+                  child: const Text('Đặt lại'),
                 ),
               ],
             ),
@@ -509,7 +509,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 18),
             Text(
-              'Dòng máy (Series)',
+              'Dòng máy',
               style: TextStyle(color: palette.navy, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 8),
@@ -618,7 +618,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             FilledButton(
               key: const Key('grinding_list_filter_apply'),
               onPressed: () => Navigator.of(context).pop(_draft),
-              child: const Text('Apply'),
+              child: const Text('Áp dụng'),
             ),
           ],
         ),

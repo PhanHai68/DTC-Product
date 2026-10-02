@@ -43,7 +43,7 @@ void main() {
       final snapshot = GrindingTechnicalSnapshot(
         machineId: 'M1',
         model: 'ASP-350',
-        seriesDisplayCode: 'BSP',
+        seriesDisplayCode: 'ASP',
         capacityDisplay: '300 - 500 kg/h',
         capturedAt: now,
       );

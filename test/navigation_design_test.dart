@@ -87,6 +87,9 @@ void main() {
     final compressorCard = tester.getRect(
       find.byKey(const ValueKey('home_solution_/acomp_menu')),
     );
+    final colorSorterCard = tester.getRect(
+      find.byKey(const ValueKey('home_solution_/color_sorter_categories')),
+    );
     final grindingMachineCard = tester.getRect(
       find.byKey(const ValueKey('home_solution_/grinding_machine')),
     );
@@ -98,6 +101,7 @@ void main() {
     // riêng bên dưới.
     expect(compressorCard.top, grindingMachineCard.top);
     expect(compressorCard.size, grindingMachineCard.size);
+    expect(colorSorterCard.height, lessThanOrEqualTo(142));
     expect(compressorCard.left, lessThan(grindingMachineCard.left));
     expect(grindingMachineCard.right, lessThanOrEqualTo(372));
     expect(extensionsCard.top, greaterThan(compressorCard.top));
@@ -105,7 +109,70 @@ void main() {
       tester.getCenter(find.byKey(const Key('home_brand_wordmark'))).dx,
       closeTo(195, 1),
     );
+    final searchText = tester.widget<Text>(
+      find.text('Tra cứu model hoặc chức năng'),
+    );
+    for (final route in const [
+      '/color_sorter_categories',
+      '/packing_menu',
+      '/acomp_menu',
+      '/grinding_machine',
+      '/extensions',
+    ]) {
+      final title = tester.widget<Text>(
+        find.byKey(ValueKey('home_solution_title_$route')),
+      );
+      expect(title.style?.color, searchText.style?.color);
+      expect(title.style?.fontSize, searchText.style?.fontSize);
+    }
     expect(tester.getBottomRight(find.text('DTCGroup')).dy, greaterThan(820));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Home Screen tối ưu thẻ trên điện thoại rộng 351px', (
+    tester,
+  ) async {
+    await _pumpAtSize(
+      tester,
+      size: const Size(351, 764),
+      home: const HomeScreen(),
+    );
+
+    final card = tester.getRect(
+      find.byKey(const ValueKey('home_solution_/color_sorter_categories')),
+    );
+    final visual = tester.getRect(
+      find.byKey(
+        const ValueKey('home_solution_visual_/color_sorter_categories'),
+      ),
+    );
+    expect(card.height, closeTo(130, 0.1));
+    expect(visual.height, lessThan(95));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Home Screen dùng 3 cột trên tablet', (tester) async {
+    await _pumpAtSize(
+      tester,
+      size: const Size(800, 1000),
+      home: const HomeScreen(),
+    );
+
+    final first = tester.getRect(
+      find.byKey(const ValueKey('home_solution_/color_sorter_categories')),
+    );
+    final second = tester.getRect(
+      find.byKey(const ValueKey('home_solution_/packing_menu')),
+    );
+    final third = tester.getRect(
+      find.byKey(const ValueKey('home_solution_/acomp_menu')),
+    );
+    final fourth = tester.getRect(
+      find.byKey(const ValueKey('home_solution_/grinding_machine')),
+    );
+    expect(first.top, second.top);
+    expect(second.top, third.top);
+    expect(fourth.top, greaterThan(first.top));
     expect(tester.takeException(), isNull);
   });
 

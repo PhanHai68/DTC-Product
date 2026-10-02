@@ -64,7 +64,7 @@ void main() {
 
       await provider.applyImport(preview);
 
-      expect(await repository.getImportedDatabaseVersion(), '1.1');
+      expect(await repository.getImportedDatabaseVersion(), '2.2.3');
       expect(await repository.getAllMachines(), hasLength(57));
     },
   );
@@ -86,19 +86,19 @@ void main() {
       final root =
           jsonDecode(await File('assets/database/grinding_machine_seed.json').readAsString())
               as Map<String, dynamic>;
-      root['databaseVersion'] = '1.2';
+      root['databaseVersion'] = '2.4';
       root['models'][0]['capacityMaxKgH'] = 350;
       final jsonBytes = Uint8List.fromList(utf8.encode(jsonEncode(root)));
 
       final preview = await provider.previewImport('new.json', jsonBytes);
 
       expect(preview.updated, hasLength(1));
-      expect(preview.currentVersion, '1.1');
-      expect(preview.report.snapshot!.databaseVersion, '1.2');
+      expect(preview.currentVersion, '2.2.3');
+      expect(preview.report.snapshot!.databaseVersion, '2.4');
 
       await provider.applyImport(preview);
 
-      expect(await repository.getImportedDatabaseVersion(), '1.2');
+      expect(await repository.getImportedDatabaseVersion(), '2.4');
       expect((await repository.getMachineByModel('ASC-200'))!.capacityMaxKgH, 350);
     },
   );
@@ -128,7 +128,7 @@ void main() {
       expect(preview.report.canImport, isFalse);
       await expectLater(provider.applyImport(preview), throwsStateError);
       // Database không đổi sau khi bị chặn.
-      expect(await repository.getImportedDatabaseVersion(), '1.1');
+      expect(await repository.getImportedDatabaseVersion(), '2.2.3');
     },
   );
 }

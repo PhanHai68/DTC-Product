@@ -62,7 +62,7 @@ void main() {
       tester,
       provider,
       const GrindingMachineCompareScreen(
-        initialMachineIds: ['BSC_COARSE__ASC-200', 'BSC_COARSE__ASC-300'],
+        initialMachineIds: ['ASC_COARSE__ASC-200', 'ASC_COARSE__ASC-300'],
       ),
     );
 
@@ -79,9 +79,9 @@ void main() {
       provider,
       const GrindingMachineCompareScreen(
         initialMachineIds: [
-          'BSC_COARSE__ASC-200',
-          'BSC_COARSE__ASC-300',
-          'BSP_ULTRAFINE__ASP-350',
+          'ASC_COARSE__ASC-200',
+          'ASC_COARSE__ASC-300',
+          'ASP_ULTRAFINE__ASP-350',
         ],
       ),
     );
@@ -118,9 +118,9 @@ void main() {
         provider,
         const GrindingMachineCompareScreen(
           initialMachineIds: [
-            'BSC_COARSE__ASC-200',
+            'ASC_COARSE__ASC-200',
             'KHONG_TON_TAI__X-999',
-            'BSC_COARSE__ASC-300',
+            'ASC_COARSE__ASC-300',
           ],
         ),
       );

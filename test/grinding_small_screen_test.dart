@@ -167,7 +167,7 @@ void main() {
             createdAt: now,
             updatedAt: now,
           ),
-          primaryMachineId: 'BSP_ULTRAFINE__ASP-350',
+          primaryMachineId: 'ASP_ULTRAFINE__ASP-350',
         );
       });
 

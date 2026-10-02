@@ -96,7 +96,7 @@ void main() {
 
     expect(find.textContaining('ASP-350'), findsWidgets);
     expect(
-      find.byKey(const Key('grinding_list_card_BSP_ULTRAFINE__ASP-350')),
+      find.byKey(const Key('grinding_list_card_ASP_ULTRAFINE__ASP-350')),
       findsOneWidget,
     );
   });
@@ -108,10 +108,10 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await pumpReady(tester, provider);
-    await search(tester, 'BSP');
+    await search(tester, 'ASP');
 
     final expected = provider.machines
-        .where((m) => m.seriesCode.toUpperCase().contains('BSP'))
+        .where((m) => m.seriesCode.toUpperCase().contains('ASP'))
         .toList();
     expect(expected.length, greaterThan(1));
     for (final m in expected) {
@@ -151,21 +151,21 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(
-        find.byKey(const Key('grinding_list_filter_series_BS_ROLLER')),
+        find.byKey(const Key('grinding_list_filter_series_AS_ROLLER')),
       );
       await tester.pump();
       await tester.tap(find.byKey(const Key('grinding_list_filter_apply')));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Filter (1)'), findsOneWidget);
-      for (final m in provider.machinesOf('BS_ROLLER')) {
+      expect(find.textContaining('Bộ lọc (1)'), findsOneWidget);
+      for (final m in provider.machinesOf('AS_ROLLER')) {
         expect(
           find.byKey(Key('grinding_list_card_${m.machineId}')),
           findsOneWidget,
         );
       }
       final otherMachine = provider.machines.firstWhere(
-        (m) => m.seriesCode != 'BS_ROLLER',
+        (m) => m.seriesCode != 'AS_ROLLER',
       );
       expect(
         find.byKey(Key('grinding_list_card_${otherMachine.machineId}')),
@@ -174,7 +174,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('grinding_list_filter_reset')));
       await tester.pump();
-      expect(find.textContaining('Filter ('), findsNothing);
+      expect(find.textContaining('Bộ lọc ('), findsNothing);
       for (final m in provider.machines) {
         expect(
           find.byKey(Key('grinding_list_card_${m.machineId}')),
@@ -194,7 +194,7 @@ void main() {
     await search(tester, 'ASP-350');
 
     await tester.tap(
-      find.byKey(const Key('grinding_list_card_BSP_ULTRAFINE__ASP-350')),
+      find.byKey(const Key('grinding_list_card_ASP_ULTRAFINE__ASP-350')),
     );
     await tester.runAsync(() async {
       await tester.pump();

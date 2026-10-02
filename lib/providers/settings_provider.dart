@@ -12,8 +12,10 @@ enum AppTextScale {
   final double scale;
   final String label;
 
-  static AppTextScale fromScale(double scale) => AppTextScale.values
-      .firstWhere((e) => e.scale == scale, orElse: () => AppTextScale.normal);
+  static AppTextScale fromScale(double scale) => AppTextScale.values.firstWhere(
+    (e) => e.scale == scale,
+    orElse: () => AppTextScale.normal,
+  );
 }
 
 /// Lưu và áp dụng các tuỳ chọn cài đặt chung: giao diện sáng/tối, cỡ chữ.
@@ -45,6 +47,7 @@ class SettingsProvider extends ChangeNotifier {
   static const _homeDailyGoalsFontSizeKey = 'home_daily_goals_font_size';
   static const _homeDailyGoalsColorKey = 'home_daily_goals_color';
   static const _homeDailyGoalsItalicKey = 'home_daily_goals_italic';
+  static const _homeSalesGoalEnabledKey = 'home_sales_goal_enabled';
 
   // Nhắc nhở cuối ngày cho "Mục tiêu hôm nay" (Phase 3) — 1 giờ nhắc cố định
   // lặp lại hàng ngày, lên lịch qua DailyGoalNotificationService khi lưu.
@@ -82,6 +85,7 @@ class SettingsProvider extends ChangeNotifier {
   Color? _homeDailyGoalsColor;
   bool _homeDailyGoalsItalic = false;
   bool _homeDailyGoalsReminderEnabled = false;
+  bool _homeSalesGoalEnabled = false;
   int _homeDailyGoalsReminderHour = defaultHomeDailyGoalsReminderHour;
   int _homeDailyGoalsReminderMinute = defaultHomeDailyGoalsReminderMinute;
 
@@ -105,6 +109,7 @@ class SettingsProvider extends ChangeNotifier {
   bool get homeDailyGoalsReminderEnabled => _homeDailyGoalsReminderEnabled;
   int get homeDailyGoalsReminderHour => _homeDailyGoalsReminderHour;
   int get homeDailyGoalsReminderMinute => _homeDailyGoalsReminderMinute;
+  bool get homeSalesGoalEnabled => _homeSalesGoalEnabled;
 
   void _load() {
     final savedMode = _prefs.getString(_themeModeKey);
@@ -134,8 +139,7 @@ class SettingsProvider extends ChangeNotifier {
         : Color(shortTextColorValue);
     _homeNameItalic = _prefs.getBool(_homeNameItalicKey) ?? false;
     _homeShortTextItalic = _prefs.getBool(_homeShortTextItalicKey) ?? false;
-    _homeDailyGoalsEnabled =
-        _prefs.getBool(_homeDailyGoalsEnabledKey) ?? false;
+    _homeDailyGoalsEnabled = _prefs.getBool(_homeDailyGoalsEnabledKey) ?? false;
     _homeDailyGoalsTitle =
         _prefs.getString(_homeDailyGoalsTitleKey) ?? defaultHomeDailyGoalsTitle;
     _homeDailyGoalsFontSize =
@@ -154,6 +158,7 @@ class SettingsProvider extends ChangeNotifier {
     _homeDailyGoalsReminderMinute =
         _prefs.getInt(_homeDailyGoalsReminderMinuteKey) ??
         defaultHomeDailyGoalsReminderMinute;
+    _homeSalesGoalEnabled = _prefs.getBool(_homeSalesGoalEnabledKey) ?? false;
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -199,6 +204,7 @@ class SettingsProvider extends ChangeNotifier {
     bool? dailyGoalsReminderEnabled,
     int? dailyGoalsReminderHour,
     int? dailyGoalsReminderMinute,
+    bool? salesGoalEnabled,
   }) async {
     _homePersonalizationEnabled = enabled;
     _homeDisplayName = displayName;
@@ -227,6 +233,9 @@ class SettingsProvider extends ChangeNotifier {
     }
     if (dailyGoalsReminderMinute != null) {
       _homeDailyGoalsReminderMinute = dailyGoalsReminderMinute;
+    }
+    if (salesGoalEnabled != null) {
+      _homeSalesGoalEnabled = salesGoalEnabled;
     }
     notifyListeners();
     await Future.wait([
@@ -270,6 +279,8 @@ class SettingsProvider extends ChangeNotifier {
           _homeDailyGoalsReminderMinuteKey,
           dailyGoalsReminderMinute,
         ),
+      if (salesGoalEnabled != null)
+        _prefs.setBool(_homeSalesGoalEnabledKey, salesGoalEnabled),
     ]);
   }
 
@@ -295,5 +306,6 @@ class SettingsProvider extends ChangeNotifier {
     dailyGoalsReminderEnabled: false,
     dailyGoalsReminderHour: defaultHomeDailyGoalsReminderHour,
     dailyGoalsReminderMinute: defaultHomeDailyGoalsReminderMinute,
+    salesGoalEnabled: false,
   );
 }

@@ -75,10 +75,10 @@ void main() {
       });
       await tester.pump();
 
-      // Material_Series_Map: SESAME chỉ xác minh tương thích BS_ROLLER.
+      // Material_Series_Map: SESAME chỉ xác minh tương thích AS_ROLLER.
       expect(find.textContaining('model phù hợp'), findsOneWidget);
       expect(
-        find.byKey(const Key('grinding_machine_tile_BS_ROLLER__AS150-3')),
+        find.byKey(const Key('grinding_machine_tile_AS_ROLLER__AS150-3')),
         findsOneWidget,
       );
     },
@@ -97,7 +97,7 @@ void main() {
 
       // ASC-1000 (1000-2500 kg/h) không được nằm trong kết quả "< 100 kg/h".
       expect(
-        find.byKey(const Key('grinding_machine_tile_BSC_COARSE__ASC-1000')),
+        find.byKey(const Key('grinding_machine_tile_ASC_COARSE__ASC-1000')),
         findsNothing,
       );
     },
@@ -134,12 +134,12 @@ void main() {
       await pickIntoSlot(
         0,
         'ASC-200',
-        'grinding_machine_tile_BSC_COARSE__ASC-200',
+        'grinding_machine_tile_ASC_COARSE__ASC-200',
       );
       await pickIntoSlot(
         1,
         'ASC-300',
-        'grinding_machine_tile_BSC_COARSE__ASC-300',
+        'grinding_machine_tile_ASC_COARSE__ASC-300',
       );
 
       expect(find.text('Công suất xử lý'), findsOneWidget);
@@ -177,19 +177,19 @@ void main() {
       tester,
       0,
       'ASC-200',
-      'grinding_machine_tile_BSC_COARSE__ASC-200',
+      'grinding_machine_tile_ASC_COARSE__ASC-200',
     );
     await pickIntoSlot(
       tester,
       1,
       'ASC-300',
-      'grinding_machine_tile_BSC_COARSE__ASC-300',
+      'grinding_machine_tile_ASC_COARSE__ASC-300',
     );
     await pickIntoSlot(
       tester,
       2,
       'ASP-350',
-      'grinding_machine_tile_BSP_ULTRAFINE__ASP-350',
+      'grinding_machine_tile_ASP_ULTRAFINE__ASP-350',
     );
 
     // Tên model xuất hiện ở cả slot đã chọn lẫn header bảng so sánh.
@@ -208,8 +208,8 @@ void main() {
         const GrindingMachineCompareScreen(),
       );
 
-      const machineA = 'BSC_COARSE__ASC-200';
-      const machineB = 'BSP_ULTRAFINE__ASP-350';
+      const machineA = 'ASC_COARSE__ASC-200';
+      const machineB = 'ASP_ULTRAFINE__ASP-350';
       late final Set<String> unionKeys;
       await tester.runAsync(() async {
         final specsA = await provider.getExtraSpecs(machineA);

@@ -43,7 +43,7 @@ void main() {
     expect(machines, hasLength(57));
     expect(
       await repository.getImportedDatabaseVersion(),
-      '1.1',
+      '2.2.3',
     );
   });
 
@@ -51,7 +51,7 @@ void main() {
     final machine = await repository.getMachineByModel('ASP-350');
 
     expect(machine, isNotNull);
-    expect(machine!.seriesCode, 'BSP_ULTRAFINE');
+    expect(machine!.seriesCode, 'ASP_ULTRAFINE');
     // Không assert cứng số liệu cụ thể ở đây để tránh trùng lặp giả định với
     // Excel — chỉ xác nhận các trường bắt buộc có giá trị hợp lệ.
     expect(machine.capacityMinKgH, isNotNull);
@@ -71,7 +71,7 @@ void main() {
     final byBrandName = await repository.searchMachines('siêu mịn');
     expect(byBrandName, isNotEmpty);
     expect(
-      byBrandName.every((m) => m.seriesCode == 'BSP_ULTRAFINE'),
+      byBrandName.every((m) => m.seriesCode == 'ASP_ULTRAFINE'),
       isTrue,
     );
   });
@@ -83,7 +83,7 @@ void main() {
     expect(specs, isNotEmpty);
     expect(specs.every((s) => s.machineId == asg300.machineId), isTrue);
 
-    final tags = await repository.getSelectionTags('BSC_COARSE');
+    final tags = await repository.getSelectionTags('ASC_COARSE');
     expect(tags, isNotEmpty);
     expect(tags.map((t) => t.tag), contains('coarse'));
   });
@@ -94,7 +94,7 @@ void main() {
 
     final sesameMap = await repository.getMaterialSeriesMapFor('SESAME');
     expect(sesameMap, hasLength(1));
-    expect(sesameMap.first.seriesCode, 'BS_ROLLER');
+    expect(sesameMap.first.seriesCode, 'AS_ROLLER');
     expect(sesameMap.first.isVerified, isTrue);
 
     // PEPPER không có trong Material_Series_Map -> phải trả về rỗng, KHÔNG
@@ -126,7 +126,7 @@ void main() {
     expect(machines, hasLength(57));
   });
 
-  Future<GrindingDatabaseSnapshot> changedSnapshot({String version = '1.2', String? model}) async {
+  Future<GrindingDatabaseSnapshot> changedSnapshot({String version = '2.3', String? model}) async {
     final root = jsonDecode(await rootBundle.loadString('assets/database/grinding_machine_seed.json')) as Map<String, dynamic>;
     root['databaseVersion'] = version;
     root['sourceDocument'] = null;
@@ -150,7 +150,7 @@ void main() {
     final snapshot = await changedSnapshot();
     await repository.importSnapshot(snapshot);
     await expectLater(repository.importSnapshot(snapshot, expectedRevision: revision, checkRevision: true), throwsStateError);
-    expect(await repository.getImportedDatabaseVersion(), '1.2');
+    expect(await repository.getImportedDatabaseVersion(), '2.3');
   });
 
   test('Chặn hạ version ở repository và xóa metadata nguồn cũ khi nguồn mới null', () async {
@@ -160,13 +160,13 @@ void main() {
     expect(meta['fileName'], 'new.json');
     expect(meta['importOrigin'], 'file');
     await expectLater(repository.importSnapshot(await changedSnapshot(version: '1.1')), throwsStateError);
-    expect(await repository.getImportedDatabaseVersion(), '1.2');
+    expect(await repository.getImportedDatabaseVersion(), '2.3');
   });
 
   test('Snapshot rỗng qua API trực tiếp không xóa dữ liệu', () async {
     const empty = GrindingDatabaseSnapshot(databaseVersion: '1.2', series: [], machines: [], extraSpecs: [], selectionTags: [], materials: [], materialSeriesMap: [], aiConfig: []);
     await expectLater(repository.importSnapshot(empty), throwsFormatException);
     expect(await repository.getAllMachines(), hasLength(57));
-    expect(await repository.getImportedDatabaseVersion(), '1.1');
+    expect(await repository.getImportedDatabaseVersion(), '2.2.3');
   });
 }

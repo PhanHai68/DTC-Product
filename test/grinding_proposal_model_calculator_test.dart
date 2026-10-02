@@ -54,7 +54,7 @@ void main() {
     test('toRow/fromRow giữ đúng dữ liệu kể cả field null', () {
       final p = _proposal(
         id: 5,
-        machineId: 'BSP_ULTRAFINE__ASP-350',
+        machineId: 'ASP_ULTRAFINE__ASP-350',
         machineUnitPrice: 500000000,
         machineQuantity: 1,
         discount: null,
@@ -74,9 +74,9 @@ void main() {
 
     test('GrindingTechnicalSnapshot toJson/fromJson round-trip đúng', () {
       final snapshot = GrindingTechnicalSnapshot(
-        machineId: 'BSP_ULTRAFINE__ASP-350',
+        machineId: 'ASP_ULTRAFINE__ASP-350',
         model: 'ASP-350',
-        seriesDisplayCode: 'BSP',
+        seriesDisplayCode: 'ASP',
         capacityDisplay: '300 - 500 kg/h',
         finenessDisplay: null,
         extraSpecs: const [

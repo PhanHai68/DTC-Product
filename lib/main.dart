@@ -30,7 +30,9 @@ import 'features/maintenance_report/providers/maintenance_report_provider.dart';
 import 'features/grinding_machine/providers/grinding_machine_provider.dart';
 import 'features/grinding_machine/providers/grinding_selection_project_provider.dart';
 import 'features/grinding_machine/providers/grinding_proposal_provider.dart';
-import 'features/grinding_machine/providers/grinding_dashboard_provider.dart';
+import 'features/factory_location/providers/factory_location_provider.dart';
+import 'features/sales_goal/providers/sales_goal_provider.dart';
+import 'features/site_layout/providers/site_layout_provider.dart';
 
 // Projects Module
 import 'features/projects/providers/project_provider.dart';
@@ -108,10 +110,7 @@ ThemeData _buildAppTheme(Brightness brightness) {
         fontWeight: FontWeight.w800,
       ),
       titleLarge: TextStyle(color: headingColor, fontWeight: FontWeight.w800),
-      titleMedium: TextStyle(
-        color: headingColor,
-        fontWeight: FontWeight.w700,
-      ),
+      titleMedium: TextStyle(color: headingColor, fontWeight: FontWeight.w700),
       bodyMedium: TextStyle(color: bodyColor, height: 1.35),
     ),
     appBarTheme: AppBarTheme(
@@ -145,27 +144,21 @@ ThemeData _buildAppTheme(Brightness brightness) {
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size(48, 48),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         textStyle: const TextStyle(fontWeight: FontWeight.w700),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(48, 48),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         textStyle: const TextStyle(fontWeight: FontWeight.w700),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(48, 48),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         textStyle: const TextStyle(fontWeight: FontWeight.w700),
       ),
     ),
@@ -208,9 +201,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => MaintenanceProvider()..loadRecords(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => NotesProvider()..loadNotes(),
-        ),
+        ChangeNotifierProvider(create: (_) => NotesProvider()..loadNotes()),
         ChangeNotifierProvider(
           create: (_) => ProjectProvider(LocalProjectRepository()),
         ),
@@ -222,7 +213,9 @@ class MyApp extends StatelessWidget {
           create: (_) => GrindingSelectionProjectProvider(),
         ),
         ChangeNotifierProvider(create: (_) => GrindingProposalProvider()),
-        ChangeNotifierProvider(create: (_) => GrindingDashboardProvider()),
+        ChangeNotifierProvider(create: (_) => SalesGoalProvider()),
+        ChangeNotifierProvider(create: (_) => SiteLayoutProvider()),
+        ChangeNotifierProvider(create: (_) => FactoryLocationProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) {
@@ -235,10 +228,16 @@ class MyApp extends StatelessWidget {
             darkTheme: _buildAppTheme(Brightness.dark),
             themeMode: settings.themeMode,
             builder: (context, child) {
+              // Nhân hệ số cỡ chữ của app với cỡ chữ hệ thống (Accessibility)
+              // thay vì ghi đè; giới hạn trên để bố cục không vỡ.
+              final systemScale = MediaQuery.textScalerOf(context).scale(1);
+              final scale = (systemScale * settings.textScale.scale).clamp(
+                0.85,
+                2.0,
+              );
               return MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  textScaler: TextScaler.linear(settings.textScale.scale),
-                ),
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(scale)),
                 child: child!,
               );
             },

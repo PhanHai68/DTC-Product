@@ -58,6 +58,12 @@ app.*.map.json
 /deps_utf8.txt
 /*.pid
 
+# Bản APK build thủ công và file nháp/tạm cục bộ
+/*.apk
+/.codex_tmp/
+/output/
+/tmp/
+
 # Widget Preview related
 .widget_preview/
 

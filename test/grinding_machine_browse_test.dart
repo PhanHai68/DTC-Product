@@ -6,6 +6,7 @@ import 'package:dtc_product/features/grinding_machine/screens/grinding_machine_h
 import 'package:dtc_product/features/grinding_machine/screens/grinding_machine_search_screen.dart';
 import 'package:dtc_product/features/grinding_machine/screens/grinding_series_machines_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +49,10 @@ Future<void> _pumpApp(WidgetTester tester) async {
           machineId: state.pathParameters['machineId']!,
         ),
       ),
+      GoRoute(
+        path: '/grinding_machine/asp-3d',
+        builder: (_, _) => const Scaffold(body: Text('ASP-350 3D viewer')),
+      ),
     ],
   );
   addTearDown(router.dispose);
@@ -77,41 +82,47 @@ Future<void> _pumpApp(WidgetTester tester) async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'Home tự seed database thật và hiển thị đúng 11 dòng máy',
-    (tester) async {
-      await _pumpApp(tester);
+  testWidgets('Home tự seed database thật và hiển thị đúng 11 dòng máy', (
+    tester,
+  ) async {
+    await _pumpApp(tester);
 
-      expect(find.text('Máy nghiền'), findsOneWidget);
-      expect(find.textContaining('11 dòng · 57 model'), findsOneWidget);
-      expect(find.byKey(const Key('grinding_series_card_BSC_COARSE')), findsOneWidget);
-    },
-  );
+    expect(find.text('Máy nghiền'), findsOneWidget);
+    expect(find.textContaining('11 dòng · 57 model'), findsOneWidget);
+    expect(
+      find.byKey(const Key('grinding_series_card_ASC_COARSE')),
+      findsOneWidget,
+    );
+  });
 
-  testWidgets(
-    'Chạm 1 Series mở đúng danh sách model của dòng máy đó',
-    (tester) async {
-      await _pumpApp(tester);
+  testWidgets('Chạm 1 Series mở đúng danh sách model của dòng máy đó', (
+    tester,
+  ) async {
+    await _pumpApp(tester);
 
-      await tester.tap(find.byKey(const Key('grinding_series_card_BSC_COARSE')));
-      await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('grinding_series_card_ASC_COARSE')));
+    await tester.pumpAndSettle();
 
-      // BSC_COARSE có 5 model ASC-200/300/400/600/1000 theo database.
-      expect(find.textContaining('5 model'), findsOneWidget);
-      expect(find.byKey(const Key('grinding_machine_tile_BSC_COARSE__ASC-200')), findsOneWidget);
-    },
-  );
+    // ASC_COARSE có 5 model ASC-200/300/400/600/1000 theo database.
+    expect(find.textContaining('5 model'), findsOneWidget);
+    expect(
+      find.byKey(const Key('grinding_machine_tile_ASC_COARSE__ASC-200')),
+      findsOneWidget,
+    );
+  });
 
   testWidgets(
     'Chạm 1 model mở Detail đúng thông số thật từ database, không rỗng',
     (tester) async {
       await _pumpApp(tester);
 
-      await tester.tap(find.byKey(const Key('grinding_series_card_BSC_COARSE')));
+      await tester.tap(
+        find.byKey(const Key('grinding_series_card_ASC_COARSE')),
+      );
       await tester.pumpAndSettle();
       await tester.runAsync(() async {
         await tester.tap(
-          find.byKey(const Key('grinding_machine_tile_BSC_COARSE__ASC-200')),
+          find.byKey(const Key('grinding_machine_tile_ASC_COARSE__ASC-200')),
         );
         await tester.pump();
         // Detail screen tự load (getMachine/getSeries/getExtraSpecs) qua
@@ -146,6 +157,53 @@ void main() {
     });
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('grinding_machine_tile_BSP_ULTRAFINE__ASP-350')), findsOneWidget);
+    expect(
+      find.byKey(const Key('grinding_machine_tile_ASP_ULTRAFINE__ASP-350')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets(
+    'Dòng ASP có nút xem 3D đại diện ASP-350 và ASP-1000 ở cuối danh sách',
+    (tester) async {
+      await _pumpApp(tester);
+
+      final seriesCard = find.byKey(
+        const Key('grinding_series_card_ASP_ULTRAFINE'),
+      );
+      await tester.scrollUntilVisible(seriesCard, 300);
+      await tester.tap(seriesCard);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('grinding_asp_3d_button')), findsOneWidget);
+      expect(find.text('Mô hình đại diện: ASP-350'), findsOneWidget);
+
+      final asp1000 = find.byKey(
+        const Key('grinding_machine_tile_ASP_ULTRAFINE__ASP-1000'),
+      );
+      await tester.scrollUntilVisible(asp1000, 250);
+      final asp900 = find.byKey(
+        const Key('grinding_machine_tile_ASP_ULTRAFINE__ASP-900'),
+      );
+      expect(
+        tester.getTopLeft(asp900).dy,
+        lessThan(tester.getTopLeft(asp1000).dy),
+      );
+
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('grinding_asp_3d_button')),
+        -300,
+      );
+      await tester.drag(find.byType(ListView), const Offset(0, 140));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('grinding_asp_3d_button')));
+      await tester.pumpAndSettle();
+      expect(find.text('ASP-350 3D viewer'), findsOneWidget);
+    },
+  );
+
+  test('video mô hình ASP-350 được khai báo trong asset bundle', () async {
+    final data = await rootBundle.load('assets/videos/ASP-350-3D.mp4');
+    expect(data.lengthInBytes, greaterThan(3 * 1024 * 1024));
   });
 }

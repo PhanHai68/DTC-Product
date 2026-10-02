@@ -108,7 +108,7 @@ class _GrindingMachineSearchScreenState
           : _results.isEmpty
           ? Center(
               child: Text(
-                'Không tìm thấy model phù hợp trong database.',
+                'Không tìm thấy model phù hợp trong cơ sở dữ liệu.',
                 style: TextStyle(color: palette.muted),
               ),
             )

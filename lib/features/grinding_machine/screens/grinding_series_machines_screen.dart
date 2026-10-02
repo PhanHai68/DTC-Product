@@ -43,9 +43,7 @@ class _GrindingSeriesMachinesScreenState
     final palette = DtcPalette.of(context);
     return Scaffold(
       backgroundColor: palette.canvas,
-      appBar: AppBar(
-        title: Text(_series?.displayCode ?? 'Dòng máy'),
-      ),
+      appBar: AppBar(title: Text(_series?.displayCode ?? 'Dòng máy')),
       body: Consumer<GrindingMachineProvider>(
         builder: (context, provider, _) {
           final machines = provider.machinesOf(widget.seriesCode);
@@ -71,7 +69,7 @@ class _GrindingSeriesMachinesScreenState
                   padding: const EdgeInsets.symmetric(vertical: 40),
                   child: Center(
                     child: Text(
-                      'Chưa có model nào trong database cho dòng máy này.',
+                      'Chưa có model nào trong cơ sở dữ liệu cho dòng máy này.',
                       style: TextStyle(color: palette.muted),
                     ),
                   ),
@@ -121,16 +119,32 @@ class _SeriesHeader extends StatelessWidget {
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 2),
-          Text(
-            series.nameEn,
-            style: TextStyle(color: palette.muted, fontSize: 12.5),
-          ),
           if (series.applicationVi.isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(
               series.applicationVi,
               style: TextStyle(color: palette.ink, fontSize: 13, height: 1.4),
+            ),
+          ],
+          if (series.seriesCode == 'ASP_ULTRAFINE') ...[
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                key: const Key('grinding_asp_3d_button'),
+                onPressed: () => context.push('/grinding_machine/asp-3d'),
+                icon: const Icon(Icons.view_in_ar_rounded),
+                label: const Text('Xem mô hình 3D'),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Mô hình đại diện: ASP-350',
+              style: TextStyle(
+                color: palette.muted,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ],

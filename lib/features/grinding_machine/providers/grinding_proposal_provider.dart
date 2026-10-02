@@ -101,7 +101,7 @@ class GrindingProposalProvider extends ChangeNotifier {
     final proposal = await _repository.getProposal(id);
     if (proposal == null) return;
     if (!_workflow.canDelete(proposal)) {
-      throw StateError('Chỉ Proposal Draft mới xoá trực tiếp được.');
+      throw StateError('Chỉ báo giá nháp mới có thể xoá trực tiếp.');
     }
     await _repository.deleteProposal(id);
     await loadForProject(projectId);
@@ -118,10 +118,10 @@ class GrindingProposalProvider extends ChangeNotifier {
   Future<int> createRevision(int sourceProposalId, {required int projectId}) async {
     final source = await _repository.getProposal(sourceProposalId);
     if (source == null) {
-      throw StateError('Proposal $sourceProposalId không tồn tại.');
+      throw StateError('Báo giá $sourceProposalId không tồn tại.');
     }
     if (!_workflow.canCreateRevision(source)) {
-      throw StateError('Trạng thái hiện tại không cho phép Create Revision.');
+      throw StateError('Trạng thái hiện tại không cho phép tạo phiên bản mới.');
     }
     final newId = await _repository.createRevision(sourceProposalId);
     await loadForProject(projectId);
@@ -132,7 +132,7 @@ class GrindingProposalProvider extends ChangeNotifier {
     final proposal = await _repository.getProposal(id);
     if (proposal == null) return;
     if (!_workflow.canMarkSent(proposal)) {
-      throw StateError('Chỉ Proposal Final mới chuyển Sent được.');
+      throw StateError('Chỉ báo giá đã chốt mới có thể đánh dấu đã gửi.');
     }
     await _repository.markSent(id);
     await loadForProject(projectId);
@@ -149,7 +149,7 @@ class GrindingProposalProvider extends ChangeNotifier {
     final proposal = await _repository.getProposal(id);
     if (proposal == null) return false;
     if (!_workflow.canAccept(proposal)) {
-      throw StateError('Chỉ Proposal Sent mới Accept được.');
+      throw StateError('Chỉ báo giá đã gửi mới có thể đánh dấu đã chấp nhận.');
     }
     final result = await _repository.markAccepted(id, responseNote: responseNote);
     await loadForProject(projectId);
@@ -164,7 +164,7 @@ class GrindingProposalProvider extends ChangeNotifier {
     final proposal = await _repository.getProposal(id);
     if (proposal == null) return;
     if (!_workflow.canReject(proposal)) {
-      throw StateError('Chỉ Proposal Sent mới Reject được.');
+      throw StateError('Chỉ báo giá đã gửi mới có thể đánh dấu đã từ chối.');
     }
     await _repository.markRejected(id, responseNote: responseNote);
     await loadForProject(projectId);

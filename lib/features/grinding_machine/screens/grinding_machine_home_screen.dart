@@ -51,12 +51,6 @@ class _GrindingMachineHomeScreenState
             icon: const Icon(Icons.compare_arrows_rounded),
             onPressed: () => context.push('/grinding_machine/compare'),
           ),
-          IconButton(
-            key: const Key('grinding_machine_backup_button'),
-            tooltip: 'Backup & Restore',
-            icon: const Icon(Icons.backup_outlined),
-            onPressed: () => context.push('/grinding_machine/backup'),
-          ),
         ],
       ),
       body: Consumer<GrindingMachineProvider>(
@@ -98,32 +92,14 @@ class _GrindingMachineHomeScreenState
                 ),
               ),
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      key: const Key('grinding_machine_projects_button'),
-                      onPressed: () => context.push('/grinding_machine/projects'),
-                      icon: const Icon(Icons.folder_outlined),
-                      label: const Text('Saved Projects'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      key: const Key('grinding_machine_dashboard_button'),
-                      onPressed: () => context.push('/grinding_machine/dashboard'),
-                      icon: const Icon(Icons.dashboard_outlined),
-                      label: const Text('Dashboard'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                      ),
-                    ),
-                  ),
-                ],
+              OutlinedButton.icon(
+                key: const Key('grinding_machine_projects_button'),
+                onPressed: () => context.push('/grinding_machine/projects'),
+                icon: const Icon(Icons.folder_outlined),
+                label: const Text('Dự án đã lưu'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                ),
               ),
               const SizedBox(height: 18),
               Row(
@@ -165,7 +141,6 @@ class _GrindingMachineHomeScreenState
                     seriesCode: series.seriesCode,
                     displayCode: series.displayCode,
                     nameVi: series.nameVi,
-                    nameEn: series.nameEn,
                     machineCount: provider.machineCountOf(series.seriesCode),
                     onTap: () => context.push(
                       '/grinding_machine/series',
@@ -224,7 +199,6 @@ class _SeriesCard extends StatelessWidget {
     required this.seriesCode,
     required this.displayCode,
     required this.nameVi,
-    required this.nameEn,
     required this.machineCount,
     required this.onTap,
   });
@@ -232,7 +206,6 @@ class _SeriesCard extends StatelessWidget {
   final String seriesCode;
   final String displayCode;
   final String nameVi;
-  final String nameEn;
   final int machineCount;
   final VoidCallback onTap;
 
@@ -294,7 +267,7 @@ class _SeriesCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      nameEn,
+                      'Dòng $displayCode',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: palette.muted, fontSize: 12.5),

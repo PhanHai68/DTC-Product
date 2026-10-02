@@ -43,7 +43,7 @@ class _GrindingMachineDetailScreenState
       if (machine == null) {
         if (!mounted) return;
         setState(() {
-          _error = 'Không tìm thấy model này trong database.';
+          _error = 'Không tìm thấy model này trong cơ sở dữ liệu.';
           _isLoading = false;
         });
         return;
@@ -177,7 +177,7 @@ class _DetailBody extends StatelessWidget {
         if (selectionTags.isNotEmpty) ...[
           const SizedBox(height: 12),
           _SectionCard(
-            title: 'Selection Tags',
+            title: 'Nhãn lựa chọn',
             child: Wrap(
               spacing: 6,
               runSpacing: 6,
@@ -222,12 +222,6 @@ class _DetailBody extends StatelessWidget {
           const SizedBox(height: 12),
           _SectionCard(title: 'Ghi chú', child: _Paragraph(series!.notes)),
         ],
-        const SizedBox(height: 16),
-        Text(
-          'Nguồn: ${machine.sourceDocument ?? 'Catalog DTC'}'
-          '${machine.pdfPage != null ? ' · trang ${machine.pdfPage}' : ''}',
-          style: TextStyle(color: palette.muted, fontSize: 11.5),
-        ),
       ],
     );
   }
