@@ -222,6 +222,8 @@ abstract final class GrindingExcelParser {
       for (final field in fields.entries) {
         if (field.key == 'id') continue;
         final header = GrindingImportSchema.header(field.key);
+        // Cột tùy chọn (thêm sau) được phép vắng ở file Excel cũ.
+        if (field.value == 'optionalText') continue;
         if (!headers.containsKey(header)) {
           issues.add(GrindingImportIssue(entry.value, 'Thiếu cột $header.'));
         }
@@ -243,7 +245,10 @@ abstract final class GrindingExcelParser {
           var value = read(
             cells[c],
             '${entry.value} · dòng ${r + 1} · ${field.key}',
-            text: field.value == 'text' || field.value == 'id',
+            text:
+                field.value == 'text' ||
+                field.value == 'optionalText' ||
+                field.value == 'id',
           );
           if ((field.value == 'bool' || field.value == 'requiredBool') &&
               value is String) {

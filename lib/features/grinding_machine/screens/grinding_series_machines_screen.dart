@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../theme/dtc_palette.dart';
+import '../../../widgets/spec_sheet/spec_sheet.dart';
 import '../models/grinding_series.dart';
 import '../providers/grinding_machine_provider.dart';
+import '../utils/grinding_format.dart';
+import '../utils/grinding_series_images.dart';
 import '../widgets/grinding_machine_list_tile.dart';
+import '../widgets/grinding_structured_text.dart';
 
 /// Danh sách model thuộc 1 dòng máy (Series) — mở từ Home khi bấm 1 Series
-/// card. [seriesCode] truyền qua `extra` của go_router.
+/// card. [seriesCode] truyền qua `extra` của go_router. Kiểu dáng theo trang
+/// máy tách màu (bộ khung lib/widgets/spec_sheet).
 class GrindingSeriesMachinesScreen extends StatefulWidget {
   const GrindingSeriesMachinesScreen({super.key, required this.seriesCode});
 
@@ -22,6 +26,7 @@ class GrindingSeriesMachinesScreen extends StatefulWidget {
 class _GrindingSeriesMachinesScreenState
     extends State<GrindingSeriesMachinesScreen> {
   GrindingSeries? _series;
+  Set<String> _tags = const {};
   bool _isLoadingSeries = true;
 
   @override
@@ -30,9 +35,11 @@ class _GrindingSeriesMachinesScreenState
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = context.read<GrindingMachineProvider>();
       final series = await provider.getSeries(widget.seriesCode);
+      final tagsBySeries = await provider.getAllSelectionTagsGrouped();
       if (!mounted) return;
       setState(() {
         _series = series;
+        _tags = tagsBySeries[widget.seriesCode] ?? const {};
         _isLoadingSeries = false;
       });
     });
@@ -40,37 +47,27 @@ class _GrindingSeriesMachinesScreenState
 
   @override
   Widget build(BuildContext context) {
-    final palette = DtcPalette.of(context);
     return Scaffold(
-      backgroundColor: palette.canvas,
       appBar: AppBar(title: Text(_series?.displayCode ?? 'Dòng máy')),
       body: Consumer<GrindingMachineProvider>(
         builder: (context, provider, _) {
           final machines = provider.machinesOf(widget.seriesCode);
           return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 32),
             children: [
               if (_isLoadingSeries)
                 const Center(child: CircularProgressIndicator())
               else if (_series != null)
-                _SeriesHeader(series: _series!),
-              const SizedBox(height: 14),
-              Text(
-                '${machines.length} model',
-                style: TextStyle(
-                  color: palette.muted,
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 8),
+                _SeriesHeader(series: _series!, tags: _tags),
+              const SizedBox(height: 16),
+              SpecSectionLabel('${machines.length} model'),
               if (machines.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
                   child: Center(
                     child: Text(
                       'Chưa có model nào trong cơ sở dữ liệu cho dòng máy này.',
-                      style: TextStyle(color: palette.muted),
+                      style: TextStyle(color: Colors.grey.shade600),
                     ),
                   ),
                 )
@@ -94,61 +91,221 @@ class _GrindingSeriesMachinesScreenState
 }
 
 class _SeriesHeader extends StatelessWidget {
-  const _SeriesHeader({required this.series});
+  const _SeriesHeader({required this.series, required this.tags});
 
   final GrindingSeries series;
+  final Set<String> tags;
 
   @override
   Widget build(BuildContext context) {
-    final palette = DtcPalette.of(context);
+    final isAsp = series.seriesCode == 'ASP_ULTRAFINE';
+    final imagePath = GrindingSeriesImages.pathFor(series.seriesCode);
+    final tagLabels = (tags.toList()..sort())
+        .map(GrindingFormat.tagLabel)
+        .toList();
+    void open3d() => context.push('/grinding_machine/asp-3d');
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: palette.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: palette.border),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SpecTitle(series.nameVi.toUpperCase()),
+          if (series.applicationVi.contains('\n')) ...[
+            // Nội dung nhiều dòng (có gạch đầu dòng) -> canh trái, có cấu trúc.
+            const SizedBox(height: 10),
+            GrindingStructuredText(
+              key: const Key('grinding_series_application'),
+              text: series.applicationVi,
+            ),
+          ] else if (series.applicationVi.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(
+              series.applicationVi,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey.shade800,
+                fontSize: 13,
+                height: 1.45,
+              ),
+            ),
+          ],
+          if (series.structureVi.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            GrindingTextSection(
+              key: const Key('grinding_series_structure'),
+              title: 'Cấu tạo',
+              text: series.structureVi,
+              toggleKey: const Key('grinding_series_structure_toggle'),
+            ),
+          ],
+          if (series.workingPrincipleVi.contains('\n')) ...[
+            const SizedBox(height: 12),
+            GrindingTextSection(
+              key: const Key('grinding_series_principle'),
+              title: 'Nguyên lý hoạt động',
+              text: series.workingPrincipleVi,
+              toggleKey: const Key('grinding_series_principle_toggle'),
+            ),
+          ] else if (series.workingPrincipleVi.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text.rich(
+              key: const Key('grinding_series_principle'),
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Nguyên lý hoạt động: ',
+                    style: TextStyle(
+                      color: Colors.blue.shade900,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  TextSpan(text: series.workingPrincipleVi),
+                ],
+              ),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey.shade800,
+                fontSize: 13,
+                height: 1.45,
+              ),
+            ),
+          ],
+          if (series.featuresVi.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _FeatureList(text: series.featuresVi),
+          ],
+          // Dòng có ảnh thực tế: hiện ảnh máy thay cho các thẻ ứng dụng.
+          if (imagePath != null) ...[
+            const SizedBox(height: 12),
+            SpecImageCard(
+              key: const Key('grinding_series_image'),
+              imagePath: imagePath,
+              zoomTitle: series.nameVi,
+              caption: GrindingSeriesImages.captionFor(series.seriesCode),
+              on3dTap: isAsp ? open3d : null,
+            ),
+          ] else if (tagLabels.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            SpecChipWrap(labels: tagLabels),
+          ],
+          if (isAsp) ...[
+            const SizedBox(height: 14),
+            Spec3dButton(
+              key: const Key('grinding_asp_3d_button'),
+              label: 'Xem mô hình 3D',
+              onPressed: open3d,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Khối "Đặc điểm chính" — mỗi dòng của [text] là 1 ý (VD "1. Nhiệt độ
+/// nghiền thấp: ..."); phần trước dấu ":" in đậm để dễ đọc lướt.
+class _FeatureList extends StatelessWidget {
+  const _FeatureList({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final lines = text
+        .split('\n')
+        .map((l) => l.trim())
+        .where((l) => l.isNotEmpty)
+        .toList();
+    final accent = Colors.blue.shade900;
+    return Container(
+      key: const Key('grinding_series_features'),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.blue.shade100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            series.nameVi,
+            'Đặc điểm chính',
             style: TextStyle(
-              color: palette.ink,
-              fontSize: 17,
+              color: accent,
+              fontSize: 13.5,
               fontWeight: FontWeight.w800,
             ),
           ),
-          if (series.applicationVi.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            Text(
-              series.applicationVi,
-              style: TextStyle(color: palette.ink, fontSize: 13, height: 1.4),
-            ),
-          ],
-          if (series.seriesCode == 'ASP_ULTRAFINE') ...[
-            const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                key: const Key('grinding_asp_3d_button'),
-                onPressed: () => context.push('/grinding_machine/asp-3d'),
-                icon: const Icon(Icons.view_in_ar_rounded),
-                label: const Text('Xem mô hình 3D'),
+          const SizedBox(height: 6),
+          for (final line in lines)
+            if (line.startsWith('- '))
+              // Gạch đầu dòng "- ..." -> "•" (VD ưu điểm của ASP).
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '•  ',
+                      style: TextStyle(
+                        color: accent,
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text.rich(
+                        _featureSpan(line.substring(2), accent),
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 13,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Text.rich(
+                  _featureSpan(line, accent),
+                  style: TextStyle(
+                    color: Colors.grey.shade800,
+                    fontSize: 13,
+                    height: 1.4,
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Mô hình đại diện: ASP-350',
-              style: TextStyle(
-                color: palette.muted,
-                fontSize: 11.5,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
         ],
       ),
+    );
+  }
+
+  static TextSpan _featureSpan(String line, Color accent) {
+    final colon = line.indexOf(':');
+    if (colon <= 0) return TextSpan(text: line);
+    return TextSpan(
+      children: [
+        TextSpan(
+          text: line.substring(0, colon + 1),
+          style: TextStyle(color: accent, fontWeight: FontWeight.w700),
+        ),
+        TextSpan(text: line.substring(colon + 1)),
+      ],
     );
   }
 }

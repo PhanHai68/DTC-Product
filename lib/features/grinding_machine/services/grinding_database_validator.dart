@@ -30,6 +30,9 @@ abstract final class GrindingImportSchema {
       'pdfPages': 'text',
       'applicationVi': 'text',
       'workingPrincipleVi': 'text',
+      // Cột thêm sau (seed 2.2.6) — file Excel cũ không có cột này vẫn hợp lệ.
+      'featuresVi': 'optionalText',
+      'structureVi': 'optionalText',
       'notes': 'text',
     },
     'models': {
@@ -194,6 +197,7 @@ abstract final class GrindingDatabaseValidator {
           switch (f.value) {
             case 'id':
             case 'text':
+            case 'optionalText':
               valid = v is String;
             case 'bool':
             case 'requiredBool':

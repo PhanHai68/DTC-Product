@@ -16,7 +16,7 @@ class GrindingMachineDatabase {
   /// Nguồn duy nhất cho version DB hiện tại — dùng lại ở [database] VÀ ở
   /// nơi cần hiển thị/so sánh (VD Backup Screen, Phase 11) thay vì hard-code
   /// số `5` thêm 1 chỗ nữa.
-  static const currentVersion = 5;
+  static const currentVersion = 7;
 
   /// Bọc quanh 1 Database đã mở sẵn (VD sqflite_common_ffi in-memory) — chỉ
   /// dùng cho test.
@@ -45,6 +45,8 @@ class GrindingMachineDatabase {
         pdfPages TEXT NOT NULL DEFAULT '',
         applicationVi TEXT NOT NULL DEFAULT '',
         workingPrincipleVi TEXT NOT NULL DEFAULT '',
+        featuresVi TEXT NOT NULL DEFAULT '',
+        structureVi TEXT NOT NULL DEFAULT '',
         notes TEXT NOT NULL DEFAULT ''
       )
     ''');
@@ -388,6 +390,29 @@ class GrindingMachineDatabase {
       // Bảng đã tồn tại từ 1 lần cài v3 thật (thiếu cột revision chain).
       await _addProposalRevisionColumns(db);
     }
+    if (oldVersion < 6 && newVersion >= 6) {
+      // Cột "Đặc điểm chính" của dòng máy thêm ở v6.
+      await _addSeriesTextColumn(db, 'featuresVi');
+    }
+    if (oldVersion < 7 && newVersion >= 7) {
+      // Cột "Cấu tạo" của dòng máy thêm ở v7.
+      await _addSeriesTextColumn(db, 'structureVi');
+    }
+  }
+
+  /// Thêm 1 cột văn bản vào grinding_series nếu bảng có và cột chưa có.
+  Future<void> _addSeriesTextColumn(Database db, String column) async {
+    final tables = await db.query(
+      'sqlite_master',
+      where: 'type = ? AND name = ?',
+      whereArgs: ['table', 'grinding_series'],
+    );
+    if (tables.isEmpty) return;
+    final columns = await db.rawQuery('PRAGMA table_info(grinding_series)');
+    if (columns.any((c) => c['name'] == column)) return;
+    await db.execute(
+      "ALTER TABLE grinding_series ADD COLUMN $column TEXT NOT NULL DEFAULT ''",
+    );
   }
 
   Future<void> close() async {

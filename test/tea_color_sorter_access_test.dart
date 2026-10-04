@@ -48,10 +48,7 @@ void main() {
 
     final button = find.byKey(const Key('tea_aux_equip_button'));
     expect(
-      find.descendant(
-        of: button,
-        matching: find.byIcon(Icons.settings_outlined),
-      ),
+      find.descendant(of: button, matching: find.byIcon(Icons.open_in_new)),
       findsOneWidget,
     );
 

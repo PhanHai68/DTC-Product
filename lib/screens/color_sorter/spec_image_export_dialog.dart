@@ -11,13 +11,35 @@ Future<void> showSpecImageExportDialog({
   required BuildContext context,
   required Map<String, String> specs,
   String? imagePath,
+  String productLabel = 'máy tách màu',
+  SpecShareTextBuilder? buildText,
+  SpecSharePdfBuilder? buildPdf,
+  List<(IconData, String)>? contentItems,
 }) {
   return showDialog<void>(
     context: context,
     useSafeArea: false,
-    builder: (_) => SpecImageExportDialog(specs: specs, imagePath: imagePath),
+    builder: (_) => SpecImageExportDialog(
+      specs: specs,
+      imagePath: imagePath,
+      productLabel: productLabel,
+      buildText: buildText,
+      buildPdf: buildPdf,
+      contentItems: contentItems,
+    ),
   );
 }
+
+/// Dựng văn bản chia sẻ từ thông tin liên hệ — mặc định dùng mẫu máy tách màu.
+typedef SpecShareTextBuilder =
+    String Function({required String contactName, required String contactPhone});
+
+/// Dựng file PDF chia sẻ — mặc định dùng catalog máy tách màu.
+typedef SpecSharePdfBuilder =
+    Future<Uint8List> Function({
+      required String contactName,
+      required String contactPhone,
+    });
 
 String buildColorSorterSpecShareText({
   required Map<String, String> specs,
@@ -64,7 +86,23 @@ class SpecImageExportDialog extends StatefulWidget {
   final Map<String, String> specs;
   final String? imagePath;
 
-  const SpecImageExportDialog({super.key, required this.specs, this.imagePath});
+  /// Tên loại máy viết thường, VD "máy tách màu", "máy nghiền".
+  final String productLabel;
+  final SpecShareTextBuilder? buildText;
+  final SpecSharePdfBuilder? buildPdf;
+
+  /// Danh sách "Nội dung chia sẻ" hiển thị trong thẻ xem trước.
+  final List<(IconData, String)>? contentItems;
+
+  const SpecImageExportDialog({
+    super.key,
+    required this.specs,
+    this.imagePath,
+    this.productLabel = 'máy tách màu',
+    this.buildText,
+    this.buildPdf,
+    this.contentItems,
+  });
 
   @override
   State<SpecImageExportDialog> createState() => _SpecImageExportDialogState();
@@ -79,6 +117,21 @@ class _SpecImageExportDialogState extends State<SpecImageExportDialog> {
   final _phoneController = TextEditingController();
   bool _isSharing = false;
   bool _isLoadingContact = true;
+
+  /// "máy tách màu" -> "may-tach-mau" để đặt tên file PDF.
+  String get _productSlug {
+    const from = 'àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ';
+    const to = 'aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd';
+    final buffer = StringBuffer();
+    for (final ch in widget.productLabel.toLowerCase().split('')) {
+      final i = from.indexOf(ch);
+      buffer.write(i >= 0 ? to[i] : ch);
+    }
+    return buffer
+        .toString()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+        .replaceAll(RegExp(r'^-|-$'), '');
+  }
 
   String get _contactName => _nameController.text.trim();
   String get _contactPhone => _phoneController.text.trim();
@@ -152,11 +205,16 @@ class _SpecImageExportDialogState extends State<SpecImageExportDialog> {
   Future<void> _copyText() async {
     if (!_validateContact()) return;
     await _saveContact();
-    final text = buildColorSorterSpecShareText(
-      specs: widget.specs,
-      contactName: _contactName,
-      contactPhone: _contactPhone,
-    );
+    final text =
+        widget.buildText?.call(
+          contactName: _contactName,
+          contactPhone: _contactPhone,
+        ) ??
+        buildColorSorterSpecShareText(
+          specs: widget.specs,
+          contactName: _contactName,
+          contactPhone: _contactPhone,
+        );
     await Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -173,16 +231,21 @@ class _SpecImageExportDialogState extends State<SpecImageExportDialog> {
     setState(() => _isSharing = true);
     try {
       await _saveContact();
-      final bytes = await DtcPdfExportService.buildColorSorterCatalog(
-        specs: widget.specs,
-        contactName: _contactName,
-        contactPhone: _contactPhone,
-        machineImagePath: widget.imagePath,
-      );
+      final bytes = widget.buildPdf != null
+          ? await widget.buildPdf!(
+              contactName: _contactName,
+              contactPhone: _contactPhone,
+            )
+          : await DtcPdfExportService.buildColorSorterCatalog(
+              specs: widget.specs,
+              contactName: _contactName,
+              contactPhone: _contactPhone,
+              machineImagePath: widget.imagePath,
+            );
       if (!mounted) return;
       final model = widget.specs['Model'] ?? 'SC';
       final safeModel = model.replaceAll(RegExp(r'[^a-zA-Z0-9]+'), '-');
-      final fileName = 'catalog-may-tach-mau-$safeModel.pdf';
+      final fileName = 'catalog-$_productSlug-$safeModel.pdf';
       final renderBox = context.findRenderObject() as RenderBox?;
       final origin = renderBox == null
           ? null
@@ -193,9 +256,9 @@ class _SpecImageExportDialogState extends State<SpecImageExportDialog> {
             XFile.fromData(bytes, mimeType: 'application/pdf', name: fileName),
           ],
           text:
-              'Catalog máy tách màu ${model.toUpperCase()}\n'
+              'Catalog ${widget.productLabel} ${model.toUpperCase()}\n'
               'Liên hệ tư vấn: $_contactName - $_contactPhone',
-          title: 'Catalog máy tách màu ${model.toUpperCase()}',
+          title: 'Catalog ${widget.productLabel} ${model.toUpperCase()}',
           sharePositionOrigin: origin,
           fileNameOverrides: [fileName],
         ),
@@ -311,7 +374,7 @@ class _SpecImageExportDialogState extends State<SpecImageExportDialog> {
                               ),
                               const SizedBox(height: 14),
                               Text(
-                                'CATALOG MÁY TÁCH MÀU $model',
+                                'CATALOG ${widget.productLabel.toUpperCase()} $model',
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   color: Color(0xFF0A2740),
@@ -330,7 +393,7 @@ class _SpecImageExportDialogState extends State<SpecImageExportDialog> {
                                 ),
                               ],
                               const SizedBox(height: 12),
-                              const _CatalogContents(),
+                              _CatalogContents(items: widget.contentItems),
                             ],
                           ),
                         ),
@@ -439,16 +502,20 @@ class _SpecImageExportDialogState extends State<SpecImageExportDialog> {
 }
 
 class _CatalogContents extends StatelessWidget {
-  const _CatalogContents();
+  const _CatalogContents({this.items});
+
+  final List<(IconData, String)>? items;
+
+  static const _colorSorterItems = [
+    (Icons.table_chart_outlined, 'Bảng thông số kỹ thuật đầy đủ'),
+    (Icons.memory_outlined, '6 đặc tính công nghệ và diễn giải'),
+    (Icons.grid_view_outlined, 'Chi tiết ứng dụng thực tế'),
+    (Icons.location_on_outlined, 'Liên hệ tư vấn và hệ thống địa chỉ'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    const items = [
-      (Icons.table_chart_outlined, 'Bảng thông số kỹ thuật đầy đủ'),
-      (Icons.memory_outlined, '6 đặc tính công nghệ và diễn giải'),
-      (Icons.grid_view_outlined, 'Chi tiết ứng dụng thực tế'),
-      (Icons.location_on_outlined, 'Liên hệ tư vấn và hệ thống địa chỉ'),
-    ];
+    final items = this.items ?? _colorSorterItems;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../../theme/dtc_palette.dart';
 import '../models/grinding_machine.dart';
 import '../utils/grinding_format.dart';
+import '../utils/grinding_series_images.dart';
+import '../utils/grinding_spec_sheet.dart';
 
 /// Hàng hiển thị 1 model trong danh sách (Series list / Search) — chỉ hiện
-/// các thông số CÓ dữ liệu, không hiển thị placeholder rỗng.
+/// các thông số CÓ dữ liệu, không hiển thị placeholder rỗng. Bên trái là ảnh
+/// thực tế của dòng máy (dòng chưa có ảnh thì dùng icon), tên model xanh
+/// đậm, ô giá trị màu.
 class GrindingMachineListTile extends StatelessWidget {
   const GrindingMachineListTile({
     super.key,
@@ -23,19 +26,21 @@ class GrindingMachineListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = DtcPalette.of(context);
-    final chips = [
-      GrindingFormat.capacityRange(machine),
-      GrindingFormat.finenessRange(machine),
-    ].whereType<String>().toList();
+    final chips = <(String, Color)>[
+      if (GrindingFormat.capacityRange(machine) case final v?)
+        (v, GrindingSpecSheet.capacityColor),
+      if (GrindingFormat.finenessRange(machine) case final v?)
+        (v, GrindingSpecSheet.finenessColor),
+    ];
 
     return Material(
-      color: palette.surface,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: palette.border),
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade200),
       ),
       clipBehavior: Clip.antiAlias,
+      elevation: 0,
       child: InkWell(
         key: Key('grinding_machine_tile_${machine.machineId}'),
         onTap: onTap,
@@ -43,6 +48,43 @@ class GrindingMachineListTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Row(
             children: [
+              if (GrindingSeriesImages.pathFor(machine.seriesCode)
+                  case final imagePath?)
+                // Ảnh thực tế của dòng máy, khung trắng như Cân đóng gói.
+                Container(
+                  key: Key('grinding_machine_thumb_${machine.machineId}'),
+                  width: 60,
+                  height: 60,
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(7),
+                    child: Image.asset(
+                      imagePath,
+                      fit: BoxFit.contain,
+                      cacheWidth: 180,
+                    ),
+                  ),
+                )
+              else
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade800.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.precision_manufacturing_outlined,
+                    size: 20,
+                    color: Colors.blue.shade800,
+                  ),
+                ),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,8 +92,8 @@ class GrindingMachineListTile extends StatelessWidget {
                     Text(
                       machine.model,
                       style: TextStyle(
-                        color: palette.ink,
-                        fontSize: 15.5,
+                        color: Colors.blue.shade900,
+                        fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -59,7 +101,10 @@ class GrindingMachineListTile extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         subtitle!,
-                        style: TextStyle(color: palette.muted, fontSize: 12),
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                     if (chips.isNotEmpty) ...[
@@ -67,16 +112,17 @@ class GrindingMachineListTile extends StatelessWidget {
                       Wrap(
                         spacing: 6,
                         runSpacing: 6,
-                        children: chips
-                            .map((c) => _SpecChip(text: c))
-                            .toList(),
+                        children: [
+                          for (final (text, color) in chips)
+                            _SpecChip(text: text, color: color),
+                        ],
                       ),
                     ],
                   ],
                 ),
               ),
               const SizedBox(width: 8),
-              Icon(Icons.chevron_right_rounded, color: palette.cyan),
+              Icon(Icons.chevron_right_rounded, color: Colors.blue.shade800),
             ],
           ),
         ),
@@ -86,24 +132,25 @@ class GrindingMachineListTile extends StatelessWidget {
 }
 
 class _SpecChip extends StatelessWidget {
-  const _SpecChip({required this.text});
+  const _SpecChip({required this.text, required this.color});
 
   final String text;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final palette = DtcPalette.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
       decoration: BoxDecoration(
-        color: palette.cyan.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(999),
+        color: color.withValues(alpha: 0.09),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Text(
         text,
         style: TextStyle(
-          color: palette.navy,
-          fontSize: 11.5,
+          color: color,
+          fontSize: 12,
           fontWeight: FontWeight.w700,
         ),
       ),

@@ -251,7 +251,11 @@ Future<void> _seedCatalogMachine(Database db) async {
 }
 
 Future<List<String>> _tableNames(Database db) async {
-  final rows = await db.query('sqlite_master', where: "type = 'table'", columns: ['name']);
+  final rows = await db.query(
+    'sqlite_master',
+    where: "type = 'table'",
+    columns: ['name'],
+  );
   return rows.map((r) => r['name'] as String).toList();
 }
 
@@ -272,11 +276,43 @@ void main() {
     await database.close();
   });
 
+  test(
+    'v5 -> v6: grinding_series thêm cột featuresVi, dữ liệu cũ giữ nguyên',
+    () async {
+      await _createCatalogTables(database);
+      await database.insert('grinding_series', {
+        'seriesCode': 'ASU_UNIVERSAL',
+        'displayCode': 'ASU',
+        'nameVi': 'Máy nghiền đa năng',
+      });
+
+      await GrindingMachineDatabase.instance.upgradeSchemaForTesting(
+        database,
+        5,
+        GrindingMachineDatabase.currentVersion,
+      );
+
+      final columns = (await database.rawQuery(
+        'PRAGMA table_info(grinding_series)',
+      )).map((c) => c['name']).toList();
+      expect(columns, contains('featuresVi'));
+      final row = (await database.query('grinding_series')).single;
+      expect(row['nameVi'], 'Máy nghiền đa năng');
+      expect(row['featuresVi'], '');
+      // v7 thêm cột "Cấu tạo".
+      expect(row['structureVi'], '');
+    },
+  );
+
   test('v1 -> latest (v5): catalog giữ nguyên, project/proposal tables được tạo mới hoạt động được', () async {
     await _createCatalogTables(database);
     await _seedCatalogMachine(database);
 
-    await GrindingMachineDatabase.instance.upgradeSchemaForTesting(database, 1, 5);
+    await GrindingMachineDatabase.instance.upgradeSchemaForTesting(
+      database,
+      1,
+      5,
+    );
 
     final machines = await database.query('grinding_machines');
     expect(machines, hasLength(1));
@@ -322,154 +358,192 @@ void main() {
       'addedAt': DateTime(2026, 1, 1).toIso8601String(),
     });
 
-    await GrindingMachineDatabase.instance.upgradeSchemaForTesting(database, 2, 5);
+    await GrindingMachineDatabase.instance.upgradeSchemaForTesting(
+      database,
+      2,
+      5,
+    );
 
-    final row = (await database.query('grinding_selection_projects', where: 'id = ?', whereArgs: [projectId])).single;
+    final row = (await database.query(
+      'grinding_selection_projects',
+      where: 'id = ?',
+      whereArgs: [projectId],
+    )).single;
     expect(row['projectName'], 'Dự án v2');
     expect(row['customerName'], 'Khách hàng v2');
     expect(row['nextFollowUpAt'], isNull);
     expect(row['followUpNote'], isNull);
 
-    final relations = await database.query('grinding_selection_project_machines');
+    final relations = await database.query(
+      'grinding_selection_project_machines',
+    );
     expect(relations, hasLength(1));
     expect(relations.single['machineId'], 'M1');
 
     final tables = await _tableNames(database);
-    expect(tables, containsAll(['grinding_proposals', 'grinding_proposal_line_items']));
+    expect(
+      tables,
+      containsAll(['grinding_proposals', 'grinding_proposal_line_items']),
+    );
   });
 
-  test(
-    'v3 -> latest (v5): project + proposal Phase 8 (chưa có revision chain) giữ nguyên, rootProposalId backfill, follow-up cột mới',
-    () async {
-      await _createCatalogTables(database);
-      await _createV2ProjectTables(database);
-      await _createV3ProposalTables(database);
-      await _seedCatalogMachine(database);
-      final projectId = await database.insert('grinding_selection_projects', {
-        'projectName': 'Dự án v3',
-        'status': 'draft',
-        'createdAt': DateTime(2026, 1, 1).toIso8601String(),
-        'updatedAt': DateTime(2026, 1, 1).toIso8601String(),
-      });
-      final proposalId = await database.insert('grinding_proposals', {
-        'projectId': projectId,
-        'proposalNumber': 'GM-2026-0001',
-        'status': 'final',
-        'currency': 'VND',
-        'machineId': 'M1',
-        'technicalSnapshotJson': '{"machineId":"M1","model":"ASP-350","capturedAt":"2026-01-01T00:00:00.000"}',
-        'revision': 0,
-        'createdAt': DateTime(2026, 1, 1).toIso8601String(),
-        'updatedAt': DateTime(2026, 1, 1).toIso8601String(),
-        'finalizedAt': DateTime(2026, 1, 1).toIso8601String(),
-      });
-      await database.insert('grinding_proposal_line_items', {
-        'proposalId': proposalId,
-        'kind': 'accessory',
-        'name': 'Cyclone phụ',
-        'quantity': 1,
-        'unitPrice': 5000000,
-        'sortOrder': 0,
-      });
+  test('v3 -> latest (v5): project + proposal Phase 8 (chưa có revision chain) giữ nguyên, rootProposalId backfill, follow-up cột mới', () async {
+    await _createCatalogTables(database);
+    await _createV2ProjectTables(database);
+    await _createV3ProposalTables(database);
+    await _seedCatalogMachine(database);
+    final projectId = await database.insert('grinding_selection_projects', {
+      'projectName': 'Dự án v3',
+      'status': 'draft',
+      'createdAt': DateTime(2026, 1, 1).toIso8601String(),
+      'updatedAt': DateTime(2026, 1, 1).toIso8601String(),
+    });
+    final proposalId = await database.insert('grinding_proposals', {
+      'projectId': projectId,
+      'proposalNumber': 'GM-2026-0001',
+      'status': 'final',
+      'currency': 'VND',
+      'machineId': 'M1',
+      'technicalSnapshotJson': '{"machineId":"M1","model":"ASP-350","capturedAt":"2026-01-01T00:00:00.000"}',
+      'revision': 0,
+      'createdAt': DateTime(2026, 1, 1).toIso8601String(),
+      'updatedAt': DateTime(2026, 1, 1).toIso8601String(),
+      'finalizedAt': DateTime(2026, 1, 1).toIso8601String(),
+    });
+    await database.insert('grinding_proposal_line_items', {
+      'proposalId': proposalId,
+      'kind': 'accessory',
+      'name': 'Cyclone phụ',
+      'quantity': 1,
+      'unitPrice': 5000000,
+      'sortOrder': 0,
+    });
 
-      await GrindingMachineDatabase.instance.upgradeSchemaForTesting(database, 3, 5);
+    await GrindingMachineDatabase.instance.upgradeSchemaForTesting(
+      database,
+      3,
+      5,
+    );
 
-      final proposalRow = (await database.query('grinding_proposals', where: 'id = ?', whereArgs: [proposalId])).single;
-      expect(proposalRow['proposalNumber'], 'GM-2026-0001');
-      expect(proposalRow['status'], 'final');
-      expect(proposalRow['rootProposalId'], proposalId);
-      expect(proposalRow['revision'], 0);
-      expect(
-        proposalRow['technicalSnapshotJson'],
-        '{"machineId":"M1","model":"ASP-350","capturedAt":"2026-01-01T00:00:00.000"}',
-      );
+    final proposalRow = (await database.query(
+      'grinding_proposals',
+      where: 'id = ?',
+      whereArgs: [proposalId],
+    )).single;
+    expect(proposalRow['proposalNumber'], 'GM-2026-0001');
+    expect(proposalRow['status'], 'final');
+    expect(proposalRow['rootProposalId'], proposalId);
+    expect(proposalRow['revision'], 0);
+    expect(
+      proposalRow['technicalSnapshotJson'],
+      '{"machineId":"M1","model":"ASP-350","capturedAt":"2026-01-01T00:00:00.000"}',
+    );
 
-      final items = await database.query('grinding_proposal_line_items', where: 'proposalId = ?', whereArgs: [proposalId]);
-      expect(items, hasLength(1));
-      expect(items.single['name'], 'Cyclone phụ');
+    final items = await database.query(
+      'grinding_proposal_line_items',
+      where: 'proposalId = ?',
+      whereArgs: [proposalId],
+    );
+    expect(items, hasLength(1));
+    expect(items.single['name'], 'Cyclone phụ');
 
-      final projectRow = (await database.query('grinding_selection_projects', where: 'id = ?', whereArgs: [projectId])).single;
-      expect(projectRow['nextFollowUpAt'], isNull);
-    },
-  );
+    final projectRow = (await database.query(
+      'grinding_selection_projects',
+      where: 'id = ?',
+      whereArgs: [projectId],
+    )).single;
+    expect(projectRow['nextFollowUpAt'], isNull);
+  });
 
-  test(
-    'v4 -> latest (v5): project + proposal chain + revision + line items + snapshot + status/timestamps giữ nguyên toàn bộ, follow-up mới null',
-    () async {
-      await _createCatalogTables(database);
-      await _createV2ProjectTables(database);
-      await _createV4ProposalTables(database);
-      await _seedCatalogMachine(database);
+  test('v4 -> latest (v5): project + proposal chain + revision + line items + snapshot + status/timestamps giữ nguyên toàn bộ, follow-up mới null', () async {
+    await _createCatalogTables(database);
+    await _createV2ProjectTables(database);
+    await _createV4ProposalTables(database);
+    await _seedCatalogMachine(database);
 
-      final projectId = await database.insert('grinding_selection_projects', {
-        'projectName': 'Dự án v4 đầy đủ',
-        'customerName': 'Khách hàng v4',
-        'status': 'selected',
-        'createdAt': DateTime(2026, 1, 1).toIso8601String(),
-        'updatedAt': DateTime(2026, 2, 1).toIso8601String(),
-      });
-      final r0Id = await database.insert('grinding_proposals', {
-        'projectId': projectId,
-        'proposalNumber': 'GM-2026-0012',
-        'status': 'sent',
-        'currency': 'USD',
-        'machineId': 'M1',
-        'technicalSnapshotJson': '{"machineId":"M1","model":"ASP-350","capturedAt":"2026-01-01T00:00:00.000"}',
-        'rootProposalId': null,
-        'revision': 0,
-        'sentAt': DateTime(2026, 1, 15).toIso8601String(),
-        'createdAt': DateTime(2026, 1, 1).toIso8601String(),
-        'updatedAt': DateTime(2026, 1, 15).toIso8601String(),
-        'finalizedAt': DateTime(2026, 1, 1).toIso8601String(),
-      });
-      await database.rawUpdate('UPDATE grinding_proposals SET rootProposalId = ? WHERE id = ?', [r0Id, r0Id]);
-      final r1Id = await database.insert('grinding_proposals', {
-        'projectId': projectId,
-        'proposalNumber': 'GM-2026-0012',
-        'status': 'accepted',
-        'currency': 'USD',
-        'machineId': 'M1',
-        'rootProposalId': r0Id,
-        'revision': 1,
-        'acceptedAt': DateTime(2026, 2, 1).toIso8601String(),
-        'createdAt': DateTime(2026, 1, 20).toIso8601String(),
-        'updatedAt': DateTime(2026, 2, 1).toIso8601String(),
-      });
-      await database.insert('grinding_proposal_line_items', {
-        'proposalId': r1Id,
-        'kind': 'additional_cost',
-        'name': 'Shipping',
-        'quantity': 1,
-        'unitPrice': 500,
-        'sortOrder': 0,
-      });
+    final projectId = await database.insert('grinding_selection_projects', {
+      'projectName': 'Dự án v4 đầy đủ',
+      'customerName': 'Khách hàng v4',
+      'status': 'selected',
+      'createdAt': DateTime(2026, 1, 1).toIso8601String(),
+      'updatedAt': DateTime(2026, 2, 1).toIso8601String(),
+    });
+    final r0Id = await database.insert('grinding_proposals', {
+      'projectId': projectId,
+      'proposalNumber': 'GM-2026-0012',
+      'status': 'sent',
+      'currency': 'USD',
+      'machineId': 'M1',
+      'technicalSnapshotJson': '{"machineId":"M1","model":"ASP-350","capturedAt":"2026-01-01T00:00:00.000"}',
+      'rootProposalId': null,
+      'revision': 0,
+      'sentAt': DateTime(2026, 1, 15).toIso8601String(),
+      'createdAt': DateTime(2026, 1, 1).toIso8601String(),
+      'updatedAt': DateTime(2026, 1, 15).toIso8601String(),
+      'finalizedAt': DateTime(2026, 1, 1).toIso8601String(),
+    });
+    await database.rawUpdate(
+      'UPDATE grinding_proposals SET rootProposalId = ? WHERE id = ?',
+      [r0Id, r0Id],
+    );
+    final r1Id = await database.insert('grinding_proposals', {
+      'projectId': projectId,
+      'proposalNumber': 'GM-2026-0012',
+      'status': 'accepted',
+      'currency': 'USD',
+      'machineId': 'M1',
+      'rootProposalId': r0Id,
+      'revision': 1,
+      'acceptedAt': DateTime(2026, 2, 1).toIso8601String(),
+      'createdAt': DateTime(2026, 1, 20).toIso8601String(),
+      'updatedAt': DateTime(2026, 2, 1).toIso8601String(),
+    });
+    await database.insert('grinding_proposal_line_items', {
+      'proposalId': r1Id,
+      'kind': 'additional_cost',
+      'name': 'Shipping',
+      'quantity': 1,
+      'unitPrice': 500,
+      'sortOrder': 0,
+    });
 
-      await GrindingMachineDatabase.instance.upgradeSchemaForTesting(database, 4, 5);
+    await GrindingMachineDatabase.instance.upgradeSchemaForTesting(
+      database,
+      4,
+      5,
+    );
 
-      final proposals = await database.query(
-        'grinding_proposals',
-        where: 'projectId = ?',
-        whereArgs: [projectId],
-        orderBy: 'revision ASC',
-      );
-      expect(proposals, hasLength(2));
-      expect(proposals[0]['status'], 'sent');
-      expect(proposals[0]['sentAt'], DateTime(2026, 1, 15).toIso8601String());
-      expect(proposals[0]['technicalSnapshotJson'], isNotNull);
-      expect(proposals[1]['status'], 'accepted');
-      expect(proposals[1]['acceptedAt'], DateTime(2026, 2, 1).toIso8601String());
-      expect(proposals[1]['rootProposalId'], r0Id);
+    final proposals = await database.query(
+      'grinding_proposals',
+      where: 'projectId = ?',
+      whereArgs: [projectId],
+      orderBy: 'revision ASC',
+    );
+    expect(proposals, hasLength(2));
+    expect(proposals[0]['status'], 'sent');
+    expect(proposals[0]['sentAt'], DateTime(2026, 1, 15).toIso8601String());
+    expect(proposals[0]['technicalSnapshotJson'], isNotNull);
+    expect(proposals[1]['status'], 'accepted');
+    expect(proposals[1]['acceptedAt'], DateTime(2026, 2, 1).toIso8601String());
+    expect(proposals[1]['rootProposalId'], r0Id);
 
-      final items = await database.query('grinding_proposal_line_items', where: 'proposalId = ?', whereArgs: [r1Id]);
-      expect(items, hasLength(1));
-      expect(items.single['name'], 'Shipping');
+    final items = await database.query(
+      'grinding_proposal_line_items',
+      where: 'proposalId = ?',
+      whereArgs: [r1Id],
+    );
+    expect(items, hasLength(1));
+    expect(items.single['name'], 'Shipping');
 
-      final projectRow = (await database.query('grinding_selection_projects', where: 'id = ?', whereArgs: [projectId])).single;
-      expect(projectRow['projectName'], 'Dự án v4 đầy đủ');
-      expect(projectRow['nextFollowUpAt'], isNull);
-      expect(projectRow['followUpNote'], isNull);
-    },
-  );
+    final projectRow = (await database.query(
+      'grinding_selection_projects',
+      where: 'id = ?',
+      whereArgs: [projectId],
+    )).single;
+    expect(projectRow['projectName'], 'Dự án v4 đầy đủ');
+    expect(projectRow['nextFollowUpAt'], isNull);
+    expect(projectRow['followUpNote'], isNull);
+  });
 
   test('v5 fresh install: schema đầy đủ, đủ bảng, catalog trống hợp lệ (chưa import)', () async {
     await GrindingMachineDatabase.instance.createSchemaForTesting(database);

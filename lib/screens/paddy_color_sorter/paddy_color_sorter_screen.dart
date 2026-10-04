@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/paddy_color_sorter_provider.dart';
 import '../../data/specs_data.dart';
+import '../../data/paddy_specs_data.dart';
 import '../color_sorter/spec_image_export_dialog.dart';
 
 class PaddyColorSorterScreen extends StatefulWidget {
@@ -257,19 +258,19 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.auto_awesome_mosaic,
-                  color: Colors.green.shade600,
+                  Icons.check_circle_rounded,
+                  color: Colors.green.shade700,
                   size: 24,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
+              const SizedBox(width: 10),
+              const Expanded(
                 child: Text(
-                  'Chi Tiết Ứng Dụng',
+                  'Chi Tiết Ứng Dụng Thực Tế',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.green.shade800,
                     fontSize: 18,
+                    color: Color(0xFF1E293B),
                   ),
                 ),
               ),
@@ -286,7 +287,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue.shade300, width: 1.2),
+                    border: Border.all(color: Colors.blue.shade200, width: 1.2),
                   ),
                   child: const Text(
                     'Máy tách màu lúa giống và lúa cựa lứt SF7D Pro dùng để phân loại thóc và gạo xô tại cối hồi hoặc phễu của gầu tải (Tuỳ gầu), lượng gạo xô sau khi phân loại sẽ đi qua giai đoạn xát trắng mà không cần quay trở lại máy bóc vỏ, giúp giảm tỷ lệ gãy / vỡ đến 96%.\n\nĐồng thời, SF7D Pro giúp tăng sản lượng gạo xô thu hồi đến 99.99% sau giai đoạn gầu tải thóc.\n\nMáy tách màu lúa giống và lúa cựa lứt SF7D Pro được trang bị 7 máng với năng suất đạt được 3.5 - 7 tấn trong một giờ giúp sản lượng thành phẩm thu hoạch đạt được gấp 10 lần năng suất thông thường. Tuy có năng suất lớn nhưng công suất điện tiêu thụ chỉ đạt 3.5kW giúp tiết kiệm điện năng tốt nhất.',
@@ -300,24 +301,22 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
               ],
             ),
           ),
-          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           actions: [
             ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green.shade600,
+                backgroundColor: const Color(0xFF1E3A8A),
                 foregroundColor: Colors.white,
-                elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
+                  horizontal: 20,
                   vertical: 10,
                 ),
               ),
               child: const Text(
-                'Đã hiểu',
+                'Đóng',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -373,7 +372,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                 const Text(
                   'Nhập sản lượng cần tách của nhà máy để nhận gợi ý model và cấu hình đồng bộ phù hợp nhất:',
                   style: TextStyle(
-                    fontSize: 13.5,
+                    fontSize: 13,
                     color: Colors.black87,
                     height: 1.4,
                   ),
@@ -390,7 +389,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                     prefixIcon: const Icon(Icons.speed),
                     suffixText: 'tấn/h',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   onChanged: (val) {
@@ -711,7 +710,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
               value,
               style: TextStyle(
                 fontWeight: FontWeight.w800,
-                fontSize: 14.5,
+                fontSize: 15,
                 color: color,
                 letterSpacing: -0.3,
               ),
@@ -723,7 +722,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
             Text(
               title,
               style: TextStyle(
-                fontSize: 11.5,
+                fontSize: 12,
                 color: Colors.grey.shade600,
                 fontWeight: FontWeight.w600,
                 height: 1.15,
@@ -824,7 +823,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                   key,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 13.5,
+                    fontSize: 13,
                     color: Color(0xFF1A1A2E),
                   ),
                 ),
@@ -850,7 +849,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 12.5,
+                      fontSize: 13,
                       color: specColor,
                       height: 1.25,
                     ),
@@ -900,8 +899,99 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
         body: Consumer<PaddyColorSorterProvider>(
           builder: (context, provider, child) {
             final specs = provider.specs;
+            final selectedModel = provider.selectedModel;
             return Column(
               children: [
+                // Quick Model Selector Chips
+                Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 12,
+                  ),
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: paddyColorSorterSpecs
+                          .map((e) => e['Model'] ?? '')
+                          .where((m) => m.isNotEmpty)
+                          .map((m) {
+                            final isSelected =
+                                m.toLowerCase() == selectedModel.toLowerCase();
+                            final isPro = m.toLowerCase().contains('pro');
+
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4.0,
+                              ),
+                              child: FilterChip(
+                                selected: isSelected,
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(m),
+                                    if (isPro) ...[
+                                      const SizedBox(width: 4),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                          vertical: 1,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? Colors.amber
+                                              : Colors.red,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'AI',
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? Colors.black87
+                                                : Colors.white,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                selectedColor: Colors.blue.shade800,
+                                checkmarkColor: Colors.white,
+                                labelStyle: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.black87,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                                backgroundColor: Colors.grey.shade100,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: BorderSide(
+                                    color: isSelected
+                                        ? Colors.blue.shade800
+                                        : Colors.grey.shade300,
+                                  ),
+                                ),
+                                onSelected: (_) => provider.selectModel(m),
+                              ),
+                            );
+                          })
+                          .toList(),
+                    ),
+                  ),
+                ),
+
+                const Divider(height: 1),
+
                 // Main Content Area
                 Expanded(
                   child: provider.isLoading
@@ -950,7 +1040,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
-                                                  BorderRadius.circular(14),
+                                                  BorderRadius.circular(16),
                                               border: Border.all(
                                                 color: Colors.grey.shade200,
                                               ),
@@ -1050,7 +1140,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                                               style: TextStyle(
                                                                 color: Colors
                                                                     .white,
-                                                                fontSize: 11.5,
+                                                                fontSize: 12,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -1075,7 +1165,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                                       color: Colors.black54,
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                            6,
+                                                            8,
                                                           ),
                                                     ),
                                                     child: Row(
@@ -1135,7 +1225,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                               elevation: 2,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(10),
+                                                    BorderRadius.circular(12),
                                               ),
                                             ),
                                           ),
@@ -1281,7 +1371,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                         'Chi Tiết Ứng Dụng',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 14.5,
+                                          fontSize: 15,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 0.3,
                                         ),
@@ -1315,7 +1405,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                     Text(
                                       'Thông số chi tiết',
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.grey.shade700,
                                         letterSpacing: 0.3,
@@ -1340,7 +1430,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                   controller: _tabController,
                                   indicator: BoxDecoration(
                                     color: Colors.blue.shade800,
-                                    borderRadius: BorderRadius.circular(9),
+                                    borderRadius: BorderRadius.circular(8),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.blue.shade900.withValues(
@@ -1358,12 +1448,12 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                       Colors.blueGrey.shade600,
                                   labelStyle: const TextStyle(
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 11.5,
+                                    fontSize: 12,
                                     height: 1.08,
                                   ),
                                   unselectedLabelStyle: const TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 11.5,
+                                    fontSize: 12,
                                     height: 1.08,
                                   ),
                                   labelPadding: const EdgeInsets.symmetric(
@@ -1501,7 +1591,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                                           label,
                                                           style:
                                                               const TextStyle(
-                                                                fontSize: 13.5,
+                                                                fontSize: 13,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600,
@@ -1554,7 +1644,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                                             Text(
                                                               'Có sẵn',
                                                               style: TextStyle(
-                                                                fontSize: 11.5,
+                                                                fontSize: 12,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w700,
@@ -1599,7 +1689,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                                 end: Alignment.bottomRight,
                                               ),
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                                  BorderRadius.circular(12),
                                               border: Border.all(
                                                 color: const Color(0xFFFFB300)
                                                     .withValues(alpha: 0.6),
@@ -1683,6 +1773,8 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                     ];
                                   } else {
                                     currentKeys = [
+                                      'Công suất điện (kW)',
+                                      'Điện áp',
                                       'Trọng lượng (kg)',
                                       'Kích thước (D x R x C mm)',
                                       'Kích thước sàn đặt máy',
@@ -1735,7 +1827,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
-                                  borderRadius: BorderRadius.circular(14),
+                                  borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: Colors.teal.shade200,
                                     width: 1.2,
@@ -1782,7 +1874,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                               'Thiết bị phụ trợ đồng bộ',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
-                                                fontSize: 13.5,
+                                                fontSize: 13,
                                                 color: Colors.teal.shade900,
                                               ),
                                             ),
@@ -1838,7 +1930,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                             ),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                                  BorderRadius.circular(12),
                                             ),
                                             backgroundColor: Colors.white
                                                 .withValues(alpha: 0.7),
@@ -1865,7 +1957,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                     vertical: 13,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
                               ),

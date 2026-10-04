@@ -15,8 +15,7 @@ class GrindingMachineHomeScreen extends StatefulWidget {
       _GrindingMachineHomeScreenState();
 }
 
-class _GrindingMachineHomeScreenState
-    extends State<GrindingMachineHomeScreen> {
+class _GrindingMachineHomeScreenState extends State<GrindingMachineHomeScreen> {
   @override
   void initState() {
     super.initState();
@@ -73,9 +72,7 @@ class _GrindingMachineHomeScreenState
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             children: [
-              _SearchBar(
-                onTap: () => context.push('/grinding_machine/search'),
-              ),
+              _SearchBar(onTap: () => context.push('/grinding_machine/search')),
               const SizedBox(height: 12),
               FilledButton.icon(
                 // Trỏ sang Machine Selector (Phase 6, minh bạch MATCH/
@@ -141,6 +138,7 @@ class _GrindingMachineHomeScreenState
                     seriesCode: series.seriesCode,
                     displayCode: series.displayCode,
                     nameVi: series.nameVi,
+                    nameEn: series.nameEn,
                     machineCount: provider.machineCountOf(series.seriesCode),
                     onTap: () => context.push(
                       '/grinding_machine/series',
@@ -183,7 +181,10 @@ class _SearchBar extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Tìm theo model, dòng máy, nguyên liệu...',
-                  style: TextStyle(color: palette.muted, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    color: palette.muted,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
@@ -199,13 +200,41 @@ class _SeriesCard extends StatelessWidget {
     required this.seriesCode,
     required this.displayCode,
     required this.nameVi,
+    required this.nameEn,
     required this.machineCount,
     required this.onTap,
   });
 
+  /// Dòng máy đã có tên tiếng Anh chính thức — dòng phụ hiện tên tiếng Anh
+  /// thay cho "Dòng <mã>". Thêm mã dòng vào đây khi cập nhật tên cho dòng
+  /// khác.
+  static const _englishSubtitleSeries = {
+    'ASU_UNIVERSAL',
+    'AS_CRYOGENIC',
+    'ASK_JET',
+    'ASF_FITZ_MILL',
+    'ASF_AS_HAMMER',
+    'ASC_COARSE',
+    'ASDF_MULTISTAGE',
+    'ASG_UNIVERSAL_SYSTEM',
+    'AS_SMALL_HAMMER',
+    'ASP_ULTRAFINE',
+    'ASZ_PIN',
+  };
+
   final String seriesCode;
   final String displayCode;
   final String nameVi;
+  final String nameEn;
+
+  String get _subtitle {
+    if (_englishSubtitleSeries.contains(seriesCode) && nameEn.isNotEmpty) {
+      return nameEn;
+    }
+    // Mã ngắn ("ASC") -> "Dòng ASC"; tên đầy đủ ("Roller mill") giữ nguyên.
+    return displayCode.contains(' ') ? displayCode : 'Dòng $displayCode';
+  }
+
   final int machineCount;
   final VoidCallback onTap;
 
@@ -241,10 +270,12 @@ class _SeriesCard extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(14),
                 ),
+                padding: const EdgeInsets.symmetric(horizontal: 3),
                 child: Text(
                   displayCode,
                   textAlign: TextAlign.center,
-                  maxLines: 1,
+                  // Tên dài như "Roller mill" xuống 2 dòng trong ô vuông.
+                  maxLines: 2,
                   style: TextStyle(
                     color: palette.navy,
                     fontSize: displayCode.length > 4 ? 11 : 13,
@@ -267,8 +298,10 @@ class _SeriesCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Dòng $displayCode',
-                      maxLines: 1,
+                      _subtitle,
+                      key: Key('grinding_series_subtitle_$seriesCode'),
+                      // Tên tiếng Anh dài được xuống tối đa 2 dòng.
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: palette.muted, fontSize: 12.5),
                     ),

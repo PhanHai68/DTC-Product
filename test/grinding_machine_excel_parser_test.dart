@@ -11,9 +11,14 @@ void main() {
   test('Workbook thật khớp toàn bộ snapshot JSON; lấy version từ README', () {
     final report = GrindingExcelParser.parse(File(fixture).readAsBytesSync());
     expect(report.canImport, isTrue, reason: report.issues.join('\n'));
-    final expected = GrindingMachineImporter.parse(File('assets/database/grinding_machine_seed.json').readAsStringSync());
+    final expected = GrindingMachineImporter.parse(
+      File('assets/database/grinding_machine_seed.json').readAsStringSync(),
+    );
     expect(report.snapshot!.toJson(), expected.toJson());
-    expect(report.snapshot!.databaseVersion, '2.2.3'); // README đã cập nhật theo Update_Log.
+    expect(
+      report.snapshot!.databaseVersion,
+      '2.2.18',
+    ); // README đã cập nhật theo Update_Log.
   });
 
   test('Workbook hỏng và thiếu sheet bị chặn', () {
@@ -25,16 +30,33 @@ void main() {
   });
 
   test('Sai số và đơn vị báo đúng dòng/cột Excel', () {
-    final book = GrindingExcelParser.decodeWorkbook(File(fixture).readAsBytesSync());
-    book['Models'].updateCell(CellIndex.indexByString('G2'), TextCellValue('không phải số'));
+    final book = GrindingExcelParser.decodeWorkbook(
+      File(fixture).readAsBytesSync(),
+    );
+    book['Models'].updateCell(
+      CellIndex.indexByString('G2'),
+      TextCellValue('không phải số'),
+    );
     final report = GrindingExcelParser.parse(book.encode()!);
     expect(report.canImport, isFalse);
-    expect(report.issues.any((i) => i.location.contains('dòng 2') && i.location.contains('capacityMinKgH')), isTrue);
+    expect(
+      report.issues.any(
+        (i) =>
+            i.location.contains('dòng 2') &&
+            i.location.contains('capacityMinKgH'),
+      ),
+      isTrue,
+    );
   });
 
   test('Công thức trong cột thông số bị chặn, không biến thành null', () {
-    final book = GrindingExcelParser.decodeWorkbook(File(fixture).readAsBytesSync());
-    book['Models'].updateCell(CellIndex.indexByString('G2'), const FormulaCellValue('40+40'));
+    final book = GrindingExcelParser.decodeWorkbook(
+      File(fixture).readAsBytesSync(),
+    );
+    book['Models'].updateCell(
+      CellIndex.indexByString('G2'),
+      const FormulaCellValue('40+40'),
+    );
     final report = GrindingExcelParser.parse(book.encode()!);
     expect(report.canImport, isFalse);
     expect(report.issues.any((i) => i.message.contains('công thức')), isTrue);

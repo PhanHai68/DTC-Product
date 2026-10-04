@@ -67,7 +67,7 @@ class SettingsProvider extends ChangeNotifier {
 
   final SharedPreferences _prefs;
 
-  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode _themeMode = ThemeMode.light;
   AppTextScale _textScale = AppTextScale.normal;
 
   bool _homePersonalizationEnabled = false;
@@ -116,7 +116,7 @@ class SettingsProvider extends ChangeNotifier {
     _themeMode = switch (savedMode) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
-      _ => ThemeMode.system,
+      _ => ThemeMode.light,
     };
     final savedScale = _prefs.getDouble(_textScaleKey);
     if (savedScale != null) {

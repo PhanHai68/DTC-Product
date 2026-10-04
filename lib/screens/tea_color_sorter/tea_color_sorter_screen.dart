@@ -80,7 +80,8 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     if (key.contains('Tần số') || key.contains('frequency')) {
       return Icons.waves;
     }
-    if (key.toLowerCase().contains('tầng') || key.toLowerCase().contains('layer')) {
+    if (key.toLowerCase().contains('tầng') ||
+        key.toLowerCase().contains('layer')) {
       return Icons.layers;
     }
     if (key.contains('chính xác') || key.contains('quality')) {
@@ -106,14 +107,17 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     return Icons.info_outline;
   }
 
+  /// Nhận tên hiển thị (VD "Số camera") để tô màu giống màn SC16 Pro.
   Color _getColorForSpec(String key) {
     if (key.contains('năng suất') || key.contains('Năng suất')) {
       return const Color(0xFFEA6C00);
     }
-    if (key.contains('máng') || key.contains('ejector')) {
+    if (key.contains('máng') ||
+        key.contains('ejector') ||
+        key.toLowerCase().contains('tầng')) {
       return const Color(0xFF0D47A1);
     }
-    if (key.contains('Camera')) return const Color(0xFF1565C0);
+    if (key.toLowerCase().contains('camera')) return const Color(0xFF1565C0);
     if (key.contains('chính xác') || key.contains('quality')) {
       return const Color(0xFF2E7D32);
     }
@@ -122,6 +126,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     }
     if (key.contains('Công suất') ||
         key.contains('Điện') ||
+        key.contains('Tần số') ||
         key.contains('power') ||
         key.contains('voltage')) {
       return const Color(0xFFF57F17);
@@ -344,7 +349,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                   'Chi Tiết Ứng Dụng Thực Tế',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 17,
+                    fontSize: 18,
                     color: Color(0xFF1E293B),
                   ),
                 ),
@@ -356,7 +361,8 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
             child: ListView(
               shrinkWrap: true,
               children: [
-                if (modelName.toLowerCase().startsWith('h') || modelName.toLowerCase() == 'sx8')
+                if (modelName.toLowerCase().startsWith('h') ||
+                    modelName.toLowerCase() == 'sx8')
                   Container(
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.only(bottom: 12),
@@ -387,7 +393,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                 'Khả năng phân loại hạt',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w800,
-                                  fontSize: 13.5,
+                                  fontSize: 13,
                                   color: Colors.blue.shade800,
                                   letterSpacing: 0.5,
                                 ),
@@ -398,7 +404,11 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                         const SizedBox(height: 8),
                         const Text(
                           'Máy tách màu dòng H phù hợp với mọi nguyên liệu dạng hạt: hạt ít dầu, hạt nhiều dầu, hạt ít bụi, hạt nhiều bụi',
-                          style: TextStyle(fontSize: 12.5, height: 1.35, color: Colors.black87),
+                          style: TextStyle(
+                            fontSize: 13,
+                            height: 1.35,
+                            color: Colors.black87,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         _buildProFeatureRow(
@@ -453,7 +463,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                               'ĐẶC QUYỀN CÔNG NGHỆ DF PRO',
                               style: TextStyle(
                                 fontWeight: FontWeight.w800,
-                                fontSize: 13.5,
+                                fontSize: 13,
                                 color: Colors.green.shade800,
                                 letterSpacing: 0.5,
                               ),
@@ -492,7 +502,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 0,
                 ),
@@ -525,7 +535,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
           child: RichText(
             text: TextSpan(
               style: const TextStyle(
-                fontSize: 12.5,
+                fontSize: 13,
                 height: 1.35,
                 color: Colors.black87,
               ),
@@ -590,7 +600,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
               value,
               style: TextStyle(
                 fontWeight: FontWeight.w800,
-                fontSize: 14.5,
+                fontSize: 15,
                 color: color,
                 letterSpacing: -0.3,
               ),
@@ -602,7 +612,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
             Text(
               title,
               style: TextStyle(
-                fontSize: 11.5,
+                fontSize: 12,
                 color: Colors.grey.shade600,
                 fontWeight: FontWeight.w600,
                 height: 1.15,
@@ -636,7 +646,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withValues(alpha: 0.3), width: 1.2),
         boxShadow: [
           BoxShadow(
@@ -685,45 +695,47 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 11,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.82),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: color.withValues(alpha: 0.14)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      materialSize.toLowerCase().contains('cà phê') ? Icons.coffee : Icons.grain_rounded,
-                      color: color, 
-                      size: 16
-                    ),
-                    const SizedBox(width: 7),
-                    Text(
-                      materialSize,
-                      style: const TextStyle(
-                        color: Color(0xFF5D4037),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Text(
-                      capacity,
-                      style: TextStyle(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 11,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.82),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: color.withValues(alpha: 0.14)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        materialSize.toLowerCase().contains('cà phê')
+                            ? Icons.coffee
+                            : Icons.grain_rounded,
                         color: color,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w900,
+                        size: 16,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 7),
+                      Text(
+                        materialSize,
+                        style: const TextStyle(
+                          color: Color(0xFF5D4037),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        capacity,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               ),
             );
           }),
@@ -797,7 +809,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
             description,
             style: const TextStyle(
               height: 1.6,
-              fontSize: 15,
+              fontSize: 14,
               color: Colors.black87,
             ),
           ),
@@ -913,7 +925,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
 
   Widget _buildSpecRow(String rawKey, String value, int index) {
     final key = _getDisplayName(rawKey);
-    final specColor = _getColorForSpec(rawKey);
+    final specColor = _getColorForSpec(key);
     final icon = _getIconForSpec(rawKey);
     final isMultiline = value.contains('\n');
     return Column(
@@ -941,7 +953,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                             key,
                             style: const TextStyle(
                               fontWeight: FontWeight.w700,
-                              fontSize: 13.5,
+                              fontSize: 13,
                               color: Color(0xFF1A1A2E),
                             ),
                           ),
@@ -994,7 +1006,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                         key,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 13.5,
+                          fontSize: 13,
                           color: Color(0xFF1A1A2E),
                         ),
                       ),
@@ -1020,7 +1032,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
-                            fontSize: 12.5,
+                            fontSize: 13,
                             color: specColor,
                             height: 1.25,
                           ),
@@ -1179,48 +1191,146 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                               16,
                                             ),
                                             border: Border.all(
-                                              color: Colors.grey.shade300,
-                                              width: 1,
+                                              color: Colors.grey.shade200,
                                             ),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.black.withValues(
-                                                  alpha: 0.05,
+                                                  alpha: 0.04,
                                                 ),
-                                                blurRadius: 10,
-                                                offset: const Offset(0, 4),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 3),
                                               ),
                                             ],
                                           ),
                                           child: Stack(
-                                            alignment: Alignment.center,
                                             children: [
-                                              Hero(
-                                                tag:
-                                                    'machine-image-${specs['model']}',
-                                                child: Image.asset(
-                                                  _getImagePath(
-                                                    specs['model'],
-                                                  )!,
-                                                  fit: BoxFit.contain,
+                                              Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    8.0,
+                                                  ),
+                                                  child: Hero(
+                                                    tag:
+                                                        'machine-image-${specs['model']}',
+                                                    child: Image.asset(
+                                                      _getImagePath(
+                                                        specs['model'],
+                                                      )!,
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
+                                              // 3D badge on image
+                                              if (model3dConfig != null)
+                                                Positioned(
+                                                  top: 8,
+                                                  right: 8,
+                                                  child: InkWell(
+                                                    onTap: () => context.push(
+                                                      '/color_sorter_3d',
+                                                      extra: model3dConfig,
+                                                    ),
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 5,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        gradient:
+                                                            LinearGradient(
+                                                              colors: [
+                                                                Colors
+                                                                    .blue
+                                                                    .shade800,
+                                                                Colors
+                                                                    .indigo
+                                                                    .shade800,
+                                                              ],
+                                                            ),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              20,
+                                                            ),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: Colors.blue
+                                                                .withValues(
+                                                                  alpha: 0.3,
+                                                                ),
+                                                            blurRadius: 6,
+                                                            offset:
+                                                                const Offset(
+                                                                  0,
+                                                                  2,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: const Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .threed_rotation,
+                                                            color: Colors.white,
+                                                            size: 16,
+                                                          ),
+                                                          SizedBox(width: 5),
+                                                          Text(
+                                                            'Mô hình 3D',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              // Zoom hint
                                               Positioned(
-                                                right: 12,
-                                                bottom: 12,
+                                                bottom: 8,
+                                                right: 8,
                                                 child: Container(
-                                                  padding: const EdgeInsets.all(
-                                                    8,
-                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4,
+                                                      ),
                                                   decoration: BoxDecoration(
-                                                    color: Colors.black
-                                                        .withValues(alpha: 0.6),
-                                                    shape: BoxShape.circle,
+                                                    color: Colors.black54,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
                                                   ),
-                                                  child: const Icon(
-                                                    Icons.zoom_in,
-                                                    color: Colors.white,
-                                                    size: 20,
+                                                  child: const Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.zoom_in,
+                                                        color: Colors.white,
+                                                        size: 14,
+                                                      ),
+                                                      SizedBox(width: 4),
+                                                      Text(
+                                                        'Chạm để phóng to',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 11,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               ),
@@ -1228,8 +1338,8 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(height: 14),
-                                      if (model3dConfig != null)
+                                      if (model3dConfig != null) ...[
+                                        const SizedBox(height: 10),
                                         ElevatedButton.icon(
                                           onPressed: () {
                                             context.push(
@@ -1254,73 +1364,85 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                             elevation: 2,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                                  BorderRadius.circular(12),
                                             ),
                                           ),
                                         ),
+                                      ],
                                     ],
                                   );
                                 },
                               ),
-                              // Application Material Image
-                              if ((specs['model'] ?? '').toLowerCase().startsWith('h'))
-                                Column(
-                                  children: [
-                                    const SizedBox(height: 14),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(16),
-                                        border: Border.all(
-                                          color: Colors.grey.shade300,
-                                          width: 1,
+                            // Application Material Image
+                            if ((specs['model'] ?? '').toLowerCase().startsWith(
+                              'h',
+                            ))
+                              Column(
+                                children: [
+                                  const SizedBox(height: 14),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.05,
+                                          ),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
                                         ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(
-                                              alpha: 0.05,
-                                            ),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 12.0),
-                                            child: Text(
-                                              'Nguyên liệu máy có khả năng tách',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue.shade900,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(12),
-                                              child: Image.asset(
-                                                'assets/images/color_sorter/Lieu-H.jpg',
-                                                fit: BoxFit.contain,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              const SizedBox(height: 14),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 12.0,
+                                          ),
+                                          child: Text(
+                                            'Nguyên liệu máy có khả năng tách',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue.shade900,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/color_sorter/Lieu-H.jpg',
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            const SizedBox(height: 14),
                             // Highlight Metrics
                             Builder(
                               builder: (context) {
-                                final capText = specs['capacity_highlight'] ?? specs['capacity_display'] ?? '--';
-                                if (capText.contains('\n') || capText.length > 15) {
+                                final capText =
+                                    specs['capacity_highlight'] ??
+                                    specs['capacity_display'] ??
+                                    '--';
+                                if (capText.contains('\n') ||
+                                    capText.length > 15) {
                                   return Column(
                                     children: [
                                       _buildCapacityOverview(capText),
@@ -1470,7 +1592,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                       'Chi Tiết Ứng Dụng',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 14.5,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.3,
                                       ),
@@ -1503,7 +1625,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                   Text(
                                     'Thông số chi tiết',
                                     style: TextStyle(
-                                      fontSize: 13,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.grey.shade700,
                                       letterSpacing: 0.3,
@@ -1528,7 +1650,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                 controller: _tabController,
                                 indicator: BoxDecoration(
                                   color: Colors.blue.shade800,
-                                  borderRadius: BorderRadius.circular(9),
+                                  borderRadius: BorderRadius.circular(8),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.blue.shade900.withValues(
@@ -1545,12 +1667,12 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                 unselectedLabelColor: Colors.blueGrey.shade600,
                                 labelStyle: const TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 11.5,
+                                  fontSize: 12,
                                   height: 1.08,
                                 ),
                                 unselectedLabelStyle: const TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 11.5,
+                                  fontSize: 12,
                                   height: 1.08,
                                 ),
                                 labelPadding: const EdgeInsets.symmetric(
@@ -1558,50 +1680,36 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                 ),
                                 tabs: const [
                                   Tab(
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Thông số\nkỹ thuật',
-                                        textAlign: TextAlign.center,
-                                      ),
+                                    height: 48,
+                                    child: Text(
+                                      'Thông số\nkỹ thuật',
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                   Tab(
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Hệ thống\nkhí nén',
-                                        textAlign: TextAlign.center,
-                                      ),
+                                    height: 48,
+                                    child: Text(
+                                      'Hệ thống\nkhí nén',
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
-                                  Tab(
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Lắp đặt',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
+                                  Tab(height: 48, text: 'Lắp đặt'),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 10),
 
                             // Tab Views
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: const Color(0xFFE2E8F0),
-                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey.shade200),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.02),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
+                                    color: Colors.black.withValues(alpha: 0.04),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
@@ -1641,7 +1749,8 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                               !k.contains('dim_') &&
                                               k != 'dimensions_display_mm' &&
                                               k != 'weight_kg' &&
-                                              k != 'capacity_max_kg_h',
+                                              k != 'capacity_max_kg_h' &&
+                                              k != 'capacity_highlight',
                                         )
                                         .toList();
 
@@ -1691,91 +1800,141 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                           index,
                                         ),
                                       ),
-                                      if (_tabController.index == 0) ...[
-                                        Divider(
-                                          height: 16,
-                                          thickness: 0.7,
-                                          indent: 14,
-                                          endIndent: 14,
-                                          color: Colors.blue.shade200,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                            12,
-                                            0,
-                                            12,
-                                            12,
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Thiết bị phụ trợ
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.teal.shade50.withValues(
+                                  alpha: 0.5,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.teal.shade100),
+                              ),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      12,
+                                      12,
+                                      12,
+                                      0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.teal.shade100,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                           ),
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: OutlinedButton.icon(
-                                              key: const Key(
-                                                'tea_aux_equip_button',
-                                              ),
-                                              onPressed: () {
-                                                final modelName =
-                                                    (specs['model'] ??
-                                                            selectedModel)
-                                                        .trim();
-                                                final isDf53Pro =
-                                                    modelName.toLowerCase() ==
-                                                    'df53 pro';
-
-                                                if (!isDf53Pro) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                            'Chức năng đang được phát triển. Vui lòng quay lại sau!',
-                                                          ),
-                                                          duration: Duration(
-                                                            seconds: 2,
-                                                          ),
-                                                        ),
-                                                      );
-                                                  return;
-                                                }
-
-                                                context.push(
-                                                  '/tea_aux_equip',
-                                                  extra: modelName,
-                                                );
-                                              },
-                                              icon: Icon(
-                                                Icons.settings_outlined,
-                                                size: 18,
-                                                color: Colors.blue.shade800,
-                                              ),
-                                              label: Text(
-                                                'Thiết bị phụ trợ đồng bộ',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 13.5,
-                                                  color: Colors.blue.shade800,
-                                                ),
-                                              ),
-                                              style: OutlinedButton.styleFrom(
-                                                side: BorderSide(
-                                                  color: Colors.blue.shade300,
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                    ),
-                                                backgroundColor:
-                                                    Colors.blue.shade50,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                              ),
+                                          child: Icon(
+                                            Icons.settings_outlined,
+                                            color: Colors.teal.shade800,
+                                            size: 18,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            'Thiết bị phụ trợ đồng bộ',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 14,
+                                              color: Colors.teal.shade900,
                                             ),
                                           ),
                                         ),
                                       ],
-                                    ],
-                                  );
-                                },
+                                    ),
+                                  ),
+                                  Divider(
+                                    height: 16,
+                                    thickness: 0.7,
+                                    indent: 14,
+                                    endIndent: 14,
+                                    color: Colors.teal.shade200,
+                                  ),
+                                  // CTA Button
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      12,
+                                      0,
+                                      12,
+                                      12,
+                                    ),
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      child: OutlinedButton.icon(
+                                        key: const Key('tea_aux_equip_button'),
+                                        onPressed: () {
+                                          final modelName =
+                                              (specs['model'] ?? selectedModel)
+                                                  .trim();
+                                          final isDf53Pro =
+                                              modelName.toLowerCase() ==
+                                              'df53 pro';
+
+                                          if (!isDf53Pro) {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'Chức năng đang được phát triển. Vui lòng quay lại sau!',
+                                                ),
+                                                duration: Duration(seconds: 2),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          context.push(
+                                            '/tea_aux_equip',
+                                            extra: modelName,
+                                          );
+                                        },
+                                        icon: Icon(
+                                          Icons.open_in_new,
+                                          size: 16,
+                                          color: Colors.teal.shade800,
+                                        ),
+                                        label: Text(
+                                          'Xem thiết bị phụ trợ',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13,
+                                            color: Colors.teal.shade800,
+                                          ),
+                                        ),
+                                        style: OutlinedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 11,
+                                            horizontal: 16,
+                                          ),
+                                          side: BorderSide(
+                                            color: Colors.teal.shade400,
+                                            width: 1.5,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                          backgroundColor: Colors.white
+                                              .withValues(alpha: 0.7),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -1802,7 +1961,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                     vertical: 13,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
                               ),

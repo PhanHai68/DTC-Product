@@ -1,23 +1,23 @@
 {
-  "databaseVersion": "2.2.3",
+  "databaseVersion": "2.2.18",
   "sourceDocument": "DTC-C-MayNghien-250426-demo4.pdf",
   "series": [
     {
       "seriesCode": "ASC_COARSE",
       "displayCode": "ASC",
-      "nameVi": "Máy nghiền thô",
-      "nameEn": "ASC Series Coarse Crusher",
+      "nameVi": "Máy nghiền thô thực phẩm",
+      "nameEn": "Foodstuff Industry Chili Powder Machine",
       "technology": "coarse_crusher",
       "pdfPages": "5",
-      "applicationVi": "Nghiền nguyên liệu thô kích thước lớn thành từng mảnh nhỏ hơn. Máy cũng được sử dụng như máy nghiền sơ cấp trước khi chuyển đến máy nghiền bột.",
-      "workingPrincipleVi": "Nguyên liệu được cấp vào buồng nghiền từ phễu nạp, sau đó được nghiền nhỏ nhờ sự kết hợp của dao quay và lưỡi dao cố định. Quá trình diễn ra dưới tác động của lực va đập, cắt và lực ly tâm, giúp nguyên liệu sau khi nghiền tự động thoát ra ngoài.",
+      "applicationVi": "Được sử dụng rộng rãi trong các ngành:\n- Thực phẩm\n- Dược phẩm\n- Hóa chất\nMáy phù hợp để nghiền sơ bộ nguyên liệu khô và giòn, tức là biến các miếng nguyên liệu lớn thành hạt nhỏ trước khi đưa sang công đoạn nghiền mịn tiếp theo.\nVí dụ nguyên liệu:\n- Ớt khô\n- Gừng khô\n- Tiêu\n- Quế\n- Cam thảo\n- Các loại dược liệu khô\nMáy không phù hợp với nguyên liệu có điểm hóa mềm thấp hoặc độ nhớt cao.",
+      "workingPrincipleVi": "ASC là dạng máy nghiền/cắt thô kiểu ngang.\nNguyên liệu được đưa vào phễu cấp liệu, sau đó đi vào buồng nghiền. Bên trong buồng, các dao quay cắt và nghiền nguyên liệu thành kích thước nhỏ hơn.\nNhờ lực ly tâm tạo ra khi dao quay, nguyên liệu sau khi đạt kích thước yêu cầu sẽ di chuyển về cửa xả.\nKích thước thành phẩm được kiểm soát bằng lưới sàng. Dao nghiền được chế tạo từ thép hợp kim chịu mài mòn.",
       "notes": "Dùng làm nghiền sơ cấp."
     },
     {
       "seriesCode": "AS_SMALL_HAMMER",
       "displayCode": "AS",
       "nameVi": "Máy nghiền búa cỡ nhỏ",
-      "nameEn": "AS Series Small Hammer Mill",
+      "nameEn": "Hammer mill",
       "technology": "high_speed_hammer",
       "pdfPages": "6",
       "applicationVi": "Sử dụng rộng rãi trong thực phẩm, hóa chất, dược phẩm và các ngành công nghiệp khác. Cấu trúc đơn giản, nhỏ gọn, dễ lắp đặt và sử dụng. Có thể tùy chỉnh lưỡi dao phù hợp nguyên liệu và yêu cầu kích thước bột.",
@@ -27,41 +27,44 @@
     {
       "seriesCode": "ASU_UNIVERSAL",
       "displayCode": "ASU",
-      "nameVi": "Máy nghiền đa năng",
-      "nameEn": "ASU Series Universal Crusher",
+      "nameVi": "Máy nghiền tua-bin tốc độ cao",
+      "nameEn": "High Speed Turbine Grinder Dried Jerusalem artichoke chips Grinding Machine",
       "technology": "universal_mill",
       "pdfPages": "7-8",
       "applicationVi": "Ứng dụng rộng trong thực phẩm, hóa chất, thức ăn chăn nuôi và dược phẩm. Kích thước bột có thể điều chỉnh bằng loại lưỡi dao, tốc độ rotor và lưới lọc.",
-      "workingPrincipleVi": "Máy nghiền đa năng dạng máy đơn; độ mịn được kiểm soát bởi rotor, lưỡi dao và lưới lọc.",
+      "workingPrincipleVi": "Máy ASU sử dụng đĩa tua-bin quay tốc độ cao tạo luồng khí tuần hoàn mạnh trong buồng nghiền. Luồng khí giúp tản nhiệt do ma sát, nhờ đó hạn chế tăng nhiệt khi nghiền các nguyên liệu nhạy nhiệt như rau củ sấy, gia vị.\nHệ thống luồng khí đồng thời tạo vận chuyển bằng áp suất âm, giúp nguyên liệu đi qua máy ổn định, giảm hiện tượng bám dính và tắc lưới. Thiết kế này phù hợp với quá trình nghiền liên tục.",
+      "featuresVi": "1. Nhiệt độ nghiền thấp: giảm nguy cơ cháy sém, mất mùi, biến màu và suy giảm chất dinh dưỡng.\n2. Phạm vi nguyên liệu rộng: có 3 loại rotor có thể thay đổi, dùng cho ngũ cốc, gia vị, thảo dược và rau củ khô.\n3. Dễ tháo vệ sinh: rotor tua-bin có thể tháo nhanh, thuận lợi vệ sinh và hạn chế nhiễm chéo giữa các mẻ.",
       "notes": "Phiên bản máy đơn."
     },
     {
       "seriesCode": "ASG_UNIVERSAL_SYSTEM",
       "displayCode": "ASG",
-      "nameVi": "Máy nghiền tự hút dạng rời",
-      "nameEn": "ASG Series Self-absorb Grinding Set (Split type)",
+      "nameVi": "Máy nghiền búa tự hút",
+      "nameEn": "Self-Suction Hammer Mill System",
       "technology": "universal_mill_with_dust_system",
       "pdfPages": "7-8",
       "applicationVi": "Ứng dụng rộng trong thực phẩm, hóa chất, thức ăn chăn nuôi và dược phẩm. Máy nghiền tích hợp hệ thống gió/thu bụi dạng lốc xoáy.",
-      "workingPrincipleVi": "Nghiền bằng rotor/lưỡi dao và lưới lọc, kết hợp máy thổi khí và động cơ xả để vận chuyển và thu gom sản phẩm.",
+      "structureVi": "Theo Brightsail, bộ BSG self-priming grinding unit gồm:\n- Máy nghiền chính\n- Thiết bị phụ trợ\n- Đường ống vận chuyển\n- Tủ/thiết bị điều khiển điện\n- Bộ cấp liệu\n- Cyclone separator\n- Bộ lọc túi / thu bụi\n- Hệ thống hút khí\nMáy phụ trợ sử dụng cyclone kết hợp bag filter và air collector để thu hồi bột và bụi mịn.",
+      "workingPrincipleVi": "Nguyên lý nghiền\nNguyên liệu đi từ phễu cấp liệu vào buồng nghiền.\nBên trong máy, đĩa nghiền/búa quay với tốc độ cao làm nguyên liệu bị:\nVa đập → văng vào vành răng cố định → cắt → va đập lại → nghiền nhỏ\nTrang mô tả quá trình nghiền là sự kết hợp của:\n- lực va đập,\n- lực cắt,\n- lực nghiền/chà xát.\nSau khi được nghiền nhỏ, nhờ áp suất âm do quạt hút tạo ra, bột được hút ra khỏi buồng nghiền và chuyển qua:\nBuồng nghiền → lưới sàng → đường ống → cyclone → thu sản phẩm\nMột lượng nhỏ bụi rất mịn sẽ được pulse dust collector thu hồi.\nChức năng phân loại kích thước\n- chức năng nghiền.\n- phân loại.\n- sàng.\n- cắt ly tâm.\nNhờ vậy kích thước hạt thành phẩm có thể được kiểm soát.\nTuy nhiên, với ASG này, việc kiểm soát kích thước vẫn phụ thuộc đáng kể vào lưới sàng, khác với ASP Air Classifier Mill sử dụng bánh phân cấp tốc độ cao.",
       "notes": "Kèm hệ thống gió khử bụi."
     },
     {
       "seriesCode": "ASP_ULTRAFINE",
       "displayCode": "ASP",
       "nameVi": "Máy nghiền siêu mịn",
-      "nameEn": "ASP Series Ultra-fine Pulverizer Set",
+      "nameEn": "Air Classifier Mill",
       "technology": "air_classifier_mill",
       "pdfPages": "9-11",
       "applicationVi": "Máy nghiền chuyên dụng để sản xuất bột siêu mịn. Kết hợp làm mát bột và phân loại không khí có kiểm soát; dùng trong hóa chất, thực phẩm, khoáng sản và sơn phủ.",
-      "workingPrincipleVi": "Nguyên liệu được cấp bằng vít vào buồng nghiền, va đập với rotor và lớp lót cố định. Sản phẩm được dòng khí làm mát, vận chuyển và đưa qua bộ phân loại động tích hợp. Hạt thô quay lại vùng nghiền; hạt mịn đi qua bánh phân loại, cyclone và được xả thành phẩm. Điểm cắt phụ thuộc tốc độ bánh phân loại.",
+      "workingPrincipleVi": "Nguyên liệu được cấp vào buồng nghiền bằng vít tải cấp liệu.\nTrong buồng nghiền, hạt nguyên liệu bị nghiền do:\n- va đập với rotor quay tốc độ cao;\n- va đập với liner cố định;\n- lực cắt và va chạm liên tục.\nSau đó bột được cuốn theo dòng khí làm mát và vận chuyển do quạt hút tạo ra. Hỗn hợp khí–bột đi tới bánh phân ly động tích hợp ngay trong máy.\nTại vùng phân ly:\n- Hạt quá thô bị bánh phân ly loại ra và quay trở lại vùng nghiền để nghiền tiếp.\n- Hạt đạt yêu cầu đi xuyên qua bánh phân ly, ra khỏi máy và được cyclone thu hồi.\n- Bụi cực mịn còn lại được chuyển tới hộp thu bụi, giúp hệ thống vận hành hạn chế phát tán bụi.\nĐộ mịn lớn nhất của sản phẩm được điều khiển chủ yếu bằng tốc độ bánh phân ly và có thể điều chỉnh trong khi máy đang hoạt động.",
+      "featuresVi": "- Nghiền + phân ly trong cùng một máy\n- Điều chỉnh kích thước hạt bằng lưu lượng khí và tốc độ rotor phân ly\n- Có thể thay đổi độ mịn trong khi máy đang chạy\n- Thiết kế gọn, tiết kiệm diện tích\n- Có thể sử dụng kết hợp chiller công nghiệp\n- Phân bố kích thước hạt hẹp\n- Kiểm soát kích thước hạt lớn nhất tốt\n- Dễ vệ sinh và bảo trì\n- Tiêu thụ năng lượng riêng thấp",
       "notes": "Có phân loại trên/dưới; dao vuông cho bột siêu mịn, nguyên liệu cứng/giàu xơ; dao hình trụ cho vật liệu giòn/dễ vỡ/kết tinh."
     },
     {
       "seriesCode": "ASZ_PIN",
       "displayCode": "ASZ",
-      "nameVi": "Máy nghiền chốt",
-      "nameEn": "ASZ Series Pin Mill",
+      "nameVi": "Máy nghiền pin",
+      "nameEn": "High speed pin mill",
       "technology": "pin_mill",
       "pdfPages": "11-13",
       "applicationVi": "Máy nghiền va đập mịn với hai đĩa chốt quay. Có thể xử lý sản phẩm ẩm, dầu và dính. Buồng rộng phù hợp các sản phẩm này; có thể kết nối nitơ lỏng để làm mát. Có thể hoạt động độc lập và phù hợp sản phẩm dạng nhão như bột mịn cacao.",
@@ -70,58 +73,72 @@
     },
     {
       "seriesCode": "ASF_AS_HAMMER",
-      "displayCode": "ASF/AS",
-      "nameVi": "Máy nghiền hiệu suất cao",
-      "nameEn": "ASF Series High-efficient Mill",
+      "displayCode": "AS",
+      "nameVi": "Máy nghiền búa",
+      "nameEn": "Hammer mill",
       "technology": "hammer_mill",
       "pdfPages": "14-15",
-      "applicationVi": "BSF được sử dụng rộng rãi trong nhà máy thực phẩm và dược phẩm. Có hai kiểu nghiền: kiểu búa phù hợp nghiền bột; kiểu dao phù hợp nghiền hạt hoặc bột thô. Dòng BS phù hợp sản xuất công suất lớn hoặc liên tục không bụi.",
-      "workingPrincipleVi": "Nghiền bằng kiểu búa hoặc kiểu dao. Các model BS hệ thống có động cơ xả và máy thổi khí để hỗ trợ sản xuất liên tục.",
-      "notes": "BSF-15/32 là dạng đơn; BS-200 trở lên có cấu hình hệ thống theo bảng."
+      "applicationVi": "Sử dụng rộng rãi trong nhà máy thực phẩm và dược phẩm; phù hợp nghiền các nguyên liệu như tiêu, gia vị, hạt thì là.",
+      "structureVi": "Hệ thống gồm các bộ phận chính:\n- Cụm máy nghiền\n- Cyclone tách liệu\n- Hộp thu bụi\n- Quạt hút\n- Tủ điều khiển điện\n- Hệ thống đường ống kết nối\nMáy sử dụng chuyển động tương đối giữa bộ phận cố định và búa/dao chuyển động để nghiền nguyên liệu bằng tác động va đập kết hợp lực ly tâm. Nhà sản xuất cho biết máy phù hợp với các nguyên liệu như tiêu, gia vị, hạt thì là...",
+      "workingPrincipleVi": "Nguyên liệu được nghiền nhờ chuyển động tốc độ cao giữa búa/dao động và đĩa cố định.\nTrong buồng nghiền có lưới sàng:\n- Hạt có kích thước nhỏ hơn lỗ sàng sẽ đi qua lưới và thoát khỏi buồng nghiền dưới tác dụng của lực ly tâm.\n- Hạt còn quá lớn sẽ tiếp tục ở lại trong buồng nghiền để được nghiền tiếp.\nNhư vậy, kích thước thành phẩm được điều chỉnh chủ yếu thông qua kích thước lỗ sàng.",
+      "notes": "AS-200 trở lên có cấu hình hệ thống theo bảng."
     },
     {
       "seriesCode": "ASDF_MULTISTAGE",
       "displayCode": "ASDF",
-      "nameVi": "Máy nghiền búa tiên tiến",
-      "nameEn": "ASDF Advanced Hammer Grinding Set",
+      "nameVi": "Máy nghiền búa nhiều tầng",
+      "nameEn": "3-Stage advanced hammer mill unit",
       "technology": "multi_stage_hammer",
       "pdfPages": "15-17",
       "applicationVi": "Nghiền ba lần trong cùng buồng nghiền qua ba vùng: thô, trung bình và mịn. Có thể nghiền bột mịn trực tiếp từ nguyên liệu thô lớn; tích hợp cyclone, lọc bụi, quạt hút và tủ điều khiển.",
-      "workingPrincipleVi": "Nguyên liệu đi qua ba nhóm dao tốc độ cao theo thứ tự. Thiết bị giữa vùng trung bình và mịn ngăn hạt thô đi vào vùng mịn. Tốc độ rotor điều khiển bằng biến tần để điều chỉnh kích thước hạt.",
+      "structureVi": "Một bộ BSDF hoàn chỉnh gồm:\n- Cụm nghiền\n- Cyclone thu hồi sản phẩm\n- Hệ thống thu bụi xung pulse\n- Quạt hút\n- Tủ điều khiển điện\nNguyên liệu đi vào buồng nghiền. Sau khi nghiền, luồng khí từ quạt đưa bột tới cyclone để tách và xả sản phẩm. Phần bột siêu mịn còn lại trong luồng khí được thu ở hộp lọc bụi. Toàn bộ quá trình được thiết kế làm việc liên tục và hạn chế phát sinh bụi.",
+      "workingPrincipleVi": "Điểm đặc biệt: nghiền 3 tầng trong cùng một buồng\nĐây là điểm quan trọng nhất của ASDF.\nBộ phận nghiền tích hợp 3 vùng nghiền liên tiếp:\n1. Vùng nghiền thô\n2. Vùng nghiền trung gian\n3. Vùng nghiền mịn\nMỗi tầng có một bộ dao và một lớp liner riêng. Nguyên liệu đi qua lần lượt ba nhóm dao quay tốc độ cao và được nghiền 3 lần trong cùng một buồng nghiền.\nGiữa vùng nghiền trung gian và vùng nghiền mịn có một cơ cấu nhằm ngăn hạt thô đi trực tiếp sang khu vực nghiền mịn, giúp kiểm soát độ mịn của sản phẩm tốt hơn.",
       "notes": "PDF trang 17 hiển thị tiêu đề 'BSC Máy nghiền thô' nhưng nội dung, hình và bảng đều là BSDF; database giữ BSDF và ghi nhận trong bảng data_corrections."
     },
     {
       "seriesCode": "AS_ROLLER",
-      "displayCode": "AS",
-      "nameVi": "Máy nghiền gia vị",
+      "displayCode": "Roller mill",
+      "nameVi": "Máy nghiền trục lăn",
       "nameEn": "AS Series Spice Pulverizer Set",
       "technology": "roller_mill",
       "pdfPages": "18",
       "applicationVi": "Dùng rộng rãi trong thực phẩm, đặc biệt cho nguyên liệu dầu như vừng, lạc (đậu phộng) và hạnh nhân; có thể nghiền thành bột khoảng 10-40 mesh.",
-      "workingPrincipleVi": "Nguyên liệu được đưa vào vùng con lăn và nghiền bằng lực ép. Kích thước bột điều chỉnh bằng khoảng cách giữa hai con lăn. Bản tiêu chuẩn có ba con lăn; bản bốn con lăn dùng khi cần bột mịn hơn.",
+      "workingPrincipleVi": "Nguyên liệu thô được đưa từ phễu nạp liệu vào khu vực trục nghiền và được nghiền thành dạng bột. Bằng cách điều chỉnh khoảng cách giữa hai trục nghiền, người dùng có thể thu được thành phẩm với kích thước hạt theo mong muốn.",
       "notes": "3-roller và 4-roller."
     },
     {
       "seriesCode": "ASK_JET",
       "displayCode": "ASK",
-      "nameVi": "Máy nghiền khí nén",
-      "nameEn": "Jet Mill",
+      "nameVi": "Máy nghiền phản lực khí siêu mịn",
+      "nameEn": "Powder Air Jet Mill",
       "technology": "jet_mill",
       "pdfPages": "19",
-      "applicationVi": "Sử dụng khí nén tốc độ cao để tạo vùng va đập, nơi các hạt tự nghiền lẫn nhau; sau nghiền, bột được phân loại và thu gom qua cyclone/bộ thu bụi.",
-      "workingPrincipleVi": "Cấp liệu trục vít đưa nguyên liệu ổn định vào máy. Khí nén qua vòi phun đạt vận tốc cao tạo va đập. Bột đi vào buồng phân loại; hạt mịn đi qua bánh phân loại vào cyclone, hạt thô quay lại buồng nghiền.",
+      "applicationVi": "Ứng dụng chính của ASK Jet Mill phù hợp cho:\n- Vật liệu có tính mài mòn\n- Nguyên liệu có tính dính\n- Chất độn khoáng\n- Chất độn ceramic/gốm\n- Thực phẩm\n- Hóa chất\n- Hóa chất nông nghiệp",
+      "workingPrincipleVi": "Air Jet Mill là máy nghiền sử dụng khí nén tốc độ cao để nghiền các vật liệu dạng khô thành bột siêu mịn. Cấu tạo chính bao gồm vít cấp liệu, vòi phun nghiền, buồng nghiền và buồng phân cấp.\nCó thể hình dung nguyên lý:\nNguyên liệu → vít cấp liệu → buồng nghiền → khí nén tốc độ cao → va chạm giữa các hạt → phân cấp → cyclone → bộ thu bụi\nBước 1 – Cấp liệu\nVít tải có tốc độ điều chỉnh, đưa nguyên liệu vào Jet Mill một cách ổn định và liên tục.\nBước 2 – Gia tốc bằng khí nén\nKhí nén đi qua các vòi phun được thiết kế đặc biệt, đạt vận tốc rất cao.\nLuồng khí cuốn nguyên liệu vào vùng nghiền.\nBước 3 – Nghiền bằng va chạm\nĐiểm rất quan trọng của Jet Mill là:\nKhông chủ yếu dùng dao, búa hay pin để nghiền.\nCác hạt nguyên liệu được khí nén gia tốc và va chạm với nhau nhiều lần, từ đó tự vỡ nhỏ thành bột.\nĐây là khác biệt lớn so với ASP Air Classifier Mill hoặc ASZ Pin Mill.\nBước 4 – Phân cấp\nSau khi nghiền, bột được luồng khí đưa lên buồng phân cấp.\nTại đây hạt chịu hai lực chính:\n- Lực ly tâm do bánh phân cấp quay tốc độ cao.\n- Lực hút khí động do hệ thống quạt hút tạo ra.\nBước 5 – Tách bột mịn và bột thô\nNếu hạt đã đủ mịn, lực hút khí thắng lực ly tâm, hạt đi qua bánh phân cấp và tiếp tục đến:\nClassifier → Cyclone → Dust Collector\nđể thu hồi sản phẩm.\nNếu hạt còn quá thô, bánh phân cấp sẽ loại nó ra và đưa trở lại buồng nghiền để tiếp tục nghiền.",
       "notes": "Đơn vị tiêu thụ khí nén được giữ nguyên theo PDF là m3/giây và được đánh dấu cần xác minh trước khi dùng thiết kế."
     },
     {
       "seriesCode": "AS_CRYOGENIC",
       "displayCode": "AS",
-      "nameVi": "Máy nghiền lạnh sâu",
-      "nameEn": "AS Series Cryogenic Grinder",
+      "nameVi": "Máy nghiền siêu lạnh",
+      "nameEn": "Low Temperature Spice Cryogenic Pin Mill Grinder",
       "technology": "cryogenic_grinding",
       "pdfPages": "20",
-      "applicationVi": "Sử dụng nitơ lỏng làm môi trường làm mát để nghiền vật liệu nhạy nhiệt thành bột mịn như trái cây, rau, thảo mộc, thuốc, nhựa, cao su; giúp bảo quản dưỡng chất ở nhiệt độ thấp.",
-      "workingPrincipleVi": "Nghiền trong môi trường nitơ lỏng, nhiệt độ thấp; tải và xả bằng truyền tải trục vít.",
+      "applicationVi": "Máy có phạm vi ứng dụng khá rộng, gồm:\n- Thực phẩm và sản phẩm chăm sóc sức khỏe: gia vị, chiết xuất động thực vật, thuốc đông dược/thành phẩm y học cổ truyền, các thành phần tự nhiên và tổng hợp\n- Ngành hóa chất và sơn phủ: ví dụ bột dùng cho lớp phủ Teflon, PA, PC, PU, PP, PE\n- Tái chế: nhựa có điểm nóng chảy thấp, vật liệu tự bôi trơn cao, cao su phế liệu, cao su nguyên sinh…",
+      "workingPrincipleVi": "Nguồn lạnh trao đổi nhiệt với vật liệu làm vật liệu hạ nhiệt và trở nên giòn. Sau đó vật liệu được va đập, cắt và ma sát trong buồng nghiền để tạo thành hạt mịn. Trang sản phẩm còn nói kích thước có thể đạt tới mức micron trong mô tả nguyên lý nghiền.",
       "notes": "Nhiệt độ nguồn ghi -196 đến 0 °C."
+    },
+    {
+      "seriesCode": "ASF_FITZ_MILL",
+      "displayCode": "ASF",
+      "nameVi": "Máy nghiền dược liệu",
+      "nameEn": "Pharmaceutical Fitz Mill",
+      "technology": "fitz_mill",
+      "pdfPages": "14-15",
+      "applicationVi": "Sử dụng trong nhiều lĩnh vực như:\n- Dược phẩm\n- Thực phẩm\n- Hóa chất\n- Dược liệu\n- Lá trà và các loại lá/thảo mộc khô\nCác bộ phận tiếp xúc trực tiếp với nguyên liệu đều được làm bằng thép không gỉ, có khả năng chống ăn mòn tốt.\nThân máy được thiết kế kín hoàn toàn, giúp thuận tiện cho việc vệ sinh. Bề mặt bên trong được xử lý phẳng và nhẵn để đáp ứng tốt hơn các yêu cầu vệ sinh khi sản xuất dược phẩm, thực phẩm và hóa chất, theo định hướng tiêu chuẩn GMP mà nhà sản xuất đề cập.",
+      "workingPrincipleVi": "ASF là thiết bị nghiền tốc độ cao.\nNguyên liệu được nghiền nhờ các dao quay tốc độ cao. Dao có hai phía làm việc khác nhau:\n- Một phía có cạnh sắc để cắt\n- Phía còn lại hoạt động như dao va đập\nTrong quá trình quay tốc độ cao, nguyên liệu liên tục bị:\nCắt → va đập → nghiền nhỏ → đi qua lưới sàng → thành phẩm\nNhà sản xuất cho biết có thể sử dụng dao với kích thước và hình dạng khác nhau tùy theo loại nguyên liệu. Kích thước bột thành phẩm được điều chỉnh bằng hai cách chính:\nThay lưới sàng hoặc thay đổi tốc độ quay.",
+      "featuresVi": "1. Dao quay tốc độ cao: Dao nghiền quay ở tốc độ cao để cắt và nghiền nguyên liệu cho đến khi kích thước hạt nhỏ hơn lỗ của tấm lưới sàng.\n2. Có thể điều chỉnh tốc độ: Tốc độ quay có thể thay đổi để phù hợp với từng loại nguyên liệu và kích thước thành phẩm yêu cầu.\n3. Sử dụng lưới đục lỗ: Máy sử dụng perforated plate screen – tấm sàng đục lỗ. Có thể lựa chọn kích thước lỗ sàng phù hợp với yêu cầu sản xuất.",
+      "notes": "Dạng máy đơn (ASF-15, ASF-32); tách từ dòng ASF/AS."
     }
   ],
   "models": [
@@ -847,7 +864,7 @@
     },
     {
       "machineId": "ASF_AS_HAMMER__ASF-15",
-      "seriesCode": "ASF_AS_HAMMER",
+      "seriesCode": "ASF_FITZ_MILL",
       "model": "ASF-15",
       "active": 1,
       "pdfPage": 15,
@@ -871,7 +888,7 @@
     },
     {
       "machineId": "ASF_AS_HAMMER__ASF-32",
-      "seriesCode": "ASF_AS_HAMMER",
+      "seriesCode": "ASF_FITZ_MILL",
       "model": "ASF-32",
       "active": 1,
       "pdfPage": 15,
@@ -3483,6 +3500,46 @@
     {
       "seriesCode": "AS_CRYOGENIC",
       "tag": "rubber",
+      "note": "Dùng cho bộ lọc/chọn máy tự động"
+    },
+    {
+      "seriesCode": "ASF_FITZ_MILL",
+      "tag": "hammer",
+      "note": "Dùng cho bộ lọc/chọn máy tự động"
+    },
+    {
+      "seriesCode": "ASF_FITZ_MILL",
+      "tag": "cutting",
+      "note": "Dùng cho bộ lọc/chọn máy tự động"
+    },
+    {
+      "seriesCode": "ASF_FITZ_MILL",
+      "tag": "food",
+      "note": "Dùng cho bộ lọc/chọn máy tự động"
+    },
+    {
+      "seriesCode": "ASF_FITZ_MILL",
+      "tag": "pharma",
+      "note": "Dùng cho bộ lọc/chọn máy tự động"
+    },
+    {
+      "seriesCode": "ASF_FITZ_MILL",
+      "tag": "continuous",
+      "note": "Dùng cho bộ lọc/chọn máy tự động"
+    },
+    {
+      "seriesCode": "ASF_FITZ_MILL",
+      "tag": "dust_control",
+      "note": "Dùng cho bộ lọc/chọn máy tự động"
+    },
+    {
+      "seriesCode": "ASF_FITZ_MILL",
+      "tag": "powder",
+      "note": "Dùng cho bộ lọc/chọn máy tự động"
+    },
+    {
+      "seriesCode": "ASF_FITZ_MILL",
+      "tag": "granule",
       "note": "Dùng cho bộ lọc/chọn máy tự động"
     }
   ],
