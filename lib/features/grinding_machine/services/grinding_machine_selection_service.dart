@@ -66,7 +66,7 @@ abstract final class GrindingMachineSelectionService {
       if (byNotMatch != 0) return byNotMatch;
       final byScore = b.matchScore.compareTo(a.matchScore);
       if (byScore != 0) return byScore;
-      return a.machine.model.compareTo(b.machine.model);
+      return GrindingFormat.compareModel(a.machine.model, b.machine.model);
     });
     return results;
   }
@@ -199,8 +199,7 @@ abstract final class GrindingMachineSelectionService {
         label: 'Kích thước đầu vào',
         status: GrindingCriterionStatus.unknown,
         requiredDisplay: requiredDisplay,
-        reason:
-            'Database chưa có dữ liệu giới hạn kích thước đầu vào cho model này.',
+        reason: 'Database chưa có dữ liệu giới hạn kích thước đầu vào cho model này.',
       );
     }
     final isMatch = required <= actual;

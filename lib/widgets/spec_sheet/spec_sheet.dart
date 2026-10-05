@@ -745,11 +745,76 @@ class SpecRow extends StatelessWidget {
   final Color color;
   final bool showDivider;
 
+  static const _labelStyle = TextStyle(
+    fontWeight: FontWeight.w600,
+    fontSize: 13,
+    color: Color(0xFF1A1A2E),
+  );
+
   @override
   Widget build(BuildContext context) {
-    // Ô giá trị chỉ rộng ~nửa hàng: chuỗi dài hơn ~18 ký tự sẽ gãy dòng xấu,
-    // nên chuyển xuống dưới nhãn và trải hết chiều ngang.
-    final isLong = value.contains('\n') || value.length > 18;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 16.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) =>
+                _buildRow(context, constraints.maxWidth),
+          ),
+        ),
+        if (showDivider)
+          Divider(
+            height: 1,
+            thickness: 0.6,
+            indent: 60,
+            endIndent: 16,
+            color: Colors.grey.shade200,
+          ),
+      ],
+    );
+  }
+
+  /// Chọn bố cục theo bề rộng chữ thật (không đếm ký tự):
+  /// 1. Vừa ô giá trị nửa hàng → nhãn / giá trị chia đôi như các dòng khác.
+  /// 2. Không vừa nửa hàng nhưng nhãn + giá trị vẫn vừa 1 hàng → ô giá trị
+  ///    nới theo nội dung, vẫn nằm cùng hàng, canh phải với các ô khác.
+  /// 3. Không vừa nữa → chuyển xuống dưới nhãn, trải hết chiều ngang.
+  Widget _buildRow(BuildContext context, double maxWidth) {
+    final valueStyle = TextStyle(
+      fontWeight: FontWeight.w700,
+      fontSize: 13,
+      color: color,
+      height: 1.3,
+    );
+    final base = DefaultTextStyle.of(context).style;
+    final scaler = MediaQuery.textScalerOf(context);
+    double measure(String text, TextStyle style) {
+      final painter = TextPainter(
+        text: TextSpan(text: text, style: base.merge(style)),
+        textDirection: TextDirection.ltr,
+        textScaler: scaler,
+        maxLines: 1,
+      )..layout();
+      final width = painter.width;
+      painter.dispose();
+      return width;
+    }
+
+    final lines = value.split('\n');
+    final valueTextWidth = lines
+        .map((l) => measure(l, valueStyle))
+        .reduce((a, b) => a > b ? a : b);
+    // 10px padding mỗi bên + viền 1px mỗi bên + 2px dư làm tròn.
+    final pillWidth = valueTextWidth + 24;
+    // Phần còn lại sau icon (34) + khoảng cách (11) + khe nhãn/giá trị (8).
+    final rest = maxWidth - 34 - 11 - 8;
+    final labelWidth = measure(label, _labelStyle);
+    final fitsHalf = lines.length <= 2 && pillWidth <= rest / 2;
+    final fitsHug =
+        lines.length <= 2 &&
+        pillWidth <= rest - (labelWidth < rest * 0.4 ? labelWidth : rest * 0.4);
+    final isLong = !fitsHalf && !fitsHug;
+
     final iconBox = Container(
       width: 34,
       height: 34,
@@ -759,14 +824,7 @@ class SpecRow extends StatelessWidget {
       ),
       child: Icon(icon, size: 17, color: color),
     );
-    final labelText = Text(
-      label,
-      style: const TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 13,
-        color: Color(0xFF1A1A2E),
-      ),
-    );
+    final labelText = Text(label, style: _labelStyle);
     final valueBox = Container(
       width: isLong ? double.infinity : null,
       padding: EdgeInsets.symmetric(
@@ -778,55 +836,38 @@ class SpecRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(isLong ? 12 : 16),
         border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
-      child: Text(
-        value,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 13,
-          color: color,
-          height: 1.3,
-        ),
-      ),
+      child: Text(value, textAlign: TextAlign.center, style: valueStyle),
     );
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 16.0),
-          child: isLong
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        iconBox,
-                        const SizedBox(width: 11),
-                        Expanded(child: labelText),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    valueBox,
-                  ],
-                )
-              : Row(
-                  children: [
-                    iconBox,
-                    const SizedBox(width: 11),
-                    Expanded(flex: 5, child: labelText),
-                    const SizedBox(width: 8),
-                    Expanded(flex: 5, child: valueBox),
-                  ],
-                ),
-        ),
-        if (showDivider)
-          Divider(
-            height: 1,
-            thickness: 0.6,
-            indent: 60,
-            endIndent: 16,
-            color: Colors.grey.shade200,
+    if (isLong) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              iconBox,
+              const SizedBox(width: 11),
+              Expanded(child: labelText),
+            ],
           ),
+          const SizedBox(height: 8),
+          valueBox,
+        ],
+      );
+    }
+    return Row(
+      children: [
+        iconBox,
+        const SizedBox(width: 11),
+        if (fitsHalf) ...[
+          Expanded(flex: 5, child: labelText),
+          const SizedBox(width: 8),
+          Expanded(flex: 5, child: valueBox),
+        ] else ...[
+          Expanded(child: labelText),
+          const SizedBox(width: 8),
+          valueBox,
+        ],
       ],
     );
   }

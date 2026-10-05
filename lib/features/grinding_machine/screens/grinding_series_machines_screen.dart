@@ -184,7 +184,10 @@ class _SeriesHeader extends StatelessWidget {
           ],
           if (series.featuresVi.isNotEmpty) ...[
             const SizedBox(height: 12),
-            _FeatureList(text: series.featuresVi),
+            GrindingFeatureList(
+              key: const Key('grinding_series_features'),
+              text: series.featuresVi,
+            ),
           ],
           // Dòng có ảnh thực tế: hiện ảnh máy thay cho các thẻ ứng dụng.
           if (imagePath != null) ...[
@@ -210,102 +213,6 @@ class _SeriesHeader extends StatelessWidget {
           ],
         ],
       ),
-    );
-  }
-}
-
-/// Khối "Đặc điểm chính" — mỗi dòng của [text] là 1 ý (VD "1. Nhiệt độ
-/// nghiền thấp: ..."); phần trước dấu ":" in đậm để dễ đọc lướt.
-class _FeatureList extends StatelessWidget {
-  const _FeatureList({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final lines = text
-        .split('\n')
-        .map((l) => l.trim())
-        .where((l) => l.isNotEmpty)
-        .toList();
-    final accent = Colors.blue.shade900;
-    return Container(
-      key: const Key('grinding_series_features'),
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade50.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.blue.shade100),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Đặc điểm chính',
-            style: TextStyle(
-              color: accent,
-              fontSize: 13.5,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 6),
-          for (final line in lines)
-            if (line.startsWith('- '))
-              // Gạch đầu dòng "- ..." -> "•" (VD ưu điểm của ASP).
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '•  ',
-                      style: TextStyle(
-                        color: accent,
-                        fontSize: 13,
-                        height: 1.4,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text.rich(
-                        _featureSpan(line.substring(2), accent),
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 13,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Text.rich(
-                  _featureSpan(line, accent),
-                  style: TextStyle(
-                    color: Colors.grey.shade800,
-                    fontSize: 13,
-                    height: 1.4,
-                  ),
-                ),
-              ),
-        ],
-      ),
-    );
-  }
-
-  static TextSpan _featureSpan(String line, Color accent) {
-    final colon = line.indexOf(':');
-    if (colon <= 0) return TextSpan(text: line);
-    return TextSpan(
-      children: [
-        TextSpan(
-          text: line.substring(0, colon + 1),
-          style: TextStyle(color: accent, fontWeight: FontWeight.w700),
-        ),
-        TextSpan(text: line.substring(colon + 1)),
-      ],
     );
   }
 }

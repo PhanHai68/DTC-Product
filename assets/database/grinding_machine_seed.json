@@ -1,5 +1,5 @@
 {
-  "databaseVersion": "2.2.18",
+  "databaseVersion": "2.2.19",
   "sourceDocument": "DTC-C-MayNghien-250426-demo4.pdf",
   "series": [
     {
@@ -44,7 +44,7 @@
       "technology": "universal_mill_with_dust_system",
       "pdfPages": "7-8",
       "applicationVi": "Ứng dụng rộng trong thực phẩm, hóa chất, thức ăn chăn nuôi và dược phẩm. Máy nghiền tích hợp hệ thống gió/thu bụi dạng lốc xoáy.",
-      "structureVi": "Theo Brightsail, bộ BSG self-priming grinding unit gồm:\n- Máy nghiền chính\n- Thiết bị phụ trợ\n- Đường ống vận chuyển\n- Tủ/thiết bị điều khiển điện\n- Bộ cấp liệu\n- Cyclone separator\n- Bộ lọc túi / thu bụi\n- Hệ thống hút khí\nMáy phụ trợ sử dụng cyclone kết hợp bag filter và air collector để thu hồi bột và bụi mịn.",
+      "structureVi": "- Máy nghiền chính\n- Thiết bị phụ trợ\n- Đường ống vận chuyển\n- Tủ/thiết bị điều khiển điện\n- Bộ cấp liệu\n- Cyclone separator\n- Bộ lọc túi / thu bụi\n- Hệ thống hút khí\nMáy phụ trợ sử dụng cyclone kết hợp bag filter và air collector để thu hồi bột và bụi mịn.",
       "workingPrincipleVi": "Nguyên lý nghiền\nNguyên liệu đi từ phễu cấp liệu vào buồng nghiền.\nBên trong máy, đĩa nghiền/búa quay với tốc độ cao làm nguyên liệu bị:\nVa đập → văng vào vành răng cố định → cắt → va đập lại → nghiền nhỏ\nTrang mô tả quá trình nghiền là sự kết hợp của:\n- lực va đập,\n- lực cắt,\n- lực nghiền/chà xát.\nSau khi được nghiền nhỏ, nhờ áp suất âm do quạt hút tạo ra, bột được hút ra khỏi buồng nghiền và chuyển qua:\nBuồng nghiền → lưới sàng → đường ống → cyclone → thu sản phẩm\nMột lượng nhỏ bụi rất mịn sẽ được pulse dust collector thu hồi.\nChức năng phân loại kích thước\n- chức năng nghiền.\n- phân loại.\n- sàng.\n- cắt ly tâm.\nNhờ vậy kích thước hạt thành phẩm có thể được kiểm soát.\nTuy nhiên, với ASG này, việc kiểm soát kích thước vẫn phụ thuộc đáng kể vào lưới sàng, khác với ASP Air Classifier Mill sử dụng bánh phân cấp tốc độ cao.",
       "notes": "Kèm hệ thống gió khử bụi."
     },

@@ -17,7 +17,7 @@ void main() {
     expect(report.snapshot!.toJson(), expected.toJson());
     expect(
       report.snapshot!.databaseVersion,
-      '2.2.18',
+      '2.2.19',
     ); // README đã cập nhật theo Update_Log.
   });
 

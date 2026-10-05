@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
       title: 'Máy nghiền',
       imagePath: 'assets/images/home_grinding_machine_asp350.png',
       visualScale: 0.82,
-      route: '/grinding_machine',
+      route: '/grinding_menu',
     ),
     _HomeAction(
       title: 'Công cụ & Tiện ích',

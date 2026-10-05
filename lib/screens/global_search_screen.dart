@@ -84,16 +84,21 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       subtitle: 'Chụp ảnh Before/After, xác minh và xuất PDF bảo trì',
       location: '/maintenance_report',
       icon: Icons.build_rounded,
-      keywords:
-          'maintenance report bao cao bao tri tinh trang may anh before after verified camera xac minh',
+      keywords: 'maintenance report bao cao bao tri tinh trang may anh before after verified camera xac minh',
     ),
     const _SearchItem(
       title: 'Máy nghiền',
       subtitle: 'Tra cứu, so sánh và chọn máy nghiền phù hợp',
       location: '/grinding_machine',
       icon: Icons.blender_outlined,
-      keywords:
-          'may nghien grinding mill bsp bsz asp asz bsc asc bsg asg bsu asu bsf bsdf pin jet roller hammer cong suat do min mesh micron',
+      keywords: 'may nghien grinding mill bsp bsz asp asz bsc asc bsg asg bsu asu bsf bsdf pin jet roller hammer cong suat do min mesh micron',
+    ),
+    const _SearchItem(
+      title: 'Máy đóng gói',
+      subtitle: 'Máy đóng gói đứng, cân định lượng, trà túi lọc, đóng bao lớn',
+      location: '/packing_machine',
+      icon: Icons.inventory_2_outlined,
+      keywords: 'may dong goi packing machine aspm aspm-320 aspm-420 aspm-520 aspm-620 aspm-720 aspm-820 aspm-f aspm-a aspm-b aspm-c aspm-a100 aspm-b100 as-20d as-c12 as-nw160 can truc vit can pheu tra tui loc bao lon chiet rot bot hat goi tui',
     ),
     const _SearchItem(
       title: 'Phân tích hoàn vốn',

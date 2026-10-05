@@ -68,7 +68,7 @@ class GrindingSpecSheet {
     if (GrindingFormat.inputSize(machine) case final v?)
       GrindingSpecItem(
         label: 'Kích thước đầu vào',
-        value: v,
+        value: _clauseLines(v),
         icon: Icons.input_rounded,
         color: weightColor,
       ),
@@ -151,7 +151,7 @@ class GrindingSpecSheet {
     }
     buffer.writeln();
     for (final row in [...technicalRows, ...extraRows, ...installRows]) {
-      buffer.writeln('• ${row.label}: ${row.value.replaceAll('\n', ' ')}');
+      buffer.writeln('• ${row.label}: ${row.value.replaceAll('\n', '; ')}');
     }
     if (series != null && series!.applicationVi.isNotEmpty) {
       buffer
@@ -169,6 +169,30 @@ class GrindingSpecSheet {
 
   static String _num(double v) =>
       v == v.roundToDouble() ? v.toInt().toString() : v.toString();
+
+  /// "<10 mm cho nguyên liệu hạt; <15×40×2 mm cho nguyên liệu lá" →
+  /// "Hạt: < 10 mm\nLá: < 15×40×2 mm" — mỗi vế 1 dòng ngắn, cùng kiểu
+  /// "< 10 mm" với các model khác. Ghi chú 1 vế giữ nguyên.
+  static String _clauseLines(String note) {
+    final parts = note
+        .split(';')
+        .map((p) => p.trim())
+        .where((p) => p.isNotEmpty);
+    if (parts.length < 2) return note;
+    final clause = RegExp(r'^(.+?)\s+cho nguyên liệu\s+(.+)$');
+    return parts
+        .map((p) {
+          final m = clause.firstMatch(p);
+          final size = (m?.group(1) ?? p).replaceFirstMapped(
+            RegExp(r'^([<>≤≥])\s*'),
+            (s) => '${s[1]} ',
+          );
+          final kind = m?.group(2);
+          if (kind == null) return size;
+          return '${kind[0].toUpperCase()}${kind.substring(1)}: $size';
+        })
+        .join('\n');
+  }
 
   static String _range(double? min, double? max, String? unit) {
     final suffix = unit == null ? '' : ' $unit';

@@ -23,6 +23,13 @@ import '../features/maintenance_report/screens/maintenance_report_form_screen.da
 import '../features/maintenance_report/screens/maintenance_report_workspace_screen.dart';
 import '../features/maintenance_report/models/maintenance_report.dart';
 import '../features/grinding_machine/screens/grinding_machine_home_screen.dart';
+import '../features/grinding_machine/screens/grinding_menu_screen.dart';
+import '../features/packing_machine/screens/packing_machine_home_screen.dart';
+import '../features/packing_machine/screens/packing_series_machines_screen.dart';
+import '../features/packing_machine/screens/packing_machine_detail_screen.dart';
+import '../features/packing_machine/screens/packing_machine_search_screen.dart';
+import '../features/packing_machine/screens/packing_machine_compare_screen.dart';
+import '../features/packing_machine/screens/packing_machine_selector_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_search_screen.dart';
 import '../features/grinding_machine/screens/grinding_series_machines_screen.dart';
 import '../features/grinding_machine/screens/grinding_machine_detail_screen.dart';
@@ -313,6 +320,41 @@ final GoRouter appRouter = GoRouter(
       path: '/maintenance_report/:id',
       builder: (context, state) => MaintenanceReportWorkspaceScreen(
         reportId: state.pathParameters['id']!,
+      ),
+    ),
+    GoRoute(
+      path: '/grinding_menu',
+      builder: (context, state) => const GrindingMenuScreen(),
+    ),
+    GoRoute(
+      path: '/packing_machine',
+      builder: (context, state) => const PackingMachineHomeScreen(),
+    ),
+    GoRoute(
+      path: '/packing_machine/search',
+      builder: (context, state) => const PackingMachineSearchScreen(),
+    ),
+    GoRoute(
+      path: '/packing_machine/series',
+      builder: (context, state) =>
+          PackingSeriesMachinesScreen(seriesCode: state.extra as String),
+    ),
+    GoRoute(
+      path: '/packing_machine/detail/:machineId',
+      builder: (context, state) => PackingMachineDetailScreen(
+        machineId: state.pathParameters['machineId']!,
+      ),
+    ),
+    GoRoute(
+      path: '/packing_machine/selector',
+      builder: (context, state) => const PackingMachineSelectorScreen(),
+    ),
+    GoRoute(
+      path: '/packing_machine/compare',
+      builder: (context, state) => PackingMachineCompareScreen(
+        initialMachineIds: state.extra is List<String>
+            ? state.extra as List<String>
+            : null,
       ),
     ),
     GoRoute(

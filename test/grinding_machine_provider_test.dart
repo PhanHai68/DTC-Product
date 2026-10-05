@@ -123,7 +123,7 @@ void main() {
   test(
     'Cùng version cần lưu ý; version thấp hơn và file lỗi không được apply',
     () async {
-      final root = updated()..['databaseVersion'] = '2.2.18';
+      final root = updated()..['databaseVersion'] = '2.2.19';
       final same = await provider.previewImport('same.json', bytes(root));
       expect(same.report.canImport, isTrue);
       expect(
@@ -136,7 +136,7 @@ void main() {
       await expectLater(provider.applyImport(old), throwsStateError);
       final bad = await provider.previewImport('empty.json', bytes({}));
       await expectLater(provider.applyImport(bad), throwsStateError);
-      expect(await repository.getImportedDatabaseVersion(), '2.2.18');
+      expect(await repository.getImportedDatabaseVersion(), '2.2.19');
       expect(provider.machines, hasLength(57));
     },
   );
@@ -196,7 +196,7 @@ void main() {
       addTearDown(reopened.dispose);
       await reopened.loadHome();
 
-      expect(await repository.getImportedDatabaseVersion(), '2.2.18');
+      expect(await repository.getImportedDatabaseVersion(), '2.2.19');
       final names = {
         for (final series in reopened.series) series.seriesCode: series.nameVi,
       };
@@ -265,7 +265,10 @@ void main() {
       );
       // Cấu tạo tách sang mục riêng (structureVi); nguyên lý bắt đầu từ
       // "Nguyên lý nghiền".
-      expect(asg.structureVi.split('\n'), hasLength(10));
+      // Không còn dòng mở đầu nhắc tên nhà sản xuất gốc.
+      expect(asg.structureVi.split('\n'), hasLength(9));
+      expect(asg.structureVi, startsWith('- Máy nghiền chính\n'));
+      expect(asg.structureVi, isNot(contains('Brightsail')));
       expect(asg.structureVi, contains('\n- Cyclone separator\n'));
       expect(asg.workingPrincipleVi, startsWith('Nguyên lý nghiền\n'));
       expect(asg.workingPrincipleVi, isNot(contains('Cấu tạo')));

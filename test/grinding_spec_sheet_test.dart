@@ -125,6 +125,27 @@ void main() {
       },
     );
 
+    test('kích thước đầu vào nhiều vế: mỗi vế 1 dòng ngắn', () {
+      final sheet = GrindingSpecSheet(
+        machine: const GrindingMachine(
+          machineId: 'm',
+          seriesCode: 'AS_SMALL_HAMMER',
+          model: 'AS-180',
+          inputSizeNote:
+              '<10 mm cho nguyên liệu hạt; <15×40×2 mm cho nguyên liệu lá',
+        ),
+        series: null,
+        extraSpecs: const [],
+      );
+      final row = sheet.technicalRows.single;
+      expect(row.label, 'Kích thước đầu vào');
+      expect(row.value, 'Hạt: < 10 mm\nLá: < 15×40×2 mm');
+      expect(
+        sheet.shareText(contactName: 'An', contactPhone: '1'),
+        contains('• Kích thước đầu vào: Hạt: < 10 mm; Lá: < 15×40×2 mm'),
+      );
+    });
+
     test('text chia sẻ có tiêu đề, thông số và liên hệ', () {
       final text = GrindingSpecSheet(
         machine: machine,
@@ -155,5 +176,11 @@ void main() {
     expect(GrindingFormat.tagLabel('cutting'), 'Nghiền cắt');
     expect(GrindingFormat.tagLabel('hammer'), 'Nghiền búa');
     expect(GrindingFormat.tagLabel('screen'), 'Có lưới sàng');
+  });
+
+  test('model sắp theo số tự nhiên, nhỏ đến lớn', () {
+    final models = ['ASC-1000', 'ASC-200', 'ASC-600', 'ASC-300', 'ASC-400']
+      ..sort(GrindingFormat.compareModel);
+    expect(models, ['ASC-200', 'ASC-300', 'ASC-400', 'ASC-600', 'ASC-1000']);
   });
 }

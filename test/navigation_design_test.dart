@@ -77,7 +77,7 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.byKey(const ValueKey('home_solution_/grinding_machine')),
+      find.byKey(const ValueKey('home_solution_/grinding_menu')),
       findsOneWidget,
     );
     expect(
@@ -91,7 +91,7 @@ void main() {
       find.byKey(const ValueKey('home_solution_/color_sorter_categories')),
     );
     final grindingMachineCard = tester.getRect(
-      find.byKey(const ValueKey('home_solution_/grinding_machine')),
+      find.byKey(const ValueKey('home_solution_/grinding_menu')),
     );
     final extensionsCard = tester.getRect(
       find.byKey(const ValueKey('home_solution_/extensions')),
@@ -116,7 +116,7 @@ void main() {
       '/color_sorter_categories',
       '/packing_menu',
       '/acomp_menu',
-      '/grinding_machine',
+      '/grinding_menu',
       '/extensions',
     ]) {
       final title = tester.widget<Text>(
@@ -168,7 +168,7 @@ void main() {
       find.byKey(const ValueKey('home_solution_/acomp_menu')),
     );
     final fourth = tester.getRect(
-      find.byKey(const ValueKey('home_solution_/grinding_machine')),
+      find.byKey(const ValueKey('home_solution_/grinding_menu')),
     );
     expect(first.top, second.top);
     expect(second.top, third.top);

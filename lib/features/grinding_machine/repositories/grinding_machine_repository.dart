@@ -9,6 +9,7 @@ import '../models/grinding_material_series_map.dart';
 import '../models/grinding_selection_tag.dart';
 import '../models/grinding_series.dart';
 import '../models/grinding_database_snapshot.dart';
+import '../utils/grinding_format.dart';
 import '../services/grinding_database_validator.dart';
 
 export '../models/grinding_database_snapshot.dart';
@@ -196,7 +197,7 @@ class GrindingMachineRepository {
       where: activeOnly ? 'active = 1' : null,
       orderBy: 'seriesCode ASC, model ASC',
     );
-    return rows.map((row) => GrindingMachine.fromJson(_map(row))).toList();
+    return _sorted(rows);
   }
 
   Future<List<GrindingMachine>> getMachinesBySeries(
@@ -213,8 +214,14 @@ class GrindingMachineRepository {
       whereArgs: [seriesCode],
       orderBy: 'model ASC',
     );
-    return rows.map((row) => GrindingMachine.fromJson(_map(row))).toList();
+    return _sorted(rows);
   }
+
+  /// SQL sắp model theo chuỗi ("ASC-1000" trước "ASC-200") — sắp lại theo
+  /// số tự nhiên để danh sách đi từ máy nhỏ đến lớn.
+  List<GrindingMachine> _sorted(List<Map<String, Object?>> rows) =>
+      rows.map((row) => GrindingMachine.fromJson(_map(row))).toList()
+        ..sort(GrindingFormat.compareMachine);
 
   Future<GrindingMachine?> getMachineById(String machineId) async {
     final db = await _db.database;
@@ -262,7 +269,7 @@ class GrindingMachineRepository {
       ''',
       [like, like, like, like, like],
     );
-    return rows.map((row) => GrindingMachine.fromJson(_map(row))).toList();
+    return _sorted(rows);
   }
 
   // ---------------------------------------------------------------------

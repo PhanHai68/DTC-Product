@@ -7,6 +7,29 @@ abstract final class GrindingFormat {
   static String _num(double v) =>
       v == v.roundToDouble() ? v.toInt().toString() : v.toString();
 
+  /// So sánh tên model theo số tự nhiên: "ASC-200" < "ASC-300" < "ASC-1000"
+  /// (SQL "ORDER BY model" so chuỗi nên "ASC-1000" đứng trước "ASC-200").
+  static int compareModel(String a, String b) {
+    final chunk = RegExp(r'\d+|\D+');
+    final left = chunk.allMatches(a.toUpperCase()).map((m) => m[0]!).toList();
+    final right = chunk.allMatches(b.toUpperCase()).map((m) => m[0]!).toList();
+    for (var i = 0; i < left.length && i < right.length; i++) {
+      final x = int.tryParse(left[i]);
+      final y = int.tryParse(right[i]);
+      final c = x != null && y != null
+          ? x.compareTo(y)
+          : left[i].compareTo(right[i]);
+      if (c != 0) return c;
+    }
+    return left.length.compareTo(right.length);
+  }
+
+  /// Sắp theo dòng máy rồi model (số tự nhiên).
+  static int compareMachine(GrindingMachine a, GrindingMachine b) {
+    final bySeries = a.seriesCode.compareTo(b.seriesCode);
+    return bySeries != 0 ? bySeries : compareModel(a.model, b.model);
+  }
+
   /// "80 - 300 kg/h" — null nếu thiếu cả 2 mốc.
   static String? capacityRange(GrindingMachine machine) {
     final min = machine.capacityMinKgH;

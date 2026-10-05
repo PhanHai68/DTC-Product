@@ -41,7 +41,7 @@ void main() {
 
     expect(series, hasLength(12));
     expect(machines, hasLength(57));
-    expect(await repository.getImportedDatabaseVersion(), '2.2.18');
+    expect(await repository.getImportedDatabaseVersion(), '2.2.19');
   });
 
   test(
@@ -222,6 +222,6 @@ void main() {
     );
     await expectLater(repository.importSnapshot(empty), throwsFormatException);
     expect(await repository.getAllMachines(), hasLength(57));
-    expect(await repository.getImportedDatabaseVersion(), '2.2.18');
+    expect(await repository.getImportedDatabaseVersion(), '2.2.19');
   });
 }

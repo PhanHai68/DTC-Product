@@ -68,7 +68,7 @@ void main() {
 
     await provider.applyImport(preview);
 
-    expect(await repository.getImportedDatabaseVersion(), '2.2.18');
+    expect(await repository.getImportedDatabaseVersion(), '2.2.19');
     expect(await repository.getAllMachines(), hasLength(57));
   });
 
@@ -94,7 +94,7 @@ void main() {
     final preview = await provider.previewImport('new.json', jsonBytes);
 
     expect(preview.updated, hasLength(1));
-    expect(preview.currentVersion, '2.2.18');
+    expect(preview.currentVersion, '2.2.19');
     expect(preview.report.snapshot!.databaseVersion, '2.4');
 
     await provider.applyImport(preview);
@@ -129,6 +129,6 @@ void main() {
     expect(preview.report.canImport, isFalse);
     await expectLater(provider.applyImport(preview), throwsStateError);
     // Database không đổi sau khi bị chặn.
-    expect(await repository.getImportedDatabaseVersion(), '2.2.18');
+    expect(await repository.getImportedDatabaseVersion(), '2.2.19');
   });
 }

@@ -21,6 +21,45 @@ abstract final class GrindingSpecSheetPdfService {
     required Set<String> selectionTags,
     required String contactName,
     required String contactPhone,
+  }) {
+    final tags = (selectionTags.toList()..sort())
+        .map(GrindingFormat.tagLabel)
+        .join(' · ');
+    final application = sheet.series?.applicationVi ?? '';
+    return buildCatalogPdf(
+      headerTitle: 'CATALOG MÁY NGHIỀN',
+      footerLabel: 'DTCGroup · Catalog máy nghiền',
+      title: sheet.title,
+      subtitle: sheet.series?.nameVi,
+      imagePath: sheet.imagePath,
+      imageCaption: sheet.imageCaption,
+      groups: [
+        ('THÔNG SỐ KỸ THUẬT', sheet.technicalRows),
+        ('THÔNG SỐ BỔ SUNG', sheet.extraRows),
+        ('LẮP ĐẶT', sheet.installRows),
+      ],
+      applicationText: [
+        if (application.isNotEmpty) application,
+        if (tags.isNotEmpty) 'Phù hợp: $tags',
+      ].join('\n'),
+      contactName: contactName,
+      contactPhone: contactPhone,
+    );
+  }
+
+  /// Dựng PDF catalog 1 model (header DTC, ảnh, bảng thông số theo nhóm, ứng
+  /// dụng, liên hệ) — dùng chung cho máy nghiền và máy đóng gói.
+  static Future<Uint8List> buildCatalogPdf({
+    required String headerTitle,
+    required String footerLabel,
+    required String title,
+    required String? subtitle,
+    required String? imagePath,
+    required String? imageCaption,
+    required List<(String, List<GrindingSpecItem>)> groups,
+    required String applicationText,
+    required String contactName,
+    required String contactPhone,
   }) async {
     final regular = Uint8List.sublistView(
       await rootBundle.load('assets/fonts/Roboto-Regular.ttf'),
@@ -35,7 +74,7 @@ abstract final class GrindingSpecSheetPdfService {
       await rootBundle.load('assets/images/DTCGroup-Slogan.png'),
     );
     Uint8List? machineImage;
-    if (sheet.imagePath case final path?) {
+    if (imagePath case final path?) {
       machineImage = Uint8List.sublistView(await rootBundle.load(path));
     }
 
@@ -60,7 +99,7 @@ abstract final class GrindingSpecSheetPdfService {
       const ui.Rect.fromLTWH(0, 12, 132, 42),
     );
     g.drawString(
-      'CATALOG MÁY NGHIỀN',
+      headerTitle,
       font(15, isBold: true),
       bounds: ui.Rect.fromLTWH(142, 14, width - 142, 22),
       brush: PdfSolidBrush(_navy),
@@ -77,16 +116,16 @@ abstract final class GrindingSpecSheetPdfService {
     y = 82;
 
     g.drawString(
-      sheet.title,
+      title,
       font(18, isBold: true),
       bounds: ui.Rect.fromLTWH(0, y, width, 24),
       brush: PdfSolidBrush(_navy),
       format: PdfStringFormat(alignment: PdfTextAlignment.center),
     );
     y += 26;
-    if (sheet.series != null) {
+    if (subtitle != null) {
       g.drawString(
-        sheet.series!.nameVi,
+        subtitle,
         font(10),
         bounds: ui.Rect.fromLTWH(0, y, width, 14),
         brush: PdfSolidBrush(_muted),
@@ -101,7 +140,7 @@ abstract final class GrindingSpecSheetPdfService {
         ui.Rect.fromLTWH(width / 2 - 110, y, 220, 140),
       );
       y += 146;
-      if (sheet.imageCaption case final caption?) {
+      if (imageCaption case final caption?) {
         g.drawString(
           caption,
           font(8),
@@ -113,19 +152,14 @@ abstract final class GrindingSpecSheetPdfService {
       }
     }
 
-    // Bảng thông số theo 3 nhóm.
-    final groups = <(String, List<GrindingSpecItem>)>[
-      ('THÔNG SỐ KỸ THUẬT', sheet.technicalRows),
-      ('THÔNG SỐ BỔ SUNG', sheet.extraRows),
-      ('LẮP ĐẶT', sheet.installRows),
-    ];
-    for (final (title, rows) in groups) {
+    // Bảng thông số theo nhóm.
+    for (final (groupTitle, rows) in groups) {
       if (rows.isEmpty) continue;
       if (y > pageHeight - 120) {
         page = document.pages.add();
         y = 0;
       }
-      y = _sectionTitle(page.graphics, font, title, y, width);
+      y = _sectionTitle(page.graphics, font, groupTitle, y, width);
       final grid = PdfGrid()..columns.add(count: 2);
       grid.columns[0].width = width * 0.42;
       for (final row in rows) {
@@ -154,23 +188,15 @@ abstract final class GrindingSpecSheetPdfService {
       y = result.bounds.bottom + 10;
     }
 
-    // Nhãn ứng dụng + mô tả ứng dụng.
-    final tags = (selectionTags.toList()..sort())
-        .map(GrindingFormat.tagLabel)
-        .join(' · ');
-    final application = sheet.series?.applicationVi ?? '';
-    if (tags.isNotEmpty || application.isNotEmpty) {
+    // Mô tả ứng dụng.
+    if (applicationText.isNotEmpty) {
       if (y > pageHeight - 120) {
         page = document.pages.add();
         y = 0;
       }
       y = _sectionTitle(page.graphics, font, 'ỨNG DỤNG', y, width);
-      final text = [
-        if (application.isNotEmpty) application,
-        if (tags.isNotEmpty) 'Phù hợp: $tags',
-      ].join('\n');
       final element = PdfTextElement(
-        text: text,
+        text: applicationText,
         font: font(9.5),
         brush: PdfSolidBrush(_navy),
       );
@@ -196,7 +222,13 @@ abstract final class GrindingSpecSheetPdfService {
     );
 
     for (var i = 0; i < document.pages.count; i++) {
-      _footer(document.pages[i], font, i + 1, document.pages.count);
+      _footer(
+        document.pages[i],
+        font,
+        footerLabel,
+        i + 1,
+        document.pages.count,
+      );
     }
 
     final bytes = Uint8List.fromList(await document.save());
@@ -232,6 +264,7 @@ abstract final class GrindingSpecSheetPdfService {
   static void _footer(
     PdfPage page,
     PdfFont Function(double, {bool isBold}) font,
+    String label,
     int current,
     int total,
   ) {
@@ -242,7 +275,7 @@ abstract final class GrindingSpecSheetPdfService {
       ui.Offset(size.width, size.height - 20),
     );
     page.graphics.drawString(
-      'DTCGroup · Catalog máy nghiền',
+      label,
       font(7.2),
       bounds: ui.Rect.fromLTWH(0, size.height - 16, size.width - 60, 12),
       brush: PdfSolidBrush(_muted),

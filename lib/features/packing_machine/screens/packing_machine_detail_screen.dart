@@ -4,48 +4,38 @@ import 'package:provider/provider.dart';
 
 import '../../../screens/color_sorter/spec_image_export_dialog.dart';
 import '../../../widgets/spec_sheet/spec_sheet.dart';
-import '../models/grinding_extra_spec.dart';
-import '../models/grinding_machine.dart';
-import '../models/grinding_series.dart';
-import '../providers/grinding_machine_provider.dart';
-import '../services/grinding_spec_sheet_pdf_service.dart';
-import '../utils/grinding_format.dart';
-import '../utils/grinding_spec_sheet.dart';
-import '../widgets/grinding_structured_text.dart';
+import '../../grinding_machine/services/grinding_spec_sheet_pdf_service.dart';
+import '../../grinding_machine/widgets/grinding_structured_text.dart';
+import '../models/packing_catalog.dart';
+import '../providers/packing_machine_provider.dart';
+import '../utils/packing_spec_sheet.dart';
 
-/// Trang thông số kỹ thuật của 1 model — [machineId] truyền qua path param
-/// `/grinding_machine/detail/:machineId`. Bố cục và màu sắc theo đúng trang
-/// máy tách màu (SC16 Pro) để 2 chức năng thống nhất; dùng bộ khung chung
-/// trong lib/widgets/spec_sheet. CHỈ hiển thị field có dữ liệu trong
-/// database, không hiển thị placeholder rỗng.
-class GrindingMachineDetailScreen extends StatefulWidget {
-  const GrindingMachineDetailScreen({super.key, required this.machineId});
+/// Trang thông số kỹ thuật 1 model máy đóng gói — cùng bố cục trang thông số
+/// máy nghiền (chip model, ảnh, 3 chỉ số nổi bật, Chi Tiết Ứng Dụng, 3 tab
+/// thông số, so sánh, chia sẻ text/PDF).
+class PackingMachineDetailScreen extends StatefulWidget {
+  const PackingMachineDetailScreen({super.key, required this.machineId});
 
   final String machineId;
 
   @override
-  State<GrindingMachineDetailScreen> createState() =>
-      _GrindingMachineDetailScreenState();
+  State<PackingMachineDetailScreen> createState() =>
+      _PackingMachineDetailScreenState();
 }
 
-class _GrindingMachineDetailScreenState
-    extends State<GrindingMachineDetailScreen>
+class _PackingMachineDetailScreenState extends State<PackingMachineDetailScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   late String _machineId;
-  GrindingMachine? _machine;
-  GrindingSeries? _series;
-  List<GrindingExtraSpec> _extraSpecs = const [];
-  Set<String> _selectionTags = const {};
-  bool _isLoading = true;
-  String? _error;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _machineId = widget.machineId;
-    WidgetsBinding.instance.addPostFrameCallback((_) => _load(_machineId));
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => context.read<PackingMachineProvider>().load(),
+    );
   }
 
   @override
@@ -54,108 +44,70 @@ class _GrindingMachineDetailScreenState
     super.dispose();
   }
 
-  Future<void> _load(String machineId) async {
-    final provider = context.read<GrindingMachineProvider>();
-    try {
-      final machine = await provider.getMachine(machineId);
-      if (machine == null) {
-        if (!mounted) return;
-        setState(() {
-          _error = 'Không tìm thấy model này trong cơ sở dữ liệu.';
-          _isLoading = false;
-        });
-        return;
-      }
-      final series = await provider.getSeries(machine.seriesCode);
-      final extraSpecs = await provider.getExtraSpecs(machine.machineId);
-      final tagsBySeries = await provider.getAllSelectionTagsGrouped();
-      if (!mounted || machineId != _machineId) return;
-      setState(() {
-        _machine = machine;
-        _series = series;
-        _extraSpecs = extraSpecs;
-        _selectionTags = tagsBySeries[machine.seriesCode] ?? const {};
-        _isLoading = false;
-        _error = null;
-      });
-    } catch (error) {
-      if (!mounted) return;
-      setState(() {
-        _error = 'Không thể tải thông số: $error';
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _selectModel(GrindingMachine machine) {
-    if (machine.machineId == _machineId) return;
-    setState(() => _machineId = machine.machineId);
-    _load(machine.machineId);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<PackingMachineProvider>();
+    final machine = provider.machineById(_machineId);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thông số kỹ thuật'),
         actions: [
           IconButton(
-            key: const Key('grinding_detail_advisor_button'),
-            icon: const Icon(Icons.auto_awesome),
-            tooltip: 'Tư vấn chọn máy',
-            onPressed: () => context.push('/grinding_machine/selector'),
-          ),
-          IconButton(
-            key: const Key('grinding_detail_compare_button'),
+            key: const Key('packing_detail_compare_button'),
             icon: const Icon(Icons.compare_arrows),
             tooltip: 'So sánh model',
             onPressed: () =>
-                context.push('/grinding_machine/compare', extra: [_machineId]),
+                context.push('/packing_machine/compare', extra: [_machineId]),
           ),
         ],
       ),
-      body: _isLoading && _machine == null
+      body: !provider.isLoaded
           ? const Center(child: CircularProgressIndicator())
-          : _error != null
+          : machine == null
           ? Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
-                  _error!,
+                  'Không tìm thấy model này trong catalog.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
               ),
             )
-          : _buildBody(context),
+          : _buildBody(context, provider, machine),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
-    final machine = _machine!;
-    final sheet = GrindingSpecSheet(
+  Widget _buildBody(
+    BuildContext context,
+    PackingMachineProvider provider,
+    PackingMachine machine,
+  ) {
+    final series = provider.seriesOf(machine.seriesCode);
+    final sheet = PackingSpecSheet(
       machine: machine,
-      series: _series,
-      extraSpecs: _extraSpecs,
+      series: series,
+      imagePath: provider.imageOf(machine),
+      imageCaption: provider.imageCaptionOf(machine),
     );
-    final siblings = context.watch<GrindingMachineProvider>().machinesOf(
-      machine.seriesCode,
-    );
-    final models = siblings.isEmpty ? [machine] : siblings;
-    final tagLabels = (_selectionTags.toList()..sort())
-        .map(GrindingFormat.tagLabel)
-        .toList();
+    final models = provider.machinesOf(machine.seriesCode);
+    final sections = _detailSections(series);
 
     return Column(
       children: [
-        SpecModelChipBar(
-          keyPrefix: 'grinding_detail_model_',
-          models: models.map((m) => m.model).toList(),
-          selected: machine.model,
-          onSelected: (model) =>
-              _selectModel(models.firstWhere((m) => m.model == model)),
-        ),
-        const Divider(height: 1),
+        if (models.length > 1) ...[
+          SpecModelChipBar(
+            keyPrefix: 'packing_detail_model_',
+            models: models.map((m) => m.model).toList(),
+            selected: machine.model,
+            onSelected: (model) => setState(
+              () => _machineId = models
+                  .firstWhere((m) => m.model == model)
+                  .machineId,
+            ),
+          ),
+          const Divider(height: 1),
+        ],
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(14.0),
@@ -163,10 +115,10 @@ class _GrindingMachineDetailScreenState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SpecTitle(sheet.title),
-                if (_series != null) ...[
+                if (series != null) ...[
                   const SizedBox(height: 2),
                   Text(
-                    _series!.nameVi,
+                    series.nameVi,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 13,
@@ -176,27 +128,14 @@ class _GrindingMachineDetailScreenState
                   ),
                 ],
                 const SizedBox(height: 12),
-
-                // Khung ảnh — chỉ hiện khi dòng máy có ảnh.
                 if (sheet.imagePath case final imagePath?) ...[
                   SpecImageCard(
                     imagePath: imagePath,
-                    zoomTitle: 'Máy nghiền ${machine.model}',
+                    zoomTitle: 'Máy đóng gói ${machine.model}',
                     caption: sheet.imageCaption,
-                    on3dTap: sheet.has3dModel
-                        ? () => context.push('/grinding_machine/asp-3d')
-                        : null,
                   ),
-                  if (sheet.has3dModel) ...[
-                    const SizedBox(height: 10),
-                    Spec3dButton(
-                      onPressed: () => context.push('/grinding_machine/asp-3d'),
-                    ),
-                  ],
                   const SizedBox(height: 14),
                 ],
-
-                // Chỉ số nổi bật
                 if (sheet.highlights.isNotEmpty) ...[
                   Row(
                     children: [
@@ -213,40 +152,31 @@ class _GrindingMachineDetailScreenState
                   ),
                   const SizedBox(height: 14),
                 ],
-
-                // Ứng dụng của dòng máy (cùng kiểu thẻ "Ứng dụng" trong
-                // "Chi Tiết Ứng Dụng Thực Tế"); dòng chưa có nội dung thì
-                // vẫn hiện nhãn ứng dụng như trước.
-                if (_series?.applicationVi.isNotEmpty ?? false) ...[
+                if (series != null && series.applicationVi.isNotEmpty) ...[
                   GrindingTextSection(
-                    key: const Key('grinding_detail_application'),
+                    key: const Key('packing_detail_application'),
                     emoji: '🎯',
                     title: 'Ứng dụng',
-                    text: _series!.applicationVi,
-                    toggleKey: const Key('grinding_detail_application_toggle'),
+                    text: series.applicationVi,
+                    toggleKey: const Key('packing_detail_application_toggle'),
                     backgroundColor: const Color(0xFFEFF6FF),
                     borderColor: const Color(0xFFBFDBFE),
                     titleColor: const Color(0xFF1D4ED8),
                   ),
                   const SizedBox(height: 12),
-                ] else if (tagLabels.isNotEmpty) ...[
-                  SpecChipWrap(labels: tagLabels),
-                  const SizedBox(height: 12),
                 ],
-
-                if (_detailSections().isNotEmpty) ...[
+                if (sections.isNotEmpty) ...[
                   SpecGradientButton(
-                    key: const Key('grinding_detail_application_button'),
+                    key: const Key('packing_detail_application_button'),
                     label: 'Chi Tiết Ứng Dụng',
                     onTap: () => showSpecDetailDialog(
                       context: context,
                       title: 'Chi Tiết Ứng Dụng Thực Tế',
-                      sections: _detailSections(),
+                      sections: sections,
                     ),
                   ),
                   const SizedBox(height: 16),
                 ],
-
                 const SpecSectionLabel('Thông số chi tiết'),
                 SpecPillTabBar(
                   controller: _tabController,
@@ -267,7 +197,7 @@ class _GrindingMachineDetailScreenState
                       ),
                       2 => (
                         sheet.installRows,
-                        'Chưa có dữ liệu kích thước / trọng lượng',
+                        'Catalog chưa có dữ liệu lắp đặt cho model này',
                       ),
                       _ => (sheet.technicalRows, 'Chưa có thông số kỹ thuật'),
                     };
@@ -288,31 +218,30 @@ class _GrindingMachineDetailScreenState
                   },
                 ),
                 const SizedBox(height: 16),
-
                 SpecCtaBlock(
-                  buttonKey: const Key('grinding_detail_selector_button'),
-                  title: 'Chọn máy phù hợp cho nguyên liệu',
+                  buttonKey: const Key('packing_detail_selector_button'),
+                  title: 'Chọn máy phù hợp nhu cầu đóng gói',
                   icon: Icons.tune_rounded,
                   description:
-                      'Nhập nguyên liệu, công suất và độ mịn cần đạt để được '
-                      'gợi ý model phù hợp.',
+                      'Nhập dạng nguyên liệu, khối lượng gói, tốc độ và bao '
+                      'bì để được gợi ý model phù hợp.',
                   buttonLabel: 'Mở công cụ chọn máy',
-                  onPressed: () => context.push('/grinding_machine/selector'),
+                  onPressed: () => context.push('/packing_machine/selector'),
                 ),
                 const SizedBox(height: 16),
                 SpecPrimaryButton(
-                  key: const Key('grinding_detail_compare_cta'),
+                  key: const Key('packing_detail_compare_cta'),
                   label: 'So sánh model',
                   icon: Icons.compare_arrows,
                   onPressed: () => context.push(
-                    '/grinding_machine/compare',
+                    '/packing_machine/compare',
                     extra: [_machineId],
                   ),
                 ),
                 const SizedBox(height: 16),
                 SpecShareSection(
-                  textButtonKey: const Key('copy_grinding_specs_btn'),
-                  pdfButtonKey: const Key('export_grinding_specs_pdf_btn'),
+                  textButtonKey: const Key('copy_packing_specs_btn'),
+                  pdfButtonKey: const Key('export_packing_specs_pdf_btn'),
                   onShare: () => _openShare(context, sheet),
                 ),
                 const SizedBox(height: 20),
@@ -324,8 +253,7 @@ class _GrindingMachineDetailScreenState
     );
   }
 
-  List<SpecDetailSection> _detailSections() {
-    final series = _series;
+  static List<SpecDetailSection> _detailSections(PackingSeries? series) {
     if (series == null) return const [];
     return [
       if (series.applicationVi.isNotEmpty)
@@ -352,33 +280,35 @@ class _GrindingMachineDetailScreenState
           title: 'Đặc điểm chính',
           content: series.featuresVi,
         ),
-      if (_selectionTags.isNotEmpty)
-        SpecDetailSection(
-          emoji: '🏷️',
-          title: 'Phù hợp với',
-          content: (_selectionTags.toList()..sort())
-              .map(GrindingFormat.tagLabel)
-              .join(' · '),
-        ),
     ];
   }
 
-  void _openShare(BuildContext context, GrindingSpecSheet sheet) {
+  void _openShare(BuildContext context, PackingSpecSheet sheet) {
     showSpecImageExportDialog(
       context: context,
       specs: {'Model': sheet.machine.model},
       imagePath: sheet.imagePath,
-      productLabel: 'máy nghiền',
+      productLabel: 'máy đóng gói',
       contentItems: const [
         (Icons.table_chart_outlined, 'Bảng thông số kỹ thuật đầy đủ'),
-        (Icons.grid_view_outlined, 'Ứng dụng và nguyên liệu phù hợp'),
+        (Icons.grid_view_outlined, 'Ứng dụng của dòng máy'),
         (Icons.location_on_outlined, 'Thông tin liên hệ tư vấn'),
       ],
       buildText: sheet.shareText,
       buildPdf: ({required contactName, required contactPhone}) =>
-          GrindingSpecSheetPdfService.buildPdf(
-            sheet: sheet,
-            selectionTags: _selectionTags,
+          GrindingSpecSheetPdfService.buildCatalogPdf(
+            headerTitle: 'CATALOG MÁY ĐÓNG GÓI',
+            footerLabel: 'DTCGroup · Catalog máy đóng gói',
+            title: sheet.title,
+            subtitle: sheet.series?.nameVi,
+            imagePath: sheet.imagePath,
+            imageCaption: sheet.imageCaption,
+            groups: [
+              ('THÔNG SỐ KỸ THUẬT', sheet.technicalRows),
+              ('THÔNG SỐ BỔ SUNG', sheet.extraRows),
+              ('LẮP ĐẶT', sheet.installRows),
+            ],
+            applicationText: sheet.series?.applicationVi ?? '',
             contactName: contactName,
             contactPhone: contactPhone,
           ),

@@ -12,7 +12,7 @@ void main() {
 
     // Số dòng phải khớp CHÍNH XÁC với số dòng trong Excel gốc (57 model,
     // 12 dòng máy (ASF tách khỏi ASF/AS)...) — không được rơi rớt hay bịa thêm dòng nào khi parse.
-    expect(snapshot.databaseVersion, '2.2.18');
+    expect(snapshot.databaseVersion, '2.2.19');
     expect(snapshot.sourceDocument, 'DTC-C-MayNghien-250426-demo4.pdf');
     expect(snapshot.series, hasLength(12));
     expect(snapshot.machines, hasLength(57));
