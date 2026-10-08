@@ -101,6 +101,29 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       keywords: 'may dong goi packing machine aspm aspm-320 aspm-420 aspm-520 aspm-620 aspm-720 aspm-820 aspm-f aspm-a aspm-b aspm-c aspm-a100 aspm-b100 as-20d as-c12 as-nw160 can truc vit can pheu tra tui loc bao lon chiet rot bot hat goi tui',
     ),
     const _SearchItem(
+      title: 'Máy trộn (Mixer)',
+      subtitle: 'Máy trộn ribbon, cánh khuấy, chữ V, chữ W, lắc 3 chiều, côn',
+      location: '/mixer_machine',
+      icon: Icons.blender_outlined,
+      keywords: 'may tron mixer ribbon bang xoan canh khuay paddle chu v chu w con vuong con xoan 3 chieu asr asl ast asv asw astd asd ass dung tich me tron bot hat',
+    ),
+    const _SearchItem(
+      title: 'Máy sàng (Sifter)',
+      subtitle: 'Máy sàng rung tròn và máy sàng quay',
+      location: '/sifter_machine',
+      icon: Icons.grid_on_rounded,
+      keywords: 'may sang sifter sieve sang rung sang quay rotary vibro asst asrs luoi mesh nang suat kg/h bot hat',
+    ),
+    const _SearchItem(
+      title: 'Xay xát Lúa - Gạo',
+      subtitle:
+          'Máy sấy, sàng tạp chất, bóc vỏ, tách thóc, xát trắng, lau bóng, '
+          'sàng phân cỡ, lọc bụi, gàu tải',
+      location: '/rice_milling',
+      icon: Icons.rice_bowl_outlined,
+      keywords: 'xay xat lua gao rice milling day chuyen may say thap tuan hoan 5h sang tap chat tqlg tqlm tach da san tqsx tqsz boc vo lua mlgq ru lo gang tach thoc mgcz gao lut xat trang mnsl mntl mnsw lau bong mpgw mpgl sang dao phan co mmjx trong phan hat mjxt gao tam phin loc bui tbhm gau tai sec ms tdtg bang tai tdsg xich cao tgsh tgss',
+    ),
+    const _SearchItem(
       title: 'Phân tích hoàn vốn',
       subtitle: 'Điện, lợi nhuận và biểu đồ hoàn vốn',
       location: '/payback_analysis',

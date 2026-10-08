@@ -1,6 +1,68 @@
 {
-  "catalogVersion": "1.0.0",
+  "catalogVersion": "1.1.0",
   "sourceDocument": "Catalog of packing machine (16 trang)",
+  "criteria": [
+    {
+      "key": "form",
+      "type": "choice",
+      "label": "Dạng nguyên liệu",
+      "options": [
+        { "value": "powder", "label": "Bột" },
+        { "value": "granule", "label": "Hạt nhỏ" },
+        { "value": "tea", "label": "Trà / dược liệu túi lọc" }
+      ]
+    },
+    {
+      "key": "weight",
+      "type": "range",
+      "label": "Khối lượng mỗi gói",
+      "inputLabel": "Khối lượng mỗi gói / bao",
+      "units": [
+        { "label": "g", "factor": 1 },
+        { "label": "kg", "factor": 1000 }
+      ]
+    },
+    {
+      "key": "speed",
+      "type": "atLeast",
+      "label": "Tốc độ",
+      "inputLabel": "Tốc độ cần đạt (túi / bao mỗi phút)",
+      "units": [
+        { "label": "túi/phút", "factor": 1 }
+      ],
+      "matchNote": "thực tế tùy nguyên liệu và khối lượng gói"
+    },
+    {
+      "key": "packaging",
+      "type": "choice",
+      "label": "Bao bì",
+      "inputLabel": "Loại bao bì",
+      "options": [
+        { "value": "bag", "label": "Túi / gói" },
+        { "value": "bottle", "label": "Chai / lon" },
+        { "value": "teabag", "label": "Túi lọc trà" },
+        { "value": "bigbag", "label": "Bao lớn 5 - 50 kg" }
+      ]
+    },
+    {
+      "key": "automation",
+      "type": "choice",
+      "label": "Mức tự động",
+      "options": [
+        { "value": "auto", "label": "Tự động hoàn toàn" },
+        { "value": "semi", "label": "Bán tự động" }
+      ]
+    },
+    {
+      "key": "power",
+      "type": "atMost",
+      "label": "Công suất điện",
+      "inputLabel": "Công suất điện tối đa (kW)",
+      "units": [
+        { "label": "kW", "factor": 1 }
+      ]
+    }
+  ],
   "series": [
     {
       "seriesCode": "ASPM_VERTICAL",
@@ -107,7 +169,28 @@
       "seriesCode": "ASPM_VERTICAL",
       "model": "ASPM-320",
       "pdfPage": 5,
-      "selection": {"forms": ["powder", "granule"], "weightMinG": null, "weightMaxG": 200, "speedMin": 25, "speedMax": 60, "speedUnit": "túi/phút", "powerKw": 2.5, "packaging": ["bag"], "automation": "auto"},
+      "selection": {
+        "form": [
+          "powder",
+          "granule"
+        ],
+        "weight": {
+          "max": 200
+        },
+        "speed": {
+          "min": 25,
+          "max": 60
+        },
+        "packaging": [
+          "bag"
+        ],
+        "automation": [
+          "auto"
+        ],
+        "power": {
+          "max": 2.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "25 - 60" },
         { "kind": "weight", "title": "Khối lượng gói", "value": "≤ 200 g" },
@@ -127,7 +210,28 @@
       "seriesCode": "ASPM_VERTICAL",
       "model": "ASPM-420",
       "pdfPage": 5,
-      "selection": {"forms": ["powder", "granule"], "weightMinG": null, "weightMaxG": 500, "speedMin": 25, "speedMax": 60, "speedUnit": "túi/phút", "powerKw": 2.5, "packaging": ["bag"], "automation": "auto"},
+      "selection": {
+        "form": [
+          "powder",
+          "granule"
+        ],
+        "weight": {
+          "max": 500
+        },
+        "speed": {
+          "min": 25,
+          "max": 60
+        },
+        "packaging": [
+          "bag"
+        ],
+        "automation": [
+          "auto"
+        ],
+        "power": {
+          "max": 2.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "25 - 60" },
         { "kind": "weight", "title": "Khối lượng gói", "value": "≤ 500 g" },
@@ -149,7 +253,28 @@
       "pdfPage": 5,
       "needsVerification": true,
       "verificationNote": "Công suất 2.5 kW (tr. 5) hay 3.5 kW (tr. 12); tốc độ 25 - 60 (tr. 5) hay 20 - 80 túi/phút (tr. 12).",
-      "selection": {"forms": ["powder", "granule"], "weightMinG": null, "weightMaxG": 1500, "speedMin": 25, "speedMax": 60, "speedUnit": "túi/phút", "powerKw": 2.5, "packaging": ["bag"], "automation": "auto"},
+      "selection": {
+        "form": [
+          "powder",
+          "granule"
+        ],
+        "weight": {
+          "max": 1500
+        },
+        "speed": {
+          "min": 25,
+          "max": 60
+        },
+        "packaging": [
+          "bag"
+        ],
+        "automation": [
+          "auto"
+        ],
+        "power": {
+          "max": 2.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "25 - 60" },
         { "kind": "weight", "title": "Khối lượng gói", "value": "≤ 1500 g" },
@@ -170,7 +295,28 @@
       "seriesCode": "ASPM_VERTICAL",
       "model": "ASPM-620",
       "pdfPage": 5,
-      "selection": {"forms": ["powder", "granule"], "weightMinG": null, "weightMaxG": 3000, "speedMin": 25, "speedMax": 60, "speedUnit": "túi/phút", "powerKw": 3.5, "packaging": ["bag"], "automation": "auto"},
+      "selection": {
+        "form": [
+          "powder",
+          "granule"
+        ],
+        "weight": {
+          "max": 3000
+        },
+        "speed": {
+          "min": 25,
+          "max": 60
+        },
+        "packaging": [
+          "bag"
+        ],
+        "automation": [
+          "auto"
+        ],
+        "power": {
+          "max": 3.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "25 - 60" },
         { "kind": "weight", "title": "Khối lượng gói", "value": "≤ 3000 g" },
@@ -192,7 +338,28 @@
       "pdfPage": 5,
       "needsVerification": true,
       "verificationNote": "Bề rộng túi 150 - 350 mm (tr. 5) hay 150 - 300 mm (tr. 12); tốc độ 25 - 60 (tr. 5) hay 15 - 18 túi/phút (tr. 12).",
-      "selection": {"forms": ["powder", "granule"], "weightMinG": null, "weightMaxG": 4000, "speedMin": 25, "speedMax": 60, "speedUnit": "túi/phút", "powerKw": 3.5, "packaging": ["bag"], "automation": "auto"},
+      "selection": {
+        "form": [
+          "powder",
+          "granule"
+        ],
+        "weight": {
+          "max": 4000
+        },
+        "speed": {
+          "min": 25,
+          "max": 60
+        },
+        "packaging": [
+          "bag"
+        ],
+        "automation": [
+          "auto"
+        ],
+        "power": {
+          "max": 3.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "25 - 60" },
         { "kind": "weight", "title": "Khối lượng gói", "value": "≤ 4000 g" },
@@ -213,7 +380,28 @@
       "seriesCode": "ASPM_VERTICAL",
       "model": "ASPM-820",
       "pdfPage": 5,
-      "selection": {"forms": ["powder", "granule"], "weightMinG": null, "weightMaxG": 6000, "speedMin": 25, "speedMax": 60, "speedUnit": "túi/phút", "powerKw": 3.5, "packaging": ["bag"], "automation": "auto"},
+      "selection": {
+        "form": [
+          "powder",
+          "granule"
+        ],
+        "weight": {
+          "max": 6000
+        },
+        "speed": {
+          "min": 25,
+          "max": 60
+        },
+        "packaging": [
+          "bag"
+        ],
+        "automation": [
+          "auto"
+        ],
+        "power": {
+          "max": 3.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "25 - 60" },
         { "kind": "weight", "title": "Khối lượng gói", "value": "≤ 6000 g" },
@@ -233,7 +421,23 @@
       "seriesCode": "SCREW_SCALE",
       "model": "25L",
       "pdfPage": 5,
-      "selection": {"forms": ["powder"], "weightMinG": 10, "weightMaxG": 500, "speedMin": 30, "speedMax": 45, "speedUnit": "lần định lượng/phút", "powerKw": 1.6, "packaging": null, "automation": null},
+      "selection": {
+        "form": [
+          "powder"
+        ],
+        "weight": {
+          "min": 10,
+          "max": 500
+        },
+        "speed": {
+          "min": 30,
+          "max": 45,
+          "unit": "lần định lượng/phút"
+        },
+        "power": {
+          "max": 1.6
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (lần/phút)", "value": "30 - 45" },
         { "kind": "weight", "title": "Khối lượng cân", "value": "10 - 500 g" },
@@ -247,14 +451,34 @@
         { "group": "technical", "key": "power_kw", "label": "Công suất điện", "value": "1.6 kW" },
         { "group": "extra", "key": "hopper_volume", "label": "Dung tích phễu", "value": "25 L" },
         { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "250 kg" }
-      ]
+      ],
+      "selectionNotes": {
+        "packaging": "Cân định lượng trục vít là thiết bị định lượng, bao bì tùy máy đóng gói đi kèm.",
+        "automation": "Catalog chưa ghi rõ mức tự động của model này."
+      }
     },
     {
       "machineId": "PACK__SCREW-50L",
       "seriesCode": "SCREW_SCALE",
       "model": "50L",
       "pdfPage": 5,
-      "selection": {"forms": ["powder"], "weightMinG": 10, "weightMaxG": 2000, "speedMin": 10, "speedMax": 45, "speedUnit": "lần định lượng/phút", "powerKw": 2.5, "packaging": null, "automation": null},
+      "selection": {
+        "form": [
+          "powder"
+        ],
+        "weight": {
+          "min": 10,
+          "max": 2000
+        },
+        "speed": {
+          "min": 10,
+          "max": 45,
+          "unit": "lần định lượng/phút"
+        },
+        "power": {
+          "max": 2.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (lần/phút)", "value": "10 - 45" },
         { "kind": "weight", "title": "Khối lượng cân", "value": "10 - 2000 g" },
@@ -268,14 +492,34 @@
         { "group": "technical", "key": "power_kw", "label": "Công suất điện", "value": "2.5 kW" },
         { "group": "extra", "key": "hopper_volume", "label": "Dung tích phễu", "value": "50 L" },
         { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "280 kg" }
-      ]
+      ],
+      "selectionNotes": {
+        "packaging": "Cân định lượng trục vít là thiết bị định lượng, bao bì tùy máy đóng gói đi kèm.",
+        "automation": "Catalog chưa ghi rõ mức tự động của model này."
+      }
     },
     {
       "machineId": "PACK__SCREW-70L",
       "seriesCode": "SCREW_SCALE",
       "model": "70L",
       "pdfPage": 5,
-      "selection": {"forms": ["powder"], "weightMinG": 10, "weightMaxG": 5000, "speedMin": 5, "speedMax": 45, "speedUnit": "lần định lượng/phút", "powerKw": 3.5, "packaging": null, "automation": null},
+      "selection": {
+        "form": [
+          "powder"
+        ],
+        "weight": {
+          "min": 10,
+          "max": 5000
+        },
+        "speed": {
+          "min": 5,
+          "max": 45,
+          "unit": "lần định lượng/phút"
+        },
+        "power": {
+          "max": 3.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (lần/phút)", "value": "5 - 45" },
         { "kind": "weight", "title": "Khối lượng cân", "value": "10 - 5000 g" },
@@ -289,14 +533,33 @@
         { "group": "technical", "key": "power_kw", "label": "Công suất điện", "value": "3.5 kW" },
         { "group": "extra", "key": "hopper_volume", "label": "Dung tích phễu", "value": "70 L" },
         { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "280 kg" }
-      ]
+      ],
+      "selectionNotes": {
+        "packaging": "Cân định lượng trục vít là thiết bị định lượng, bao bì tùy máy đóng gói đi kèm.",
+        "automation": "Catalog chưa ghi rõ mức tự động của model này."
+      }
     },
     {
       "machineId": "PACK__HOPPER-2",
       "seriesCode": "HOPPER_SCALE",
       "model": "2 phễu",
       "pdfPage": 11,
-      "selection": {"forms": ["granule"], "weightMinG": 50, "weightMaxG": 3000, "speedMin": 12, "speedMax": 16, "speedUnit": "túi/phút", "powerKw": 1, "packaging": null, "automation": null},
+      "selection": {
+        "form": [
+          "granule"
+        ],
+        "weight": {
+          "min": 50,
+          "max": 3000
+        },
+        "speed": {
+          "min": 12,
+          "max": 16
+        },
+        "power": {
+          "max": 1
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "12 - 16" },
         { "kind": "weight", "title": "Khối lượng gói", "value": "50 - 3000 g" },
@@ -312,14 +575,33 @@
         { "group": "extra", "key": "hopper_count", "label": "Số phễu cân", "value": "2" },
         { "group": "extra", "key": "hopper_volume", "label": "Dung tích 1 phễu", "value": "10 L" },
         { "group": "install", "key": "power_supply", "label": "Nguồn điện", "value": "1 pha 220 V / 50 Hz" }
-      ]
+      ],
+      "selectionNotes": {
+        "packaging": "Cân phễu định lượng (hạt nhỏ) là thiết bị định lượng, bao bì tùy máy đóng gói đi kèm.",
+        "automation": "Catalog chưa ghi rõ mức tự động của model này."
+      }
     },
     {
       "machineId": "PACK__HOPPER-4",
       "seriesCode": "HOPPER_SCALE",
       "model": "4 phễu",
       "pdfPage": 11,
-      "selection": {"forms": ["granule"], "weightMinG": 50, "weightMaxG": 1000, "speedMin": 24, "speedMax": 32, "speedUnit": "túi/phút", "powerKw": 1, "packaging": null, "automation": null},
+      "selection": {
+        "form": [
+          "granule"
+        ],
+        "weight": {
+          "min": 50,
+          "max": 1000
+        },
+        "speed": {
+          "min": 24,
+          "max": 32
+        },
+        "power": {
+          "max": 1
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "24 - 32" },
         { "kind": "weight", "title": "Khối lượng gói", "value": "50 - 1000 g" },
@@ -335,7 +617,11 @@
         { "group": "extra", "key": "hopper_count", "label": "Số phễu cân", "value": "4" },
         { "group": "extra", "key": "hopper_volume", "label": "Dung tích 1 phễu", "value": "3.6 L" },
         { "group": "install", "key": "power_supply", "label": "Nguồn điện", "value": "1 pha 220 V / 50 Hz" }
-      ]
+      ],
+      "selectionNotes": {
+        "packaging": "Cân phễu định lượng (hạt nhỏ) là thiết bị định lượng, bao bì tùy máy đóng gói đi kèm.",
+        "automation": "Catalog chưa ghi rõ mức tự động của model này."
+      }
     },
     {
       "machineId": "PACK__ASPM-F",
@@ -344,7 +630,30 @@
       "pdfPage": 6,
       "needsVerification": true,
       "verificationNote": "Phần mô tả ghi túi rộng 30 - 100 mm, dài 30 - 165 mm; bảng thông số ghi 30 - 150 x 30 - 170 mm.",
-      "selection": {"forms": ["powder", "granule"], "weightMinG": 5, "weightMaxG": 100, "speedMin": 35, "speedMax": 65, "speedUnit": "gói/phút", "powerKw": 1.5, "packaging": ["bag"], "automation": "auto"},
+      "selection": {
+        "form": [
+          "powder",
+          "granule"
+        ],
+        "weight": {
+          "min": 5,
+          "max": 100
+        },
+        "speed": {
+          "min": 35,
+          "max": 65,
+          "unit": "gói/phút"
+        },
+        "packaging": [
+          "bag"
+        ],
+        "automation": [
+          "auto"
+        ],
+        "power": {
+          "max": 1.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (gói/phút)", "value": "35 - 65" },
         { "kind": "weight", "title": "Khối lượng gói", "value": "5 - 100 g" },
@@ -368,7 +677,29 @@
       "seriesCode": "ASPM_ABC",
       "model": "ASPM-A",
       "pdfPage": 7,
-      "selection": {"forms": ["powder"], "weightMinG": 10, "weightMaxG": 500, "speedMin": 10, "speedMax": 45, "speedUnit": "túi/phút", "powerKw": 1.5, "packaging": ["bag", "bottle"], "automation": "semi"},
+      "selection": {
+        "form": [
+          "powder"
+        ],
+        "weight": {
+          "min": 10,
+          "max": 500
+        },
+        "speed": {
+          "min": 10,
+          "max": 45
+        },
+        "packaging": [
+          "bag",
+          "bottle"
+        ],
+        "automation": [
+          "semi"
+        ],
+        "power": {
+          "max": 1.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "10 - 45" },
         { "kind": "weight", "title": "Khối lượng rót", "value": "10 - 500 g" },
@@ -390,7 +721,29 @@
       "seriesCode": "ASPM_ABC",
       "model": "ASPM-B",
       "pdfPage": 7,
-      "selection": {"forms": ["powder"], "weightMinG": 10, "weightMaxG": 2000, "speedMin": 10, "speedMax": 45, "speedUnit": "túi/phút", "powerKw": 1.5, "packaging": ["bag", "bottle"], "automation": "semi"},
+      "selection": {
+        "form": [
+          "powder"
+        ],
+        "weight": {
+          "min": 10,
+          "max": 2000
+        },
+        "speed": {
+          "min": 10,
+          "max": 45
+        },
+        "packaging": [
+          "bag",
+          "bottle"
+        ],
+        "automation": [
+          "semi"
+        ],
+        "power": {
+          "max": 1.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "10 - 45" },
         { "kind": "weight", "title": "Khối lượng rót", "value": "10 - 2000 g" },
@@ -412,7 +765,29 @@
       "seriesCode": "ASPM_ABC",
       "model": "ASPM-C",
       "pdfPage": 7,
-      "selection": {"forms": ["powder"], "weightMinG": 10, "weightMaxG": 5000, "speedMin": 10, "speedMax": 45, "speedUnit": "túi/phút", "powerKw": 2.5, "packaging": ["bag", "bottle"], "automation": "semi"},
+      "selection": {
+        "form": [
+          "powder"
+        ],
+        "weight": {
+          "min": 10,
+          "max": 5000
+        },
+        "speed": {
+          "min": 10,
+          "max": 45
+        },
+        "packaging": [
+          "bag",
+          "bottle"
+        ],
+        "automation": [
+          "semi"
+        ],
+        "power": {
+          "max": 2.5
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "10 - 45" },
         { "kind": "weight", "title": "Khối lượng rót", "value": "10 - 5000 g" },
@@ -436,7 +811,26 @@
       "pdfPage": 8,
       "image": "assets/images/catalog_packing_tea_20d.png",
       "imageCaption": "Ảnh máy AS-20D",
-      "selection": {"forms": ["tea", "granule"], "weightMinG": 1, "weightMaxG": 20, "speedMin": 40, "speedMax": 60, "speedUnit": "túi/phút", "powerKw": 1.4, "packaging": ["teabag"], "automation": null},
+      "selection": {
+        "form": [
+          "tea",
+          "granule"
+        ],
+        "weight": {
+          "min": 1,
+          "max": 20
+        },
+        "speed": {
+          "min": 40,
+          "max": 60
+        },
+        "packaging": [
+          "teabag"
+        ],
+        "power": {
+          "max": 1.4
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "40 - 60" },
         { "kind": "weight", "title": "Khối lượng túi", "value": "1 - 20 g" },
@@ -452,7 +846,10 @@
         { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "850 x 900 x 1700 mm" },
         { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "350 kg" },
         { "group": "install", "key": "air", "label": "Khí nén", "value": "≥ 0.6 MPa" }
-      ]
+      ],
+      "selectionNotes": {
+        "automation": "Catalog chưa ghi rõ mức tự động của model này."
+      }
     },
     {
       "machineId": "PACK__AS-C12",
@@ -461,7 +858,28 @@
       "pdfPage": 9,
       "image": "assets/images/catalog_packing_tea_c12.png",
       "imageCaption": "Ảnh máy AS-C12",
-      "selection": {"forms": ["tea"], "weightMinG": 1.5, "weightMaxG": 5, "speedMin": 40, "speedMax": 40, "speedUnit": "túi/phút", "powerKw": 1.6, "packaging": ["teabag"], "automation": "auto"},
+      "selection": {
+        "form": [
+          "tea"
+        ],
+        "weight": {
+          "min": 1.5,
+          "max": 5
+        },
+        "speed": {
+          "min": 40,
+          "max": 40
+        },
+        "packaging": [
+          "teabag"
+        ],
+        "automation": [
+          "auto"
+        ],
+        "power": {
+          "max": 1.6
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "~40" },
         { "kind": "weight", "title": "Khối lượng túi", "value": "1.5 - 5 g" },
@@ -489,7 +907,29 @@
       "imageCaption": "Ảnh máy AS-NW160",
       "needsVerification": true,
       "verificationNote": "Lượng khí cấp ghi \"≥0.4m /min\" bị mất đơn vị nên chưa hiển thị.",
-      "selection": {"forms": ["tea", "granule"], "weightMinG": 3, "weightMaxG": 10, "speedMin": 30, "speedMax": 40, "speedUnit": "túi/phút", "powerKw": 3.7, "packaging": ["teabag"], "automation": "auto"},
+      "selection": {
+        "form": [
+          "tea",
+          "granule"
+        ],
+        "weight": {
+          "min": 3,
+          "max": 10
+        },
+        "speed": {
+          "min": 30,
+          "max": 40
+        },
+        "packaging": [
+          "teabag"
+        ],
+        "automation": [
+          "auto"
+        ],
+        "power": {
+          "max": 3.7
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (túi/phút)", "value": "30 - 40" },
         { "kind": "weight", "title": "Khối lượng túi", "value": "3 - 10 g" },
@@ -517,7 +957,26 @@
       "imageCaption": "Ảnh máy ASPM-A100",
       "needsVerification": true,
       "verificationNote": "Phần ưu điểm của A100 nhắc túi gối và hàn nhiệt, có vẻ chép từ máy đóng gói đứng.",
-      "selection": {"forms": ["powder"], "weightMinG": 5000, "weightMaxG": 50000, "speedMin": 2, "speedMax": 4, "speedUnit": "bao/phút", "powerKw": 2, "packaging": ["bigbag"], "automation": null},
+      "selection": {
+        "form": [
+          "powder"
+        ],
+        "weight": {
+          "min": 5000,
+          "max": 50000
+        },
+        "speed": {
+          "min": 2,
+          "max": 4,
+          "unit": "bao/phút"
+        },
+        "packaging": [
+          "bigbag"
+        ],
+        "power": {
+          "max": 2
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (bao/phút)", "value": "2 - 4" },
         { "kind": "weight", "title": "Khối lượng bao", "value": "5 - 50 kg" },
@@ -530,7 +989,10 @@
         { "group": "technical", "key": "power_kw", "label": "Tổng công suất", "value": "2 kW" },
         { "group": "extra", "key": "hopper_volume", "label": "Dung tích phễu", "value": "150 L" },
         { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1000 x 1000 x 2300 mm" }
-      ]
+      ],
+      "selectionNotes": {
+        "automation": "Catalog chưa ghi rõ mức tự động của model này."
+      }
     },
     {
       "machineId": "PACK__ASPM-B100",
@@ -541,7 +1003,30 @@
       "imageCaption": "Ảnh máy ASPM-B100",
       "needsVerification": true,
       "verificationNote": "Tiêu đề ghi BSPM-B100, bảng thông số ghi BSPMB-100.",
-      "selection": {"forms": ["powder"], "weightMinG": 5000, "weightMaxG": 50000, "speedMin": 2, "speedMax": 4, "speedUnit": "bao/phút", "powerKw": 3.3, "packaging": ["bigbag", "bottle"], "automation": "semi"},
+      "selection": {
+        "form": [
+          "powder"
+        ],
+        "weight": {
+          "min": 5000,
+          "max": 50000
+        },
+        "speed": {
+          "min": 2,
+          "max": 4,
+          "unit": "bao/phút"
+        },
+        "packaging": [
+          "bigbag",
+          "bottle"
+        ],
+        "automation": [
+          "semi"
+        ],
+        "power": {
+          "max": 3.3
+        }
+      },
       "highlights": [
         { "kind": "speed", "title": "Tốc độ (bao/phút)", "value": "2 - 4" },
         { "kind": "weight", "title": "Khối lượng bao", "value": "5 - 50 kg" },

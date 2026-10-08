@@ -34,6 +34,11 @@ class HomeScreen extends StatelessWidget {
       route: '/grinding_menu',
     ),
     _HomeAction(
+      title: 'Xay xát Lúa-Gạo',
+      imagePath: 'assets/images/home_rice_milling.jpg',
+      route: '/rice_milling',
+    ),
+    _HomeAction(
       title: 'Công cụ & Tiện ích',
       icon: Icons.dashboard_customize_outlined,
       route: '/extensions',

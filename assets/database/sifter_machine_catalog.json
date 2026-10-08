@@ -1,0 +1,392 @@
+{
+  "catalogVersion": "1.0.0",
+  "sourceDocument": "Overall Powder Solution (catalog trang 16-23)",
+  "criteria": [
+    {
+      "key": "capacity",
+      "type": "atLeast",
+      "label": "Năng suất",
+      "inputLabel": "Năng suất cần đạt",
+      "units": [
+        { "label": "kg/h", "factor": 1 },
+        { "label": "tấn/h", "factor": 1000 }
+      ],
+      "matchNote": "thực tế tùy nguyên liệu và cỡ lưới"
+    },
+    {
+      "key": "mesh",
+      "type": "range",
+      "label": "Cỡ lưới",
+      "inputLabel": "Cỡ lưới cần sàng (mesh)",
+      "units": [
+        { "label": "mesh", "factor": 1 }
+      ]
+    },
+    {
+      "key": "material",
+      "type": "choice",
+      "label": "Dạng nguyên liệu",
+      "options": [
+        { "value": "powder", "label": "Bột khô" },
+        { "value": "granule", "label": "Hạt rắn" },
+        { "value": "sticky", "label": "Dính / nhiều xơ" }
+      ]
+    },
+    {
+      "key": "power",
+      "type": "atMost",
+      "label": "Công suất động cơ",
+      "inputLabel": "Công suất động cơ tối đa (kW)",
+      "units": [
+        { "label": "kW", "factor": 1 }
+      ]
+    }
+  ],
+  "series": [
+    {
+      "seriesCode": "ASST_VIBRO",
+      "displayCode": "ASST",
+      "nameVi": "Máy sàng rung tròn hiệu suất cao",
+      "nameEn": "ASST Series High Efficient Sifting Machine",
+      "pdfPages": "22",
+      "image": "assets/images/catalog_sifter_vibro.png",
+      "imageCaption": "Ảnh đại diện dòng ASST",
+      "applicationVi": "Phân loại cỡ hạt nguyên liệu bột khô trong ngành dược phẩm, hóa chất, thực phẩm...",
+      "structureVi": "- Động cơ rung thẳng đứng\n- Đáy sàng\n- Khung lưới\n- Buồng sàng\n- Bát rung cao su\n- Các chi tiết bắt chặt",
+      "workingPrincipleVi": "Động cơ rung thẳng đứng tạo dao động cho buồng sàng (1500 lần/phút); nguyên liệu được phân loại theo cỡ hạt qua lưới sàng.\nCó thể dùng 1 lớp lưới hoặc nhiều lớp lưới để tách nhiều cỡ hạt.",
+      "featuresVi": "1. Kết cấu gọn: dễ vận hành và sửa chữa.\n2. Chạy êm: độ ồn thấp.\n3. Năng suất lớn: độ mịn tốt.\n4. Ứng dụng rộng: lưới 12 - 200 mesh."
+    },
+    {
+      "seriesCode": "ASRS_ROTARY",
+      "displayCode": "ASRS",
+      "nameVi": "Máy sàng quay",
+      "nameEn": "ASRS Series Rotary Sifter",
+      "pdfPages": "23",
+      "image": "assets/images/catalog_sifter_rotary.png",
+      "imageCaption": "Ảnh đại diện dòng ASRS",
+      "applicationVi": "Sàng nguyên liệu dạng hạt rắn; dùng kèm dây chuyền xử lý bột hoặc chạy độc lập. Phù hợp sàng nguyên liệu có độ nhớt cao, nhiều xơ trong ngành dược phẩm, hóa chất, thực phẩm.",
+      "structureVi": "- Đế máy và khung máy\n- Cơ cấu vít cấp liệu vào / ra\n- Động cơ\n- Lồng sàng đặt trong xi lanh, có cánh gạt",
+      "workingPrincipleVi": "Trong xi lanh có lồng sàng; cánh gạt liên tục đảo nguyên liệu lên xuống và đẩy về phía trước.\nHạt mịn lọt qua lưới sàng; phần hạt thô tiếp tục được đẩy đi và ra ở cửa xả hạt thô.",
+      "featuresVi": "1. Nguyên liệu khó sàng: phù hợp nguyên liệu độ nhớt cao, nhiều xơ.\n2. Linh hoạt: dùng kèm dây chuyền bột hoặc chạy độc lập.\n3. Tách 2 cửa ra: hạt mịn và hạt thô.\n4. Lưới sàng: 20 - 200 mesh."
+    }
+  ],
+  "machines": [
+    {
+      "machineId": "SIFT__ASST-600",
+      "seriesCode": "ASST_VIBRO",
+      "model": "ASST-600",
+      "pdfPage": 22,
+      "selection": {
+        "capacity": {
+          "min": 180,
+          "max": 2000
+        },
+        "mesh": {
+          "min": 12,
+          "max": 200
+        },
+        "material": [
+          "powder"
+        ],
+        "power": {
+          "max": 0.4
+        }
+      },
+      "highlights": [
+        { "kind": "capacity", "title": "Năng suất (kg/h)", "value": "180 - 2000" },
+        { "kind": "mesh", "title": "Lưới sàng (mesh)", "value": "12 - 200" },
+        { "kind": "power", "title": "Công suất (kW)", "value": "0.4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "capacity", "label": "Năng suất", "value": "180 - 2000 kg/h" },
+        { "group": "technical", "key": "mesh", "label": "Cỡ lưới sàng", "value": "12 - 200 mesh" },
+        { "group": "technical", "key": "vibration_freq", "label": "Tần số rung", "value": "1500 lần/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Công suất động cơ", "value": "0.4 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "800 x 800 x 1100 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "150 kg" }
+      ]
+    },
+    {
+      "machineId": "SIFT__ASST-800",
+      "seriesCode": "ASST_VIBRO",
+      "model": "ASST-800",
+      "pdfPage": 22,
+      "selection": {
+        "capacity": {
+          "min": 200,
+          "max": 2500
+        },
+        "mesh": {
+          "min": 12,
+          "max": 200
+        },
+        "material": [
+          "powder"
+        ],
+        "power": {
+          "max": 0.75
+        }
+      },
+      "highlights": [
+        { "kind": "capacity", "title": "Năng suất (kg/h)", "value": "200 - 2500" },
+        { "kind": "mesh", "title": "Lưới sàng (mesh)", "value": "12 - 200" },
+        { "kind": "power", "title": "Công suất (kW)", "value": "0.75" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "capacity", "label": "Năng suất", "value": "200 - 2500 kg/h" },
+        { "group": "technical", "key": "mesh", "label": "Cỡ lưới sàng", "value": "12 - 200 mesh" },
+        { "group": "technical", "key": "vibration_freq", "label": "Tần số rung", "value": "1500 lần/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Công suất động cơ", "value": "0.75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1100 x 950 x 1150 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "250 kg" }
+      ]
+    },
+    {
+      "machineId": "SIFT__ASST-1000",
+      "seriesCode": "ASST_VIBRO",
+      "model": "ASST-1000",
+      "pdfPage": 22,
+      "selection": {
+        "capacity": {
+          "min": 250,
+          "max": 3500
+        },
+        "mesh": {
+          "min": 12,
+          "max": 200
+        },
+        "material": [
+          "powder"
+        ],
+        "power": {
+          "max": 1.1
+        }
+      },
+      "highlights": [
+        { "kind": "capacity", "title": "Năng suất (kg/h)", "value": "250 - 3500" },
+        { "kind": "mesh", "title": "Lưới sàng (mesh)", "value": "12 - 200" },
+        { "kind": "power", "title": "Công suất (kW)", "value": "1.1" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "capacity", "label": "Năng suất", "value": "250 - 3500 kg/h" },
+        { "group": "technical", "key": "mesh", "label": "Cỡ lưới sàng", "value": "12 - 200 mesh" },
+        { "group": "technical", "key": "vibration_freq", "label": "Tần số rung", "value": "1500 lần/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Công suất động cơ", "value": "1.1 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1100 x 1100 x 1200 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "350 kg" }
+      ]
+    },
+    {
+      "machineId": "SIFT__ASST-1200",
+      "seriesCode": "ASST_VIBRO",
+      "model": "ASST-1200",
+      "pdfPage": 22,
+      "selection": {
+        "capacity": {
+          "min": 300,
+          "max": 4000
+        },
+        "mesh": {
+          "min": 12,
+          "max": 200
+        },
+        "material": [
+          "powder"
+        ],
+        "power": {
+          "max": 1.5
+        }
+      },
+      "highlights": [
+        { "kind": "capacity", "title": "Năng suất (kg/h)", "value": "300 - 4000" },
+        { "kind": "mesh", "title": "Lưới sàng (mesh)", "value": "12 - 200" },
+        { "kind": "power", "title": "Công suất (kW)", "value": "1.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "capacity", "label": "Năng suất", "value": "300 - 4000 kg/h" },
+        { "group": "technical", "key": "mesh", "label": "Cỡ lưới sàng", "value": "12 - 200 mesh" },
+        { "group": "technical", "key": "vibration_freq", "label": "Tần số rung", "value": "1500 lần/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Công suất động cơ", "value": "1.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1300 x 1300 x 1400 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "450 kg" }
+      ]
+    },
+    {
+      "machineId": "SIFT__ASST-1500",
+      "seriesCode": "ASST_VIBRO",
+      "model": "ASST-1500",
+      "pdfPage": 22,
+      "selection": {
+        "capacity": {
+          "min": 350,
+          "max": 4500
+        },
+        "mesh": {
+          "min": 12,
+          "max": 200
+        },
+        "material": [
+          "powder"
+        ],
+        "power": {
+          "max": 2.2
+        }
+      },
+      "highlights": [
+        { "kind": "capacity", "title": "Năng suất (kg/h)", "value": "350 - 4500" },
+        { "kind": "mesh", "title": "Lưới sàng (mesh)", "value": "12 - 200" },
+        { "kind": "power", "title": "Công suất (kW)", "value": "2.2" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "capacity", "label": "Năng suất", "value": "350 - 4500 kg/h" },
+        { "group": "technical", "key": "mesh", "label": "Cỡ lưới sàng", "value": "12 - 200 mesh" },
+        { "group": "technical", "key": "vibration_freq", "label": "Tần số rung", "value": "1500 lần/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Công suất động cơ", "value": "2.2 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1680 x 1680 x 1420 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "650 kg" }
+      ]
+    },
+    {
+      "machineId": "SIFT__ASST-1800",
+      "seriesCode": "ASST_VIBRO",
+      "model": "ASST-1800",
+      "pdfPage": 22,
+      "selection": {
+        "capacity": {
+          "min": 450,
+          "max": 5000
+        },
+        "mesh": {
+          "min": 12,
+          "max": 200
+        },
+        "material": [
+          "powder"
+        ],
+        "power": {
+          "max": 3
+        }
+      },
+      "highlights": [
+        { "kind": "capacity", "title": "Năng suất (kg/h)", "value": "450 - 5000" },
+        { "kind": "mesh", "title": "Lưới sàng (mesh)", "value": "12 - 200" },
+        { "kind": "power", "title": "Công suất (kW)", "value": "3" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "capacity", "label": "Năng suất", "value": "450 - 5000 kg/h" },
+        { "group": "technical", "key": "mesh", "label": "Cỡ lưới sàng", "value": "12 - 200 mesh" },
+        { "group": "technical", "key": "vibration_freq", "label": "Tần số rung", "value": "1500 lần/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Công suất động cơ", "value": "3 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1935 x 1935 x 1500 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "900 kg" }
+      ]
+    },
+    {
+      "machineId": "SIFT__ASST-2000",
+      "seriesCode": "ASST_VIBRO",
+      "model": "ASST-2000",
+      "pdfPage": 22,
+      "selection": {
+        "capacity": {
+          "min": 500,
+          "max": 5500
+        },
+        "mesh": {
+          "min": 12,
+          "max": 200
+        },
+        "material": [
+          "powder"
+        ],
+        "power": {
+          "max": 3
+        }
+      },
+      "highlights": [
+        { "kind": "capacity", "title": "Năng suất (kg/h)", "value": "500 - 5500" },
+        { "kind": "mesh", "title": "Lưới sàng (mesh)", "value": "12 - 200" },
+        { "kind": "power", "title": "Công suất (kW)", "value": "3" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "capacity", "label": "Năng suất", "value": "500 - 5500 kg/h" },
+        { "group": "technical", "key": "mesh", "label": "Cỡ lưới sàng", "value": "12 - 200 mesh" },
+        { "group": "technical", "key": "vibration_freq", "label": "Tần số rung", "value": "1500 lần/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Công suất động cơ", "value": "3 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2135 x 2135 x 1500 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1000 kg" }
+      ]
+    },
+    {
+      "machineId": "SIFT__ASRS-190",
+      "seriesCode": "ASRS_ROTARY",
+      "model": "ASRS-190",
+      "pdfPage": 23,
+      "selection": {
+        "capacity": {
+          "min": 100,
+          "max": 1500
+        },
+        "mesh": {
+          "min": 20,
+          "max": 200
+        },
+        "material": [
+          "granule",
+          "sticky"
+        ],
+        "power": {
+          "max": 3
+        }
+      },
+      "highlights": [
+        { "kind": "capacity", "title": "Năng suất (kg/h)", "value": "100 - 1500" },
+        { "kind": "mesh", "title": "Lưới sàng (mesh)", "value": "20 - 200" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "3" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "capacity", "label": "Năng suất", "value": "100 - 1500 kg/h" },
+        { "group": "technical", "key": "mesh", "label": "Cỡ lưới sàng", "value": "20 - 200 mesh" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ", "value": "940 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "3 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1700 x 600 x 1630 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "200 kg" }
+      ]
+    },
+    {
+      "machineId": "SIFT__ASRS-300",
+      "seriesCode": "ASRS_ROTARY",
+      "model": "ASRS-300",
+      "pdfPage": 23,
+      "selection": {
+        "capacity": {
+          "min": 200,
+          "max": 2000
+        },
+        "mesh": {
+          "min": 20,
+          "max": 200
+        },
+        "material": [
+          "granule",
+          "sticky"
+        ],
+        "power": {
+          "max": 4
+        }
+      },
+      "highlights": [
+        { "kind": "capacity", "title": "Năng suất (kg/h)", "value": "200 - 2000" },
+        { "kind": "mesh", "title": "Lưới sàng (mesh)", "value": "20 - 200" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "capacity", "label": "Năng suất", "value": "200 - 2000 kg/h" },
+        { "group": "technical", "key": "mesh", "label": "Cỡ lưới sàng", "value": "20 - 200 mesh" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ", "value": "620 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "4 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1735 x 750 x 2400 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "450 kg" }
+      ]
+    }
+  ]
+}

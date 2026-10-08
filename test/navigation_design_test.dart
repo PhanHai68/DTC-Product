@@ -58,6 +58,7 @@ void main() {
     expect(find.text('Máy nén khí'), findsOneWidget);
     expect(find.text('Cân đóng gói'), findsOneWidget);
     expect(find.text('Máy nghiền'), findsOneWidget);
+    expect(find.text('Xay xát Lúa-Gạo'), findsOneWidget);
     expect(find.text('Công cụ & Tiện ích'), findsOneWidget);
     expect(find.text('DTCGroup'), findsOneWidget);
     expect(find.text('Tra cứu model hoặc chức năng'), findsOneWidget);
@@ -96,9 +97,8 @@ void main() {
     final extensionsCard = tester.getRect(
       find.byKey(const ValueKey('home_solution_/extensions')),
     );
-    // Lưới 2 cột trên điện thoại: 5 mục -> "Máy nén khí" + "Máy nghiền" (mục
-    // thứ 3-4) cùng hàng, "Công cụ & Tiện ích" (mục thứ 5, lẻ) xuống hàng
-    // riêng bên dưới.
+    // Lưới 2 cột trên điện thoại: "Máy nén khí" + "Máy nghiền" (mục 3-4) cùng
+    // hàng; "Xay xát Lúa-Gạo" + "Công cụ & Tiện ích" (mục 5-6) ở hàng dưới.
     expect(compressorCard.top, grindingMachineCard.top);
     expect(compressorCard.size, grindingMachineCard.size);
     expect(colorSorterCard.height, lessThanOrEqualTo(142));
@@ -117,6 +117,7 @@ void main() {
       '/packing_menu',
       '/acomp_menu',
       '/grinding_menu',
+      '/rice_milling',
       '/extensions',
     ]) {
       final title = tester.widget<Text>(

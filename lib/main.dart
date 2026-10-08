@@ -28,7 +28,7 @@ import 'providers/daily_goals_provider.dart';
 import 'services/note_notification_service.dart';
 import 'features/maintenance_report/providers/maintenance_report_provider.dart';
 import 'features/grinding_machine/providers/grinding_machine_provider.dart';
-import 'features/packing_machine/providers/packing_machine_provider.dart';
+import 'features/equipment_catalog/providers/equipment_catalog_provider.dart';
 import 'features/grinding_machine/providers/grinding_selection_project_provider.dart';
 import 'features/grinding_machine/providers/grinding_proposal_provider.dart';
 import 'features/factory_location/providers/factory_location_provider.dart';
@@ -210,7 +210,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DailyGoalsProvider()),
         ChangeNotifierProvider(create: (_) => MaintenanceReportProvider()),
         ChangeNotifierProvider(create: (_) => GrindingMachineProvider()),
-        ChangeNotifierProvider(create: (_) => PackingMachineProvider()),
+        ChangeNotifierProvider(create: (_) => EquipmentCatalogProvider()),
         ChangeNotifierProvider(
           create: (_) => GrindingSelectionProjectProvider(),
         ),

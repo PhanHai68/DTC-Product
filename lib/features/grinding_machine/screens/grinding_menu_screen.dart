@@ -3,12 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../widgets/technology_menu.dart';
-import '../../packing_machine/providers/packing_machine_provider.dart';
+import '../../equipment_catalog/equipment_catalog_config.dart';
+import '../../equipment_catalog/providers/equipment_catalog_provider.dart';
 import '../providers/grinding_machine_provider.dart';
 
-/// Menu trung gian khi bấm "Máy nghiền" ở Home: chọn giữa danh mục máy
-/// nghiền (các model đã có) và máy đóng gói (catalog riêng). Cùng kiểu menu
-/// "Cân đóng gói" / "Máy nén khí".
+/// Menu trung gian khi bấm "Máy nghiền" ở Home: danh mục máy nghiền (các
+/// model đã có) và các thiết bị trong dây chuyền bột — máy đóng gói, máy
+/// trộn, máy sàng (catalog riêng). Cùng kiểu menu "Cân đóng gói".
 class GrindingMenuScreen extends StatefulWidget {
   const GrindingMenuScreen({super.key});
 
@@ -22,18 +23,21 @@ class _GrindingMenuScreenState extends State<GrindingMenuScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<GrindingMachineProvider>().loadHome();
-      context.read<PackingMachineProvider>().load();
+      final catalogs = context.read<EquipmentCatalogProvider>();
+      for (final config in EquipmentCatalogs.powderLine) {
+        catalogs.load(config);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final grinding = context.watch<GrindingMachineProvider>();
-    final packing = context.watch<PackingMachineProvider>();
+    final catalogs = context.watch<EquipmentCatalogProvider>();
     String? counts(int series, int models) =>
         series == 0 ? null : '$series dòng · $models model';
     return TechnologyMenuScaffold(
-      title: 'Máy nghiền & đóng gói',
+      title: 'Máy nghiền & dây chuyền bột',
       entries: [
         TechnologyMenuEntry(
           id: 'grinding_menu_grinding_btn',
@@ -45,15 +49,19 @@ class _GrindingMenuScreenState extends State<GrindingMenuScreen> {
           featured: true,
           onTap: () => context.push('/grinding_machine'),
         ),
-        TechnologyMenuEntry(
-          id: 'grinding_menu_packing_btn',
-          title: 'Máy đóng gói',
-          icon: Icons.inventory_2_outlined,
-          imagePath: 'assets/images/catalog_packing_aspm_vertical.png',
-          iconBackgroundColor: Colors.white,
-          subtitle: counts(packing.series.length, packing.machines.length),
-          onTap: () => context.push('/packing_machine'),
-        ),
+        for (final config in EquipmentCatalogs.powderLine)
+          TechnologyMenuEntry(
+            id: 'grinding_menu_${config.id}_btn',
+            title: config.menuTitle,
+            icon: config.icon,
+            imagePath: config.menuImage,
+            iconBackgroundColor: Colors.white,
+            subtitle: switch (catalogs.catalog(config)) {
+              final c? => counts(c.series.length, c.machines.length),
+              null => null,
+            },
+            onTap: () => context.push(config.routeBase),
+          ),
       ],
     );
   }

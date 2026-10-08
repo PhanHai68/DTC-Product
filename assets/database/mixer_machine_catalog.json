@@ -1,0 +1,2656 @@
+{
+  "catalogVersion": "1.0.0",
+  "sourceDocument": "Overall Powder Solution (catalog trang 16-23)",
+  "criteria": [
+    {
+      "key": "volume",
+      "type": "atLeast",
+      "label": "Dung tích mẻ trộn",
+      "inputLabel": "Dung tích mỗi mẻ trộn",
+      "units": [
+        { "label": "L", "factor": 1 },
+        { "label": "m³", "factor": 1000 }
+      ]
+    },
+    {
+      "key": "batch_weight",
+      "type": "atLeast",
+      "label": "Khối lượng mẻ trộn",
+      "inputLabel": "Khối lượng mỗi mẻ",
+      "units": [
+        { "label": "kg", "factor": 1 },
+        { "label": "tấn", "factor": 1000 }
+      ]
+    },
+    {
+      "key": "material",
+      "type": "choice",
+      "label": "Dạng nguyên liệu",
+      "options": [
+        { "value": "powder", "label": "Bột khô" },
+        { "value": "granule", "label": "Hạt" },
+        { "value": "paste", "label": "Dạng sệt / nhão" },
+        { "value": "liquid", "label": "Bột trộn thêm chất lỏng" },
+        { "value": "density", "label": "Chênh lệch tỉ trọng lớn" }
+      ]
+    },
+    {
+      "key": "power",
+      "type": "atMost",
+      "label": "Công suất động cơ",
+      "inputLabel": "Công suất động cơ tối đa (kW)",
+      "units": [
+        { "label": "kW", "factor": 1 }
+      ]
+    }
+  ],
+  "series": [
+    {
+      "seriesCode": "ASR_RIBBON",
+      "displayCode": "ASR",
+      "nameVi": "Máy trộn ribbon (băng xoắn)",
+      "nameEn": "ASR Series Ribbon Mixer",
+      "pdfPages": "16",
+      "image": "assets/images/catalog_mixer_ribbon.png",
+      "imageCaption": "Ảnh đại diện dòng ASR",
+      "applicationVi": "Trộn rắn - rắn (nguyên liệu dạng bột) và rắn - lỏng (bột trộn với chất lỏng) trong ngành hóa chất, dược phẩm, thực phẩm.",
+      "structureVi": "- Thùng trộn\n- Trục băng xoắn 2 lớp (băng xoắn trong và băng xoắn ngoài)\n- Bộ truyền động",
+      "workingPrincipleVi": "Băng xoắn lớp trong đẩy nguyên liệu ra ngoài, băng xoắn lớp ngoài đẩy nguyên liệu vào trong, tạo vòng tuần hoàn nguyên liệu liên tục.\nBăng xoắn quay quanh trục nên máy trộn đều trong thời gian rất ngắn.",
+      "featuresVi": "1. Trộn khô và trộn ướt: bột khô hoặc bột có bổ sung chất lỏng.\n2. Băng xoắn 2 lớp: nguyên liệu tuần hoàn liên tục, trộn đều nhanh.\n3. Dải model rộng: dung tích làm việc từ 60 L đến 12.000 L."
+    },
+    {
+      "seriesCode": "ASL_PADDLE",
+      "displayCode": "ASL",
+      "nameVi": "Máy trộn cánh khuấy 2 trục",
+      "nameEn": "ASL Series Double Shaft Paddle Mixer",
+      "pdfPages": "17",
+      "image": "assets/images/catalog_mixer_paddle.png",
+      "imageCaption": "Ảnh đại diện dòng ASL",
+      "applicationVi": "Trộn nhanh, đồng đều nhờ 2 trục cánh khuấy quay ngược chiều, tạo vùng hóa lỏng không trọng lượng ở giữa thùng.",
+      "structureVi": "- Hộp giảm tốc nối trực tiếp, truyền động bằng xích\n- 2 trục rotor gắn cánh khuấy, quay ngược chiều nhau\n- 2 cửa xả liệu",
+      "workingPrincipleVi": "Hộp giảm tốc nối trực tiếp, xích kéo 2 trục rotor quay ngược chiều với tốc độ nhất định.\nCánh khuấy trên trục vừa đẩy nguyên liệu đi tới, vừa hất nguyên liệu theo hướng kính ra không gian phía trước.\nNguyên liệu 2 bên chuyển động qua lại, đan xen vào nhau, tạo vùng hóa lỏng không trọng lượng và xoáy ở giữa thùng, tuần hoàn liên tục theo hướng trục và hướng kính nên nhanh chóng trộn đều.",
+      "featuresVi": "1. Trộn nhanh: vùng hóa lỏng không trọng lượng ở giữa thùng.\n2. Tuần hoàn toàn diện: nguyên liệu chuyển động theo cả hướng trục và hướng kính.\n3. Dải model rộng: dung tích làm việc từ 60 L đến 6.000 L."
+    },
+    {
+      "seriesCode": "AST_TROUGH",
+      "displayCode": "AST",
+      "nameVi": "Máy trộn máng chữ U",
+      "nameEn": "AST Series Trough Shaped Mixer",
+      "pdfPages": "18",
+      "image": "assets/images/catalog_mixer_trough.png",
+      "imageCaption": "Ảnh đại diện dòng AST",
+      "applicationVi": "Trộn đều nguyên liệu dạng bột hoặc dạng sệt (nhão).",
+      "structureVi": "- Thùng trộn dạng máng\n- Cánh trộn hình chữ S\n- Động cơ trộn và động cơ lật thùng xả liệu",
+      "workingPrincipleVi": "Cơ cấu truyền động quay cánh trộn hình chữ S, đảo nguyên liệu qua lại để trộn đều.",
+      "featuresVi": "1. Trộn được bột và nguyên liệu dạng sệt.\n2. Lật thùng xả liệu: có động cơ lật thùng riêng 0.75 kW.\n3. Tốc độ trộn 24 vòng/phút cho mọi model."
+    },
+    {
+      "seriesCode": "ASV_V",
+      "displayCode": "ASV",
+      "nameVi": "Máy trộn chữ V",
+      "nameEn": "ASV Series V Shape Mixer",
+      "pdfPages": "18",
+      "image": "assets/images/catalog_mixer_v.png",
+      "imageCaption": "Ảnh đại diện dòng ASV",
+      "applicationVi": "Trộn bột khô hoặc hạt cho ngành dược phẩm, thực phẩm, hóa chất và các ngành liên quan.",
+      "structureVi": "- Thùng trộn hình chữ V\n- Động cơ quay thùng\n- Thanh tăng cường trộn có động cơ riêng",
+      "workingPrincipleVi": "Thùng trộn chữ V quay (7 - 15 vòng/phút tùy model), kết hợp thanh tăng cường trộn có động cơ riêng, trộn đều nguyên liệu trong 4 - 10 phút.",
+      "featuresVi": "1. Thiết kế thùng trộn đặc biệt: hiệu quả trộn cao.\n2. Không có góc chết: trộn đều.\n3. Thời gian trộn ngắn: 4 - 10 phút."
+    },
+    {
+      "seriesCode": "ASW_W",
+      "displayCode": "ASW",
+      "nameVi": "Máy trộn chữ W (côn đôi)",
+      "nameEn": "ASW Series W Shape Mixer",
+      "pdfPages": "19",
+      "image": "assets/images/catalog_mixer_w.png",
+      "imageCaption": "Ảnh đại diện dòng ASW",
+      "applicationVi": "Trộn bột khô hoặc hạt cho ngành dược phẩm, thực phẩm, hóa chất và các ngành liên quan.",
+      "structureVi": "- Thùng trộn hình chữ W (côn đôi)\n- Khung máy và động cơ quay thùng",
+      "workingPrincipleVi": "Thùng trộn quay (7.8 - 12 vòng/phút tùy model) đảo trộn nguyên liệu, thời gian trộn 4 - 10 phút.",
+      "featuresVi": "1. Hiệu quả trộn cao.\n2. Không có góc chết: trộn đều.\n3. Dung tích thùng từ 0.18 m³ đến 4 m³."
+    },
+    {
+      "seriesCode": "ASTD_3D",
+      "displayCode": "ASTD",
+      "nameVi": "Máy trộn lắc 3 chiều",
+      "nameEn": "ASTD Series Three-dimensional Swing Mixer",
+      "pdfPages": "19",
+      "image": "assets/images/catalog_mixer_3d.png",
+      "imageCaption": "Ảnh đại diện dòng ASTD",
+      "applicationVi": "Trộn bột cho ngành dược phẩm, hóa chất, thực phẩm; trộn nhanh và đều các nguyên liệu khác nhau về cỡ hạt và tỉ trọng.",
+      "structureVi": "- Thùng trộn\n- Cơ cấu chuyển động 3 chiều: lắc, tịnh tiến song song và lăn\n- Động cơ dẫn động",
+      "workingPrincipleVi": "Thùng trộn chuyển động theo 3 chiều: lắc, tịnh tiến song song và lăn, tạo chuyển động xung mạnh đẩy và trộn nguyên liệu liên tục.\nDòng xoáy thay đổi liên tục bên trong thùng cho hiệu quả trộn cao.",
+      "featuresVi": "1. Trộn được nguyên liệu khác nhau về cỡ hạt và tỉ trọng.\n2. Chạy êm, độ ồn thấp.\n3. Tải nạp cao: khoảng 60 - 70% dung tích thùng.\n4. Thời gian trộn ngắn."
+    },
+    {
+      "seriesCode": "ASD_DOUBLE_CONE",
+      "displayCode": "ASD",
+      "nameVi": "Máy trộn côn 2 trục vít",
+      "nameEn": "ASD Series Double Auger-shaped Mixer",
+      "pdfPages": "20",
+      "image": "assets/images/catalog_mixer_double_cone.png",
+      "imageCaption": "Ảnh đại diện dòng ASD",
+      "applicationVi": "Dùng trong ngành hóa chất, dược phẩm, thức ăn chăn nuôi; đặc biệt cho nguyên liệu bột chênh lệch lớn về tỉ trọng hoặc tỉ lệ phối trộn. Rất phổ biến trong ngành thuốc nhuộm, chất màu.",
+      "structureVi": "- Thùng trộn hình côn\n- 2 trục vít trộn\n- Bộ động cơ và hộp giảm tốc cycloid",
+      "workingPrincipleVi": "Bộ động cơ cùng hộp giảm tốc cycloid điều khiển trục vít vừa tự quay vừa quay quanh thùng côn để trộn nguyên liệu.",
+      "featuresVi": "1. Chênh lệch tỉ trọng lớn: trộn tốt nguyên liệu khác biệt về tỉ trọng hoặc tỉ lệ phối trộn.\n2. Hệ số nạp: 0.6 dung tích thùng.\n3. Cỡ hạt nguyên liệu: 20 - 250 mesh.\n4. Thời gian trộn: 6 - 10 phút."
+    },
+    {
+      "seriesCode": "ASS_SQUARE_CONE",
+      "displayCode": "ASS",
+      "nameVi": "Máy trộn côn vuông",
+      "nameEn": "ASS Series Square Cone Mixer",
+      "pdfPages": "20",
+      "image": "assets/images/catalog_mixer_square_cone.png",
+      "imageCaption": "Ảnh đại diện dòng ASS",
+      "applicationVi": "Dùng rộng rãi trong ngành dược phẩm, hóa chất, thực phẩm, thức ăn chăn nuôi.",
+      "structureVi": "- Thùng trộn côn vuông kín\n- Trục quay đặt lệch góc so với trục đối xứng của thùng",
+      "workingPrincipleVi": "Nạp nguyên liệu vào thùng trộn côn kín; trục đối xứng của thùng đặt lệch một góc so với trục quay.\nKhi quay, nguyên liệu chuyển động 3 chiều trong thùng kín, đảo mạnh, khuếch tán rồi dồn lại liên tục nên đạt hiệu quả trộn tốt nhất.",
+      "featuresVi": "1. Thùng trộn kín.\n2. Chuyển động 3 chiều: đảo mạnh, trộn đều.\n3. Tải nạp: 80% dung tích thùng."
+    }
+  ],
+  "machines": [
+    {
+      "machineId": "MIX__ASR-100",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-100",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 60
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 3
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "60" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "62" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "3" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "60 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "62 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "3 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1080 x 758 x 615 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "330 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-300",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-300",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 180
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 5.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "180" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "49" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "5.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "180 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "49 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "5.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1550 x 812 x 1015 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "780 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-500",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-500",
+      "pdfPage": 16,
+      "needsVerification": true,
+      "verificationNote": "Catalog ghi tên model \"BSR--500\".",
+      "selection": {
+        "volume": {
+          "max": 300
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "300" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "46" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "300 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "46 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "7.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1975 x 1059 x 1120 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "955 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-1000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-1000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 600
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 11
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "600" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "35" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "11" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "600 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "35 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "11 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2340 x 1380 x 1455 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1400 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-2000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-2000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 1200
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 15
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "1200" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "33" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "15" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "1.200 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "33 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "15 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2480 x 1651 x 1805 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2500 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-3000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-3000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 1800
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 18.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "1800" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "33" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "18.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "1.800 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "33 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "18.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2945 x 1896 x 1980 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "3300 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-4000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-4000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 2400
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 22
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "2400" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "29" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "22" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "2.400 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "29 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "22 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3038 x 1946 x 2205 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "3600 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-5000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-5000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 3000
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 30
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "3000" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "29" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "30" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "3.000 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "29 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "30 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3932 x 2010 x 2035 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "4620 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-6000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-6000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 3600
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 37
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "3600" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "26" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "37" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "3.600 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "26 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "37 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3938 x 1882 x 2246 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "5300 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-8000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-8000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 4800
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 45
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "4800" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "26" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "45" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "4.800 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "26 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "45 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3986 x 2160 x 2516 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "6800 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-10000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-10000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 6000
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 55
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "6000" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "19" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "55" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "6.000 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "19 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "55 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "4500 x 2270 x 2667 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "8900 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-12000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-12000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 7200
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 55
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "7200" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "19" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "55" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "7.200 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "19 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "55 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "4500 x 2466 x 2785 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "9520 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-15000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-15000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 9000
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 75
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "9000" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "17" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "75" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "9.000 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "17 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "5363 x 2470 x 3020 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "9950 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASR-20000",
+      "seriesCode": "ASR_RIBBON",
+      "model": "ASR-20000",
+      "pdfPage": 16,
+      "selection": {
+        "volume": {
+          "max": 12000
+        },
+        "material": [
+          "powder",
+          "liquid"
+        ],
+        "power": {
+          "max": 90
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "12000" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "17" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "90" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc tối đa", "value": "12.000 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "17 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "90 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "5670 x 2650 x 3497 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "11140 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-100",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-100",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 60
+        },
+        "power": {
+          "max": 3
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "60" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 57" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "3" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "60 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 57 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "3 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 200 x 50 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1320 x 700 x 700 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "320 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-300",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-300",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 180
+        },
+        "power": {
+          "max": 5.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "180" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 57" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "5.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "180 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 57 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "5.5 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 250 x 60 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1242 x 1278 x 1025 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "750 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-500",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-500",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 300
+        },
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "300" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 51" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "300 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 51 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "7.5 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 300 x 80 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1412 x 1410 x 1230 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1000 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-1000",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-1000",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 600
+        },
+        "power": {
+          "max": 15
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "600" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 43" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "15" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "600 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 43 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "15 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 350 x 120 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1875 x 1610 x 1350 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1550 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-2000",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-2000",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 1200
+        },
+        "power": {
+          "max": 18.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "1200" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 43" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "18.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "1.200 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 43 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "18.5 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 350 x 120 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2312 x 2160 x 1775 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2500 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-3000",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-3000",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 1800
+        },
+        "power": {
+          "max": 22
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "1800" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 36" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "22" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "1.800 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 36 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "22 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 350 x 120 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2408 x 2400 x 1955 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2900 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-4000",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-4000",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 2400
+        },
+        "power": {
+          "max": 30
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "2400" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 36" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "30" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "2.400 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 36 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "30 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 360 x 140 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2822 x 2546 x 2015 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "3600 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-6000",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-6000",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 3600
+        },
+        "power": {
+          "max": 45
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "3600" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 29" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "45" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "3.600 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 29 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "45 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 700 x 140 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3075 x 2980 x 2235 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "5600 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-8000",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-8000",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 4800
+        },
+        "power": {
+          "max": 55
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "4800" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 29" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "55" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "4.800 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 29 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "55 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 700 x 140 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3278 x 3426 x 2425 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "7100 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASL-10000",
+      "seriesCode": "ASL_PADDLE",
+      "model": "ASL-10000",
+      "pdfPage": 17,
+      "selection": {
+        "volume": {
+          "max": 6000
+        },
+        "power": {
+          "max": 75
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu).",
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASL."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích (L)", "value": "6000" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "2 x 29" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "75" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích làm việc", "value": "6.000 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục", "value": "2 x 29 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "75 kW" },
+        { "group": "extra", "key": "output_size", "label": "Cửa xả", "value": "2 cửa 800 x 140 mm" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3538 x 3645 x 2615 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "8000 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__AST-50",
+      "seriesCode": "AST_TROUGH",
+      "model": "AST-50",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 50
+        },
+        "material": [
+          "powder",
+          "paste"
+        ],
+        "power": {
+          "max": 1.5
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 50 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "50" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "24" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "1.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "50 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trộn", "value": "24 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "1.5 kW" },
+        { "group": "extra", "key": "dumping_motor", "label": "Động cơ lật thùng", "value": "0.75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1200 x 500 x 600 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "320 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__AST-100",
+      "seriesCode": "AST_TROUGH",
+      "model": "AST-100",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 100
+        },
+        "material": [
+          "powder",
+          "paste"
+        ],
+        "power": {
+          "max": 2.2
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 100 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "100" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "24" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "2.2" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "100 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trộn", "value": "24 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "2.2 kW" },
+        { "group": "extra", "key": "dumping_motor", "label": "Động cơ lật thùng", "value": "0.75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1400 x 580 x 1000 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "350 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__AST-150",
+      "seriesCode": "AST_TROUGH",
+      "model": "AST-150",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 150
+        },
+        "material": [
+          "powder",
+          "paste"
+        ],
+        "power": {
+          "max": 3
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 150 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "150" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "24" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "3" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "150 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trộn", "value": "24 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "3 kW" },
+        { "group": "extra", "key": "dumping_motor", "label": "Động cơ lật thùng", "value": "0.75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2000 x 630 x 1150 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "410 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__AST-200",
+      "seriesCode": "AST_TROUGH",
+      "model": "AST-200",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 200
+        },
+        "material": [
+          "powder",
+          "paste"
+        ],
+        "power": {
+          "max": 4
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 200 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "200" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "24" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "200 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trộn", "value": "24 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "4 kW" },
+        { "group": "extra", "key": "dumping_motor", "label": "Động cơ lật thùng", "value": "0.75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2300 x 750 x 1350 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "450 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__AST-300",
+      "seriesCode": "AST_TROUGH",
+      "model": "AST-300",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 300
+        },
+        "material": [
+          "powder",
+          "paste"
+        ],
+        "power": {
+          "max": 5.5
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 300 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "300" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "24" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "5.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "300 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trộn", "value": "24 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "5.5 kW" },
+        { "group": "extra", "key": "dumping_motor", "label": "Động cơ lật thùng", "value": "0.75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2700 x 850 x 1500 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "520 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-100",
+      "seriesCode": "ASV_V",
+      "model": "ASV-100",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 100
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 1.1
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 100 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "100" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "4 - 8" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "1.1" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "0.1 m³ (100 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "4 - 8 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "15 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "1.1 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "0.75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1840 x 600 x 1430 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "230 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-200",
+      "seriesCode": "ASV_V",
+      "model": "ASV-200",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 200
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 1.1
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 200 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "200" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "4 - 8" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "1.1" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "0.2 m³ (200 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "4 - 8 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "15 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "1.1 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "0.75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2110 x 600 x 1675 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "290 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-300",
+      "seriesCode": "ASV_V",
+      "model": "ASV-300",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 300
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 1.1
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 300 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "300" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "1.1" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "0.3 m³ (300 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "1.1 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "0.75 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2280 x 630 x 1780 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "400 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-500",
+      "seriesCode": "ASV_V",
+      "model": "ASV-500",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 500
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 2.2
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 500 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "500" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "2.2" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "0.5 m³ (500 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "2.2 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "1.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2655 x 1040 x 2250 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "550 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-1000",
+      "seriesCode": "ASV_V",
+      "model": "ASV-1000",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 1000
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 4
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 1.000 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "1000" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "1 m³ (1.000 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "4 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "2.2 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3070 x 1240 x 2490 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "850 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-1500",
+      "seriesCode": "ASV_V",
+      "model": "ASV-1500",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 1500
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 5.5
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 1.500 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "1500" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "5.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "1.5 m³ (1.500 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "10 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "5.5 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "2.2 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3840 x 1600 x 2980 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1020 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-2000",
+      "seriesCode": "ASV_V",
+      "model": "ASV-2000",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 2000
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 2.000 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "2000" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "2 m³ (2.000 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "10 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "7.5 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "3 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3900 x 1440 x 3100 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2040 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-2500",
+      "seriesCode": "ASV_V",
+      "model": "ASV-2500",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 2500
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 2.500 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "2500" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "2.5 m³ (2.500 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "8 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "7.5 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "3 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "4000 x 1500 x 3225 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2200 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-3000",
+      "seriesCode": "ASV_V",
+      "model": "ASV-3000",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 3000
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 3.000 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "3000" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "3 m³ (3.000 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "8 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "7.5 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "4 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "4370 x 2000 x 3560 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2500 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASV-4000",
+      "seriesCode": "ASV_V",
+      "model": "ASV-4000",
+      "pdfPage": 18,
+      "selection": {
+        "volume": {
+          "limit": 4000
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 11
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi tổng dung tích 4.000 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "4000" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "11" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "4 m³ (4.000 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "7 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ trộn", "value": "11 kW" },
+        { "group": "extra", "key": "intensifier_motor", "label": "Động cơ thanh tăng cường", "value": "5.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "4800 x 2000 x 4000 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2800 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASW-180",
+      "seriesCode": "ASW_W",
+      "model": "ASW-180",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "limit": 180
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 1.1
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 180 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "180" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "4 - 8" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "1.1" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "0.18 m³ (180 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "4 - 8 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "1.1 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước khung máy (D x R x C)", "value": "1400 x 800 x 1850 mm" },
+        { "group": "install", "key": "rotation_height", "label": "Chiều cao khi thùng quay", "value": "1850 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "280 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASW-300",
+      "seriesCode": "ASW_W",
+      "model": "ASW-300",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "limit": 300
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 1.1
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 300 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "300" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "1.1" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "0.3 m³ (300 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "1.1 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước khung máy (D x R x C)", "value": "1685 x 800 x 1850 mm" },
+        { "group": "install", "key": "rotation_height", "label": "Chiều cao khi thùng quay", "value": "1850 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "310 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASW-500",
+      "seriesCode": "ASW_W",
+      "model": "ASW-500",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "limit": 500
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 2.2
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 500 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "500" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "2.2" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "0.5 m³ (500 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "2.2 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước khung máy (D x R x C)", "value": "1910 x 800 x 1940 mm" },
+        { "group": "install", "key": "rotation_height", "label": "Chiều cao khi thùng quay", "value": "1950 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "550 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASW-1000",
+      "seriesCode": "ASW_W",
+      "model": "ASW-1000",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "limit": 1000
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 4
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 1.000 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "1000" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "1 m³ (1.000 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "4 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước khung máy (D x R x C)", "value": "2765 x 1500 x 2370 mm" },
+        { "group": "install", "key": "rotation_height", "label": "Chiều cao khi thùng quay", "value": "2460 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "810 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASW-1500",
+      "seriesCode": "ASW_W",
+      "model": "ASW-1500",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "limit": 1500
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 4
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 1.500 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "1500" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "1.5 m³ (1.500 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "4 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước khung máy (D x R x C)", "value": "2960 x 1500 x 2480 mm" },
+        { "group": "install", "key": "rotation_height", "label": "Chiều cao khi thùng quay", "value": "2540 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "980 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASW-2000",
+      "seriesCode": "ASW_W",
+      "model": "ASW-2000",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "limit": 2000
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 2.000 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "2000" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "2 m³ (2.000 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "7.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước khung máy (D x R x C)", "value": "3386 x 1900 x 3560 mm" },
+        { "group": "install", "key": "rotation_height", "label": "Chiều cao khi thùng quay", "value": "3650 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2150 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASW-2500",
+      "seriesCode": "ASW_W",
+      "model": "ASW-2500",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "limit": 2500
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 2.500 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "2500" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "2.5 m³ (2.500 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "7.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước khung máy (D x R x C)", "value": "3386 x 1900 x 3560 mm" },
+        { "group": "install", "key": "rotation_height", "label": "Chiều cao khi thùng quay", "value": "3650 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2150 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASW-3000",
+      "seriesCode": "ASW_W",
+      "model": "ASW-3000",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "limit": 3000
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 3.000 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "3000" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "3 m³ (3.000 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "7.8 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "7.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước khung máy (D x R x C)", "value": "4450 x 2200 x 3600 mm" },
+        { "group": "install", "key": "rotation_height", "label": "Chiều cao khi thùng quay", "value": "3700 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2500 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASW-4000",
+      "seriesCode": "ASW_W",
+      "model": "ASW-4000",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "limit": 4000
+        },
+        "material": [
+          "powder",
+          "granule"
+        ],
+        "power": {
+          "max": 11
+        }
+      },
+      "selectionNotes": {
+        "volume": "Catalog chỉ ghi dung tích thùng 4.000 L, chưa ghi dung tích nạp tối đa.",
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Dung tích thùng (L)", "value": "4000" },
+        { "kind": "time", "title": "Thời gian trộn (phút)", "value": "6 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "11" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "4 m³ (4.000 L)" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ quay thùng", "value": "7.8 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "11 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước khung máy (D x R x C)", "value": "4750 x 2500 x 3680 mm" },
+        { "group": "install", "key": "rotation_height", "label": "Chiều cao khi thùng quay", "value": "3730 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "3200 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-5",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-5",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "max": 3
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 0.37
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "3" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 19" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "0.37" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "3 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "5 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 19 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "0.37 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "715 x 620 x 710 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "70 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-10",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-10",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "max": 7
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 0.55
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "7" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 20" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "0.55" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "7 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "10 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 20 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "0.55 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "640 x 620 x 550 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "120 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-25",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-25",
+      "pdfPage": 19,
+      "needsVerification": true,
+      "verificationNote": "Kích thước catalog ghi \"900×900×75\" (chiều cao bất thường) nên chưa hiển thị.",
+      "selection": {
+        "volume": {
+          "max": 17
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 0.75
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "17" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 15" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "0.75" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "17 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "25 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 15 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "0.75 kW" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "150 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-50",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-50",
+      "pdfPage": 19,
+      "needsVerification": true,
+      "verificationNote": "Kích thước catalog ghi \"970×950×120\" (chiều cao bất thường) nên chưa hiển thị.",
+      "selection": {
+        "volume": {
+          "max": 35
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 1.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "35" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 15" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "1.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "35 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "50 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 15 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "1.5 kW" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "300 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-100",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-100",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "max": 70
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 1.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "70" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 15" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "1.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "70 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "100 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 15 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "1.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1200 x 1600 x 1500 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "500 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-200",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-200",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "max": 140
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 2.2
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "140" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 15" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "2.2" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "140 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "200 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 15 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "2.2 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1400 x 1800 x 1600 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "800 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-400",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-400",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "max": 280
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 4
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "280" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 12" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "280 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "400 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "4 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1700 x 2100 x 1850 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1200 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-600",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-600",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "max": 420
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 5.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "420" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 11" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "5.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "420 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "600 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 11 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "5.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2100 x 2400 x 2250 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1500 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-800",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-800",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "max": 560
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "560" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "560 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "800 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 10 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "7.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2200 x 2500 x 2300 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2000 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASTD-1000",
+      "seriesCode": "ASTD_3D",
+      "model": "ASTD-1000",
+      "pdfPage": 19,
+      "selection": {
+        "volume": {
+          "max": 700
+        },
+        "material": [
+          "powder",
+          "granule",
+          "density"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "batch_weight": "Catalog chưa ghi khối lượng nạp tối đa (phụ thuộc tỉ trọng nguyên liệu)."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "700" },
+        { "kind": "speed", "title": "Tốc độ (vòng/phút)", "value": "0 - 10" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "700 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "1.000 L" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "0 - 10 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "7.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2280 x 2600 x 2500 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2500 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASD-200",
+      "seriesCode": "ASD_DOUBLE_CONE",
+      "model": "ASD-200",
+      "pdfPage": 20,
+      "needsVerification": true,
+      "verificationNote": "Tỉ trọng xốp catalog ghi \"-0.8\" (khớp tải nạp ≈ 0.8 kg/L).",
+      "selection": {
+        "volume": {
+          "max": 120
+        },
+        "batch_weight": {
+          "max": 95
+        },
+        "material": [
+          "powder",
+          "density"
+        ],
+        "power": {
+          "max": 2.2
+        }
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "200" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "95" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "2.2" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "0.2 m³ (200 L)" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "95 kg" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "6 - 10 phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "2.2 kW" },
+        { "group": "extra", "key": "loading_coefficient", "label": "Hệ số nạp", "value": "0.6" },
+        { "group": "extra", "key": "density", "label": "Tỉ trọng xốp tính tải", "value": "~0.8" },
+        { "group": "extra", "key": "granularity", "label": "Cỡ hạt nguyên liệu", "value": "20 - 250 mesh" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (đường kính x cao)", "value": "Φ900 x 1905 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "500 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASD-500",
+      "seriesCode": "ASD_DOUBLE_CONE",
+      "model": "ASD-500",
+      "pdfPage": 20,
+      "needsVerification": true,
+      "verificationNote": "Tỉ trọng xốp catalog ghi \"-0.8\" (khớp tải nạp ≈ 0.8 kg/L).",
+      "selection": {
+        "volume": {
+          "max": 300
+        },
+        "batch_weight": {
+          "max": 190
+        },
+        "material": [
+          "powder",
+          "density"
+        ],
+        "power": {
+          "max": 4
+        }
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "500" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "190" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "0.5 m³ (500 L)" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "190 kg" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "8 - 10 phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "4 kW" },
+        { "group": "extra", "key": "loading_coefficient", "label": "Hệ số nạp", "value": "0.6" },
+        { "group": "extra", "key": "density", "label": "Tỉ trọng xốp tính tải", "value": "~0.8" },
+        { "group": "extra", "key": "granularity", "label": "Cỡ hạt nguyên liệu", "value": "20 - 250 mesh" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (đường kính x cao)", "value": "Φ1160 x 2215 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "600 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASD-1000",
+      "seriesCode": "ASD_DOUBLE_CONE",
+      "model": "ASD-1000",
+      "pdfPage": 20,
+      "needsVerification": true,
+      "verificationNote": "Tỉ trọng xốp catalog ghi \"-0.8\" (khớp tải nạp ≈ 0.8 kg/L).",
+      "selection": {
+        "volume": {
+          "max": 600
+        },
+        "batch_weight": {
+          "max": 380
+        },
+        "material": [
+          "powder",
+          "density"
+        ],
+        "power": {
+          "max": 4
+        }
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "1000" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "380" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "1 m³ (1.000 L)" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "380 kg" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "8 - 10 phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "4 kW" },
+        { "group": "extra", "key": "loading_coefficient", "label": "Hệ số nạp", "value": "0.6" },
+        { "group": "extra", "key": "density", "label": "Tỉ trọng xốp tính tải", "value": "~0.8" },
+        { "group": "extra", "key": "granularity", "label": "Cỡ hạt nguyên liệu", "value": "20 - 250 mesh" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (đường kính x cao)", "value": "Φ1450 x 2820 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1300 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASD-2000",
+      "seriesCode": "ASD_DOUBLE_CONE",
+      "model": "ASD-2000",
+      "pdfPage": 20,
+      "needsVerification": true,
+      "verificationNote": "Tỉ trọng xốp catalog ghi \"-0.8\" (khớp tải nạp ≈ 0.8 kg/L).",
+      "selection": {
+        "volume": {
+          "max": 1200
+        },
+        "batch_weight": {
+          "max": 720
+        },
+        "material": [
+          "powder",
+          "density"
+        ],
+        "power": {
+          "max": 5.5
+        }
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "2000" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "720" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "5.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "2 m³ (2.000 L)" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "720 kg" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "8 - 10 phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "5.5 kW" },
+        { "group": "extra", "key": "loading_coefficient", "label": "Hệ số nạp", "value": "0.6" },
+        { "group": "extra", "key": "density", "label": "Tỉ trọng xốp tính tải", "value": "~0.8" },
+        { "group": "extra", "key": "granularity", "label": "Cỡ hạt nguyên liệu", "value": "20 - 250 mesh" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (đường kính x cao)", "value": "Φ1850 x 3450 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1600 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASD-3000",
+      "seriesCode": "ASD_DOUBLE_CONE",
+      "model": "ASD-3000",
+      "pdfPage": 20,
+      "needsVerification": true,
+      "verificationNote": "Tỉ trọng xốp catalog ghi \"-0.8\" (khớp tải nạp ≈ 0.8 kg/L). Kích thước giống hệt ASD-2000 (Φ1850 x 3450).",
+      "selection": {
+        "volume": {
+          "max": 1800
+        },
+        "batch_weight": {
+          "max": 1080
+        },
+        "material": [
+          "powder",
+          "density"
+        ],
+        "power": {
+          "max": 7.5
+        }
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "3000" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "1080" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "3 m³ (3.000 L)" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "1080 kg" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "8 - 10 phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "7.5 kW" },
+        { "group": "extra", "key": "loading_coefficient", "label": "Hệ số nạp", "value": "0.6" },
+        { "group": "extra", "key": "density", "label": "Tỉ trọng xốp tính tải", "value": "~0.8" },
+        { "group": "extra", "key": "granularity", "label": "Cỡ hạt nguyên liệu", "value": "20 - 250 mesh" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (đường kính x cao)", "value": "Φ1850 x 3450 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1600 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASD-4000",
+      "seriesCode": "ASD_DOUBLE_CONE",
+      "model": "ASD-4000",
+      "pdfPage": 20,
+      "needsVerification": true,
+      "verificationNote": "Tỉ trọng xốp catalog ghi \"-0.8\" (khớp tải nạp ≈ 0.8 kg/L).",
+      "selection": {
+        "volume": {
+          "max": 2400
+        },
+        "batch_weight": {
+          "max": 1400
+        },
+        "material": [
+          "powder",
+          "density"
+        ],
+        "power": {
+          "max": 11
+        }
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "4000" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "1400" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "11" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "4 m³ (4.000 L)" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "1400 kg" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "8 - 10 phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "11 kW" },
+        { "group": "extra", "key": "loading_coefficient", "label": "Hệ số nạp", "value": "0.6" },
+        { "group": "extra", "key": "density", "label": "Tỉ trọng xốp tính tải", "value": "~0.8" },
+        { "group": "extra", "key": "granularity", "label": "Cỡ hạt nguyên liệu", "value": "20 - 250 mesh" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (đường kính x cao)", "value": "Φ2260 x 4210 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2800 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASD-10000",
+      "seriesCode": "ASD_DOUBLE_CONE",
+      "model": "ASD-10000",
+      "pdfPage": 20,
+      "needsVerification": true,
+      "verificationNote": "Tỉ trọng xốp catalog ghi \"-0.8\" (khớp tải nạp ≈ 0.8 kg/L). Catalog ghi tên model \"SBD-10000\".",
+      "selection": {
+        "volume": {
+          "max": 6000
+        },
+        "batch_weight": {
+          "max": 3600
+        },
+        "material": [
+          "powder",
+          "density"
+        ],
+        "power": {
+          "max": 18.5
+        }
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "10000" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "3600" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "18.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "10 m³ (10.000 L)" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "3600 kg" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "8 - 10 phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "18.5 kW" },
+        { "group": "extra", "key": "loading_coefficient", "label": "Hệ số nạp", "value": "0.6" },
+        { "group": "extra", "key": "density", "label": "Tỉ trọng xốp tính tải", "value": "~0.8" },
+        { "group": "extra", "key": "granularity", "label": "Cỡ hạt nguyên liệu", "value": "20 - 250 mesh" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (đường kính x cao)", "value": "Φ3080 x 5810 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "5600 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASD-15000",
+      "seriesCode": "ASD_DOUBLE_CONE",
+      "model": "ASD-15000",
+      "pdfPage": 20,
+      "needsVerification": true,
+      "verificationNote": "Tỉ trọng xốp catalog ghi \"-0.8\" (khớp tải nạp ≈ 0.8 kg/L).",
+      "selection": {
+        "volume": {
+          "max": 9000
+        },
+        "batch_weight": {
+          "max": 5400
+        },
+        "material": [
+          "powder",
+          "density"
+        ],
+        "power": {
+          "max": 22
+        }
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Tổng dung tích (L)", "value": "15000" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "5400" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "22" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "total_volume", "label": "Tổng dung tích", "value": "15 m³ (15.000 L)" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "5400 kg" },
+        { "group": "technical", "key": "mixing_time", "label": "Thời gian trộn", "value": "8 - 10 phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "22 kW" },
+        { "group": "extra", "key": "loading_coefficient", "label": "Hệ số nạp", "value": "0.6" },
+        { "group": "extra", "key": "density", "label": "Tỉ trọng xốp tính tải", "value": "~0.8" },
+        { "group": "extra", "key": "granularity", "label": "Cỡ hạt nguyên liệu", "value": "20 - 250 mesh" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (đường kính x cao)", "value": "Φ3576 x 6310 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "6700 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASS-300",
+      "seriesCode": "ASS_SQUARE_CONE",
+      "model": "ASS-300",
+      "pdfPage": 20,
+      "selection": {
+        "volume": {
+          "max": 240
+        },
+        "batch_weight": {
+          "max": 150
+        },
+        "power": {
+          "max": 1.5
+        }
+      },
+      "selectionNotes": {
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASS."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "240" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "150" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "1.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "240 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "300 L" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "150 kg" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "14 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "1.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "1850 x 1280 x 1980 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "600 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASS-500",
+      "seriesCode": "ASS_SQUARE_CONE",
+      "model": "ASS-500",
+      "pdfPage": 20,
+      "selection": {
+        "volume": {
+          "max": 400
+        },
+        "batch_weight": {
+          "max": 250
+        },
+        "power": {
+          "max": 2.2
+        }
+      },
+      "selectionNotes": {
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASS."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "400" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "250" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "2.2" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "400 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "500 L" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "250 kg" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "13 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "2.2 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2200 x 1530 x 2220 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "750 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASS-1000",
+      "seriesCode": "ASS_SQUARE_CONE",
+      "model": "ASS-1000",
+      "pdfPage": 20,
+      "selection": {
+        "volume": {
+          "max": 800
+        },
+        "batch_weight": {
+          "max": 500
+        },
+        "power": {
+          "max": 4
+        }
+      },
+      "selectionNotes": {
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASS."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "800" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "500" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "4" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "800 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "1.000 L" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "500 kg" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "12 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "4 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2800 x 2000 x 2820 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1200 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASS-1500",
+      "seriesCode": "ASS_SQUARE_CONE",
+      "model": "ASS-1500",
+      "pdfPage": 20,
+      "selection": {
+        "volume": {
+          "max": 1200
+        },
+        "batch_weight": {
+          "max": 750
+        },
+        "power": {
+          "max": 5.5
+        }
+      },
+      "selectionNotes": {
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASS."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "1200" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "750" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "5.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "1.200 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "1.500 L" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "750 kg" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "10 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "5.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "2930 x 2330 x 3355 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "1650 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASS-2000",
+      "seriesCode": "ASS_SQUARE_CONE",
+      "model": "ASS-2000",
+      "pdfPage": 20,
+      "selection": {
+        "volume": {
+          "max": 1600
+        },
+        "batch_weight": {
+          "max": 1000
+        },
+        "power": {
+          "max": 7.5
+        }
+      },
+      "selectionNotes": {
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASS."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "1600" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "1000" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "7.5" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "1.600 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "2.000 L" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "1000 kg" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "10 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "7.5 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3300 x 2550 x 3280 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "2000 kg" }
+      ]
+    },
+    {
+      "machineId": "MIX__ASS-3000",
+      "seriesCode": "ASS_SQUARE_CONE",
+      "model": "ASS-3000",
+      "pdfPage": 20,
+      "selection": {
+        "volume": {
+          "max": 2400
+        },
+        "batch_weight": {
+          "max": 1500
+        },
+        "power": {
+          "max": 11
+        }
+      },
+      "selectionNotes": {
+        "material": "Catalog chưa ghi dạng nguyên liệu cho dòng ASS."
+      },
+      "highlights": [
+        { "kind": "volume", "title": "Nạp tối đa (L)", "value": "2400" },
+        { "kind": "weight", "title": "Nạp tối đa (kg)", "value": "1500" },
+        { "kind": "power", "title": "Động cơ (kW)", "value": "11" }
+      ],
+      "specs": [
+        { "group": "technical", "key": "work_volume", "label": "Dung tích nạp tối đa", "value": "2.400 L" },
+        { "group": "technical", "key": "total_volume", "label": "Dung tích thùng", "value": "3.000 L" },
+        { "group": "technical", "key": "max_load_weight", "label": "Khối lượng nạp tối đa", "value": "1500 kg" },
+        { "group": "technical", "key": "speed_rpm", "label": "Tốc độ trục chính", "value": "8 vòng/phút" },
+        { "group": "technical", "key": "power_kw", "label": "Động cơ", "value": "11 kW" },
+        { "group": "install", "key": "dimensions", "label": "Kích thước máy (D x R x C)", "value": "3800 x 3000 x 3800 mm" },
+        { "group": "install", "key": "weight", "label": "Trọng lượng", "value": "3000 kg" }
+      ]
+    }
+  ]
+}
