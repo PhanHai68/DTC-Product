@@ -41,6 +41,13 @@ class ExtensionsScreen extends StatelessWidget {
           onTap: () => context.push('/sample_record'),
         ),
         TechnologyMenuEntry(
+          id: 'extension_grain_analysis',
+          title: 'Phân tích mẫu AI',
+          icon: Icons.grain_rounded,
+          featured: true,
+          onTap: () => context.push('/grain-analysis'),
+        ),
+        TechnologyMenuEntry(
           id: 'extension_fault_bank',
           title: 'Ngân Hàng Lỗi',
           icon: Icons.menu_book_rounded,
