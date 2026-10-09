@@ -225,4 +225,36 @@ void main() {
 
     expect(find.text('Ghi chú cần ghim'), findsOneWidget);
   });
+
+  testWidgets('Bộ lọc ghi chú chia đều, nhãn không xuống dòng trên máy hẹp', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 740);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final provider = NotesProvider(repository: _FakeNoteRepository());
+    await provider.loadNotes();
+
+    await tester.pumpWidget(_buildApp(provider));
+    await tester.pumpAndSettle();
+
+    final segmentWidths = <double>[];
+    for (final label in ['Tất cả', 'Có nhắc hẹn', 'Đã ghim']) {
+      final text = find.text(label);
+      final lineHeight = tester.widget<Text>(text).style?.fontSize ?? 14;
+      // Chữ 1 dòng: cao không quá ~1.6 lần cỡ chữ.
+      expect(tester.getSize(text).height, lessThan(lineHeight * 1.6 + 6));
+      segmentWidths.add(
+        tester
+            .getSize(
+              find
+                  .ancestor(of: text, matching: find.byType(InkWell))
+                  .first,
+            )
+            .width,
+      );
+    }
+    expect(segmentWidths[1], closeTo(segmentWidths[0], 1));
+    expect(segmentWidths[2], closeTo(segmentWidths[0], 1));
+  });
 }

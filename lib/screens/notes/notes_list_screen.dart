@@ -101,19 +101,27 @@ class NotesListScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Consumer<NotesProvider>(
                   builder: (context, provider, _) => SegmentedButton<NoteFilter>(
+                    // 3 nút rộng bằng nhau, chữ luôn 1 dòng (tự thu nhỏ nếu
+                    // màn hình quá hẹp) thay vì xuống dòng.
+                    expandedInsets: EdgeInsets.zero,
+                    style: const ButtonStyle(
+                      padding: WidgetStatePropertyAll(
+                        EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                    ),
                     segments: const [
                       ButtonSegment(
                         value: NoteFilter.all,
-                        label: Text('Tất cả'),
+                        label: _FilterLabel('Tất cả'),
                       ),
                       ButtonSegment(
                         value: NoteFilter.reminder,
-                        label: Text('Có nhắc hẹn'),
+                        label: _FilterLabel('Có nhắc hẹn'),
                         icon: Icon(Icons.notifications_active_outlined),
                       ),
                       ButtonSegment(
                         value: NoteFilter.pinned,
-                        label: Text('Đã ghim'),
+                        label: _FilterLabel('Đã ghim'),
                         icon: Icon(Icons.push_pin_outlined),
                       ),
                     ],
@@ -216,6 +224,21 @@ class NotesListScreen extends StatelessWidget {
         onPressed: () => context.push('/notes/edit'),
         child: const Icon(Icons.add_rounded),
       ),
+    );
+  }
+}
+
+/// Nhãn bộ lọc 1 dòng: thu nhỏ chữ khi không đủ chỗ thay vì xuống dòng.
+class _FilterLabel extends StatelessWidget {
+  const _FilterLabel(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(text, maxLines: 1, softWrap: false),
     );
   }
 }
