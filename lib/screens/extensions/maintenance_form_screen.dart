@@ -279,7 +279,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                   controller: _modelController,
                   decoration: const InputDecoration(
                     labelText: 'Model Máy',
-                    prefixIcon: Icon(Icons.settings_input_component_rounded),
+                    prefixIcon: Icon(Icons.label_outline_rounded),
                   ),
                   validator: (val) =>
                       val == null || val.isEmpty ? 'Bắt buộc nhập' : null,
@@ -289,7 +289,7 @@ class _MaintenanceFormScreenState extends State<MaintenanceFormScreen> {
                   initialValue: _serviceType,
                   decoration: const InputDecoration(
                     labelText: 'Loại công việc',
-                    prefixIcon: Icon(Icons.category_rounded),
+                    prefixIcon: Icon(Icons.build_rounded),
                   ),
                   items: _serviceTypes.map((type) {
                     return DropdownMenuItem(value: type, child: Text(type));
