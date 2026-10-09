@@ -41,7 +41,7 @@ class _FactoryLocationListScreenState extends State<FactoryLocationListScreen> {
     final provider = context.watch<FactoryLocationProvider>();
     final items = provider.filtered;
     return Scaffold(
-      appBar: AppBar(title: const Text('Vị trí nhà máy')),
+      appBar: AppBar(title: const Text('Địa điểm đã lưu')),
       floatingActionButton: FloatingActionButton.extended(
         key: const Key('factory_location_add'),
         onPressed: () => context.push('/factory-locations/form'),
@@ -58,7 +58,7 @@ class _FactoryLocationListScreenState extends State<FactoryLocationListScreen> {
               onChanged: provider.setQuery,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
-                hintText: 'Tìm theo tên nhà máy',
+                hintText: 'Tìm theo tên địa điểm',
                 prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: provider.query.isEmpty
                     ? null
@@ -109,7 +109,7 @@ class _FactoryLocationListScreenState extends State<FactoryLocationListScreen> {
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Text(
-            'Không tìm thấy nhà máy nào khớp với "${provider.query.trim()}".',
+            'Không tìm thấy địa điểm nào khớp với "${provider.query.trim()}".',
             textAlign: TextAlign.center,
           ),
         ),
@@ -175,7 +175,7 @@ class _FactoryLocationListScreenState extends State<FactoryLocationListScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Xóa nhà máy?'),
+        title: const Text('Xóa địa điểm?'),
         content: Text(
           'Xóa vị trí "${location.name}"? Thao tác này không thể hoàn tác.',
         ),
@@ -211,10 +211,10 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.factory_outlined, size: 56, color: palette.cyan),
+            Icon(Icons.location_on_outlined, size: 56, color: palette.cyan),
             const SizedBox(height: 12),
             Text(
-              'Chưa lưu nhà máy nào.',
+              'Chưa lưu địa điểm nào.',
               style: TextStyle(
                 color: palette.navy,
                 fontWeight: FontWeight.w800,
@@ -222,7 +222,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'Nhấn "Thêm" khi đang ở nhà máy để lưu vị trí cho lần sau.',
+              'Nhấn "Thêm" khi đang ở địa điểm cần lưu để lưu vị trí cho lần sau.',
               textAlign: TextAlign.center,
               style: TextStyle(color: palette.muted),
             ),
@@ -260,7 +260,7 @@ class _FactoryCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.factory_outlined, color: palette.cyan),
+                Icon(Icons.location_on_outlined, color: palette.cyan),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(

@@ -17,7 +17,7 @@ class LocationFailure implements Exception {
 
   String get message => switch (type) {
     LocationFailureType.serviceDisabled => 'Dịch vụ vị trí (GPS) đang tắt. Vui lòng bật vị trí trên thiết bị rồi thử lại.',
-    LocationFailureType.permissionDenied => 'Ứng dụng cần quyền vị trí để lưu tọa độ nhà máy. Vui lòng cho phép khi được hỏi.',
+    LocationFailureType.permissionDenied => 'Ứng dụng cần quyền vị trí để lưu tọa độ địa điểm. Vui lòng cho phép khi được hỏi.',
     LocationFailureType.permissionDeniedForever =>
       kIsWeb
           ? 'Trình duyệt đang chặn quyền vị trí. Hãy cho phép vị trí cho trang này trong cài đặt trình duyệt rồi thử lại.'

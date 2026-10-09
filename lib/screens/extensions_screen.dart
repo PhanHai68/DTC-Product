@@ -70,8 +70,8 @@ class ExtensionsScreen extends StatelessWidget {
         ),
         TechnologyMenuEntry(
           id: 'extension_factory_location',
-          title: 'Vị Trí Nhà Máy',
-          icon: Icons.factory_outlined,
+          title: 'Địa Điểm Đã Lưu',
+          icon: Icons.location_on_outlined,
           featured: true,
           onTap: () => context.push('/factory-locations'),
         ),

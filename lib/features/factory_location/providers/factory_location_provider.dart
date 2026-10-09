@@ -38,7 +38,7 @@ class FactoryLocationProvider extends ChangeNotifier {
       _items = await _repository.getAll();
       _loaded = true;
     } catch (error, stackTrace) {
-      _error = 'Không thể tải danh sách nhà máy.';
+      _error = 'Không thể tải danh sách địa điểm.';
       debugPrint('FactoryLocationProvider.load: $error\n$stackTrace');
     } finally {
       _isLoading = false;

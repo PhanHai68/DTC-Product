@@ -71,7 +71,7 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       title: Text(
-        widget.location == null ? 'Thêm nhà máy' : 'Sửa thông tin nhà máy',
+        widget.location == null ? 'Thêm địa điểm' : 'Sửa thông tin địa điểm',
       ),
     ),
     body: Form(
@@ -85,9 +85,9 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
             maxLength: 120,
             textInputAction: TextInputAction.next,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(labelText: 'Tên nhà máy *'),
+            decoration: const InputDecoration(labelText: 'Tên địa điểm *'),
             validator: (value) => value == null || value.trim().isEmpty
-                ? 'Vui lòng nhập tên nhà máy'
+                ? 'Vui lòng nhập tên địa điểm'
                 : null,
           ),
           const SizedBox(height: 8),
@@ -100,7 +100,6 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
             textCapitalization: TextCapitalization.sentences,
             decoration: const InputDecoration(
               labelText: 'Ghi chú',
-              hintText: 'VD: cổng số 2, gửi xe bên trái',
             ),
           ),
           const SizedBox(height: 12),
@@ -115,7 +114,7 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.save_outlined),
-            label: const Text('Lưu nhà máy'),
+            label: const Text('Lưu địa điểm'),
           ),
         ],
       ),
@@ -365,7 +364,7 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Không thể lưu nhà máy. Vui lòng thử lại.'),
+          content: Text('Không thể lưu địa điểm. Vui lòng thử lại.'),
         ),
       );
     }
@@ -375,9 +374,9 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
     context: context,
     builder: (dialogContext) => AlertDialog(
       icon: const Icon(Icons.warning_amber_rounded, color: Colors.orange),
-      title: const Text('Tên nhà máy bị trùng'),
+      title: const Text('Tên địa điểm bị trùng'),
       content: Text(
-        'Đã có nhà máy tên "$name" trong danh sách. Bạn vẫn muốn lưu?',
+        'Đã có địa điểm tên "$name" trong danh sách. Bạn vẫn muốn lưu?',
       ),
       actions: [
         TextButton(

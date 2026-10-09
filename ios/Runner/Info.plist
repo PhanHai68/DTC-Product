@@ -31,7 +31,7 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>DTC Product cần quyền truy cập thư viện ảnh để người dùng chọn ảnh cho báo cáo.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>DTC Product cần quyền vị trí để lưu tọa độ nhà máy, giúp bạn mở lại đường đi bằng Google Maps ở lần sau.</string>
+	<string>DTC Product cần quyền vị trí để lưu tọa độ địa điểm, giúp bạn mở lại đường đi bằng Google Maps ở lần sau.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>DTC Product cần quyền lưu báo cáo và hình ảnh do người dùng tạo.</string>
 	<key>UIApplicationSceneManifest</key>
