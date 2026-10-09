@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../models/productivity_calc.dart';
 import '../../core/input/localized_number.dart';
+import '../../core/utils/wall_clock_stopwatch.dart';
 import '../../services/productivity_pdf_service.dart';
 
 class ProductivityCalcScreen extends StatefulWidget {
@@ -26,9 +29,11 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
   final _minutesController = TextEditingController(text: '0');
   final _secondsController = TextEditingController(text: '0');
 
-  // Quản lý đồng hồ bấm giờ (Stopwatch)
-  final Stopwatch _stopwatch = Stopwatch();
+  // Đồng hồ bấm giờ theo giờ thực: tắt màn hình/chạy nền vẫn tính tiếp.
+  static const _stopwatchPrefsKey = 'productivity_stopwatch';
+  final WallClockStopwatch _stopwatch = WallClockStopwatch();
   Timer? _timer;
+  AppLifecycleListener? _lifecycleListener;
   int _stopwatchElapsedSeconds = 0;
   bool _isStopwatchActive = false;
 
@@ -45,6 +50,9 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
     _hoursController.addListener(_onFieldChanged);
     _minutesController.addListener(_onFieldChanged);
     _secondsController.addListener(_onFieldChanged);
+    // Quay lại app sau khi tắt màn hình → cập nhật ngay, không chờ tick.
+    _lifecycleListener = AppLifecycleListener(onResume: _refreshStopwatch);
+    _restoreStopwatch();
   }
 
   void _onFieldChanged() {
@@ -54,6 +62,7 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _lifecycleListener?.dispose();
     _customerController.dispose();
     _materialController.dispose();
     _notesController.dispose();
@@ -65,34 +74,74 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
   }
 
   // --- Logic Đồng hồ bấm giờ ---
+  // Timer chỉ để vẽ lại màn hình; thời gian thật lấy từ _stopwatch.elapsed.
   void _startStopwatch() {
     _stopwatch.start();
+    _startTicker();
+    _saveStopwatch();
+  }
+
+  void _startTicker() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
-      if (mounted) {
-        setState(() {
-          _stopwatchElapsedSeconds = _stopwatch.elapsed.inSeconds;
-          _isStopwatchActive = true;
-        });
-      }
+    _timer = Timer.periodic(
+      const Duration(milliseconds: 200),
+      (_) => _refreshStopwatch(),
+    );
+    _refreshStopwatch();
+  }
+
+  void _refreshStopwatch() {
+    if (!mounted) return;
+    setState(() {
+      _stopwatchElapsedSeconds = _stopwatch.elapsed.inSeconds;
+      _isStopwatchActive = _stopwatch.isRunning;
     });
-    setState(() => _isStopwatchActive = true);
   }
 
   void _pauseStopwatch() {
-    _stopwatch.stop();
+    _stopwatch.pause();
     _timer?.cancel();
-    setState(() => _isStopwatchActive = false);
+    _refreshStopwatch();
+    _saveStopwatch();
   }
 
   void _resetStopwatch() {
     _stopwatch.reset();
-    _stopwatch.stop();
     _timer?.cancel();
-    setState(() {
-      _stopwatchElapsedSeconds = 0;
-      _isStopwatchActive = false;
-    });
+    _refreshStopwatch();
+    _saveStopwatch();
+  }
+
+  Future<void> _restoreStopwatch() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_stopwatchPrefsKey);
+      if (raw == null || !mounted) return;
+      _stopwatch.restore(Map<String, Object?>.from(jsonDecode(raw) as Map));
+      if (_stopwatch.isRunning) {
+        _startTicker();
+      } else {
+        _refreshStopwatch();
+      }
+    } catch (error) {
+      debugPrint('Không khôi phục được đồng hồ bấm giờ: $error');
+    }
+  }
+
+  Future<void> _saveStopwatch() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (!_stopwatch.isRunning && _stopwatch.elapsed == Duration.zero) {
+        await prefs.remove(_stopwatchPrefsKey);
+      } else {
+        await prefs.setString(
+          _stopwatchPrefsKey,
+          jsonEncode(_stopwatch.toJson()),
+        );
+      }
+    } catch (error) {
+      debugPrint('Không lưu được đồng hồ bấm giờ: $error');
+    }
   }
 
   void _applyStopwatchToInputs() {
@@ -474,7 +523,6 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
               controller: _customerController,
               decoration: InputDecoration(
                 labelText: 'Tên Khách Hàng / Nhà Máy',
-                hintText: 'Ví dụ: Nhà máy xay xát Tân Phát...',
                 prefixIcon: const Icon(Icons.business_rounded, size: 20),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -487,7 +535,6 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
               controller: _materialController,
               decoration: InputDecoration(
                 labelText: 'Tên Nguyên Liệu',
-                hintText: 'Ví dụ: Gạo Jasmine, Cà phê Robusta, Tiêu đen...',
                 prefixIcon: const Icon(Icons.grain_rounded, size: 20),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -500,7 +547,6 @@ class _ProductivityCalcScreenState extends State<ProductivityCalcScreen> {
               controller: _notesController,
               decoration: InputDecoration(
                 labelText: 'Ghi Chú Thêm (Dòng máy, chế độ, thông số cài đặt)',
-                hintText: 'Ví dụ: Máy 5 máng, áp suất 3.5 bar, chạy chế độ tách hạt vàng...',
                 prefixIcon: const Icon(Icons.note_alt_outlined, size: 20),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
