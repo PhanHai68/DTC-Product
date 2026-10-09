@@ -101,15 +101,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             : _buildForm(theme, colorScheme),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Tài khoản do quản trị viên DTC cấp. Liên hệ quản trị '
-                      'viên nếu bạn chưa có tài khoản.',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
                   ],
                 ),
               ),
