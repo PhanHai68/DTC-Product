@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'routes/app_routes.dart';
+import 'features/auth/services/auth_service.dart';
 import 'providers/electricity_bill_provider.dart';
 import 'providers/processing_profit_provider.dart';
 import 'providers/self_business_provider.dart';
@@ -42,6 +43,7 @@ import 'features/projects/repositories/local_project_repository.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  await AuthService.instance.restore(prefs);
   // Không chờ init() xong mới vẽ khung hình đầu tiên — dịch vụ thông báo tự
   // khởi tạo song song trong lúc UI hiển thị; schedule()/cancel()/
   // requestPermission() đã tự đảm bảo init() hoàn tất trước khi dùng.

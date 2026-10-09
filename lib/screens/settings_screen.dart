@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../features/auth/services/auth_service.dart';
 import '../providers/settings_provider.dart';
 
 const _feedbackFormUrl =
@@ -84,6 +85,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ThemeMode.system => Icons.brightness_auto_outlined,
   };
 
+  Future<void> _signOut() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Đăng xuất?'),
+        content: const Text(
+          'Dữ liệu đã nhập vẫn được giữ trên máy này. Bạn cần mạng để đăng '
+          'nhập lại.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Hủy'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Đăng xuất'),
+          ),
+        ],
+      ),
+    );
+    // Router tự chuyển về màn hình đăng nhập khi trạng thái đổi.
+    if (confirmed == true) await AuthService.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
@@ -93,6 +119,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         children: [
+          _SettingsSection(
+            icon: Icons.account_circle_outlined,
+            title: 'Tài khoản',
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.person_outline_rounded),
+              title: Text(AuthService.instance.email ?? 'Đã đăng nhập'),
+              subtitle: const Text('Đăng xuất khỏi DTC Product trên máy này'),
+              trailing: const Icon(Icons.logout_rounded),
+              onTap: _signOut,
+            ),
+          ),
+          const SizedBox(height: 16),
           _SettingsSection(
             icon: Icons.palette_outlined,
             title: 'Giao diện',

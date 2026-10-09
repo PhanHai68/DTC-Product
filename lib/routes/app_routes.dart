@@ -42,7 +42,8 @@ import '../features/grinding_machine/screens/grinding_proposal_editor_screen.dar
 import '../features/grinding_machine/models/grinding_selection_request.dart';
 import '../features/grinding_machine/models/grinding_selection_project.dart';
 import '../features/fault_bank/fault_bank_routes.dart';
-import '../features/grain_analysis/grain_analysis_routes.dart';
+import '../features/auth/screens/login_screen.dart';
+import '../features/auth/services/auth_service.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
 import '../screens/technical_converter/technical_converter_screen.dart';
 import '../screens/color_sorter_categories_screen.dart';
@@ -120,6 +121,14 @@ import '../features/factory_location/screens/factory_location_form_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
+  // Chưa đăng nhập thì mọi đường dẫn đều về /login; đăng nhập xong về trang chủ.
+  refreshListenable: AuthService.instance,
+  redirect: (context, state) {
+    final signedIn = AuthService.instance.isSignedIn;
+    final atLogin = state.matchedLocation == '/login';
+    if (!signedIn) return atLogin ? null : '/login';
+    return atLogin ? '/' : null;
+  },
   errorBuilder: (context, state) => Scaffold(
     appBar: AppBar(title: const Text('Không tìm thấy nội dung')),
     body: Center(
@@ -151,6 +160,7 @@ final GoRouter appRouter = GoRouter(
   ),
   routes: [
     GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(
       path: '/search',
       builder: (context, state) => const GlobalSearchScreen(),
@@ -259,8 +269,6 @@ final GoRouter appRouter = GoRouter(
     ),
     // Ngân hàng lỗi (/fault-bank/...) — provider riêng của module.
     buildFaultBankRoutes(),
-    // Phân tích mẫu AI (/grain-analysis/...) — provider riêng của module.
-    buildGrainAnalysisRoutes(),
     GoRoute(
       path: '/factory-locations/form',
       builder: (context, state) => FactoryLocationFormScreen(
