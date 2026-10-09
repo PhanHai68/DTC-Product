@@ -251,7 +251,6 @@ class _ProjectStagePageState extends State<ProjectStagePage> {
             controller: _productivity,
             decoration: const InputDecoration(
               labelText: 'Thông số năng suất',
-              hintText: 'Ví dụ: 8 tấn/giờ',
               prefixIcon: Icon(Icons.speed_outlined),
             ),
           ),

@@ -136,7 +136,6 @@ class _DailyGoalFormScreenState extends State<DailyGoalFormScreen> {
               controller: _titleController,
               decoration: const InputDecoration(
                 labelText: 'Tên mục tiêu',
-                hintText: 'VD: Gửi báo giá cho khách hàng',
               ),
               maxLength: 120,
               validator: (value) => (value == null || value.trim().isEmpty)

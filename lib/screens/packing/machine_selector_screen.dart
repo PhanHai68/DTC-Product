@@ -136,7 +136,6 @@ class _MachineSelectorScreenState extends State<MachineSelectorScreen> {
                             id: 'weight_input',
                             controller: _weightController,
                             label: 'Khối lượng mỗi túi (kg)',
-                            hint: 'Vd: 5',
                             icon: Icons.scale_outlined,
                             suffix: 'kg',
                             onChanged: (v) => provider.setWeightKg(v),
@@ -148,7 +147,6 @@ class _MachineSelectorScreenState extends State<MachineSelectorScreen> {
                             id: 'capacity_input',
                             controller: _capacityController,
                             label: 'Năng suất yêu cầu',
-                            hint: 'Vd: 500',
                             icon: Icons.speed_outlined,
                             suffix: provider.selectedCapacityUnit ?? 'túi/giờ',
                             onChanged: (v) => provider.setCapacity(v),
@@ -559,7 +557,6 @@ class _NumberField extends StatelessWidget {
   final String id;
   final TextEditingController controller;
   final String label;
-  final String hint;
   final IconData icon;
   final String suffix;
   final ValueChanged<double?> onChanged;
@@ -568,7 +565,6 @@ class _NumberField extends StatelessWidget {
     required this.id,
     required this.controller,
     required this.label,
-    required this.hint,
     required this.icon,
     required this.suffix,
     required this.onChanged,
@@ -583,7 +579,6 @@ class _NumberField extends StatelessWidget {
       inputFormatters: const [LocalizedDecimalTextInputFormatter()],
       decoration: InputDecoration(
         labelText: label,
-        hintText: hint,
         prefixIcon: Icon(icon, size: 20),
         suffixText: suffix,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),

@@ -87,7 +87,7 @@ class _PackingSearchScreenState extends State<PackingSearchScreen> {
                 autofocus: true,
                 onChanged: _onSearchChanged,
                 decoration: InputDecoration(
-                  hintText: 'Nhập model máy (vd: LZB-600)',
+                  hintText: 'Nhập model máy',
                   hintStyle: TextStyle(
                     color: colorScheme.onSurfaceVariant,
                     fontSize: 15,

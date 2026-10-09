@@ -259,7 +259,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
               SearchBar(
                 controller: _controller,
                 focusNode: _focusNode,
-                hintText: 'Nhập model hoặc chức năng, ví dụ: SC12, PDF...',
+                hintText: 'Nhập model hoặc chức năng...',
                 leading: const Icon(Icons.search_rounded),
                 trailing: [
                   if (_query.isNotEmpty)

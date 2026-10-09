@@ -72,7 +72,7 @@ class _EquipmentSearchScreenState extends State<EquipmentSearchScreen> {
       body: query.isEmpty
           ? Center(
               child: Text(
-                'Nhập model (VD: ${config.searchExample}) hoặc từ khóa để tìm.',
+                'Nhập model hoặc từ khóa để tìm.',
                 style: TextStyle(color: palette.muted),
               ),
             )

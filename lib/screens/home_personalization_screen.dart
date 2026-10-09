@@ -250,7 +250,6 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
                   maxLength: _displayNameMaxLength,
                   decoration: const InputDecoration(
                     labelText: 'Tên hiển thị',
-                    hintText: 'VD: Kevin',
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -260,7 +259,6 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
                   maxLines: 2,
                   decoration: const InputDecoration(
                     labelText: 'Dòng giới thiệu',
-                    hintText: 'VD: DTC Engineer',
                   ),
                 ),
               ],
@@ -355,7 +353,6 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
                   maxLength: 30,
                   decoration: const InputDecoration(
                     labelText: 'Tiêu đề hiển thị',
-                    hintText: 'VD: Mục tiêu hôm nay, Công việc hôm nay...',
                   ),
                 ),
                 const SizedBox(height: 8),

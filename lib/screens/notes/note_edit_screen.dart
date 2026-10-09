@@ -314,7 +314,6 @@ class _NoteEditScreenState extends State<NoteEditScreen> {
                   controller: _titleController,
                   decoration: const InputDecoration(
                     labelText: 'Tiêu đề',
-                    hintText: 'Ví dụ: Gọi lại khách hàng ABC',
                   ),
                   textCapitalization: TextCapitalization.sentences,
                   maxLength: 120,

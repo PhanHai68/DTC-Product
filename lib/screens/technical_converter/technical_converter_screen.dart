@@ -118,7 +118,6 @@ class _MeshMicronTabState extends State<_MeshMicronTab> {
                 onChanged: (_) => setState(() {}),
                 decoration: InputDecoration(
                   labelText: 'Tìm kiếm theo Mesh, Micron, mm hoặc Inch',
-                  hintText: 'Ví dụ: 18, 1000, 1.0...',
                   prefixIcon: const Icon(Icons.search_rounded),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(

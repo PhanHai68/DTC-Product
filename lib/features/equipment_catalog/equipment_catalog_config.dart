@@ -12,7 +12,6 @@ class EquipmentCatalogConfig {
     required this.routeBase,
     required this.icon,
     required this.menuImage,
-    required this.searchExample,
     required this.chipKeys,
     required this.selectorCtaDescription,
   });
@@ -33,9 +32,6 @@ class EquipmentCatalogConfig {
   final IconData icon;
   final String menuImage;
 
-  /// Model ví dụ trong ô tìm kiếm, VD "ASPM-520".
-  final String searchExample;
-
   /// Các ô giá trị trên thẻ model: mỗi nhóm lấy khoá thông số đầu tiên mà
   /// model có (VD dung tích làm việc, không có thì tổng dung tích).
   final List<List<String>> chipKeys;
@@ -54,7 +50,6 @@ abstract final class EquipmentCatalogs {
     routeBase: '/packing_machine',
     icon: Icons.inventory_2_outlined,
     menuImage: 'assets/images/catalog_packing_aspm_vertical.png',
-    searchExample: 'ASPM-520',
     chipKeys: [
       ['pack_weight'],
       ['speed'],
@@ -73,7 +68,6 @@ abstract final class EquipmentCatalogs {
     routeBase: '/mixer_machine',
     icon: Icons.blender_outlined,
     menuImage: 'assets/images/catalog_mixer_ribbon.png',
-    searchExample: 'ASR-1000',
     chipKeys: [
       ['work_volume', 'total_volume'],
       ['power_kw'],
@@ -92,7 +86,6 @@ abstract final class EquipmentCatalogs {
     routeBase: '/sifter_machine',
     icon: Icons.grid_on_rounded,
     menuImage: 'assets/images/catalog_sifter_vibro.png',
-    searchExample: 'ASST-1000',
     chipKeys: [
       ['capacity'],
       ['mesh'],
@@ -113,7 +106,6 @@ abstract final class EquipmentCatalogs {
     routeBase: '/rice_milling',
     icon: Icons.rice_bowl_outlined,
     menuImage: 'assets/images/home_rice_milling.jpg',
-    searchExample: 'MLGQ36B',
     chipKeys: [
       ['capacity', 'capacity_long', 'capacity_paddy', 'air_flow'],
       ['power_kw', 'weight'],

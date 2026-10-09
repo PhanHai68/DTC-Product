@@ -99,7 +99,7 @@ class _GrindingMachineSearchScreenState
       body: query.isEmpty
           ? Center(
               child: Text(
-                'Nhập model (VD: ASP-350) hoặc từ khóa để tìm.',
+                'Nhập model hoặc từ khóa để tìm.',
                 style: TextStyle(color: palette.muted),
               ),
             )

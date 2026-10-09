@@ -1136,7 +1136,6 @@ class _ParameterCardRow extends StatelessWidget {
                       (value ?? '').trim().isEmpty ? 'Nhập tên thông số' : null,
                   decoration: const InputDecoration(
                     labelText: 'Nhập tên mẫu',
-                    hintText: 'VD: Hạt tốt, Hạt xấu...',
                     isDense: true,
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 10,

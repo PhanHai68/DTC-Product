@@ -573,7 +573,6 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                   ),
                   decoration: InputDecoration(
                     labelText: 'Sản lượng mục tiêu (tấn/giờ)',
-                    hintText: 'Ví dụ: 5, 8, 12, 18...',
                     prefixIcon: const Icon(Icons.speed),
                     suffixText: 'tấn/h',
                     border: OutlineInputBorder(

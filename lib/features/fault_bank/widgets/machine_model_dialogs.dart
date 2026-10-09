@@ -104,7 +104,6 @@ class _MachineModelEditorState extends State<_MachineModelEditor> {
                 textCapitalization: TextCapitalization.characters,
                 decoration: const InputDecoration(
                   labelText: 'Tên model máy *',
-                  hintText: 'VD: SC16 Pro',
                 ),
                 onChanged: (_) {
                   if (_similar != null) setState(() => _similar = null);

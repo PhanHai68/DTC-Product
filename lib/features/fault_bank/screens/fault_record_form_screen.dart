@@ -477,7 +477,6 @@ class _FaultRecordFormScreenState extends State<FaultRecordFormScreen> {
                 onChanged: (_) => _markDirty(),
                 decoration: const InputDecoration(
                   labelText: 'Tên nhóm lỗi mới',
-                  hintText: 'VD: BĂNG TẢI',
                 ),
               ),
             ],
@@ -660,7 +659,6 @@ class _FaultRecordFormScreenState extends State<FaultRecordFormScreen> {
               onChanged: (_) => _markDirty(),
               decoration: const InputDecoration(
                 labelText: 'Thời gian xử lý',
-                hintText: 'VD: 1,5',
                 suffixText: 'giờ',
               ),
             ),
