@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../document_library_catalog.dart';
 import '../drive_docs_config.dart';
 import '../models/drive_item.dart';
 import 'drive_doc_cache.dart';
@@ -16,9 +17,10 @@ class DriveDocsException implements Exception {
   String toString() => message;
 }
 
-/// Đọc thư viện PDF trên Google Drive (thư mục chia sẻ công khai + API key).
+/// Đọc thư viện tài liệu trên Google Drive (thư mục chia sẻ công khai + API
+/// key).
 ///
-/// Danh sách thư mục được lưu vào SharedPreferences và PDF vào
+/// Danh sách thư mục được lưu vào SharedPreferences và nội dung PDF/ảnh vào
 /// [DriveDocCache], nên tài liệu đã mở một lần vẫn xem được khi mất mạng.
 class DriveDocsService {
   DriveDocsService({
@@ -56,7 +58,7 @@ class DriveDocsService {
     }
   }
 
-  /// Thư mục con + file PDF trong [folderId], thư mục xếp trước.
+  /// Thư mục con + file trong [folderId], thư mục xếp trước.
   /// Lỗi mạng → trả danh sách đã lưu lần trước (nếu có).
   Future<List<DriveItem>> listFolder(
     String folderId, {
@@ -104,7 +106,7 @@ class DriveDocsService {
           jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
       for (final json in body['files'] as List? ?? const []) {
         final item = DriveItem.fromJson(json as Map<String, dynamic>);
-        if (item.isFolder || item.isPdf) items.add(item);
+        if (item.mimeType != DriveItem.shortcutMimeType) items.add(item);
       }
       pageToken = body['nextPageToken'] as String?;
     } while (pageToken != null);
@@ -113,6 +115,28 @@ class DriveDocsService {
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
     return items;
+  }
+
+  /// Đi lần lượt từ thư mục gốc theo [path]; mỗi cấp là danh sách tên chấp
+  /// nhận được, so khớp bằng [normalizeDriveName]. Trả null nếu thư mục chưa
+  /// được tạo trên Drive.
+  Future<String?> findFolderByPath(
+    List<List<String>> path, {
+    bool refresh = false,
+  }) async {
+    _ensureConfigured();
+    var folderId = rootFolderId;
+    for (final names in path) {
+      final wanted = names.map(normalizeDriveName).toSet();
+      final items = await listFolder(folderId, refresh: refresh);
+      final match = items.where(
+        (item) =>
+            item.isFolder && wanted.contains(normalizeDriveName(item.name)),
+      );
+      if (match.isEmpty) return null;
+      folderId = match.first.id;
+    }
+    return folderId;
   }
 
   /// Tìm file PDF theo đúng tên (không phân biệt hoa thường) trong toàn bộ
@@ -144,18 +168,23 @@ class DriveDocsService {
     throw DriveDocsException('Chưa có tài liệu "$name" trên Google Drive.');
   }
 
-  /// Nội dung PDF: lấy từ bộ đệm nếu đúng phiên bản, nếu không thì tải về.
-  /// Lỗi mạng → dùng bản đã lưu trước đó (có thể cũ hơn).
-  Future<Uint8List> loadPdf(DriveItem item) async {
+  /// Link tải trực tiếp nội dung file — dùng để phát video dạng stream.
+  Uri mediaUri(DriveItem item) => Uri.https(
+    _host,
+    '/drive/v3/files/${item.id}',
+    {'alt': 'media', 'key': _apiKey},
+  );
+
+  /// Nội dung file (PDF, ảnh): lấy từ bộ đệm nếu đúng phiên bản, nếu không
+  /// thì tải về. Lỗi mạng → dùng bản đã lưu trước đó (có thể cũ hơn).
+  Future<Uint8List> loadFile(DriveItem item) async {
     _ensureConfigured();
     final cached = await _cache.read(item.id, item.version);
     if (cached != null) return cached;
     try {
-      final uri = Uri.https(_host, '/drive/v3/files/${item.id}', {
-        'alt': 'media',
-        'key': _apiKey,
-      });
-      final response = await _client.get(uri).timeout(_downloadTimeout);
+      final response = await _client
+          .get(mediaUri(item))
+          .timeout(_downloadTimeout);
       _checkStatus(response);
       final bytes = response.bodyBytes;
       try {
@@ -173,7 +202,7 @@ class DriveDocsService {
   }
 
   Future<Uint8List> loadPdfByName(String name) async =>
-      loadPdf(await findPdfByName(name));
+      loadFile(await findPdfByName(name));
 
   void _checkStatus(http.Response response) {
     if (response.statusCode == 200) return;

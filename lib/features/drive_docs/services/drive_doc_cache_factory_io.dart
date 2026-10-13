@@ -7,7 +7,7 @@ import 'drive_doc_cache.dart';
 
 DriveDocCache createDriveDocCache() => FileDriveDocCache();
 
-/// Lưu `<id>__<version>.pdf` trong thư mục hỗ trợ của app.
+/// Lưu `<id>__<version>.bin` trong thư mục hỗ trợ của app.
 class FileDriveDocCache implements DriveDocCache {
   FileDriveDocCache({Future<Directory> Function()? baseDir})
     : _baseDir = baseDir ?? getApplicationSupportDirectory;
@@ -25,13 +25,13 @@ class FileDriveDocCache implements DriveDocCache {
     final dir = await _cacheDir();
     return dir.listSync().whereType<File>().where((f) {
       final name = f.uri.pathSegments.last;
-      return name.startsWith('${id}__') && name.endsWith('.pdf');
+      return name.startsWith('${id}__') && name.endsWith('.bin');
     }).toList();
   }
 
   @override
   Future<Uint8List?> read(String id, String version) async {
-    final file = File('${(await _cacheDir()).path}/${id}__$version.pdf');
+    final file = File('${(await _cacheDir()).path}/${id}__$version.bin');
     return await file.exists() ? file.readAsBytes() : null;
   }
 
@@ -44,8 +44,8 @@ class FileDriveDocCache implements DriveDocCache {
   @override
   Future<void> write(String id, String version, Uint8List bytes) async {
     final dir = await _cacheDir();
-    final target = File('${dir.path}/${id}__$version.pdf');
-    // Ghi file tạm rồi đổi tên để không để lại PDF dở dang khi app bị tắt.
+    final target = File('${dir.path}/${id}__$version.bin');
+    // Ghi file tạm rồi đổi tên để không để lại file dở dang khi app bị tắt.
     final temp = File('${target.path}.part');
     await temp.writeAsBytes(bytes, flush: true);
     for (final old in await _filesOf(id)) {

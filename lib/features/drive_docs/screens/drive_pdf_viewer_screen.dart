@@ -4,7 +4,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../models/drive_item.dart';
 import '../services/drive_docs_service.dart';
-import '../widgets/drive_pdf_loader.dart';
+import '../widgets/drive_file_loader.dart';
 
 /// Xem một PDF trên Google Drive, theo [item] (mở từ thư viện) hoặc theo
 /// [fileName] (tài liệu cố định mà màn hình khác trỏ tới).
@@ -36,9 +36,9 @@ class DrivePdfViewerScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: DrivePdfLoader(
+      body: DriveFileLoader(
         load: () => item != null
-            ? service.loadPdf(item!)
+            ? service.loadFile(item!)
             : service.loadPdfByName(fileName!),
         builder: (context, bytes) => SfPdfViewer.memory(
           bytes,

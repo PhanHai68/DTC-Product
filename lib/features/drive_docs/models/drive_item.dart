@@ -1,4 +1,4 @@
-/// Một thư mục hoặc file PDF trong thư viện tài liệu Google Drive.
+/// Một thư mục hoặc file trong thư viện tài liệu Google Drive.
 class DriveItem {
   const DriveItem({
     required this.id,
@@ -10,6 +10,7 @@ class DriveItem {
 
   static const folderMimeType = 'application/vnd.google-apps.folder';
   static const pdfMimeType = 'application/pdf';
+  static const shortcutMimeType = 'application/vnd.google-apps.shortcut';
 
   final String id;
   final String name;
@@ -19,6 +20,14 @@ class DriveItem {
 
   bool get isFolder => mimeType == folderMimeType;
   bool get isPdf => mimeType == pdfMimeType;
+  bool get isImage => mimeType.startsWith('image/');
+  bool get isVideo => mimeType.startsWith('video/');
+
+  /// File khác (bản vẽ DWG, Word, Excel, Google Docs…): mở bằng Google Drive.
+  bool get opensInDrive => !isFolder && !isPdf && !isImage && !isVideo;
+
+  /// Trang xem file của Google Drive (file đã chia sẻ công khai).
+  Uri get driveViewUri => Uri.https('drive.google.com', '/open', {'id': id});
 
   /// Đổi khi file được thay bản mới trên Drive → bộ đệm tải lại.
   String get version => (modifiedTime?.millisecondsSinceEpoch ?? 0).toString();

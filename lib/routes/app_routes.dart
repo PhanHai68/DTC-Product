@@ -18,8 +18,11 @@ import '../screens/storage/stored_image_viewer_screen.dart';
 import '../screens/storage/stored_model_viewer_screen.dart';
 import '../models/stored_file.dart';
 import '../screens/sample_record/sample_record_screen.dart';
+import '../features/drive_docs/document_library_catalog.dart';
 import '../features/drive_docs/models/drive_item.dart';
+import '../features/drive_docs/screens/document_library_screen.dart';
 import '../features/drive_docs/screens/drive_docs_screen.dart';
+import '../features/drive_docs/screens/drive_media_viewer_screens.dart';
 import '../features/drive_docs/screens/drive_pdf_viewer_screen.dart';
 import '../features/maintenance_report/screens/maintenance_report_list_screen.dart';
 import '../features/maintenance_report/screens/maintenance_report_form_screen.dart';
@@ -237,10 +240,54 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/documents',
+      builder: (context, state) => const DocumentLibraryScreen(),
+    ),
+    GoRoute(
+      path: '/documents/product/:product',
+      builder: (context, state) {
+        final product = docProductById(state.pathParameters['product']);
+        if (product == null) return const DocumentLibraryScreen();
+        return DocumentProductScreen(product: product);
+      },
+    ),
+    GoRoute(
+      path: '/documents/product/:product/:type',
+      builder: (context, state) {
+        final product = docProductById(state.pathParameters['product']);
+        final type = docTypeById(state.pathParameters['type']);
+        if (product == null || type == null) {
+          return const DocumentLibraryScreen();
+        }
+        return DriveDocsScreen(
+          folderPath: [product.matchNames, type.matchNames],
+          title: type.title,
+          subtitle: product.title,
+          missingFolderHint: '${product.folderName} › ${type.folderName}',
+        );
+      },
+    ),
+    GoRoute(
+      path: '/documents/folder',
       builder: (context, state) => DriveDocsScreen(
-        folderId: state.uri.queryParameters['folder'],
+        folderId: state.uri.queryParameters['id'],
         title: state.uri.queryParameters['title'],
       ),
+    ),
+    GoRoute(
+      path: '/documents/image',
+      builder: (context, state) {
+        final item = state.extra as DriveItem?;
+        if (item == null) return const DocumentLibraryScreen();
+        return DriveImageViewerScreen(item: item);
+      },
+    ),
+    GoRoute(
+      path: '/documents/video',
+      builder: (context, state) {
+        final item = state.extra as DriveItem?;
+        if (item == null) return const DocumentLibraryScreen();
+        return DriveVideoPlayerScreen(item: item);
+      },
     ),
     GoRoute(
       path: '/documents/view',
@@ -250,7 +297,9 @@ final GoRouter appRouter = GoRouter(
         final item = state.extra as DriveItem?;
         final query = state.uri.queryParameters;
         final fileName = query['name'];
-        if (item == null && fileName == null) return const DriveDocsScreen();
+        if (item == null && fileName == null) {
+          return const DocumentLibraryScreen();
+        }
         return DrivePdfViewerScreen(
           item: item,
           fileName: fileName,

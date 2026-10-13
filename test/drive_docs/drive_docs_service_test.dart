@@ -70,12 +70,18 @@ DriveDocsService _service(_FakeDrive drive, {DriveDocCache? cache}) =>
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  test('liệt kê thư mục: chỉ giữ thư mục + PDF, thư mục xếp trước', () async {
+  test('liệt kê thư mục: bỏ shortcut, thư mục xếp trước', () async {
     final drive = _FakeDrive(
       folders: {
         _root: [
           _pdf('p2', 'b.pdf'),
           {'id': 'x', 'name': 'ghi chu.docx', 'mimeType': 'application/msword'},
+          {
+            'id': 's',
+            'name': 'lối tắt',
+            'mimeType': DriveItem.shortcutMimeType,
+          },
+          {'id': 'v', 'name': 'chạy thử.mp4', 'mimeType': 'video/mp4'},
           _pdf('p1', 'A.pdf'),
           _folder('f1', 'Bản vẽ'),
         ],
@@ -84,8 +90,42 @@ void main() {
 
     final items = await _service(drive).listFolder(_root);
 
-    expect(items.map((i) => i.name), ['Bản vẽ', 'A.pdf', 'b.pdf']);
+    expect(items.map((i) => i.name), [
+      'Bản vẽ',
+      'A.pdf',
+      'b.pdf',
+      'chạy thử.mp4',
+      'ghi chu.docx',
+    ]);
     expect(items[1].size, 2048);
+    expect(items[3].isVideo, isTrue);
+    expect(items[4].opensInDrive, isTrue);
+  });
+
+  test('tìm thư mục theo đường dẫn tên, bỏ qua hoa thường và dấu', () async {
+    final drive = _FakeDrive(
+      folders: {
+        _root: [_folder('p', 'MAY TACH MAU'), _folder('q', 'Cân đóng gói')],
+        'p': [_folder('m', 'Video/Hình ảnh'), _folder('c', 'Catalogue')],
+        'q': [],
+      },
+    );
+    final service = _service(drive);
+
+    expect(
+      await service.findFolderByPath([
+        ['Máy tách màu'],
+        ['Video - hình ảnh'],
+      ]),
+      'm',
+    );
+    expect(
+      await service.findFolderByPath([
+        ['Cân đóng gói'],
+        ['Catalogue'],
+      ]),
+      isNull,
+    );
   });
 
   test('mất mạng: dùng danh sách thư mục đã lưu lần trước', () async {
@@ -161,9 +201,9 @@ void main() {
     final service = _service(drive);
     final item = (await service.listFolder(_root)).single;
 
-    expect(await service.loadPdf(item), [1, 2, 3]);
+    expect(await service.loadFile(item), [1, 2, 3]);
     final downloads = drive.requests.length;
-    expect(await service.loadPdf(item), [1, 2, 3]);
+    expect(await service.loadFile(item), [1, 2, 3]);
     expect(drive.requests.length, downloads);
   });
 
@@ -182,16 +222,16 @@ void main() {
       final v2 = DriveItem.fromJson(
         _pdf('p1', 'A.pdf', modified: '2026-10-05T08:00:00.000Z'),
       );
-      await service.loadPdf(v1);
+      await service.loadFile(v1);
 
       drive.files['p1'] = [2];
-      expect(await service.loadPdf(v2), [2]);
+      expect(await service.loadFile(v2), [2]);
 
       drive.offline = true;
       final v3 = DriveItem.fromJson(
         _pdf('p1', 'A.pdf', modified: '2026-10-09T08:00:00.000Z'),
       );
-      expect(await service.loadPdf(v3), [2]);
+      expect(await service.loadFile(v3), [2]);
     },
   );
 

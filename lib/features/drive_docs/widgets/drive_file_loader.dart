@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 import '../services/drive_docs_service.dart';
 
-/// Tải PDF từ Google Drive rồi giao bytes cho [builder]; hiện vòng chờ khi
+/// Tải file (PDF, ảnh) từ Google Drive rồi giao bytes cho [builder]; hiện vòng chờ khi
 /// đang tải và thông báo lỗi kèm nút "Thử lại" khi thất bại.
-class DrivePdfLoader extends StatefulWidget {
-  const DrivePdfLoader({
+class DriveFileLoader extends StatefulWidget {
+  const DriveFileLoader({
     super.key,
     required this.load,
     required this.builder,
@@ -20,10 +20,10 @@ class DrivePdfLoader extends StatefulWidget {
   final Color? foregroundColor;
 
   @override
-  State<DrivePdfLoader> createState() => _DrivePdfLoaderState();
+  State<DriveFileLoader> createState() => _DriveFileLoaderState();
 }
 
-class _DrivePdfLoaderState extends State<DrivePdfLoader> {
+class _DriveFileLoaderState extends State<DriveFileLoader> {
   late Future<Uint8List> _future = widget.load();
 
   void _retry() => setState(() => _future = widget.load());
