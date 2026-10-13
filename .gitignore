@@ -68,6 +68,6 @@ app.*.map.json
 .widget_preview/
 
 # Kho tài liệu gốc duy nhất (Excel, PDF, ảnh, bản vẽ, catalog...) — chỉ lưu
-# local, không đưa lên Git vì dung lượng lớn (~575MB) và không phải code.
+# local, không đưa lên Git vì dung lượng lớn (~213MB) và không phải code.
 # Cần tự sao lưu. Xem docs_database/README.md để biết cách tổ chức.
 /docs_database/

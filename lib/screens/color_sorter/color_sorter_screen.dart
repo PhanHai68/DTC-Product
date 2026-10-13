@@ -1123,6 +1123,7 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                       children:
                           [
                             'SC16 Pro',
+                            'SC16',
                             'SC12',
                             'SC10',
                             'SC8',
@@ -1580,6 +1581,34 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                                         'AI Deep Learning',
                                         Colors.blue,
                                       ),
+                                      _buildTechChip(
+                                        context,
+                                        'Analyzer Cloud Control',
+                                        Colors.orange,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ mắt diều hâu 3.0',
+                                        Colors.purple,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ tích hợp đa điểm ảnh',
+                                        Colors.indigo,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ PLOV',
+                                        Colors.teal,
+                                      ),
+                                      _buildTechChip(
+                                        context,
+                                        'Công nghệ hút bụi độc lập',
+                                        Colors.blueGrey,
+                                      ),
+                                    ] else if (specs['Model'] == 'SC16') ...[
+                                      // SC16 giống SC16 Pro, chỉ không có AI
+                                      // Deep Learning.
                                       _buildTechChip(
                                         context,
                                         'Analyzer Cloud Control',
