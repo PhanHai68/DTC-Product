@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../data/acomp_ds8011_data.dart';
+import '../../data/product_data.dart';
 
 class AcompDs8011SettingsScreen extends StatelessWidget {
   const AcompDs8011SettingsScreen({super.key});

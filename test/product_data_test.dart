@@ -79,6 +79,94 @@ void main() {
     );
   });
 
+  group('Máy nén khí', () {
+    test('specs.json: model không trùng, series hợp lệ, số liệu dương', () {
+      final codes = <String>[];
+      for (final spec in acompSpecData) {
+        expect(spec.modelCode.trim(), isNotEmpty);
+        codes.add(spec.modelCode);
+        // AcompSpecProvider tách 2 danh sách theo đúng 2 tên series này.
+        expect(
+          spec.series,
+          anyOf('PM VSD', 'Fixed Speed'),
+          reason:
+              '${spec.modelCode}: series phải là "PM VSD" hoặc "Fixed Speed"',
+        );
+        for (final (name, value) in [
+          ('powerKW', spec.powerKW),
+          ('powerHP', spec.powerHP),
+          ('flow7Bar', spec.flow7Bar),
+          ('flow8Bar', spec.flow8Bar),
+        ]) {
+          expect(value, greaterThan(0), reason: '${spec.modelCode}: $name');
+        }
+      }
+      expect(codes.toSet().length, codes.length, reason: 'model bị trùng');
+    });
+
+    test('bảng lưu lượng sinh đúng từ specs.json', () {
+      expect(acompModelsFlowData.length, acompSpecData.length);
+      final first = acompSpecData.first;
+      expect(acompModelsFlowData.first['model'], first.modelCode);
+      expect(
+        double.parse(acompModelsFlowData.first['flow7bar'] as String),
+        first.flow7Bar,
+      );
+    });
+
+    test('mccb_cable.json: model không trùng', () {
+      final models = [for (final row in acompMccbData) row['model']];
+      expect(models, everyElement(isNotNull));
+      expect(models.toSet().length, models.length);
+    });
+
+    test('pipe_standard.json: đường kính tăng dần', () {
+      // Màn tính ống chọn ống đầu tiên đủ lớn, nên bảng phải xếp tăng dần.
+      final sizes = [for (final pipe in pipeStandardData) pipe['mm'] as num];
+      for (var i = 1; i < sizes.length; i++) {
+        expect(
+          sizes[i],
+          greaterThan(sizes[i - 1]),
+          reason: 'pipe_standard.json: dòng ${i + 1} nhỏ hơn dòng trên',
+        );
+      }
+    });
+
+    test('common_errors.json: đủ 3 nhóm lỗi', () {
+      expect(commonErrorsGeneral, isNotEmpty);
+      expect(commonErrorsController, isNotEmpty);
+      expect(commonErrorsOilLoss, isNotEmpty);
+    });
+
+    test('ds8011.json: mỗi tham số có mã và mô tả', () {
+      for (final category in ds8011Parameters) {
+        final items = category['items'] as List;
+        expect(items, isNotEmpty, reason: '${category['category']}');
+        for (final item in items.cast<Map<String, dynamic>>()) {
+          expect((item['code'] as String).trim(), isNotEmpty);
+          expect((item['description'] as String).trim(), isNotEmpty);
+        }
+      }
+    });
+
+    test('operation_manual.json: icon hợp lệ, items là danh sách chuỗi', () {
+      const knownIcons = {
+        'play_circle_outline',
+        'build_circle_outlined',
+        'warning_amber_rounded',
+        'inventory_2_outlined',
+      };
+      for (final section in manualSummary) {
+        expect(
+          knownIcons,
+          contains(section['icon']),
+          reason: '${section['title']}: icon không có trong app',
+        );
+        expect(section['items'], isA<List<String>>());
+      }
+    });
+  });
+
   test('báo lỗi rõ ràng khi file JSON sai cú pháp', () {
     final sources = {for (final path in ProductData.assetPaths) path: '[]'};
     sources[ProductData.auxEquipmentPath] = '{}';

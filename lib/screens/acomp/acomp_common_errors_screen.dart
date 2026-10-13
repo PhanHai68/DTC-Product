@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../data/acomp_common_errors_data.dart';
+import '../../data/product_data.dart';
 
 class AcompCommonErrorsScreen extends StatefulWidget {
   const AcompCommonErrorsScreen({super.key});

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../data/acomp_pipe_data.dart';
+import '../../data/product_data.dart';
 import '../../core/input/localized_number.dart';
 
 class AcompPipeScreen extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../data/acomp_manual_data.dart';
+import '../../data/product_data.dart';
 
 class AcompOperationManualScreen extends StatelessWidget {
   const AcompOperationManualScreen({super.key});

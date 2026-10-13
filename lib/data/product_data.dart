@@ -5,7 +5,10 @@
 // trong main() bằng ProductData.load(rootBundle.loadString) trước khi chạy app.
 import 'dart:convert';
 
+import '../models/acomp_spec_model.dart';
+
 const _colorSorterDir = 'assets/database/color_sorter';
+const _airCompressorDir = 'assets/database/air_compressor';
 
 abstract final class ProductData {
   static const colorSorterRicePath = '$_colorSorterDir/sc_rice.json';
@@ -16,6 +19,13 @@ abstract final class ProductData {
   static const auxEquipmentPath = '$_colorSorterDir/aux_equipment.json';
   static const teaAuxEquipmentPath = '$_colorSorterDir/tea_aux_equipment.json';
 
+  static const acompSpecsPath = '$_airCompressorDir/specs.json';
+  static const acompMccbCablePath = '$_airCompressorDir/mccb_cable.json';
+  static const acompPipeStandardPath = '$_airCompressorDir/pipe_standard.json';
+  static const acompCommonErrorsPath = '$_airCompressorDir/common_errors.json';
+  static const acompDs8011Path = '$_airCompressorDir/ds8011.json';
+  static const acompManualPath = '$_airCompressorDir/operation_manual.json';
+
   static const assetPaths = [
     colorSorterRicePath,
     colorSorterPaddyPath,
@@ -24,6 +34,12 @@ abstract final class ProductData {
     colorSorterAgroPath,
     auxEquipmentPath,
     teaAuxEquipmentPath,
+    acompSpecsPath,
+    acompMccbCablePath,
+    acompPipeStandardPath,
+    acompCommonErrorsPath,
+    acompDs8011Path,
+    acompManualPath,
   ];
 
   /// Nạp toàn bộ file JSON qua [readAsset] (trong app: rootBundle.loadString).
@@ -63,15 +79,20 @@ abstract final class ProductData {
       for (final entry in (decode(auxEquipmentPath) as Map).entries)
         entry.key as String: _toStringMapList(entry.value as List),
     };
-    final teaAux = [
-      for (final item in decode(teaAuxEquipmentPath) as List)
-        <String, dynamic>{
-          for (final field in (item as Map).entries)
-            field.key as String: field.value is List
-                ? List<String>.unmodifiable(field.value as List)
-                : field.value as String,
-        },
+    final teaAux = _toDynamicMapList(decode(teaAuxEquipmentPath) as List);
+
+    final acompSpecs = [
+      for (final item in decode(acompSpecsPath) as List)
+        AcompSpecModel.fromJson(item as Map<String, dynamic>),
     ];
+    final mccb = _toStringMapList(decode(acompMccbCablePath) as List);
+    final pipes = _toDynamicMapList(decode(acompPipeStandardPath) as List);
+    final errors = decode(acompCommonErrorsPath) as Map;
+    final errorsGeneral = _toStringMapList(errors['general'] as List);
+    final errorsController = _toStringMapList(errors['controller'] as List);
+    final errorsOilLoss = _toStringMapList(errors['oilLoss'] as List);
+    final ds8011 = _toDynamicMapList(decode(acompDs8011Path) as List);
+    final manual = _toDynamicMapList(decode(acompManualPath) as List);
 
     _colorSorterSpecs = rice;
     _paddyColorSorterSpecs = paddy;
@@ -80,6 +101,22 @@ abstract final class ProductData {
     _agroColorSorterSpecs = agro;
     _auxEquipSpecsByModel = auxByModel;
     _teaAuxEquipData = teaAux;
+    _acompSpecData = acompSpecs;
+    _acompModelsFlowData = [
+      for (final spec in acompSpecs)
+        {
+          'model': spec.modelCode,
+          'flow7bar': _formatFlow(spec.flow7Bar),
+          'flow8bar': _formatFlow(spec.flow8Bar),
+        },
+    ];
+    _acompMccbData = mccb;
+    _pipeStandardData = pipes;
+    _commonErrorsGeneral = errorsGeneral;
+    _commonErrorsController = errorsController;
+    _commonErrorsOilLoss = errorsOilLoss;
+    _ds8011Parameters = ds8011;
+    _manualSummary = manual;
   }
 
   static List<Map<String, String>> _toStringMapList(List items) => [
@@ -89,6 +126,30 @@ abstract final class ProductData {
           field.key as String: field.value as String,
       },
   ];
+
+  static List<Map<String, dynamic>> _toDynamicMapList(List items) => [
+    for (final item in items) _toDynamicMap(item as Map),
+  ];
+
+  /// Đổi Map/List từ jsonDecode sang kiểu màn hình đang ép: danh sách chuỗi
+  /// thành `List<String>`, danh sách object thành `List<Map<String, dynamic>>`.
+  static Map<String, dynamic> _toDynamicMap(Map map) => {
+    for (final field in map.entries)
+      field.key as String: switch (field.value) {
+        final Map value => _toDynamicMap(value),
+        final List value when value.every((e) => e is String) =>
+          List<String>.unmodifiable(value),
+        final List value when value.every((e) => e is Map) => _toDynamicMapList(
+          value,
+        ),
+        final value => value,
+      },
+  };
+
+  /// 5.0 → "5", 30.25 → "30.25" (giống cách bảng lưu lượng cũ ghi số).
+  static String _formatFlow(double value) => value == value.truncateToDouble()
+      ? value.toInt().toString()
+      : value.toString();
 }
 
 List<Map<String, String>>? _colorSorterSpecs;
@@ -98,6 +159,15 @@ List<Map<String, String>>? _mineralColorSorterSpecs;
 List<Map<String, String>>? _agroColorSorterSpecs;
 Map<String, List<Map<String, String>>>? _auxEquipSpecsByModel;
 List<Map<String, dynamic>>? _teaAuxEquipData;
+List<AcompSpecModel>? _acompSpecData;
+List<Map<String, dynamic>>? _acompModelsFlowData;
+List<Map<String, String>>? _acompMccbData;
+List<Map<String, dynamic>>? _pipeStandardData;
+List<Map<String, String>>? _commonErrorsGeneral;
+List<Map<String, String>>? _commonErrorsController;
+List<Map<String, String>>? _commonErrorsOilLoss;
+List<Map<String, dynamic>>? _ds8011Parameters;
+List<Map<String, dynamic>>? _manualSummary;
 
 T _loaded<T>(T? value) {
   if (value == null) {
@@ -107,6 +177,8 @@ T _loaded<T>(T? value) {
   }
   return value;
 }
+
+// ── Máy tách màu ────────────────────────────────────────────────────────────
 
 /// Máy tách màu gạo dòng SC — `color_sorter/sc_rice.json`.
 List<Map<String, String>> get colorSorterSpecs => _loaded(_colorSorterSpecs);
@@ -133,3 +205,37 @@ Map<String, List<Map<String, String>>> get auxEquipSpecsByModel =>
 
 /// Thiết bị phụ trợ dây chuyền trà — `color_sorter/tea_aux_equipment.json`.
 List<Map<String, dynamic>> get teaAuxEquipData => _loaded(_teaAuxEquipData);
+
+// ── Máy nén khí ACOMP ───────────────────────────────────────────────────────
+
+/// Thông số máy nén khí — `air_compressor/specs.json`.
+List<AcompSpecModel> get acompSpecData => _loaded(_acompSpecData);
+
+/// Lưu lượng 7/8 bar theo model, sinh từ `air_compressor/specs.json`
+/// (dùng cho màn tính ống khí nén và thời gian nạp bình).
+List<Map<String, dynamic>> get acompModelsFlowData =>
+    _loaded(_acompModelsFlowData);
+
+/// MCCB và cáp điện theo model — `air_compressor/mccb_cable.json`.
+List<Map<String, String>> get acompMccbData => _loaded(_acompMccbData);
+
+/// Bảng ống tiêu chuẩn DN/mm — `air_compressor/pipe_standard.json`.
+List<Map<String, dynamic>> get pipeStandardData => _loaded(_pipeStandardData);
+
+/// Lỗi thường gặp: chung — `air_compressor/common_errors.json` (`general`).
+List<Map<String, String>> get commonErrorsGeneral =>
+    _loaded(_commonErrorsGeneral);
+
+/// Lỗi bộ điều khiển — `air_compressor/common_errors.json` (`controller`).
+List<Map<String, String>> get commonErrorsController =>
+    _loaded(_commonErrorsController);
+
+/// Lỗi hao dầu — `air_compressor/common_errors.json` (`oilLoss`).
+List<Map<String, String>> get commonErrorsOilLoss =>
+    _loaded(_commonErrorsOilLoss);
+
+/// Tham số cài đặt bộ điều khiển DS8011 — `air_compressor/ds8011.json`.
+List<Map<String, dynamic>> get ds8011Parameters => _loaded(_ds8011Parameters);
+
+/// Tóm tắt hướng dẫn vận hành — `air_compressor/operation_manual.json`.
+List<Map<String, dynamic>> get manualSummary => _loaded(_manualSummary);

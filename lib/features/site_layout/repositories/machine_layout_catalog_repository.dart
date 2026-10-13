@@ -1,4 +1,3 @@
-import '../../../data/acomp_spec_data.dart';
 import '../../../data/product_data.dart';
 import '../../../repositories/packing_machine_repository.dart';
 import '../../grinding_machine/providers/grinding_machine_provider.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/acomp_spec_model.dart';
-import '../data/acomp_spec_data.dart';
+import '../data/product_data.dart';
 
 class AcompSpecProvider extends ChangeNotifier {
   List<AcompSpecModel> pvList = [];
