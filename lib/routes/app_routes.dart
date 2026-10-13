@@ -54,7 +54,6 @@ import '../screens/color_sorter_categories_screen.dart';
 import '../screens/color_sorter_menu_screen.dart';
 import '../screens/color_sorter/color_sorter_screen.dart';
 import '../screens/color_sorter/color_sorter_3d_screen.dart';
-import '../screens/color_sorter/color_sorter_manual_screen.dart';
 import '../screens/paddy_color_sorter/paddy_color_sorter_menu_screen.dart';
 import '../screens/paddy_color_sorter/paddy_color_sorter_screen.dart';
 import '../screens/tea_color_sorter_menu_screen.dart';
@@ -631,10 +630,6 @@ final GoRouter appRouter = GoRouter(
           environmentImage: environmentImage,
         );
       },
-    ),
-    GoRoute(
-      path: '/color_sorter_manual',
-      builder: (context, state) => const ColorSorterManualScreen(),
     ),
     GoRoute(
       path: '/aux_equip',

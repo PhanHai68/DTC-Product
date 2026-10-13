@@ -36,12 +36,6 @@ class MineralColorSorterMenuScreen extends StatelessWidget {
           icon: Icons.troubleshoot_rounded,
           statusLabel: 'Sắp có',
         ),
-        const TechnologyMenuEntry(
-          id: 'mineral_color_sorter_manual_btn',
-          title: 'Tài liệu vận hành',
-          icon: Icons.menu_book_rounded,
-          statusLabel: 'Sắp có',
-        ),
       ],
     );
   }

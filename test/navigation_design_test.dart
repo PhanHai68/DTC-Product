@@ -234,7 +234,7 @@ void main() {
     );
 
     expect(find.text('Trung tâm chức năng'), findsOneWidget);
-    expect(find.text('6 mục'), findsOneWidget);
+    expect(find.text('4 mục'), findsOneWidget);
     expect(find.text('Phân loại nông sản thông minh'), findsNothing);
     expect(
       find.text('Chọn nội dung bạn cần tra cứu hoặc tính toán'),
@@ -248,9 +248,12 @@ void main() {
     expect(find.byIcon(Icons.data_object_rounded), findsNothing);
     expect(find.byIcon(Icons.fact_check_outlined), findsOneWidget);
     expect(find.byKey(const Key('color_sorter_specs_btn')), findsOneWidget);
-    expect(find.byKey(const Key('color_sorter_manual_btn')), findsOneWidget);
+    // Bản vẽ lắp đặt và tài liệu vận hành đã chuyển vào Thư viện tài liệu.
+    expect(find.text('Bản vẽ lắp đặt'), findsNothing);
+    expect(find.text('Tài liệu vận hành'), findsNothing);
+    expect(find.byKey(const Key('color_sorter_errors_btn')), findsOneWidget);
     expect(
-      tester.getRect(find.byKey(const Key('color_sorter_manual_btn'))).bottom,
+      tester.getRect(find.byKey(const Key('color_sorter_errors_btn'))).bottom,
       lessThanOrEqualTo(844),
     );
     expect(tester.takeException(), isNull);
