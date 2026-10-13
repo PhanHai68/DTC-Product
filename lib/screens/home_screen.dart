@@ -40,6 +40,11 @@ class HomeScreen extends StatelessWidget {
       route: '/rice_milling',
     ),
     _HomeAction(
+      title: 'Thư viện tài liệu',
+      icon: Icons.folder_copy_outlined,
+      route: '/documents',
+    ),
+    _HomeAction(
       title: 'Công cụ & Tiện ích',
       icon: Icons.dashboard_customize_outlined,
       route: '/extensions',

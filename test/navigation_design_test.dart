@@ -59,6 +59,7 @@ void main() {
     expect(find.text('Cân đóng gói'), findsOneWidget);
     expect(find.text('Máy nghiền'), findsOneWidget);
     expect(find.text('Xay xát Lúa-Gạo'), findsOneWidget);
+    expect(find.text('Thư viện tài liệu'), findsOneWidget);
     expect(find.text('Công cụ & Tiện ích'), findsOneWidget);
     expect(find.text('DTCGroup'), findsOneWidget);
     expect(find.text('Tra cứu model hoặc chức năng'), findsOneWidget);
@@ -98,7 +99,8 @@ void main() {
       find.byKey(const ValueKey('home_solution_/extensions')),
     );
     // Lưới 2 cột trên điện thoại: "Máy nén khí" + "Máy nghiền" (mục 3-4) cùng
-    // hàng; "Xay xát Lúa-Gạo" + "Công cụ & Tiện ích" (mục 5-6) ở hàng dưới.
+    // hàng; "Xay xát Lúa-Gạo", "Thư viện tài liệu", "Công cụ & Tiện ích"
+    // (mục 5-7) ở các hàng dưới.
     expect(compressorCard.top, grindingMachineCard.top);
     expect(compressorCard.size, grindingMachineCard.size);
     expect(colorSorterCard.height, lessThanOrEqualTo(142));
@@ -118,6 +120,7 @@ void main() {
       '/acomp_menu',
       '/grinding_menu',
       '/rice_milling',
+      '/documents',
       '/extensions',
     ]) {
       final title = tester.widget<Text>(
