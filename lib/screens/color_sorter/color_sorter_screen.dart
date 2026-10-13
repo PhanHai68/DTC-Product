@@ -310,9 +310,8 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                     ),
                   )
                 else ...[
-                  // ⭐ ĐẶC QUYỀN DÒNG SC PRO — SC16 là bản không có AI nên
-                  // không hiện khung này.
-                  if (modelName != 'SC16')
+                  // ⭐ ĐẶC QUYỀN DÒNG SC PRO — chỉ hiện cho bản Pro.
+                  if (modelName.toLowerCase().contains('pro'))
                   Container(
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.only(bottom: 12),
