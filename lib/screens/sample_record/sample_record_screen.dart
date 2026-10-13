@@ -21,7 +21,8 @@ class SampleRecordScreen extends StatefulWidget {
   State<SampleRecordScreen> createState() => _SampleRecordScreenState();
 }
 
-class _SampleRecordScreenState extends State<SampleRecordScreen> {
+class _SampleRecordScreenState extends State<SampleRecordScreen>
+    with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
   final _factoryController = TextEditingController();
   final _materialController = TextEditingController();
@@ -37,6 +38,12 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   Timer? _saveTimer;
   bool _loading = true;
   bool _saving = false;
+  SampleRecordData? _pendingDraft;
+  Future<void>? _saveFuture;
+  bool _saveError = false;
+  bool _disposing = false;
+  bool _allowPop = false;
+  bool _leaving = false;
   bool _savingToDevice = false;
   bool _sharingPdf = false;
 
@@ -56,6 +63,7 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _repository = widget.repository ?? LocalSampleRecordRepository();
     _streams = {
       for (final type in SampleStreamType.values)
@@ -86,7 +94,11 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
 
   @override
   void dispose() {
+    _disposing = true;
+    WidgetsBinding.instance.removeObserver(this);
     _saveTimer?.cancel();
+    // Pending drafts are snapshots, so draining never reads disposed controllers.
+    if (_pendingDraft != null || _saving) unawaited(_trySaveDraft());
     for (final controller in _allControllers) {
       controller.removeListener(_onChanged);
     }
@@ -106,6 +118,7 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   Future<void> _loadDraft() async {
     try {
       final draft = await _repository.loadDraft();
+      if (!mounted) return;
       if (draft != null) {
         _factoryController.text = draft.factoryName;
         _materialController.text = draft.materialName;
@@ -135,11 +148,12 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   }
 
   void _onChanged() {
-    if (_loading) return;
+    if (_loading || _disposing) return;
+    _pendingDraft = _record();
     setState(() {});
     _saveTimer?.cancel();
     _saveTimer = Timer(const Duration(milliseconds: 700), () {
-      unawaited(_saveDraft());
+      unawaited(_trySaveDraft());
     });
   }
 
@@ -157,15 +171,74 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
     note: _noteController.text.trim(),
   );
 
-  Future<void> _saveDraft() async {
-    if (_saving || _loading) return;
+  Future<void> _saveDraft() {
+    _saveTimer?.cancel();
+    if (_loading) return Future.value();
+    if (mounted && !_disposing) _pendingDraft = _record();
+    if (_saveFuture != null) return _saveFuture!;
+    if (_pendingDraft == null) return Future.value();
+    _saveFuture = _drainDrafts().whenComplete(() => _saveFuture = null);
+    return _saveFuture!;
+  }
+
+  Future<void> _drainDrafts() async {
     _saving = true;
-    if (mounted) setState(() {});
+    _saveError = false;
+    if (mounted && !_disposing) setState(() {});
     try {
-      await _repository.saveDraft(_record());
+      while (_pendingDraft != null) {
+        final snapshot = _pendingDraft!;
+        _pendingDraft = null;
+        try {
+          await _repository.saveDraft(snapshot);
+        } catch (_) {
+          // Keep the newest edit when storage fails; it can be retried.
+          _pendingDraft ??= snapshot;
+          _saveError = true;
+          rethrow;
+        }
+      }
+      _saveError = false;
     } finally {
       _saving = false;
-      if (mounted) setState(() {});
+      if (mounted && !_disposing) setState(() {});
+    }
+  }
+
+  Future<bool> _trySaveDraft() async {
+    try {
+      await _saveDraft();
+      return true;
+    } catch (_) {
+      _saveError = true;
+      if (mounted && !_disposing) setState(() {});
+      _showMessage(
+        'Chưa lưu được bản nháp. Dữ liệu vẫn giữ trên biểu mẫu; vui lòng thử lưu lại.',
+      );
+      return false;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if ((state == AppLifecycleState.inactive ||
+            state == AppLifecycleState.paused ||
+            state == AppLifecycleState.detached) &&
+        (_pendingDraft != null || _saving)) {
+      unawaited(_trySaveDraft());
+    }
+  }
+
+  Future<void> _leaveScreen() async {
+    if (_leaving) return;
+    _leaving = true;
+    try {
+      if (!await _trySaveDraft() || !mounted) return;
+      setState(() => _allowPop = true);
+      await WidgetsBinding.instance.endOfFrame;
+      if (mounted) Navigator.of(context).pop();
+    } finally {
+      _leaving = false;
     }
   }
 
@@ -233,8 +306,8 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
   Future<(Uint8List, String)> _generatePdfBytesAndName({
     bool isDraft = false,
   }) async {
+    await _saveDraft();
     final record = _record();
-    await _repository.saveDraft(record);
     final photos = <SampleStreamType, Uint8List>{};
     final categoryPhotos = <SampleStreamType, List<Uint8List?>>{};
     for (final stream in record.streams) {
@@ -367,9 +440,9 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
         ],
       ),
     );
-    if (confirmed != true) return;
-    _saveTimer?.cancel();
-    await _repository.clearDraft();
+    if (confirmed != true || !mounted) return;
+    if (!await _trySaveDraft() || !mounted) return;
+    _loading = true;
     for (final controller in _allControllers) {
       controller.clear();
     }
@@ -377,12 +450,15 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
       stream.resetLabelsAndPhotos();
     }
     if (!mounted) return;
-    setState(() => _createdAt = DateTime.now());
-    await _saveDraft();
+    setState(() {
+      _createdAt = DateTime.now();
+      _loading = false;
+    });
+    await _trySaveDraft();
   }
 
   void _showMessage(String message) {
-    if (!mounted) return;
+    if (!mounted || _disposing) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
@@ -390,189 +466,207 @@ class _SampleRecordScreenState extends State<SampleRecordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: DtcPalette.of(context).canvas,
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Lập Form Lưu Mẫu'),
-        actions: [
-          IconButton(
-            key: const Key('sample_record_new'),
-            tooltip: 'Tạo biểu mẫu mới',
-            onPressed: _startNewRecord,
-            icon: const Icon(Icons.note_add_outlined),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: Center(child: _StatusChip(saving: _saving)),
-          ),
-        ],
-      ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(14, 14, 14, 118),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 920),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const _OfflineBanner(),
-                        const SizedBox(height: 12),
-                        _FormSection(
-                          title: 'Thông tin chung',
-                          subtitle: 'GENERAL INFORMATION',
-                          icon: Icons.assignment_ind_outlined,
-                          child: _buildGeneralInformation(),
-                        ),
-                        const SizedBox(height: 12),
-                        ...SampleStreamType.values.map((type) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _SampleStreamSection(
-                              controllers: _streams[type]!,
-                              onCaptureOverview: () => _capturePhoto(type),
-                              onCaptureParameter: (index) =>
-                                  _capturePhoto(type, parameterIndex: index),
-                              onAddParameter: () {
-                                setState(() {
-                                  _streams[type]!.addParameter();
-                                });
-                                _onChanged();
-                              },
-                              onRemoveParameter: (index) {
-                                setState(() {
-                                  _streams[type]!.removeParameter(index);
-                                });
-                                _onChanged();
-                              },
-                            ),
-                          );
-                        }),
-                        _FormSection(
-                          title: 'Kết luận',
-                          subtitle: 'CONCLUSION',
-                          icon: Icons.verified_outlined,
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                controller: _conclusionController,
-                                minLines: 3,
-                                maxLines: 6,
-                                validator: (value) =>
-                                    (value ?? '').trim().isEmpty
-                                    ? 'Kỹ sư cần nhập nội dung kết luận'
-                                    : null,
-                                decoration: const InputDecoration(
-                                  labelText: 'Kết luận của kỹ sư / Engineer conclusion',
-                                  hintText: 'Nhập nội dung kết luận tại đây',
-                                  alignLabelWithHint: true,
-                                  prefixIcon: Icon(Icons.edit_note_rounded),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              TextFormField(
-                                controller: _noteController,
-                                minLines: 2,
-                                maxLines: 4,
-                                decoration: const InputDecoration(
-                                  labelText: 'Ghi chú / Notes',
-                                  alignLabelWithHint: true,
-                                  prefixIcon: Icon(Icons.notes_rounded),
-                                ),
-                              ),
-                            ],
+    return PopScope(
+      canPop: _allowPop || (_pendingDraft == null && !_saving),
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) unawaited(_leaveScreen());
+      },
+      child: Scaffold(
+        backgroundColor: DtcPalette.of(context).canvas,
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Lập Form Lưu Mẫu'),
+          actions: [
+            IconButton(
+              key: const Key('sample_record_new'),
+              tooltip: 'Tạo biểu mẫu mới',
+              onPressed: _loading || _leaving ? null : _startNewRecord,
+              icon: const Icon(Icons.note_add_outlined),
+            ),
+            if (_saveError)
+              IconButton(
+                key: const Key('sample_record_retry_save'),
+                tooltip: 'Lưu lại bản nháp',
+                onPressed: () => unawaited(_trySaveDraft()),
+                icon: const Icon(Icons.save_outlined),
+              ),
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Center(
+                child: _StatusChip(
+                  saving: _saving || _pendingDraft != null,
+                  hasError: _saveError,
+                ),
+              ),
+            ),
+          ],
+        ),
+        body: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(14, 14, 14, 118),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 920),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const _OfflineBanner(),
+                          const SizedBox(height: 12),
+                          _FormSection(
+                            title: 'Thông tin chung',
+                            subtitle: 'GENERAL INFORMATION',
+                            icon: Icons.assignment_ind_outlined,
+                            child: _buildGeneralInformation(),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 12),
+                          ...SampleStreamType.values.map((type) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: _SampleStreamSection(
+                                controllers: _streams[type]!,
+                                onCaptureOverview: () => _capturePhoto(type),
+                                onCaptureParameter: (index) =>
+                                    _capturePhoto(type, parameterIndex: index),
+                                onAddParameter: () {
+                                  setState(() {
+                                    _streams[type]!.addParameter();
+                                  });
+                                  _onChanged();
+                                },
+                                onRemoveParameter: (index) {
+                                  setState(() {
+                                    _streams[type]!.removeParameter(index);
+                                  });
+                                  _onChanged();
+                                },
+                              ),
+                            );
+                          }),
+                          _FormSection(
+                            title: 'Kết luận',
+                            subtitle: 'CONCLUSION',
+                            icon: Icons.verified_outlined,
+                            child: Column(
+                              children: [
+                                TextFormField(
+                                  controller: _conclusionController,
+                                  minLines: 3,
+                                  maxLines: 6,
+                                  validator: (value) =>
+                                      (value ?? '').trim().isEmpty
+                                      ? 'Kỹ sư cần nhập nội dung kết luận'
+                                      : null,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Kết luận của kỹ sư / Engineer conclusion',
+                                    hintText: 'Nhập nội dung kết luận tại đây',
+                                    alignLabelWithHint: true,
+                                    prefixIcon: Icon(Icons.edit_note_rounded),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                TextFormField(
+                                  controller: _noteController,
+                                  minLines: 2,
+                                  maxLines: 4,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Ghi chú / Notes',
+                                    alignLabelWithHint: true,
+                                    prefixIcon: Icon(Icons.notes_rounded),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-      bottomNavigationBar: SafeArea(
-        child: Material(
-          color: Colors.white,
-          elevation: 12,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 10,
-              children: [
-                SizedBox(
-                  width: 170,
-                  child: OutlinedButton.icon(
-                    key: const Key('sample_record_save_device'),
-                    onPressed: (_savingToDevice || _sharingPdf)
-                        ? null
-                        : _savePdfToDevice,
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                      foregroundColor: const Color(0xFF148147),
-                      side: const BorderSide(
-                        color: Color(0xFF148147),
-                        width: 1.5,
+        bottomNavigationBar: SafeArea(
+          child: Material(
+            color: Colors.white,
+            elevation: 12,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 12,
+                runSpacing: 10,
+                children: [
+                  SizedBox(
+                    width: 170,
+                    child: OutlinedButton.icon(
+                      key: const Key('sample_record_save_device'),
+                      onPressed: (_savingToDevice || _sharingPdf)
+                          ? null
+                          : _savePdfToDevice,
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                        foregroundColor: const Color(0xFF148147),
+                        side: const BorderSide(
+                          color: Color(0xFF148147),
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    icon: _savingToDevice
-                        ? const SizedBox.square(
-                            dimension: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Color(0xFF148147),
-                            ),
-                          )
-                        : const Icon(Icons.download_rounded, size: 20),
-                    label: Text(
-                      _savingToDevice ? 'Đang lưu...' : 'Lưu bản PDF',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 170,
-                  child: FilledButton.icon(
-                    key: const Key('sample_record_share_pdf'),
-                    onPressed: (_savingToDevice || _sharingPdf)
-                        ? null
-                        : _sharePdfOnly,
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                      backgroundColor: const Color(0xFF148147),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    icon: _sharingPdf
-                        ? const SizedBox.square(
-                            dimension: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Icon(Icons.share_rounded, size: 20),
-                    label: Text(
-                      _sharingPdf ? 'Đang chia sẻ...' : 'Chia sẻ PDF',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
+                      icon: _savingToDevice
+                          ? const SizedBox.square(
+                              dimension: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Color(0xFF148147),
+                              ),
+                            )
+                          : const Icon(Icons.download_rounded, size: 20),
+                      label: Text(
+                        _savingToDevice ? 'Đang lưu...' : 'Lưu bản PDF',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    width: 170,
+                    child: FilledButton.icon(
+                      key: const Key('sample_record_share_pdf'),
+                      onPressed: (_savingToDevice || _sharingPdf)
+                          ? null
+                          : _sharePdfOnly,
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                        backgroundColor: const Color(0xFF148147),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: _sharingPdf
+                          ? const SizedBox.square(
+                              dimension: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.share_rounded, size: 20),
+                      label: Text(
+                        _sharingPdf ? 'Đang chia sẻ...' : 'Chia sẻ PDF',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1474,8 +1568,9 @@ class _OfflineBanner extends StatelessWidget {
 
 class _StatusChip extends StatelessWidget {
   final bool saving;
+  final bool hasError;
 
-  const _StatusChip({required this.saving});
+  const _StatusChip({required this.saving, this.hasError = false});
 
   @override
   Widget build(BuildContext context) {
@@ -1489,13 +1584,21 @@ class _StatusChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            saving ? Icons.sync_rounded : Icons.check_circle_outline,
+            hasError
+                ? Icons.warning_amber_rounded
+                : saving
+                ? Icons.sync_rounded
+                : Icons.check_circle_outline,
             size: 15,
             color: const Color(0xFF148147),
           ),
           const SizedBox(width: 4),
           Text(
-            saving ? 'Đang lưu' : 'Đã lưu',
+            hasError
+                ? 'Chưa lưu được'
+                : saving
+                ? 'Đang lưu'
+                : 'Đã lưu',
             style: const TextStyle(
               color: Color(0xFF148147),
               fontSize: 11,

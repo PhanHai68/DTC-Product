@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:sqflite/sqflite.dart';
 
 import '../../../core/database/local_database_factory.dart'
@@ -32,9 +34,9 @@ class MaintenanceReportDatabase {
     return _database!;
   }
 
-  Future<void> _create(Database db, int version) async {
+  Future<void> _create(DatabaseExecutor db, int version) async {
     await db.execute('''
-      CREATE TABLE maintenance_reports(
+      CREATE TABLE IF NOT EXISTS maintenance_reports(
         id TEXT PRIMARY KEY,
         status TEXT NOT NULL,
         customerName TEXT NOT NULL DEFAULT '',
@@ -58,10 +60,10 @@ class MaintenanceReportDatabase {
       )
     ''');
     await db.execute(
-      'CREATE INDEX idx_maintenance_reports_updated ON maintenance_reports(updatedAt DESC)',
+      'CREATE INDEX IF NOT EXISTS idx_maintenance_reports_updated ON maintenance_reports(updatedAt DESC)',
     );
     await db.execute('''
-      CREATE TABLE maintenance_items(
+      CREATE TABLE IF NOT EXISTS maintenance_items(
         id TEXT PRIMARY KEY,
         reportId TEXT NOT NULL,
         name TEXT NOT NULL,
@@ -75,10 +77,10 @@ class MaintenanceReportDatabase {
       )
     ''');
     await db.execute(
-      'CREATE INDEX idx_maintenance_items_report ON maintenance_items(reportId, orderIndex)',
+      'CREATE INDEX IF NOT EXISTS idx_maintenance_items_report ON maintenance_items(reportId, orderIndex)',
     );
     await db.execute('''
-      CREATE TABLE maintenance_photos(
+      CREATE TABLE IF NOT EXISTS maintenance_photos(
         id TEXT PRIMARY KEY,
         reportId TEXT NOT NULL,
         itemId TEXT,
@@ -92,13 +94,13 @@ class MaintenanceReportDatabase {
       )
     ''');
     await db.execute(
-      'CREATE INDEX idx_maintenance_photos_report ON maintenance_photos(reportId, kind, sequence)',
+      'CREATE INDEX IF NOT EXISTS idx_maintenance_photos_report ON maintenance_photos(reportId, kind, sequence)',
     );
     await db.execute(
-      'CREATE INDEX idx_maintenance_photos_item ON maintenance_photos(itemId)',
+      'CREATE INDEX IF NOT EXISTS idx_maintenance_photos_item ON maintenance_photos(itemId)',
     );
     await db.execute('''
-      CREATE TABLE maintenance_checklist(
+      CREATE TABLE IF NOT EXISTS maintenance_checklist(
         id TEXT PRIMARY KEY,
         reportId TEXT NOT NULL,
         label TEXT NOT NULL,
@@ -107,10 +109,10 @@ class MaintenanceReportDatabase {
       )
     ''');
     await db.execute(
-      'CREATE INDEX idx_maintenance_checklist_report ON maintenance_checklist(reportId, orderIndex)',
+      'CREATE INDEX IF NOT EXISTS idx_maintenance_checklist_report ON maintenance_checklist(reportId, orderIndex)',
     );
     await db.execute('''
-      CREATE TABLE maintenance_parts(
+      CREATE TABLE IF NOT EXISTS maintenance_parts(
         id TEXT PRIMARY KEY,
         reportId TEXT NOT NULL,
         partName TEXT NOT NULL,
@@ -122,10 +124,10 @@ class MaintenanceReportDatabase {
       )
     ''');
     await db.execute(
-      'CREATE INDEX idx_maintenance_parts_report ON maintenance_parts(reportId, orderIndex)',
+      'CREATE INDEX IF NOT EXISTS idx_maintenance_parts_report ON maintenance_parts(reportId, orderIndex)',
     );
     await db.execute('''
-      CREATE TABLE maintenance_activity_log(
+      CREATE TABLE IF NOT EXISTS maintenance_activity_log(
         id TEXT PRIMARY KEY,
         reportId TEXT NOT NULL,
         timestamp TEXT NOT NULL,
@@ -133,49 +135,99 @@ class MaintenanceReportDatabase {
       )
     ''');
     await db.execute(
-      'CREATE INDEX idx_maintenance_activity_report ON maintenance_activity_log(reportId, timestamp)',
+      'CREATE INDEX IF NOT EXISTS idx_maintenance_activity_report ON maintenance_activity_log(reportId, timestamp)',
     );
   }
 
-  /// v2: đơn giản hoá cột của `maintenance_reports` (bỏ contactPerson/
-  /// contactPhone/machineName/machineType/machineSerial/machineLocation,
-  /// thêm machineTagName, đổi engineerName (String) thành engineerNames
-  /// (JSON array)) và bỏ cột isCustom của `maintenance_checklist`. Tính
-  /// năng này chưa từng phát hành rộng rãi (chỉ mới cài bản thử nghiệm),
-  /// nên xoá sạch dữ liệu cũ và tạo lại theo schema mới thay vì viết
-  /// migration ánh xạ từng cột — tránh vướng vì bản v1 cũ có domain dữ
-  /// liệu không map 1-1 sang schema mới (VD Serial/Location không có chỗ
-  /// tương ứng ở Tagname).
-  Future<void> _upgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      for (final table in const [
-        'maintenance_reports',
-        'maintenance_items',
-        'maintenance_photos',
-        'maintenance_checklist',
-        'maintenance_parts',
-        'maintenance_parameters',
-        'maintenance_activity_log',
-        'maintenance_counters',
-      ]) {
-        await db.execute('DROP TABLE IF EXISTS $table');
+  /// Additive migration: keep original columns/tables as a lossless archive.
+  /// sqflite runs onUpgrade in a transaction; never drop user reports/photos.
+  Future<void> _upgrade(
+    DatabaseExecutor db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    final columns = (await db.rawQuery(
+      'PRAGMA table_info(maintenance_reports)',
+    )).map((row) => row['name'] as String).toSet();
+    if (oldVersion < 2 && newVersion >= 2) {
+      if (!columns.contains('machineTagName')) {
+        await db.execute(
+          "ALTER TABLE maintenance_reports ADD COLUMN machineTagName TEXT NOT NULL DEFAULT ''",
+        );
       }
-      await _create(db, newVersion);
-      return;
+      if (!columns.contains('engineerNames')) {
+        await db.execute(
+          "ALTER TABLE maintenance_reports ADD COLUMN engineerNames TEXT NOT NULL DEFAULT '[]'",
+        );
+        if (columns.contains('engineerName')) {
+          for (final row in await db.query('maintenance_reports')) {
+            final name = (row['engineerName'] as String? ?? '').trim();
+            await db.update(
+              'maintenance_reports',
+              {
+                'engineerNames': jsonEncode(name.isEmpty ? <String>[] : [name]),
+              },
+              where: 'id = ?',
+              whereArgs: [row['id']],
+            );
+          }
+        }
+      }
     }
-    // v3: thêm cột machineCondition (Tình trạng máy sau bảo trì — nay chỉ
-    // còn 1 đoạn văn bản tự do thay vì danh sách thông số Label/Value/Unit),
-    // bỏ bảng maintenance_parameters (không còn dùng) và maintenance_counters
-    // (Session ID đổi sang định dạng TTM-<viết tắt kỹ sư>-<giờ tạo>, không
-    // cần bộ đếm nữa). Giữ nguyên report/items/photos/checklist/parts/
-    // activity_log đã có (khác v1→v2, lần này không cần xoá sạch).
-    if (oldVersion < 3) {
-      await db.execute(
-        "ALTER TABLE maintenance_reports ADD COLUMN machineCondition TEXT NOT NULL DEFAULT ''",
-      );
-      await db.execute('DROP TABLE IF EXISTS maintenance_parameters');
-      await db.execute('DROP TABLE IF EXISTS maintenance_counters');
+    if (oldVersion < 3 && newVersion >= 3) {
+      if (!columns.contains('machineCondition')) {
+        await db.execute(
+          "ALTER TABLE maintenance_reports ADD COLUMN machineCondition TEXT NOT NULL DEFAULT ''",
+        );
+      }
+      final hasParameters = (await db.query(
+        'sqlite_master',
+        where: 'type = ? AND name = ?',
+        whereArgs: ['table', 'maintenance_parameters'],
+      )).isNotEmpty;
+      for (final row in await db.query('maintenance_reports')) {
+        final details = <String>[];
+        final condition = row['machineCondition'] as String? ?? '';
+        if (condition.isNotEmpty) details.add(condition);
+        // These fields have no exact equivalent in the simplified form.
+        // Keep their original columns and also make them visible in reports.
+        for (final field in const {
+          'contactPerson': 'Người liên hệ',
+          'contactPhone': 'Điện thoại',
+          'machineName': 'Tên máy',
+          'machineType': 'Loại máy',
+          'machineSerial': 'Số serial',
+          'machineLocation': 'Vị trí máy',
+        }.entries) {
+          final value = row[field.key] as String? ?? '';
+          if (value.isNotEmpty) details.add('${field.value}: $value');
+        }
+        if (hasParameters) {
+          final parameters = await db.query(
+            'maintenance_parameters',
+            where: 'reportId = ?',
+            whereArgs: [row['id']],
+            orderBy: 'orderIndex ASC, id ASC',
+          );
+          for (final parameter in parameters) {
+            final value =
+                '${parameter['value'] ?? ''} ${parameter['unit'] ?? ''}'.trim();
+            details.add('${parameter['label']}: $value');
+          }
+        }
+        if (details.isNotEmpty) {
+          await db.update(
+            'maintenance_reports',
+            {'machineCondition': details.join('\n')},
+            where: 'id = ?',
+            whereArgs: [row['id']],
+          );
+        }
+      }
     }
+    // Some early installations only created a subset of child tables.
+    // CREATE IF NOT EXISTS fills the gaps without replacing existing data.
+    await _create(db, newVersion);
   }
 
   Future<void> close() async {
@@ -191,5 +243,5 @@ class MaintenanceReportDatabase {
     Database db,
     int oldVersion,
     int newVersion,
-  ) => _upgrade(db, oldVersion, newVersion);
+  ) => db.transaction((txn) => _upgrade(txn, oldVersion, newVersion));
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -21,6 +22,9 @@ class SiteLayoutEditorScreen extends StatefulWidget {
 class _SiteLayoutEditorScreenState extends State<SiteLayoutEditorScreen>
     with WidgetsBindingObserver {
   bool _loaded = false;
+  bool _allowPop = false;
+  bool _leaving = false;
+  SiteLayoutProvider? _provider;
 
   @override
   void initState() {
@@ -30,7 +34,8 @@ class _SiteLayoutEditorScreenState extends State<SiteLayoutEditorScreen>
   }
 
   Future<void> _load() async {
-    final provider = context.read<SiteLayoutProvider>();
+    if (!mounted) return;
+    final provider = _provider = context.read<SiteLayoutProvider>();
     if (provider.catalog.isEmpty) await provider.initialize();
     final loaded = await provider.loadProject(widget.projectId);
     if (mounted) setState(() => _loaded = loaded);
@@ -41,14 +46,14 @@ class _SiteLayoutEditorScreenState extends State<SiteLayoutEditorScreen>
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
-      context.read<SiteLayoutProvider>().saveNow();
+      unawaited(_provider?.saveNow());
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    context.read<SiteLayoutProvider>().saveNow();
+    unawaited(_provider?.saveNow());
     super.dispose();
   }
 
@@ -71,7 +76,10 @@ class _SiteLayoutEditorScreenState extends State<SiteLayoutEditorScreen>
     }
 
     return PopScope(
-      onPopInvokedWithResult: (_, _) => provider.saveNow(),
+      canPop: _allowPop || (!provider.isDirty && !provider.isSaving),
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) unawaited(_leaveEditor(provider));
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Column(
@@ -104,7 +112,10 @@ class _SiteLayoutEditorScreenState extends State<SiteLayoutEditorScreen>
             IconButton(
               tooltip: 'Xuất báo cáo',
               onPressed: () async {
-                await provider.saveNow();
+                if (!await provider.saveNow()) {
+                  _showSaveError(provider);
+                  return;
+                }
                 if (context.mounted) {
                   context.push(
                     '/site-layout/project/${bundle.project.id}/export',
@@ -219,6 +230,34 @@ class _SiteLayoutEditorScreenState extends State<SiteLayoutEditorScreen>
     );
   }
 
+  void _showSaveError(SiteLayoutProvider provider) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          provider.error ?? 'Chưa lưu được phương án. Vui lòng thử lại.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _leaveEditor(SiteLayoutProvider provider) async {
+    if (_leaving) return;
+    _leaving = true;
+    try {
+      if (!await provider.saveNow()) {
+        _showSaveError(provider);
+        return;
+      }
+      if (!mounted) return;
+      setState(() => _allowPop = true);
+      await WidgetsBinding.instance.endOfFrame;
+      if (mounted) Navigator.of(context).pop();
+    } finally {
+      _leaving = false;
+    }
+  }
+
   Future<void> _handleLayoutMenu(
     String value,
     SiteLayoutProvider provider,
@@ -238,6 +277,7 @@ class _SiteLayoutEditorScreenState extends State<SiteLayoutEditorScreen>
       );
       if (accepted) await provider.deleteCurrentLayout();
     }
+    if (provider.error != null) _showSaveError(provider);
   }
 
   Future<bool> _confirm(String title, String content) async =>
@@ -1332,6 +1372,7 @@ class _MachinePropertiesState extends State<_MachineProperties> {
             const SizedBox(height: 10),
             OutlinedButton.icon(
               onPressed: () {
+                if (!mounted) return;
                 final provider = context.read<SiteLayoutProvider>();
                 final bundle = provider.bundle;
                 if (bundle == null) return;

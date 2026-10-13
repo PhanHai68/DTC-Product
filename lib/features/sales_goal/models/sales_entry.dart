@@ -6,6 +6,7 @@ class SalesEntry {
     this.customerOrProject = '',
     this.productOrMachine = '',
     this.notes = '',
+    this.sourceOpportunityId,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -16,6 +17,7 @@ class SalesEntry {
   final String customerOrProject;
   final String productOrMachine;
   final String notes;
+  final int? sourceOpportunityId;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -34,6 +36,7 @@ class SalesEntry {
     customerOrProject: customerOrProject ?? this.customerOrProject,
     productOrMachine: productOrMachine ?? this.productOrMachine,
     notes: notes ?? this.notes,
+    sourceOpportunityId: sourceOpportunityId,
     createdAt: createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -45,6 +48,7 @@ class SalesEntry {
     'customerOrProject': customerOrProject,
     'productOrMachine': productOrMachine,
     'notes': notes,
+    'sourceOpportunityId': sourceOpportunityId,
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
   };
@@ -56,6 +60,7 @@ class SalesEntry {
     customerOrProject: map['customerOrProject'] as String? ?? '',
     productOrMachine: map['productOrMachine'] as String? ?? '',
     notes: map['notes'] as String? ?? '',
+    sourceOpportunityId: map['sourceOpportunityId'] as int?,
     createdAt: DateTime.parse(map['createdAt'] as String),
     updatedAt: DateTime.parse(map['updatedAt'] as String),
   );

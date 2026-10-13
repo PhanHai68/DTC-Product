@@ -208,21 +208,11 @@ class SalesGoalProvider extends ChangeNotifier {
   }
 
   Future<void> convertOpportunityToEntry(SalesOpportunity opportunity) async {
-    final now = DateTime.now();
-    await _repository.saveEntry(
-      SalesEntry(
-        saleDate: now,
-        amount: opportunity.estimatedValue,
-        customerOrProject: opportunity.customerOrProject,
-        productOrMachine: opportunity.productOrMachine,
-        notes: 'Ghi nhận từ cơ hội bán hàng',
-        createdAt: now,
-        updatedAt: now,
-      ),
-    );
-    await _repository.saveOpportunity(
-      opportunity.copyWith(status: SalesOpportunityStatus.won, updatedAt: now),
-    );
+    final id = opportunity.id;
+    if (id == null) {
+      throw StateError('Cần lưu cơ hội trước khi ghi nhận doanh số.');
+    }
+    await _repository.convertOpportunityToEntry(id, _now());
     await load(showLoading: false);
   }
 

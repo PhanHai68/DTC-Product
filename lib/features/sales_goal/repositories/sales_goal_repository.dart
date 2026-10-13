@@ -85,7 +85,8 @@ class SalesGoalRepository {
     if (entry.id == null) return db.insert('sales_entries', entry.toMap());
     await db.update(
       'sales_entries',
-      entry.toMap(),
+      // Provenance is immutable; older form callers may omit this field.
+      entry.toMap()..remove('sourceOpportunityId'),
       where: 'id = ?',
       whereArgs: [entry.id],
     );
@@ -123,6 +124,61 @@ class SalesGoalRepository {
   Future<void> deleteOpportunity(int id) async {
     final db = await _db;
     await db.delete('sales_opportunities', where: 'id = ?', whereArgs: [id]);
+  }
+
+  /// Atomically convert the persisted opportunity. Its source link prevents
+  /// duplicate revenue when callers retry or hold a stale opportunity object.
+  Future<int?> convertOpportunityToEntry(
+    int opportunityId,
+    DateTime now,
+  ) async {
+    final db = await _db;
+    return db.transaction((txn) async {
+      final rows = await txn.query(
+        'sales_opportunities',
+        where: 'id = ?',
+        whereArgs: [opportunityId],
+      );
+      if (rows.isEmpty) throw StateError('Không tìm thấy cơ hội bán hàng.');
+      final opportunity = SalesOpportunity.fromMap(rows.single);
+      final entries = await txn.query(
+        'sales_entries',
+        where: 'sourceOpportunityId = ?',
+        whereArgs: [opportunityId],
+      );
+      if (entries.isEmpty && opportunity.status == SalesOpportunityStatus.won) {
+        // Legacy won opportunities lack a source link; do not book them again.
+        return null;
+      }
+      if (entries.isEmpty && !opportunity.status.isOpen) {
+        throw StateError('Chỉ ghi nhận doanh số từ cơ hội đang mở.');
+      }
+      final id = entries.isNotEmpty
+          ? entries.single['id'] as int
+          : await txn.insert(
+              'sales_entries',
+              SalesEntry(
+                saleDate: now,
+                amount: opportunity.estimatedValue,
+                customerOrProject: opportunity.customerOrProject,
+                productOrMachine: opportunity.productOrMachine,
+                notes: 'Ghi nhận từ cơ hội bán hàng',
+                sourceOpportunityId: opportunityId,
+                createdAt: now,
+                updatedAt: now,
+              ).toMap(),
+            );
+      await txn.update(
+        'sales_opportunities',
+        {
+          'status': SalesOpportunityStatus.won.name,
+          'updatedAt': now.toIso8601String(),
+        },
+        where: 'id = ?',
+        whereArgs: [opportunityId],
+      );
+      return id;
+    });
   }
 
   Future<List<SalesFocusTask>> getFocusTasks(DateTime date) async {

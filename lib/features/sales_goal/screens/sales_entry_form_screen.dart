@@ -133,6 +133,7 @@ class _SalesEntryFormScreenState extends State<SalesEntryFormScreen> {
       () => provider.saveEntry(
         SalesEntry(
           id: old?.id,
+          sourceOpportunityId: old?.sourceOpportunityId,
           saleDate: _date,
           amount: parseSalesMoney(_amount.text)!,
           customerOrProject: _customer.text.trim(),

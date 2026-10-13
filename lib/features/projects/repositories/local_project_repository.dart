@@ -17,6 +17,12 @@ class LocalProjectRepository implements ProjectRepository {
 
   final ProjectLocalDataSource _local;
 
+  Future<void> _transaction(
+    Future<void> Function(LocalProjectRepository repository) action,
+  ) => _local.transaction(
+    (local) => action(LocalProjectRepository(localDataSource: local)),
+  );
+
   Map<String, dynamic> _map(Map<String, Object?> value) =>
       Map<String, dynamic>.from(value);
   String _id(String prefix) =>
@@ -105,7 +111,10 @@ class LocalProjectRepository implements ProjectRepository {
   }
 
   @override
-  Future<void> createProject(Project project) async {
+  Future<void> createProject(Project project) =>
+      _transaction((repository) => repository._createProject(project));
+
+  Future<void> _createProject(Project project) async {
     await _local.insert('projects', _projectRow(project));
     for (var index = 0; index < defaultProjectStageNames.length; index++) {
       final now = DateTime.now();
@@ -157,7 +166,10 @@ class LocalProjectRepository implements ProjectRepository {
   }
 
   @override
-  Future<void> saveMachine(ProjectMachine machine) async {
+  Future<void> saveMachine(ProjectMachine machine) =>
+      _transaction((repository) => repository._saveMachine(machine));
+
+  Future<void> _saveMachine(ProjectMachine machine) async {
     await _local.insert('project_machines', _machineRow(machine));
     await addActivity(
       ProjectActivity(
@@ -197,7 +209,10 @@ class LocalProjectRepository implements ProjectRepository {
   }
 
   @override
-  Future<void> saveStage(ProjectStage stage) async {
+  Future<void> saveStage(ProjectStage stage) =>
+      _transaction((repository) => repository._saveStage(stage));
+
+  Future<void> _saveStage(ProjectStage stage) async {
     await _local.insert('project_stages', _stageRow(stage));
     await addActivity(
       ProjectActivity(
@@ -270,7 +285,10 @@ class LocalProjectRepository implements ProjectRepository {
   }
 
   @override
-  Future<void> saveStageSubmission(ProjectStageSubmission submission) async {
+  Future<void> saveStageSubmission(ProjectStageSubmission submission) =>
+      _transaction((repository) => repository._saveStageSubmission(submission));
+
+  Future<void> _saveStageSubmission(ProjectStageSubmission submission) async {
     await _local.insert(
       'project_stage_submissions',
       _submissionRow(submission),
@@ -314,7 +332,10 @@ class LocalProjectRepository implements ProjectRepository {
   }
 
   @override
-  Future<void> saveChecklist(ProjectChecklist checklist) async {
+  Future<void> saveChecklist(ProjectChecklist checklist) =>
+      _transaction((repository) => repository._saveChecklist(checklist));
+
+  Future<void> _saveChecklist(ProjectChecklist checklist) async {
     await _local.insert('project_checklists', _checklistRow(checklist));
     await addActivity(
       ProjectActivity(
@@ -370,7 +391,10 @@ class LocalProjectRepository implements ProjectRepository {
   }
 
   @override
-  Future<void> saveAttachment(ProjectAttachment attachment) async {
+  Future<void> saveAttachment(ProjectAttachment attachment) =>
+      _transaction((repository) => repository._saveAttachment(attachment));
+
+  Future<void> _saveAttachment(ProjectAttachment attachment) async {
     final existing = await _local.query(
       'project_attachments',
       where: 'id = ?',
@@ -412,7 +436,10 @@ class LocalProjectRepository implements ProjectRepository {
   }
 
   @override
-  Future<void> saveAcceptance(ProjectAcceptance acceptance) async {
+  Future<void> saveAcceptance(ProjectAcceptance acceptance) =>
+      _transaction((repository) => repository._saveAcceptance(acceptance));
+
+  Future<void> _saveAcceptance(ProjectAcceptance acceptance) async {
     await _local.insert('project_acceptances', _acceptanceRow(acceptance));
     await addActivity(
       ProjectActivity(

@@ -4,12 +4,28 @@ import 'project_database.dart';
 
 class ProjectLocalDataSource {
   const ProjectLocalDataSource({Database? database})
-    : _overrideDatabase = database;
+    : _overrideDatabase = database,
+      _executor = null;
+
+  const ProjectLocalDataSource._transaction(DatabaseExecutor executor)
+    : _executor = executor,
+      _overrideDatabase = null;
 
   final Database? _overrideDatabase;
+  final DatabaseExecutor? _executor;
 
-  Future<Database> get _db async =>
-      _overrideDatabase ?? await ProjectDatabase.instance.database;
+  Future<DatabaseExecutor> get _db async =>
+      _executor ?? _overrideDatabase ?? await ProjectDatabase.instance.database;
+
+  Future<T> transaction<T>(
+    Future<T> Function(ProjectLocalDataSource local) action,
+  ) async {
+    if (_executor != null) return action(this);
+    final db = _overrideDatabase ?? await ProjectDatabase.instance.database;
+    return db.transaction(
+      (txn) => action(ProjectLocalDataSource._transaction(txn)),
+    );
+  }
 
   Future<List<Map<String, Object?>>> query(
     String table, {
@@ -45,8 +61,8 @@ class ProjectLocalDataSource {
   }
 
   Future<void> deleteProject(String projectId) async {
-    final db = await _db;
-    await db.transaction((txn) async {
+    await transaction((local) async {
+      final txn = await local._db;
       for (final table in const [
         'project_checklists',
         'project_attachments',

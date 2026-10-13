@@ -2,20 +2,30 @@
 // Lưu trữ hoàn toàn offline trên SQLite (dùng chung user_data.db với
 // module Bảo trì) — không cần tài khoản hay đồng bộ cloud.
 
+import 'package:sqflite/sqflite.dart';
+
 import '../core/database/local_database.dart';
 import '../models/note.dart';
 
 class NoteRepository {
   NoteRepository({LocalDatabase? database})
-    : _db = database ?? LocalDatabase.instance;
+    : _db = database ?? LocalDatabase.instance,
+      _overrideDatabase = null;
+
+  NoteRepository.forTesting(Database database)
+    : _db = LocalDatabase.instance,
+      _overrideDatabase = database;
 
   final LocalDatabase _db;
+  final Database? _overrideDatabase;
+  Future<Database> get _database async =>
+      _overrideDatabase ?? await _db.database;
 
   static const _notesTable = 'notes';
   static const _checklistTable = 'checklist_items';
 
   Future<List<Note>> getAllNotes() async {
-    final db = await _db.database;
+    final db = await _database;
     final noteRows = await db.query(
       _notesTable,
       orderBy: 'isPinned DESC, updatedAt DESC',
@@ -41,7 +51,10 @@ class NoteRepository {
   }
 
   Future<Note?> getNoteById(int id) async {
-    final db = await _db.database;
+    return _getNoteById(await _database, id);
+  }
+
+  Future<Note?> _getNoteById(DatabaseExecutor db, int id) async {
     final rows = await db.query(_notesTable, where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
     final checklistRows = await db.query(
@@ -58,15 +71,17 @@ class NoteRepository {
 
   /// Tạo ghi chú mới, lưu checklist đi kèm nếu có. Trả về ghi chú đã có id.
   Future<Note> insertNote(Note note) async {
-    final db = await _db.database;
-    final id = await db.insert(_notesTable, note.toMap()..remove('id'));
-    for (final item in note.checklistItems) {
-      await db.insert(
-        _checklistTable,
-        item.copyWith(id: null, noteId: id).toMap()..remove('id'),
-      );
-    }
-    return (await getNoteById(id))!;
+    final db = await _database;
+    return db.transaction((txn) async {
+      final id = await txn.insert(_notesTable, note.toMap()..remove('id'));
+      for (final item in note.checklistItems) {
+        await txn.insert(
+          _checklistTable,
+          item.copyWith(id: null, noteId: id).toMap()..remove('id'),
+        );
+      }
+      return (await _getNoteById(txn, id))!;
+    });
   }
 
   /// Cập nhật ghi chú + đồng bộ lại toàn bộ checklist (xoá cũ, ghi lại mới)
@@ -76,38 +91,46 @@ class NoteRepository {
     if (note.id == null) {
       throw ArgumentError('Không thể cập nhật ghi chú chưa có id.');
     }
-    final db = await _db.database;
-    await db.update(
-      _notesTable,
-      note.toMap(),
-      where: 'id = ?',
-      whereArgs: [note.id],
-    );
-    await db.delete(
-      _checklistTable,
-      where: 'noteId = ?',
-      whereArgs: [note.id],
-    );
-    for (final item in note.checklistItems) {
-      await db.insert(
-        _checklistTable,
-        item.copyWith(id: null, noteId: note.id).toMap()..remove('id'),
+    final db = await _database;
+    return db.transaction((txn) async {
+      final count = await txn.update(
+        _notesTable,
+        note.toMap(),
+        where: 'id = ?',
+        whereArgs: [note.id],
       );
-    }
-    return (await getNoteById(note.id!))!;
+      if (count != 1) throw StateError('Không tìm thấy ghi chú.');
+      await txn.delete(
+        _checklistTable,
+        where: 'noteId = ?',
+        whereArgs: [note.id],
+      );
+      for (final item in note.checklistItems) {
+        await txn.insert(
+          _checklistTable,
+          item.copyWith(id: null, noteId: note.id).toMap()..remove('id'),
+        );
+      }
+      return (await _getNoteById(txn, note.id!))!;
+    });
   }
 
   Future<void> deleteNote(int id) async {
-    final db = await _db.database;
-    await db.delete(_checklistTable, where: 'noteId = ?', whereArgs: [id]);
-    await db.delete(_notesTable, where: 'id = ?', whereArgs: [id]);
+    final db = await _database;
+    await db.transaction((txn) async {
+      await txn.delete(_checklistTable, where: 'noteId = ?', whereArgs: [id]);
+      await txn.delete(_notesTable, where: 'id = ?', whereArgs: [id]);
+    });
   }
 
   Future<void> setPinned(int id, bool isPinned) async {
-    final db = await _db.database;
+    final db = await _database;
     await db.update(
       _notesTable,
-      {'isPinned': isPinned ? 1 : 0, 'updatedAt': DateTime.now().toIso8601String()},
+      {
+        'isPinned': isPinned ? 1 : 0,
+        'updatedAt': DateTime.now().toIso8601String(),
+      },
       where: 'id = ?',
       whereArgs: [id],
     );

@@ -38,7 +38,8 @@ class SiteLayoutProvider extends ChangeNotifier {
   Timer? _saveTimer;
   int _revision = 0;
   int _savedRevision = 0;
-  Future<void>? _savingFuture;
+  Future<bool>? _savingFuture;
+  bool _disposed = false;
   SiteLayoutBundle? _transformStartBundle;
   String? _transformId;
   bool _transformChanged = false;
@@ -149,7 +150,7 @@ class SiteLayoutProvider extends ChangeNotifier {
   }
 
   Future<bool> loadProject(String projectId, {String? layoutId}) async {
-    await saveNow();
+    if (!await saveNow()) return false;
     _setLoading(true);
     try {
       _layouts = await _repository.getLayouts(projectId);
@@ -195,7 +196,7 @@ class SiteLayoutProvider extends ChangeNotifier {
   }) async {
     final current = _bundle;
     if (current == null) return;
-    await saveNow();
+    if (!await saveNow()) return;
     final created = duplicateCurrent
         ? await _repository.duplicateLayout(current.layout, name: name)
         : await _repository.createLayout(current.project.id, name: name);
@@ -205,28 +206,40 @@ class SiteLayoutProvider extends ChangeNotifier {
   Future<void> setPreferredLayout() async {
     final current = _bundle;
     if (current == null) return;
-    await saveNow();
+    if (!await saveNow()) return;
     await _repository.setPreferredLayout(current.project.id, current.layout.id);
     _layouts = await _repository.getLayouts(current.project.id);
-    _bundle = current.copyWith(
-      layout: current.layout.copyWith(isPreferred: true),
-    );
+    final latest = _bundle;
+    if (latest?.layout.id == current.layout.id) {
+      _bundle = latest!.copyWith(
+        layout: latest.layout.copyWith(isPreferred: true),
+      );
+    }
     notifyListeners();
   }
 
   Future<void> deleteCurrentLayout() async {
     final current = _bundle;
-    if (current == null) return;
+    if (current == null || !await saveNow()) return;
     await _repository.deleteLayout(current.layout);
+    _bundle = null;
+    _revision = _savedRevision = 0;
+    _undo.clear();
+    _redo.clear();
     await loadProject(current.project.id);
   }
 
   Future<void> deleteProject(String projectId) async {
-    if (_bundle?.project.id == projectId) {
+    final isCurrent = _bundle?.project.id == projectId;
+    if (isCurrent && !await saveNow()) return;
+    await _repository.deleteProject(projectId);
+    if (isCurrent) {
       _saveTimer?.cancel();
       _bundle = null;
+      _revision = _savedRevision = 0;
+      _undo.clear();
+      _redo.clear();
     }
-    await _repository.deleteProject(projectId);
     _projects = await _repository.getProjects();
     notifyListeners();
   }
@@ -1051,18 +1064,15 @@ class SiteLayoutProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveNow() async {
+  Future<bool> saveNow() async {
     _saveTimer?.cancel();
-    if (_bundle == null || _savedRevision == _revision) return;
-    if (_savingFuture != null) {
-      await _savingFuture;
-      if (_savedRevision != _revision) await saveNow();
-      return;
-    }
-    final completer = Completer<void>();
+    if (_savingFuture != null) return _savingFuture!;
+    if (_bundle == null || _savedRevision == _revision) return true;
+    final completer = Completer<bool>();
     _savingFuture = completer.future;
     _isSaving = true;
     notifyListeners();
+    var saved = false;
     try {
       while (_bundle != null && _savedRevision != _revision) {
         final snapshot = _bundle!;
@@ -1072,14 +1082,16 @@ class SiteLayoutProvider extends ChangeNotifier {
         _lastSavedAt = DateTime.now();
         _error = null;
       }
+      saved = true;
     } catch (error) {
       _error = 'Không thể tự động lưu: $error';
     } finally {
       _isSaving = false;
       _savingFuture = null;
-      completer.complete();
+      completer.complete(saved);
       notifyListeners();
     }
+    return saved;
   }
 
   void clearError() {
@@ -1093,7 +1105,13 @@ class SiteLayoutProvider extends ChangeNotifier {
   }
 
   @override
+  void notifyListeners() {
+    if (!_disposed) super.notifyListeners();
+  }
+
+  @override
   void dispose() {
+    _disposed = true;
     _saveTimer?.cancel();
     super.dispose();
   }

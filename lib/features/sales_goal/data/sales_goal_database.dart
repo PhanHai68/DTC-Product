@@ -10,7 +10,7 @@ class SalesGoalDatabase {
 
   SalesGoalDatabase.forTesting(Database database) : _database = database;
 
-  static const currentVersion = 1;
+  static const currentVersion = 2;
   Database? _database;
 
   Future<Database> get database async {
@@ -44,12 +44,17 @@ class SalesGoalDatabase {
         customerOrProject TEXT NOT NULL DEFAULT '',
         productOrMachine TEXT NOT NULL DEFAULT '',
         notes TEXT NOT NULL DEFAULT '',
+        sourceOpportunityId INTEGER,
         createdAt TEXT NOT NULL,
         updatedAt TEXT NOT NULL
       )
     ''');
     await db.execute(
       'CREATE INDEX idx_sales_entries_date ON sales_entries(saleDate)',
+    );
+    await db.execute(
+      'CREATE UNIQUE INDEX idx_sales_entries_opportunity '
+      'ON sales_entries(sourceOpportunityId)',
     );
     await db.execute('''
       CREATE TABLE sales_opportunities(
@@ -95,9 +100,27 @@ class SalesGoalDatabase {
     ''');
   }
 
-  Future<void> _upgrade(Database db, int oldVersion, int newVersion) async {}
+  Future<void> _upgrade(
+    DatabaseExecutor db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    if (oldVersion < 2 && newVersion >= 2) {
+      await db.execute(
+        'ALTER TABLE sales_entries ADD COLUMN sourceOpportunityId INTEGER',
+      );
+      await db.execute(
+        'CREATE UNIQUE INDEX idx_sales_entries_opportunity '
+        'ON sales_entries(sourceOpportunityId)',
+      );
+    }
+  }
 
-  Future<void> createSchemaForTesting(Database db) => _create(db, 1);
+  Future<void> createSchemaForTesting(Database db) =>
+      _create(db, currentVersion);
+
+  Future<void> upgradeSchemaForTesting(Database db, int oldVersion) =>
+      db.transaction((txn) => _upgrade(txn, oldVersion, currentVersion));
 
   Future<void> close() async {
     await _database?.close();
