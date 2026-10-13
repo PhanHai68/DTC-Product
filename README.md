@@ -25,6 +25,20 @@ flutter test
 flutter run
 ```
 
+## Cấu trúc thư mục
+
+```
+lib/             mã nguồn app (features/ là cấu trúc mới theo tính năng)
+assets/          ảnh, font, mô hình 3D, video và database sản phẩm (assets/database/)
+test/            unit test và widget test
+tool/data/       script sinh database sản phẩm từ tài liệu gốc
+                 (dart run tool/data/<tên_script>.dart)
+tool/presentation/ script PowerShell tạo báo cáo/slide giới thiệu app
+docs/            tài liệu kỹ thuật dạng Markdown (máy nghiền, nội dung thuyết trình, RELEASE_AUDIT)
+docs_database/   kho tài liệu gốc Excel/PDF/ảnh — chỉ lưu local, không đưa lên Git
+                 (xem docs_database/README.md)
+```
+
 ## Nền tảng
 
 - Android, iOS: nền tảng phát hành chính.
