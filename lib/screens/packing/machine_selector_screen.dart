@@ -28,6 +28,9 @@ class _MachineSelectorScreenState extends State<MachineSelectorScreen> {
   @override
   void initState() {
     super.initState();
+    final provider = context.read<MachineSelectorProvider>();
+    _weightController.text = provider.requestedWeightKg?.toString() ?? '';
+    _capacityController.text = provider.requestedCapacity?.toString() ?? '';
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MachineSelectorProvider>().loadOptions();
     });
@@ -142,13 +145,26 @@ class _MachineSelectorScreenState extends State<MachineSelectorScreen> {
                           ),
                           const SizedBox(height: 12),
 
+                          _DropdownField(
+                            key: ValueKey(provider.selectedCapacityUnit),
+                            id: 'capacity_unit_dropdown',
+                            label: 'Đơn vị năng suất',
+                            hint: 'Chọn đơn vị',
+                            value: provider.selectedCapacityUnit,
+                            items: MachineSelectorProvider.capacityUnits,
+                            onChanged: provider.setCapacityUnit,
+                            icon: Icons.swap_horiz,
+                            helperText: 'Nhập kg/túi khi cần quy đổi giữa túi/giờ và tấn/giờ.',
+                          ),
+                          const SizedBox(height: 12),
+
                           // Năng suất yêu cầu
                           _NumberField(
                             id: 'capacity_input',
                             controller: _capacityController,
                             label: 'Năng suất yêu cầu',
                             icon: Icons.speed_outlined,
-                            suffix: provider.selectedCapacityUnit ?? 'túi/giờ',
+                            suffix: provider.selectedCapacityUnit,
                             onChanged: (v) => provider.setCapacity(v),
                           ),
                         ],
@@ -501,6 +517,7 @@ class _DropdownField extends StatelessWidget {
   final String? helperText;
 
   const _DropdownField({
+    super.key,
     required this.id,
     required this.label,
     required this.hint,
@@ -520,6 +537,7 @@ class _DropdownField extends StatelessWidget {
     return DropdownButtonFormField<String>(
       key: Key(id),
       initialValue: value,
+      isExpanded: true,
       decoration: InputDecoration(
         labelText: label + (isRequired ? '' : ' (tùy chọn)'),
         prefixIcon: Icon(icon, size: 20),
@@ -593,7 +611,8 @@ class _NumberField extends StatelessWidget {
       },
       validator: (value) {
         if (value != null && value.isNotEmpty) {
-          if (parseLocalizedDouble(value) == null) {
+          if (parseLocalizedDouble(value) == null ||
+              !parseLocalizedDouble(value)!.isFinite) {
             return 'Vui lòng nhập số hợp lệ';
           }
           if (parseLocalizedDouble(value)! <= 0) {

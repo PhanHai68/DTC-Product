@@ -16,7 +16,7 @@ class MachineSelectorRequest {
     this.automationLevel,
     this.requestedWeightKg,
     this.requestedCapacity,
-    this.capacityUnit,
+    this.capacityUnit = 'túi/giờ',
   });
 
   /// Có ít nhất một tiêu chí để lọc không?

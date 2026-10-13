@@ -185,7 +185,9 @@ class AcompSuitableScreen extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: Text(
-                    '${provider.minPower.toInt()} kW',
+                    provider.minPower == null
+                        ? '—'
+                        : '${provider.minPower!.toInt()} kW',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -196,6 +198,13 @@ class AcompSuitableScreen extends StatelessWidget {
                 ),
               ],
             ),
+            if (provider.recommendationError != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                provider.recommendationError!,
+                style: const TextStyle(color: Colors.deepOrange, fontSize: 15),
+              ),
+            ],
           ],
         ),
       ),

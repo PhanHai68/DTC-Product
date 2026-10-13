@@ -15,7 +15,7 @@ class AcompTechCategoryScreen extends StatelessWidget {
             context,
             title: 'Máy nén khí trục vít biến tần',
             subtitle: 'Model: ACP-PV',
-            icon: Icons.speed,
+            badgeText: 'PM\nVFD',
             onTap: () {
               context.push('/acomp_tech_detail', extra: 'PV');
             },
@@ -24,7 +24,7 @@ class AcompTechCategoryScreen extends StatelessWidget {
             context,
             title: 'Máy nén khí trục vít tốc độ cố định',
             subtitle: 'Model: ACP-F',
-            icon: Icons.settings,
+            badgeText: 'FIXED\nSPEED',
             onTap: () {
               context.push('/acomp_tech_detail', extra: 'F');
             },
@@ -33,7 +33,7 @@ class AcompTechCategoryScreen extends StatelessWidget {
             context,
             title: 'Máy nén khí trục vít 4 trong 1',
             subtitle: 'Đang cập nhật dữ liệu',
-            icon: Icons.layers,
+            badgeText: '4 IN 1',
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -53,7 +53,7 @@ class AcompTechCategoryScreen extends StatelessWidget {
     BuildContext context, {
     required String title,
     required String subtitle,
-    required IconData icon,
+    required String badgeText,
     required VoidCallback onTap,
   }) {
     return Card(
@@ -64,12 +64,26 @@ class AcompTechCategoryScreen extends StatelessWidget {
           horizontal: 16.0,
         ),
         leading: Container(
-          padding: const EdgeInsets.all(8),
+          width: 48,
+          height: 48,
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: Colors.teal.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: Colors.teal, size: 32),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              badgeText,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.teal,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                height: 1.15,
+              ),
+            ),
+          ),
         ),
         title: Text(
           title,

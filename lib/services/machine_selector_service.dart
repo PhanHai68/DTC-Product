@@ -23,6 +23,17 @@ class MachineSelectorService {
   Future<List<MachineMatchResult>> findSuitableMachines(
     MachineSelectorRequest request,
   ) async {
+    for (final value in [
+      request.requestedWeightKg,
+      request.requestedCapacity,
+    ]) {
+      if (value != null && (!value.isFinite || value <= 0)) {
+        throw ArgumentError(
+          'Khối lượng và năng suất phải là số hữu hạn lớn hơn 0.',
+        );
+      }
+    }
+
     // Lấy ứng viên ban đầu (pre-filter nhẹ bằng DB query)
     final candidates = await _repository.getMachinesForSelector(
       bagMaterial: request.bagMaterial,
@@ -140,30 +151,73 @@ class MachineSelectorService {
     MatchLevel? capacityLevel;
 
     if (request.requestedCapacity != null) {
-      final reqCap = request.requestedCapacity!;
+      final originalCapacity = request.requestedCapacity!;
+      final requestUnit = _capacityUnit(request.capacityUnit);
+      final machineUnit = _capacityUnit(machine.capacityUnit);
       final capMax = machine.capacityMax;
       final capMin = machine.capacityMin;
+      double? reqCap;
+      String? conversion;
 
-      if (capMax == null) {
-        // Không có thông tin năng suất → bỏ qua
-      } else if (reqCap > capMax) {
-        // Yêu cầu vượt quá năng suất tối đa
+      if (requestUnit == null || machineUnit == null) {
         mismatchReasons.add(
-          '✗ Năng suất yêu cầu ${_formatNum(reqCap)}, '
-          'máy đạt tối đa ${_formatNum(capMax)} ${machine.capacityUnit ?? ''}',
+          '✗ Chưa thể xác nhận năng suất: đơn vị yêu cầu '
+          '${request.capacityUnit ?? "chưa có"} / đơn vị catalog '
+          '${machine.capacityUnit ?? "chưa có"}. Cần đơn vị theo giờ; '
+          'không tự coi “tấn” là “tấn/giờ”.',
+        );
+      } else if (requestUnit == machineUnit) {
+        reqCap = originalCapacity;
+      } else if (request.requestedWeightKg == null) {
+        mismatchReasons.add(
+          '✗ Cần khối lượng mỗi túi (kg) để quy đổi '
+          '${request.capacityUnit} sang ${machine.capacityUnit}.',
+        );
+      } else {
+        final weight = request.requestedWeightKg!;
+        reqCap = requestUnit == 'tấn/giờ'
+            ? originalCapacity * 1000 / weight
+            : originalCapacity * weight / 1000;
+        conversion =
+            'Quy đổi theo ${_formatNum(weight)} kg/túi: '
+            '${_formatNum(originalCapacity)} ${request.capacityUnit} = '
+            '${_formatNum(reqCap)} ${machine.capacityUnit}';
+      }
+
+      if (reqCap == null) {
+        isCompatible = false;
+      } else if (!reqCap.isFinite || reqCap <= 0) {
+        mismatchReasons.add(
+          '✗ Không thể quy đổi năng suất với các giá trị đã nhập.',
+        );
+        isCompatible = false;
+      } else if (capMax == null ||
+          !capMax.isFinite ||
+          capMax <= 0 ||
+          (capMin != null &&
+              (!capMin.isFinite || capMin < 0 || capMin > capMax))) {
+        mismatchReasons.add(
+          '✗ Chưa có dải năng suất hợp lệ để xác nhận yêu cầu.',
+        );
+        isCompatible = false;
+      } else if (reqCap > capMax) {
+        mismatchReasons.add(
+          '✗ Năng suất yêu cầu ${_formatNum(originalCapacity)} ${request.capacityUnit}; '
+          'máy đạt tối đa ${_formatNum(capMax)} ${machine.capacityUnit}.'
+          '${conversion == null ? "" : " $conversion"}',
         );
         isCompatible = false;
       } else {
-        // Máy đáp ứng được năng suất
         final capRange = (capMin != null && capMin > 0)
             ? '${_formatNum(capMin)}-${_formatNum(capMax)}'
             : _formatNum(capMax);
         matchReasons.add(
-          '✓ Yêu cầu ${_formatNum(reqCap)} ${machine.capacityUnit ?? ''} '
-          '/ Máy đạt $capRange ${machine.capacityUnit ?? ''}',
+          '✓ Yêu cầu ${_formatNum(originalCapacity)} ${request.capacityUnit} '
+          '/ Máy đạt $capRange ${machine.capacityUnit}'
+          '${conversion == null ? "" : ". $conversion"}',
         );
 
-        // Tính mức dư công suất
+        // Tính mức dư công suất sau khi đưa về cùng đơn vị.
         final surplus = (capMax - reqCap) / reqCap;
         capacityScore = 100 - (surplus * 50).clamp(0, 100);
 
@@ -218,10 +272,21 @@ class MachineSelectorService {
     return false;
   }
 
+  // Chỉ chấp nhận năng suất có mốc thời gian rõ ràng.
+  String? _capacityUnit(String? raw) {
+    final unit = raw?.toLowerCase().replaceAll(RegExp(r'\s+'), '');
+    return switch (unit) {
+      'túi/giờ' || 'bao/giờ' => 'túi/giờ',
+      'tấn/giờ' => 'tấn/giờ',
+      _ => null,
+    };
+  }
+
   String _formatNum(double value) {
+    if (!value.isFinite) return value.toString();
     if (value == value.truncateToDouble()) {
       return value.toInt().toString();
     }
-    return value.toStringAsFixed(2);
+    return value.toString();
   }
 }

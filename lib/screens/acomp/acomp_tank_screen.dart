@@ -21,6 +21,19 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
   final TextEditingController _t1Controller = TextEditingController(text: '35');
 
   @override
+  void initState() {
+    super.initState();
+    final provider = context.read<AcompTankProvider>();
+    _qcController.text = provider.qc == 0 ? '' : _inputText(provider.qc);
+    _tcController.text = _inputText(provider.tc);
+    _deltaPController.text = _inputText(provider.deltaP);
+    _t0Controller.text = _inputText(provider.t0);
+    _t1Controller.text = _inputText(provider.t1);
+  }
+
+  String _inputText(double value) => value.isFinite ? value.toString() : '';
+
+  @override
   void dispose() {
     _qcController.dispose();
     _tcController.dispose();
@@ -43,7 +56,8 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
               children: [
                 _buildInputSection(context, provider),
                 const SizedBox(height: 24),
-                if (provider.qc > 0) ...[
+                if (provider.qc > 0 ||
+                    provider.recommendationError != null) ...[
                   _buildResultSection(provider),
                 ] else ...[
                   const Center(
@@ -182,7 +196,9 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
                   Expanded(
                     flex: 1,
                     child: Text(
-                      '${provider.vTh.toStringAsFixed(1)} Lít',
+                      provider.inputError != null || !provider.vTh.isFinite
+                          ? '—'
+                          : '${provider.vTh.toStringAsFixed(1)} Lít',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -213,7 +229,9 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
                   Expanded(
                     flex: 2,
                     child: Text(
-                      '${provider.vRec.toInt()} Lít',
+                      provider.vRec == null
+                          ? '—'
+                          : '${provider.vRec!.toInt()} Lít',
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -225,6 +243,13 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
                 ],
               ),
             ),
+            if (provider.recommendationError != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                provider.recommendationError!,
+                style: const TextStyle(color: Colors.deepOrange, fontSize: 15),
+              ),
+            ],
           ],
         ),
       ),

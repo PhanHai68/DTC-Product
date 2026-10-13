@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/color_sorter_provider.dart';
+import '../../core/input/localized_number.dart';
 import '../../data/specs_data.dart';
 import 'spec_image_export_dialog.dart';
 
@@ -91,8 +92,9 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
     if (m.contains('sc10')) return 'assets/images/color_sorter/sc10.jpeg';
     if (m.contains('sc8')) return 'assets/images/color_sorter/sc8.jpeg';
     if (m.contains('sc4')) return 'assets/images/color_sorter/sc4.jpeg';
-    if (m.contains('s+80d'))
+    if (m.contains('s+80d')) {
       return 'assets/images/color_sorter/may_phan_tich_mau_s80d.jpg';
+    }
     return null;
   }
 
@@ -580,12 +582,12 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                     ),
                   ),
                   onChanged: (val) {
-                    final cap = double.tryParse(val.replaceAll(',', '.'));
-                    if (cap != null) {
-                      setState(() {
-                        recommendation = provider.suggestModelByCapacity(cap);
-                      });
-                    }
+                    final cap = parseLocalizedDouble(val);
+                    setState(() {
+                      recommendation = val.trim().isEmpty
+                          ? null
+                          : provider.suggestModelByCapacity(cap ?? double.nan);
+                    });
                   },
                 ),
                 if (recommendation != null) ...[
@@ -602,15 +604,21 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                       children: [
                         Row(
                           children: [
-                            const Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
+                            Icon(
+                              recommendation!['model'] == null
+                                  ? Icons.warning_amber
+                                  : Icons.check_circle,
+                              color: recommendation!['model'] == null
+                                  ? Colors.orange
+                                  : Colors.green,
                               size: 20,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Đề xuất: Model ${recommendation!['model']}',
+                                recommendation!['model'] == null
+                                    ? 'Chưa có đề xuất phù hợp'
+                                    : 'Đề xuất: Model ${recommendation!['model']}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -637,7 +645,7 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
               onPressed: () => Navigator.pop(context),
               child: const Text('Đóng'),
             ),
-            if (recommendation != null)
+            if (recommendation?['model'] != null)
               ElevatedButton(
                 onPressed: () {
                   final model = recommendation!['model'] as String;

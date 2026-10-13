@@ -15,7 +15,8 @@ class MachineSelectorProvider extends ChangeNotifier {
   MachineSelectorProvider({
     MachineSelectorService? selectorService,
     PackingMachineRepository? repository,
-  }) : _selectorService = selectorService ?? MachineSelectorService(),
+  }) : _selectorService =
+           selectorService ?? MachineSelectorService(repository: repository),
        _repository = repository ?? PackingMachineRepository();
 
   // ─── State ────────────────────────────────────────────────────────────────
@@ -26,7 +27,10 @@ class MachineSelectorProvider extends ChangeNotifier {
   String? _selectedAutomationLevel;
   double? _requestedWeightKg;
   double? _requestedCapacity;
-  String? _selectedCapacityUnit;
+  String _selectedCapacityUnit = 'túi/giờ';
+  int _criteriaVersion = 0;
+
+  static const capacityUnits = ['túi/giờ', 'tấn/giờ'];
 
   // Options for dropdowns (loaded from DB)
   List<String> _bagMaterials = [];
@@ -46,7 +50,7 @@ class MachineSelectorProvider extends ChangeNotifier {
   String? get selectedAutomationLevel => _selectedAutomationLevel;
   double? get requestedWeightKg => _requestedWeightKg;
   double? get requestedCapacity => _requestedCapacity;
-  String? get selectedCapacityUnit => _selectedCapacityUnit;
+  String get selectedCapacityUnit => _selectedCapacityUnit;
 
   List<String> get bagMaterials => _bagMaterials;
   List<String> get bagEdges => _bagEdges;
@@ -84,10 +88,18 @@ class MachineSelectorProvider extends ChangeNotifier {
     }
   }
 
+  void _invalidateResults() {
+    _criteriaVersion++;
+    _results = [];
+    _hasSearched = false;
+    _errorMessage = null;
+  }
+
   // ── Setters ───────────────────────────────────────────────────────────────
 
   void setBagMaterial(String? value) {
     _selectedBagMaterial = value;
+    _invalidateResults();
     // Giữ tiêu chí kiểu túi người dùng đã chọn. Hai tiêu chí được đánh giá
     // độc lập để ứng dụng có thể giải thích rõ tổ hợp nào chưa có dữ liệu.
     notifyListeners();
@@ -95,26 +107,31 @@ class MachineSelectorProvider extends ChangeNotifier {
 
   void setBagEdges(String? value) {
     _selectedBagEdges = value;
+    _invalidateResults();
     notifyListeners();
   }
 
   void setAutomationLevel(String? value) {
     _selectedAutomationLevel = value;
+    _invalidateResults();
     notifyListeners();
   }
 
   void setWeightKg(double? value) {
     _requestedWeightKg = value;
+    _invalidateResults();
     notifyListeners();
   }
 
   void setCapacity(double? value) {
     _requestedCapacity = value;
+    _invalidateResults();
     notifyListeners();
   }
 
   void setCapacityUnit(String? value) {
-    _selectedCapacityUnit = value;
+    _selectedCapacityUnit = value ?? 'túi/giờ';
+    _invalidateResults();
     notifyListeners();
   }
 
@@ -124,7 +141,8 @@ class MachineSelectorProvider extends ChangeNotifier {
     _selectedAutomationLevel = null;
     _requestedWeightKg = null;
     _requestedCapacity = null;
-    _selectedCapacityUnit = null;
+    _selectedCapacityUnit = 'túi/giờ';
+    _criteriaVersion++;
     _results = [];
     _hasSearched = false;
     _errorMessage = null;
@@ -135,6 +153,8 @@ class MachineSelectorProvider extends ChangeNotifier {
 
   /// Thực hiện tìm máy phù hợp
   Future<void> findMachines() async {
+    if (_isSearching) return;
+    final criteriaVersion = _criteriaVersion;
     _isSearching = true;
     _errorMessage = null;
     notifyListeners();
@@ -149,11 +169,16 @@ class MachineSelectorProvider extends ChangeNotifier {
         capacityUnit: _selectedCapacityUnit,
       );
 
-      _results = await _selectorService.findSuitableMachines(request);
-      _hasSearched = true;
+      final results = await _selectorService.findSuitableMachines(request);
+      if (criteriaVersion == _criteriaVersion) {
+        _results = results;
+        _hasSearched = true;
+      }
     } catch (e) {
-      _errorMessage = 'Lỗi tìm kiếm: $e';
-      _results = [];
+      if (criteriaVersion == _criteriaVersion) {
+        _errorMessage = 'Lỗi tìm kiếm: $e';
+        _results = [];
+      }
     } finally {
       _isSearching = false;
       notifyListeners();

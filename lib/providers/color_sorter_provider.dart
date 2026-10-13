@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../data/specs_data.dart';
 
 class ColorSorterProvider extends ChangeNotifier {
@@ -33,7 +34,9 @@ class ColorSorterProvider extends ChangeNotifier {
 
       if (found.isNotEmpty) {
         _specs = Map.fromEntries(
-          found.entries.where((e) => e.value.trim().isNotEmpty && e.value != 'N/A'),
+          found.entries.where(
+            (e) => e.value.trim().isNotEmpty && e.value != 'N/A',
+          ),
         );
       } else {
         _specs = null;
@@ -73,7 +76,10 @@ class ColorSorterProvider extends ChangeNotifier {
       // 2. Partial match Model name
       if (result == null) {
         for (var row in colorSorterSpecs) {
-          if (row['Model']?.toLowerCase().contains(modelName.toLowerCase().trim()) == true) {
+          if (row['Model']?.toLowerCase().contains(
+                modelName.toLowerCase().trim(),
+              ) ==
+              true) {
             result = row;
             break;
           }
@@ -100,7 +106,9 @@ class ColorSorterProvider extends ChangeNotifier {
       if (result != null) {
         _selectedModel = result['Model'] ?? _selectedModel;
         _specs = Map.fromEntries(
-          result.entries.where((e) => e.value.trim().isNotEmpty && e.value != 'N/A'),
+          result.entries.where(
+            (e) => e.value.trim().isNotEmpty && e.value != 'N/A',
+          ),
         );
       } else {
         _specs = null;
@@ -127,10 +135,18 @@ class ColorSorterProvider extends ChangeNotifier {
 
   /// Gợi ý model tối ưu dựa trên sản lượng xưởng (tấn/giờ)
   Map<String, dynamic> suggestModelByCapacity(double capacity) {
-    if (capacity <= 0) {
+    if (!capacity.isFinite || capacity <= 0) {
       return {
-        'model': 'SC4',
-        'reason': 'Vui lòng nhập sản lượng mong muốn lớn hơn 0.',
+        'model': null,
+        'reason': 'Vui lòng nhập sản lượng là số hữu hạn lớn hơn 0.',
+      };
+    }
+
+    if (capacity > 22) {
+      return {
+        'model': null,
+        'reason':
+            'Yêu cầu $capacity tấn/giờ vượt mức tối đa 22 tấn/giờ của một máy trong catalog hiện có. Cần tư vấn cấu hình riêng; chưa có model đơn lẻ phù hợp.',
       };
     }
 
@@ -138,32 +154,37 @@ class ColorSorterProvider extends ChangeNotifier {
       return {
         'model': 'SC4',
         'năng_suất': '4 - 6 tấn/giờ',
-        'reason': 'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC4 (4-6 T/h, 3 máng) là lựa chọn tối ưu chi phí đầu tư ban đầu cho xưởng vừa và nhỏ.',
+        'reason':
+            'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC4 (4-6 T/h, 3 máng) là lựa chọn tối ưu chi phí đầu tư ban đầu cho xưởng vừa và nhỏ.',
       };
     } else if (capacity <= 8.5) {
       return {
         'model': 'SC8',
         'năng_suất': '8 - 10 tấn/giờ',
-        'reason': 'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC8 (8-10 T/h, 5 máng) đáp ứng hoàn hảo công suất, vận hành ổn định và tiết kiệm điện khí nén.',
+        'reason':
+            'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC8 (8-10 T/h, 5 máng) đáp ứng hoàn hảo công suất, vận hành ổn định và tiết kiệm điện khí nén.',
       };
     } else if (capacity <= 11.5) {
       return {
         'model': 'SC10',
         'năng_suất': '10 - 12 tấn/giờ',
-        'reason': 'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC10 (10-12 T/h, 6 máng) là lựa chọn lý tưởng cho các nhà máy công suất trung - lớn.',
+        'reason':
+            'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC10 (10-12 T/h, 6 máng) là lựa chọn lý tưởng cho các nhà máy công suất trung - lớn.',
       };
-    } else if (capacity <= 16.5) {
+    } else if (capacity <= 16.0) {
       return {
         'model': 'SC12',
         'năng_suất': '12 - 16 tấn/giờ',
-        'reason': 'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC12 (12-16 T/h, 10 máng, 20 camera) là cấu hình chuẩn cho nhà máy xay xát xuất khẩu quy mô lớn.',
+        'reason':
+            'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC12 (12-16 T/h, 10 máng, 20 camera) là cấu hình chuẩn cho nhà máy xay xát xuất khẩu quy mô lớn.',
       };
     } else {
       return {
         'model': 'SC16 Pro',
         'alternate': 'SC16',
         'năng_suất': '16 - 22 tấn/giờ',
-        'reason': 'Với sản lượng lớn ${capacity.toStringAsFixed(1)} T/h, khuyến nghị model SC16 Pro (16-22 T/h, 12 máng) tích hợp AI Deep Learning và Cloud Control để tối đa hóa hiệu suất và chất lượng hạt thành phẩm.',
+        'reason':
+            'Với sản lượng lớn ${capacity.toStringAsFixed(1)} T/h, khuyến nghị model SC16 Pro (16-22 T/h, 12 máng) tích hợp AI Deep Learning và Cloud Control để tối đa hóa hiệu suất và chất lượng hạt thành phẩm.',
       };
     }
   }
