@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/paddy_specs_data.dart';
-import '../data/specs_data.dart';
-import '../data/tea_specs_data.dart';
-import '../data/mineral_specs_data.dart';
-import '../data/agro_specs_data.dart';
+import '../data/product_data.dart';
 
 class GlobalSearchScreen extends StatefulWidget {
   const GlobalSearchScreen({super.key});

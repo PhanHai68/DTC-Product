@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../data/aux_equip_data.dart';
+import '../../data/product_data.dart';
 import '../../providers/aux_equip_provider.dart';
 import '../../services/pdf_export_service.dart';
 

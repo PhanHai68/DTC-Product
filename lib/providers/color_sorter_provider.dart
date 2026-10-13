@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/specs_data.dart';
+import '../data/product_data.dart';
 
 class ColorSorterProvider extends ChangeNotifier {
   Map<String, String>? _specs;

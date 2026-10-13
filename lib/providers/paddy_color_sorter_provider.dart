@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/paddy_specs_data.dart';
+import '../data/product_data.dart';
 
 class PaddyColorSorterProvider extends ChangeNotifier {
   Map<String, String>? _specs;

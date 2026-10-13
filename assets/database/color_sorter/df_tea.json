@@ -1,4 +1,4 @@
-const List<Map<String, String>> teaColorSorterSpecs = [
+[
   {
     "id": "tea_df53_pro",
     "category": "Máy tách màu trà",
@@ -25,7 +25,7 @@ const List<Map<String, String>> teaColorSorterSpecs = [
     "air_dryer": "Đi kèm",
     "air_tank": "1500 lít",
     "air_filter": "Bộ lọc thô và bộ lọc tinh",
-    "key_features": "Nền tảng PLOV 3.0; Deep Learning AI; Điện toán đám mây; Hợp nhất đa điểm ảnh; Camera mắt diều hâu 3.0.",
+    "key_features": "Nền tảng PLOV 3.0; Deep Learning AI; Điện toán đám mây; Hợp nhất đa điểm ảnh; Camera mắt diều hâu 3.0."
   },
   {
     "id": "tea_df36",
@@ -53,7 +53,7 @@ const List<Map<String, String>> teaColorSorterSpecs = [
     "air_dryer": "Đi kèm",
     "air_tank": "1000 lít",
     "air_filter": "Bộ lọc thô và bộ lọc tinh",
-    "key_features": "Nền tảng PLOV 3.0; Deep Learning AI; Điện toán đám mây; Hợp nhất đa điểm ảnh; Camera mắt diều hâu 3.0.",
+    "key_features": "Nền tảng PLOV 3.0; Deep Learning AI; Điện toán đám mây; Hợp nhất đa điểm ảnh; Camera mắt diều hâu 3.0."
   },
   {
     "id": "tea_df21",
@@ -81,7 +81,7 @@ const List<Map<String, String>> teaColorSorterSpecs = [
     "air_dryer": "Đi kèm",
     "air_tank": "500 lít",
     "air_filter": "Bộ lọc thô và bộ lọc tinh",
-    "key_features": "Nền tảng PLOV 3.0; Deep Learning AI; Điện toán đám mây; Hợp nhất đa điểm ảnh; Camera mắt diều hâu 3.0.",
+    "key_features": "Nền tảng PLOV 3.0; Deep Learning AI; Điện toán đám mây; Hợp nhất đa điểm ảnh; Camera mắt diều hâu 3.0."
   },
   {
     "id": "tea_df12",
@@ -109,6 +109,6 @@ const List<Map<String, String>> teaColorSorterSpecs = [
     "air_dryer": "Đi kèm",
     "air_tank": "300 lít",
     "air_filter": "Bộ lọc thô và bộ lọc tinh",
-    "key_features": "Nền tảng PLOV 3.0; Deep Learning AI; Điện toán đám mây; Hợp nhất đa điểm ảnh; Camera mắt diều hâu 3.0.",
-  },
-];
+    "key_features": "Nền tảng PLOV 3.0; Deep Learning AI; Điện toán đám mây; Hợp nhất đa điểm ảnh; Camera mắt diều hâu 3.0."
+  }
+]

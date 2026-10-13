@@ -3,8 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/paddy_color_sorter_provider.dart';
-import '../../data/specs_data.dart';
-import '../../data/paddy_specs_data.dart';
+import '../../data/product_data.dart';
 import '../color_sorter/spec_image_export_dialog.dart';
 
 class PaddyColorSorterScreen extends StatefulWidget {

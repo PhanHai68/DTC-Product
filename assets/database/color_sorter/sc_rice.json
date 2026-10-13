@@ -1,7 +1,4 @@
-// GENERATED & ENRICHED FILE FOR DTC COLOR SORTER
-// Dữ liệu thông số kỹ thuật máy tách màu DTC SC Series
-
-const List<Map<String, String>> colorSorterSpecs = [
+[
   {
     "Model": "SC16 Pro",
     "Phân khúc": "Dòng Flagship AI Deep Learning & Cloud Control",
@@ -136,4 +133,4 @@ const List<Map<String, String>> colorSorterSpecs = [
     "Trọng lượng (Kg)": "218",
     "Kích thước (DxRxC) (mm)": "1020x682x11238"
   }
-];
+]

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/color_sorter_provider.dart';
 import '../../core/input/localized_number.dart';
-import '../../data/specs_data.dart';
+import '../../data/product_data.dart';
 import 'spec_image_export_dialog.dart';
 
 class ColorSorterScreen extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:dtc_product/data/mineral_specs_data.dart';
+import 'package:dtc_product/data/product_data.dart';
 import 'package:dtc_product/screens/mineral_color_sorter/mineral_color_sorter_screen.dart';
 import 'package:dtc_product/screens/mineral_color_sorter_menu_screen.dart';
 import 'package:flutter/material.dart';

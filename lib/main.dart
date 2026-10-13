@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'data/product_data.dart';
 import 'routes/app_routes.dart';
 import 'features/auth/services/auth_service.dart';
 import 'providers/electricity_bill_provider.dart';
@@ -44,6 +46,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
   await AuthService.instance.restore(prefs);
+  // Thông số máy (assets/database/*.json) phải có trước khi vẽ màn hình nào.
+  await ProductData.load(rootBundle.loadString);
   // Không chờ init() xong mới vẽ khung hình đầu tiên — dịch vụ thông báo tự
   // khởi tạo song song trong lúc UI hiển thị; schedule()/cancel()/
   // requestPermission() đã tự đảm bảo init() hoàn tất trước khi dùng.

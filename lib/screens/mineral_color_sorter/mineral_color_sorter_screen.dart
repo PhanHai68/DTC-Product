@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/mineral_specs_data.dart';
+import '../../data/product_data.dart';
 import '../../providers/tea_color_sorter_provider.dart';
 import '../tea_color_sorter/tea_color_sorter_screen.dart';
 

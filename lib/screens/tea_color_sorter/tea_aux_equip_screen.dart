@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../data/tea_aux_equip_data.dart';
+import '../../data/product_data.dart';
 import '../../services/pdf_export_service.dart';
 import '../../theme/dtc_palette.dart';
 

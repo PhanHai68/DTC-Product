@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/tea_specs_data.dart';
+import '../data/product_data.dart';
 
 class TeaColorSorterProvider extends ChangeNotifier {
   final List<Map<String, String>> data;
@@ -18,9 +18,9 @@ class TeaColorSorterProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   TeaColorSorterProvider({
-    this.data = teaColorSorterSpecs,
+    List<Map<String, String>>? data,
     String initialModel = 'DF53 Pro',
-  }) {
+  }) : data = data ?? teaColorSorterSpecs {
     selectModel(initialModel);
   }
 

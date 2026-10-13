@@ -1,10 +1,5 @@
 import '../../../data/acomp_spec_data.dart';
-import '../../../data/agro_specs_data.dart';
-import '../../../data/mineral_specs_data.dart';
-import '../../../data/paddy_specs_data.dart';
-import '../../../data/specs_data.dart';
-import '../../../data/tea_aux_equip_data.dart';
-import '../../../data/tea_specs_data.dart';
+import '../../../data/product_data.dart';
 import '../../../repositories/packing_machine_repository.dart';
 import '../../grinding_machine/providers/grinding_machine_provider.dart';
 import '../../grinding_machine/repositories/grinding_machine_repository.dart';

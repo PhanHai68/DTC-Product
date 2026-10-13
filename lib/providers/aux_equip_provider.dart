@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/aux_equip_data.dart';
+import '../data/product_data.dart';
 
 class AuxEquipProvider extends ChangeNotifier {
   List<Map<String, String>>? _specs;

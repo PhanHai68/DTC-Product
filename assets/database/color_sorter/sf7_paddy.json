@@ -1,4 +1,4 @@
-const List<Map<String, String>> paddyColorSorterSpecs = [
+[
   {
     "Model": "SF7D Pro",
     "Phân khúc": "Máy tách màu lúa giống và lúa cựa lứt",
@@ -20,4 +20,4 @@ const List<Map<String, String>> paddyColorSorterSpecs = [
     "Bình tích khí đồng bộ": "1500 lít",
     "Nguyên liệu phù hợp": "Thóc và gạo xô"
   }
-];
+]

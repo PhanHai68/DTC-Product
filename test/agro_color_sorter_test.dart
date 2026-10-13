@@ -1,4 +1,4 @@
-import 'package:dtc_product/data/agro_specs_data.dart';
+import 'package:dtc_product/data/product_data.dart';
 import 'package:dtc_product/screens/agro_color_sorter/agro_color_sorter_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

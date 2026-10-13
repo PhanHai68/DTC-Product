@@ -1,5 +1,4 @@
-import 'package:dtc_product/data/aux_equip_data.dart';
-import 'package:dtc_product/data/specs_data.dart';
+import 'package:dtc_product/data/product_data.dart';
 import 'package:dtc_product/services/pdf_export_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
