@@ -7,6 +7,7 @@ import '../drive_docs_config.dart';
 import '../models/drive_item.dart';
 import '../services/drive_docs_service.dart';
 import '../widgets/drive_file_loader.dart';
+import '../widgets/drive_share_sheet.dart';
 
 /// Xếp các mục có tên trong [order] lên trước, đúng thứ tự đó (không phân
 /// biệt hoa thường); các mục còn lại giữ thứ tự sẵn có ở phía sau.
@@ -175,11 +176,9 @@ class _DriveDocsScreenState extends State<DriveDocsScreen> {
                 leading: Icon(_iconOf(item), color: _colorOf(item), size: 32),
                 title: Text(item.name),
                 subtitle: item.isFolder ? null : Text(_fileInfo(item)),
-                trailing: Icon(
-                  item.opensInDrive
-                      ? Icons.open_in_new_rounded
-                      : Icons.chevron_right_rounded,
-                ),
+                trailing: item.isFolder
+                    ? const Icon(Icons.chevron_right_rounded)
+                    : DriveShareButton(item: item),
                 onTap: () => _open(item),
               ),
             ),

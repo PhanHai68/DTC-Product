@@ -12,6 +12,10 @@ class DriveItem {
   static const pdfMimeType = 'application/pdf';
   static const shortcutMimeType = 'application/vnd.google-apps.shortcut';
 
+  /// File lớn hơn mức này chỉ gửi đường link, không tải cả file vào máy để
+  /// chia sẻ.
+  static const maxShareFileBytes = 100 * 1024 * 1024;
+
   final String id;
   final String name;
   final String mimeType;
@@ -25,6 +29,14 @@ class DriveItem {
 
   /// File khác (bản vẽ DWG, Word, Excel, Google Docs…): mở bằng Google Drive.
   bool get opensInDrive => !isFolder && !isPdf && !isImage && !isVideo;
+
+  /// Google Docs/Sheets/Slides không có file gốc để tải về.
+  bool get isGoogleNative =>
+      mimeType.startsWith('application/vnd.google-apps.');
+
+  /// Gửi được nguyên file qua Zalo/Messenger…; nếu không thì chỉ gửi link.
+  bool get canShareAsFile =>
+      !isGoogleNative && (size ?? 0) <= maxShareFileBytes;
 
   /// Trang xem file của Google Drive (file đã chia sẻ công khai).
   Uri get driveViewUri => Uri.https('drive.google.com', '/open', {'id': id});

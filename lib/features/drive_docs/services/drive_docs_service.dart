@@ -154,7 +154,8 @@ class DriveDocsService {
 
   /// Nội dung file (PDF, ảnh): lấy từ bộ đệm nếu đúng phiên bản, nếu không
   /// thì tải về. Lỗi mạng → dùng bản đã lưu trước đó (có thể cũ hơn).
-  Future<Uint8List> loadFile(DriveItem item) async {
+  /// [cache] false: không lưu bản vừa tải (video, file chỉ tải để chia sẻ).
+  Future<Uint8List> loadFile(DriveItem item, {bool cache = true}) async {
     _ensureConfigured();
     final cached = await _cache.read(item.id, item.version);
     if (cached != null) return cached;
@@ -164,11 +165,13 @@ class DriveDocsService {
           .timeout(_downloadTimeout);
       _checkStatus(response);
       final bytes = response.bodyBytes;
-      try {
-        await _cache.write(item.id, item.version, bytes);
-      } on Object catch (error) {
-        // Không lưu được bộ đệm vẫn mở được tài liệu lần này.
-        debugPrint('DriveDocs: không lưu được bộ đệm ${item.name}: $error');
+      if (cache) {
+        try {
+          await _cache.write(item.id, item.version, bytes);
+        } on Object catch (error) {
+          // Không lưu được bộ đệm vẫn mở được tài liệu lần này.
+          debugPrint('DriveDocs: không lưu được bộ đệm ${item.name}: $error');
+        }
       }
       return bytes;
     } on Object catch (error) {

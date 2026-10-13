@@ -181,6 +181,27 @@ void main() {
     expect(drive.requests.length, downloads);
   });
 
+  test('tải để chia sẻ với cache: false thì không lưu bộ đệm', () async {
+    final cache = MemoryDriveDocCache();
+    final drive = _FakeDrive(
+      folders: {},
+      files: {
+        'v1': [9, 9],
+      },
+    );
+    final service = _service(drive, cache: cache);
+    final video = DriveItem.fromJson({
+      'id': 'v1',
+      'name': 'Video.mp4',
+      'mimeType': 'video/mp4',
+      'size': '2',
+      'modifiedTime': '2026-10-01T08:00:00.000Z',
+    });
+
+    expect(await service.loadFile(video, cache: false), [9, 9]);
+    expect(await cache.readAny('v1'), isNull);
+  });
+
   test(
     'file được cập nhật trên Drive thì tải bản mới; mất mạng dùng bản cũ',
     () async {

@@ -6,6 +6,7 @@ import 'package:video_player/video_player.dart';
 import '../models/drive_item.dart';
 import '../services/drive_docs_service.dart';
 import '../widgets/drive_file_loader.dart';
+import '../widgets/drive_share_sheet.dart';
 
 Future<void> _openInDrive(DriveItem item) =>
     launchUrl(item.driveViewUri, mode: LaunchMode.externalApplication);
@@ -25,6 +26,7 @@ class DriveImageViewerScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         title: Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: [
+          DriveShareButton(item: item),
           IconButton(
             icon: const Icon(Icons.close),
             tooltip: 'Đóng',
@@ -108,6 +110,7 @@ class _DriveVideoPlayerScreenState extends State<DriveVideoPlayerScreen> {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
+          DriveShareButton(item: widget.item),
           IconButton(
             icon: const Icon(Icons.open_in_new_rounded),
             tooltip: 'Mở bằng Google Drive',
