@@ -149,23 +149,6 @@ void main() {
         }
       }
     });
-
-    test('operation_manual.json: icon hợp lệ, items là danh sách chuỗi', () {
-      const knownIcons = {
-        'play_circle_outline',
-        'build_circle_outlined',
-        'warning_amber_rounded',
-        'inventory_2_outlined',
-      };
-      for (final section in manualSummary) {
-        expect(
-          knownIcons,
-          contains(section['icon']),
-          reason: '${section['title']}: icon không có trong app',
-        );
-        expect(section['items'], isA<List<String>>());
-      }
-    });
   });
 
   group('Cân đóng gói', () {

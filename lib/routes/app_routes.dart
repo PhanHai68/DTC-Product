@@ -79,12 +79,10 @@ import '../screens/acomp/acomp_suitable_screen.dart';
 import '../screens/acomp/acomp_tank_screen.dart';
 import '../screens/acomp/acomp_mccb_cable_screen.dart';
 import '../screens/acomp/acomp_pipe_screen.dart';
-import '../screens/acomp/acomp_installation_drawing_screen.dart';
 import '../screens/acomp/acomp_tank_fill_time_screen.dart';
 import '../screens/acomp/acomp_troubleshooting_menu_screen.dart';
 import '../screens/acomp/acomp_common_errors_screen.dart';
 import '../screens/acomp/acomp_ds8011_settings_screen.dart';
-import '../screens/acomp/acomp_operation_manual_screen.dart';
 // Packing module screens
 import '../screens/packing/packing_menu_screen.dart';
 import '../screens/packing/packing_search_screen.dart';
@@ -575,10 +573,6 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const AcompPipeScreen(),
     ),
     GoRoute(
-      path: '/acomp_drawing',
-      builder: (context, state) => const AcompInstallationDrawingScreen(),
-    ),
-    GoRoute(
       path: '/acomp_tank_fill_time',
       builder: (context, state) => const AcompTankFillTimeScreen(),
     ),
@@ -593,10 +587,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/acomp_ds8011_settings',
       builder: (context, state) => const AcompDs8011SettingsScreen(),
-    ),
-    GoRoute(
-      path: '/acomp_operation_manual',
-      builder: (context, state) => const AcompOperationManualScreen(),
     ),
     GoRoute(
       path: '/color_sorter',

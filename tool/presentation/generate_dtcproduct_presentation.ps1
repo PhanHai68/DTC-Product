@@ -31,7 +31,7 @@ $imgSorter = Join-Path $ProjectRoot 'assets\images\home_color_sorter_5_chutes_v5
 $imgPacking = Join-Path $ProjectRoot 'assets\images\home_packing_lzb1200.jpg'
 $imgCompressor = Join-Path $ProjectRoot 'assets\images\home_air_compressor_v5.png'
 $imgGrinding = Join-Path $ProjectRoot 'assets\images\home_grinding_machine_asp350.png'
-$imgLayout = Join-Path $ProjectRoot 'assets\images\So_do_lap_dat.png'
+$imgLayout = Join-Path $ProjectRoot 'docs_database\02_May_Nen_Khi\Ban_Ve_Lap_Dat\So_do_lap_dat.png'
 
 function Set-SlideBackground($slide, [int]$color) {
   $slide.FollowMasterBackground = 0

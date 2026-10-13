@@ -43,12 +43,6 @@ class AcompMenuScreen extends StatelessWidget {
           onTap: () => context.push('/acomp_pipe'),
         ),
         TechnologyMenuEntry(
-          id: 'acomp_drawing_btn',
-          title: 'Bản vẽ lắp đặt',
-          icon: Icons.architecture_rounded,
-          onTap: () => context.push('/acomp_drawing'),
-        ),
-        TechnologyMenuEntry(
           id: 'acomp_materials_btn',
           title: 'Danh sách vật tư',
           icon: Icons.inventory_2_outlined,

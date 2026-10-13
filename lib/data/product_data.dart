@@ -29,7 +29,6 @@ abstract final class ProductData {
   static const acompPipeStandardPath = '$_airCompressorDir/pipe_standard.json';
   static const acompCommonErrorsPath = '$_airCompressorDir/common_errors.json';
   static const acompDs8011Path = '$_airCompressorDir/ds8011.json';
-  static const acompManualPath = '$_airCompressorDir/operation_manual.json';
 
   static const packingMachinesPath = '$_packingScaleDir/machines.json';
   static const packingFeaturesPath = '$_packingScaleDir/features.json';
@@ -49,7 +48,6 @@ abstract final class ProductData {
     acompPipeStandardPath,
     acompCommonErrorsPath,
     acompDs8011Path,
-    acompManualPath,
     packingMachinesPath,
     packingFeaturesPath,
   ];
@@ -112,7 +110,6 @@ abstract final class ProductData {
     final errorsController = _toStringMapList(errors['controller'] as List);
     final errorsOilLoss = _toStringMapList(errors['oilLoss'] as List);
     final ds8011 = _toDynamicMapList(decode(acompDs8011Path) as List);
-    final manual = _toDynamicMapList(decode(acompManualPath) as List);
 
     final packing = [
       for (final item in decode(packingMachinesPath) as List)
@@ -147,7 +144,6 @@ abstract final class ProductData {
     _commonErrorsController = errorsController;
     _commonErrorsOilLoss = errorsOilLoss;
     _ds8011Parameters = ds8011;
-    _manualSummary = manual;
     _packingMachines = List.unmodifiable(packing);
     _packingFeatureSets = packingFeatures;
   }
@@ -202,7 +198,6 @@ List<Map<String, String>>? _commonErrorsGeneral;
 List<Map<String, String>>? _commonErrorsController;
 List<Map<String, String>>? _commonErrorsOilLoss;
 List<Map<String, dynamic>>? _ds8011Parameters;
-List<Map<String, dynamic>>? _manualSummary;
 List<PackingMachine>? _packingMachines;
 Map<String, List<Map<String, String>>>? _packingFeatureSets;
 
@@ -278,9 +273,6 @@ List<Map<String, String>> get commonErrorsOilLoss =>
 
 /// Tham số cài đặt bộ điều khiển DS8011 — `air_compressor/ds8011.json`.
 List<Map<String, dynamic>> get ds8011Parameters => _loaded(_ds8011Parameters);
-
-/// Tóm tắt hướng dẫn vận hành — `air_compressor/operation_manual.json`.
-List<Map<String, dynamic>> get manualSummary => _loaded(_manualSummary);
 
 /// Nguyên liệu và hệ số khí cho màn chọn máy nén khí theo máy tách màu —
 /// `air_compressor/materials.json`.

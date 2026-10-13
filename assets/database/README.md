@@ -21,7 +21,6 @@ Không cần sửa code Dart.
 | `air_compressor/pipe_standard.json` | Bảng ống tiêu chuẩn DN ↔ mm | Máy nén khí → Tính ống khí nén |
 | `air_compressor/common_errors.json` | Lỗi thường gặp: `general`, `controller`, `oilLoss` | Máy nén khí → Tra cứu lỗi |
 | `air_compressor/ds8011.json` | Tham số cài đặt bộ điều khiển DS8011 | Máy nén khí → Cài đặt DS8011 |
-| `air_compressor/operation_manual.json` | Tóm tắt hướng dẫn vận hành, bảo dưỡng | Máy nén khí → Hướng dẫn vận hành |
 | `air_compressor/materials.json` | Nguyên liệu và hệ số khí (`cm`, `optimalPressure`) | Máy nén khí → Chọn máy nén khí phù hợp máy tách màu |
 | `packing_scale/machines.json` | 46 máy cân đóng gói (PE, PP, định lượng) | Cân đóng gói → Danh mục, tìm kiếm, chọn máy, so sánh |
 | `packing_scale/features.json` | Các bộ đặc điểm nổi bật, mỗi máy chọn một bộ qua `feature_set` | Cân đóng gói → Chi tiết máy |
@@ -55,9 +54,6 @@ Không cần sửa code Dart.
   ống khí nén và thời gian nạp bình — chỉ sửa ở một chỗ này.
 - `pipe_standard.json`: giữ các dòng theo thứ tự đường kính `mm` tăng dần;
   `mm` là số không có ngoặc kép.
-- `operation_manual.json`: `icon` chỉ dùng một trong 4 tên có sẵn
-  (`play_circle_outline`, `build_circle_outlined`, `warning_amber_rounded`,
-  `inventory_2_outlined`).
 
 ## Quy tắc khi sửa file cân đóng gói
 

@@ -24,12 +24,6 @@ class AcompTroubleshootingMenuScreen extends StatelessWidget {
           icon: Icons.tune_rounded,
           onTap: () => context.push('/acomp_ds8011_settings'),
         ),
-        TechnologyMenuEntry(
-          id: 'acomp_operation_manual_btn',
-          title: 'Tài liệu vận hành',
-          icon: Icons.menu_book_rounded,
-          onTap: () => context.push('/acomp_operation_manual'),
-        ),
       ],
     );
   }
