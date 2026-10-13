@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -316,9 +317,12 @@ class _ActionVisual extends StatelessWidget {
       // Ảnh gốc lớn hơn nhiều so với kích thước hiển thị trong card (chỉ
       // ~150-280px) — giới hạn cacheWidth để Flutter giải mã ảnh ở độ phân
       // giải phù hợp thay vì decode nguyên ảnh gốc rồi mới thu nhỏ, giảm
-      // thời gian và bộ nhớ khi vẽ Home.
-      final cacheWidth = (280 * MediaQuery.of(context).devicePixelRatio)
-          .round();
+      // thời gian và bộ nhớ khi vẽ Home. Trên web bỏ cacheWidth: Safari không
+      // có ImageDecoder nên Flutter thu nhỏ ảnh qua OffscreenCanvas và lỗi
+      // trên iPad, khiến ảnh rơi vào errorBuilder.
+      final cacheWidth = kIsWeb
+          ? null
+          : (280 * MediaQuery.of(context).devicePixelRatio).round();
       final image = Image.asset(
         imagePath,
         fit: BoxFit.contain,

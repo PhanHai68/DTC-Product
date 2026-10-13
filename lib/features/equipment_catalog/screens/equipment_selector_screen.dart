@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -366,7 +367,7 @@ class _MatchCard extends StatelessWidget {
                   child: Image.asset(
                     path,
                     fit: BoxFit.contain,
-                    cacheWidth: 144,
+                    cacheWidth: kIsWeb ? null : 144,
                   ),
                 ),
                 const SizedBox(width: 10),

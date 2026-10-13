@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../equipment_catalog_config.dart';
@@ -58,7 +59,7 @@ class EquipmentMachineListTile extends StatelessWidget {
                     child: Image.asset(
                       path,
                       fit: BoxFit.contain,
-                      cacheWidth: 180,
+                      cacheWidth: kIsWeb ? null : 180,
                     ),
                   ),
                 )

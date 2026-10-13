@@ -1,6 +1,7 @@
 // Card hiển thị thông tin tóm tắt một máy cân đóng gói.
 // Sử dụng trong màn hình Search và Catalog.
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../../models/packing_machine.dart';
@@ -183,9 +184,11 @@ class _MachineImage extends StatelessWidget {
                   // Ảnh nguồn thường lớn hơn nhiều so với ô icon (chỉ ~size
                   // px) — giới hạn cacheWidth để giải mã đúng độ phân giải
                   // cần hiển thị, tránh tốn bộ nhớ/thời gian decode.
-                  cacheWidth:
-                      (size * MediaQuery.of(context).devicePixelRatio)
-                          .round(),
+                  // Web: bỏ cacheWidth — xem ghi chú ở _ActionVisual (Home).
+                  cacheWidth: kIsWeb
+                      ? null
+                      : (size * MediaQuery.of(context).devicePixelRatio)
+                            .round(),
                   errorBuilder: (_, _, _) => _placeholder(context),
                 ),
               )
@@ -269,10 +272,11 @@ class MachineImage extends StatelessWidget {
       // (cacheWidth hoặc cacheHeight) — nếu truyền cả hai mà tỉ lệ khác ảnh
       // gốc, ảnh giải mã ra sẽ bị méo trước khi fit áp dụng.
       final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
-      final cacheWidth = width != null
+      // Web: không truyền (Safari/iPad lỗi khi Flutter thu nhỏ ảnh).
+      final cacheWidth = !kIsWeb && width != null
           ? (width! * devicePixelRatio).round()
           : null;
-      final cacheHeight = cacheWidth == null && height != null
+      final cacheHeight = !kIsWeb && cacheWidth == null && height != null
           ? (height! * devicePixelRatio).round()
           : null;
       return Image.asset(

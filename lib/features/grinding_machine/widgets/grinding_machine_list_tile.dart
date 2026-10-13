@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../models/grinding_machine.dart';
@@ -66,7 +67,7 @@ class GrindingMachineListTile extends StatelessWidget {
                     child: Image.asset(
                       imagePath,
                       fit: BoxFit.contain,
-                      cacheWidth: 180,
+                      cacheWidth: kIsWeb ? null : 180,
                     ),
                   ),
                 )
