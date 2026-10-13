@@ -1,122 +1,82 @@
 // Repository cho Cân Đóng Gói.
-// Cung cấp các phương thức truy vấn dữ liệu từ SQLite database.
-// Tất cả methods đều async và có error handling.
+// Truy vấn trên danh sách máy đọc từ assets/database/packing_scale/machines.json
+// (nạp sẵn bởi ProductData). Giữ API async như thời còn dùng SQLite để màn
+// hình và provider không phải đổi.
 
-import '../core/database/packing_database.dart';
+import '../data/product_data.dart';
 import '../models/packing_machine.dart';
 
 class PackingMachineRepository {
-  final PackingDatabase _dbHelper;
+  /// [machines] chỉ dùng cho test; mặc định lấy toàn bộ máy trong JSON.
+  PackingMachineRepository({List<PackingMachine>? machines})
+    : _machinesOverride = machines;
 
-  PackingMachineRepository({PackingDatabase? dbHelper})
-    : _dbHelper = dbHelper ?? PackingDatabase.instance;
+  final List<PackingMachine>? _machinesOverride;
 
-  static const String _table = 'packing_machines';
+  /// Danh sách máy đã sắp theo stt.
+  List<PackingMachine> get _machines => _machinesOverride ?? packingMachines;
 
   // ─── Read All ──────────────────────────────────────────────────────────────
 
   /// Lấy tất cả máy, sắp xếp theo stt
-  Future<List<PackingMachine>> getAllMachines() async {
-    final db = await _dbHelper.database;
-    final rows = await db.query(_table, orderBy: 'stt ASC');
-    return rows.map(PackingMachine.fromMap).toList();
-  }
+  Future<List<PackingMachine>> getAllMachines() async => List.of(_machines);
 
   // ─── Search ────────────────────────────────────────────────────────────────
 
-  /// Tìm kiếm máy theo model name hoặc các trường text
-  /// Hỗ trợ tìm partial: "LZB-600" tìm được "LZB-600-R10"
+  /// Tìm kiếm máy theo model name hoặc các trường text, không phân biệt hoa
+  /// thường. Hỗ trợ tìm partial: "LZB-600" tìm được "LZB-600-R10".
+  /// Máy khớp theo model được xếp lên trước.
   Future<List<PackingMachine>> searchMachines(String query) async {
     if (query.trim().isEmpty) return getAllMachines();
 
-    final db = await _dbHelper.database;
-    final keyword = '%${query.trim().toUpperCase()}%';
+    final keyword = query.trim().toUpperCase();
+    bool contains(String? value) =>
+        value != null && value.toUpperCase().contains(keyword);
 
-    final rows = await db.rawQuery(
-      '''
-      SELECT * FROM $_table
-      WHERE
-        UPPER(model) LIKE ? OR
-        UPPER(product_group) LIKE ? OR
-        UPPER(machine_line) LIKE ? OR
-        UPPER(materials) LIKE ? OR
-        UPPER(notes) LIKE ?
-      ORDER BY
-        CASE WHEN UPPER(model) LIKE ? THEN 0 ELSE 1 END,
-        stt ASC
-      ''',
-      [keyword, keyword, keyword, keyword, keyword, keyword],
+    final matches = _machines.where(
+      (m) =>
+          contains(m.model) ||
+          contains(m.productGroup) ||
+          contains(m.machineLine) ||
+          contains(m.materials) ||
+          contains(m.notes),
     );
-
-    return rows.map(PackingMachine.fromMap).toList();
+    return [
+      ...matches.where((m) => contains(m.model)),
+      ...matches.where((m) => !contains(m.model)),
+    ];
   }
 
   // ─── Filter ────────────────────────────────────────────────────────────────
 
   /// Lấy máy theo nhóm sản phẩm (product_group)
-  Future<List<PackingMachine>> getMachinesByGroup(String group) async {
-    final db = await _dbHelper.database;
-    final rows = await db.query(
-      _table,
-      where: 'product_group = ?',
-      whereArgs: [group],
-      orderBy: 'stt ASC',
-    );
-    return rows.map(PackingMachine.fromMap).toList();
-  }
+  Future<List<PackingMachine>> getMachinesByGroup(String group) async =>
+      _machines.where((m) => m.productGroup == group).toList();
 
   /// Lấy máy theo dòng máy (machine_line)
-  Future<List<PackingMachine>> getMachinesByLine(String line) async {
-    final db = await _dbHelper.database;
-    final rows = await db.query(
-      _table,
-      where: 'machine_line = ?',
-      whereArgs: [line],
-      orderBy: 'stt ASC',
-    );
-    return rows.map(PackingMachine.fromMap).toList();
-  }
+  Future<List<PackingMachine>> getMachinesByLine(String line) async =>
+      _machines.where((m) => m.machineLine == line).toList();
 
   /// Lấy máy theo vật liệu túi (bag_material: PE / PP)
-  Future<List<PackingMachine>> getMachinesByBagMaterial(String material) async {
-    final db = await _dbHelper.database;
-    final rows = await db.query(
-      _table,
-      where: 'bag_material = ?',
-      whereArgs: [material],
-      orderBy: 'stt ASC',
-    );
-    return rows.map(PackingMachine.fromMap).toList();
-  }
+  Future<List<PackingMachine>> getMachinesByBagMaterial(
+    String material,
+  ) async => _machines.where((m) => m.bagMaterial == material).toList();
 
   // ─── Get Single ────────────────────────────────────────────────────────────
 
   /// Lấy một máy theo model name (exact match, case-insensitive)
   Future<PackingMachine?> getMachineByModel(String model) async {
-    final db = await _dbHelper.database;
-    final rows = await db.query(
-      _table,
-      where: 'UPPER(model) = UPPER(?)',
-      whereArgs: [model],
-      limit: 1,
-    );
-    if (rows.isEmpty) return null;
-    return PackingMachine.fromMap(rows.first);
+    final key = model.toUpperCase();
+    for (final machine in _machines) {
+      if (machine.model.toUpperCase() == key) return machine;
+    }
+    return null;
   }
 
-  /// Lấy nhiều máy theo danh sách model names
+  /// Lấy nhiều máy theo danh sách model names, giữ đúng thứ tự đầu vào
   Future<List<PackingMachine>> getMachinesByModels(List<String> models) async {
     if (models.isEmpty) return [];
-    final db = await _dbHelper.database;
-    final rows = await db.rawQuery(
-      'SELECT * FROM $_table WHERE UPPER(model) IN (${models.map((_) => 'UPPER(?)').join(', ')})',
-      models,
-    );
-    // Giữ đúng thứ tự theo danh sách input
-    final machineMap = {
-      for (final r in rows.map(PackingMachine.fromMap))
-        r.model.toUpperCase(): r,
-    };
+    final machineMap = {for (final m in _machines) m.model.toUpperCase(): m};
     return models
         .map((m) => machineMap[m.toUpperCase()])
         .whereType<PackingMachine>()
@@ -125,69 +85,29 @@ class PackingMachineRepository {
 
   // ─── Distinct Values (cho Filters & Catalog) ───────────────────────────────
 
-  /// Lấy danh sách các nhóm sản phẩm duy nhất
-  Future<List<String>> getDistinctProductGroups() async {
-    final db = await _dbHelper.database;
-    final rows = await db.rawQuery(
-      'SELECT DISTINCT product_group FROM $_table '
-      'WHERE product_group IS NOT NULL '
-      'ORDER BY stt ASC',
-    );
-    return rows
-        .map((r) => r['product_group'] as String)
-        .where((s) => s.isNotEmpty)
-        .toSet()
-        .toList();
-  }
+  /// Lấy danh sách các nhóm sản phẩm duy nhất, theo thứ tự stt
+  Future<List<String>> getDistinctProductGroups() async =>
+      _distinctInOrder(_machines.map((m) => m.productGroup));
 
-  /// Lấy danh sách dòng máy duy nhất trong một nhóm
-  Future<List<String>> getDistinctMachineLines(String productGroup) async {
-    final db = await _dbHelper.database;
-    final rows = await db.rawQuery(
-      'SELECT DISTINCT machine_line FROM $_table '
-      'WHERE product_group = ? AND machine_line IS NOT NULL '
-      'ORDER BY stt ASC',
-      [productGroup],
-    );
-    return rows
-        .map((r) => r['machine_line'] as String)
-        .where((s) => s.isNotEmpty)
-        .toSet()
-        .toList();
-  }
+  /// Lấy danh sách dòng máy duy nhất trong một nhóm, theo thứ tự stt
+  Future<List<String>> getDistinctMachineLines(String productGroup) async =>
+      _distinctInOrder(
+        _machines
+            .where((m) => m.productGroup == productGroup)
+            .map((m) => m.machineLine),
+      );
 
-  /// Lấy danh sách vật liệu túi duy nhất (PE, PP)
-  Future<List<String>> getDistinctBagMaterials() async {
-    final db = await _dbHelper.database;
-    final rows = await db.rawQuery(
-      'SELECT DISTINCT bag_material FROM $_table '
-      "WHERE bag_material IS NOT NULL AND bag_material != '' "
-      'ORDER BY bag_material ASC',
-    );
-    return rows.map((r) => r['bag_material'] as String).toList();
-  }
+  /// Lấy danh sách vật liệu túi duy nhất (PE, PP), theo bảng chữ cái
+  Future<List<String>> getDistinctBagMaterials() async =>
+      _distinctSorted(_machines.map((m) => m.bagMaterial));
 
-  /// Lấy danh sách kiểu túi (bag_edges) duy nhất
-  Future<List<String>> getDistinctBagEdges() async {
-    final db = await _dbHelper.database;
-    final rows = await db.rawQuery(
-      'SELECT DISTINCT bag_edges FROM $_table '
-      "WHERE bag_edges IS NOT NULL AND bag_edges != '' "
-      'ORDER BY bag_edges ASC',
-    );
-    return rows.map((r) => r['bag_edges'] as String).toList();
-  }
+  /// Lấy danh sách kiểu túi (bag_edges) duy nhất, theo bảng chữ cái
+  Future<List<String>> getDistinctBagEdges() async =>
+      _distinctSorted(_machines.map((m) => m.bagEdges));
 
-  /// Lấy danh sách mức độ tự động hóa duy nhất
-  Future<List<String>> getDistinctAutomationLevels() async {
-    final db = await _dbHelper.database;
-    final rows = await db.rawQuery(
-      'SELECT DISTINCT automation_level FROM $_table '
-      'WHERE automation_level IS NOT NULL '
-      'ORDER BY automation_level ASC',
-    );
-    return rows.map((r) => r['automation_level'] as String).toList();
-  }
+  /// Lấy danh sách mức độ tự động hóa duy nhất, theo bảng chữ cái
+  Future<List<String>> getDistinctAutomationLevels() async =>
+      _distinctSorted(_machines.map((m) => m.automationLevel));
 
   // ─── Advanced Filter (cho Machine Selector) ────────────────────────────────
 
@@ -197,36 +117,29 @@ class PackingMachineRepository {
     String? bagMaterial,
     double? weightKg,
   }) async {
-    final db = await _dbHelper.database;
-
-    final conditions = <String>[];
-    final args = <dynamic>[];
-
-    // Filter by bag material nếu có
-    if (bagMaterial != null && bagMaterial.isNotEmpty) {
-      conditions.add(
-        "(bag_material = ? OR bag_material IS NULL OR bag_material = '')",
-      );
-      args.add(bagMaterial);
-    }
-
-    // Filter by weight range nếu có
-    if (weightKg != null) {
-      conditions.add(
-        '((weight_min_kg IS NULL OR weight_min_kg <= ?) '
-        'AND (weight_max_kg IS NULL OR weight_max_kg >= ?))',
-      );
-      args.addAll([weightKg, weightKg]);
-    }
-
-    final where = conditions.isEmpty ? null : conditions.join(' AND ');
-
-    final rows = await db.query(
-      _table,
-      where: where,
-      whereArgs: args.isEmpty ? null : args,
-      orderBy: 'stt ASC',
-    );
-    return rows.map(PackingMachine.fromMap).toList();
+    return _machines.where((m) {
+      // Máy không ghi vật liệu túi được coi là dùng được cho mọi loại túi.
+      if (bagMaterial != null && bagMaterial.isNotEmpty) {
+        final material = m.bagMaterial;
+        if (material != null &&
+            material.isNotEmpty &&
+            material != bagMaterial) {
+          return false;
+        }
+      }
+      if (weightKg != null) {
+        if (m.weightMinKg != null && m.weightMinKg! > weightKg) return false;
+        if (m.weightMaxKg != null && m.weightMaxKg! < weightKg) return false;
+      }
+      return true;
+    }).toList();
   }
+
+  // ─── Helper ────────────────────────────────────────────────────────────────
+
+  static List<String> _distinctInOrder(Iterable<String?> values) =>
+      values.whereType<String>().where((s) => s.isNotEmpty).toSet().toList();
+
+  static List<String> _distinctSorted(Iterable<String?> values) =>
+      _distinctInOrder(values)..sort();
 }

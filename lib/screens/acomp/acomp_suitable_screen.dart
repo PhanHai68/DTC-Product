@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/acomp_suitable_provider.dart';
 import '../../models/material_model.dart';
-import '../../data/material_data.dart';
+import '../../data/product_data.dart';
 
 class AcompSuitableScreen extends StatelessWidget {
   const AcompSuitableScreen({super.key});

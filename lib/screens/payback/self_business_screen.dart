@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../providers/electricity_bill_provider.dart';
 import '../../providers/self_business_provider.dart';
 import '../../core/input/localized_number.dart';
-import '../../data/power_consumption_data.dart';
+import '../../data/product_data.dart';
 
 class SelfBusinessScreen extends StatefulWidget {
   const SelfBusinessScreen({super.key});

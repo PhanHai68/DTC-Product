@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/electricity_bill_provider.dart';
-import '../../data/power_consumption_data.dart';
+import '../../data/product_data.dart';
 import '../../core/input/localized_number.dart';
 
 import 'package:intl/intl.dart';

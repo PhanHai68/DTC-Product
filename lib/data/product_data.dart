@@ -6,9 +6,12 @@
 import 'dart:convert';
 
 import '../models/acomp_spec_model.dart';
+import '../models/material_model.dart';
+import '../models/packing_machine.dart';
 
 const _colorSorterDir = 'assets/database/color_sorter';
 const _airCompressorDir = 'assets/database/air_compressor';
+const _packingScaleDir = 'assets/database/packing_scale';
 
 abstract final class ProductData {
   static const colorSorterRicePath = '$_colorSorterDir/sc_rice.json';
@@ -18,13 +21,18 @@ abstract final class ProductData {
   static const colorSorterAgroPath = '$_colorSorterDir/h7_agro.json';
   static const auxEquipmentPath = '$_colorSorterDir/aux_equipment.json';
   static const teaAuxEquipmentPath = '$_colorSorterDir/tea_aux_equipment.json';
+  static const powerConsumptionPath = '$_colorSorterDir/power_consumption.json';
 
   static const acompSpecsPath = '$_airCompressorDir/specs.json';
+  static const acompMaterialsPath = '$_airCompressorDir/materials.json';
   static const acompMccbCablePath = '$_airCompressorDir/mccb_cable.json';
   static const acompPipeStandardPath = '$_airCompressorDir/pipe_standard.json';
   static const acompCommonErrorsPath = '$_airCompressorDir/common_errors.json';
   static const acompDs8011Path = '$_airCompressorDir/ds8011.json';
   static const acompManualPath = '$_airCompressorDir/operation_manual.json';
+
+  static const packingMachinesPath = '$_packingScaleDir/machines.json';
+  static const packingFeaturesPath = '$_packingScaleDir/features.json';
 
   static const assetPaths = [
     colorSorterRicePath,
@@ -34,12 +42,16 @@ abstract final class ProductData {
     colorSorterAgroPath,
     auxEquipmentPath,
     teaAuxEquipmentPath,
+    powerConsumptionPath,
     acompSpecsPath,
+    acompMaterialsPath,
     acompMccbCablePath,
     acompPipeStandardPath,
     acompCommonErrorsPath,
     acompDs8011Path,
     acompManualPath,
+    packingMachinesPath,
+    packingFeaturesPath,
   ];
 
   /// Nạp toàn bộ file JSON qua [readAsset] (trong app: rootBundle.loadString).
@@ -80,7 +92,15 @@ abstract final class ProductData {
         entry.key as String: _toStringMapList(entry.value as List),
     };
     final teaAux = _toDynamicMapList(decode(teaAuxEquipmentPath) as List);
+    final powerByModel = {
+      for (final entry in (decode(powerConsumptionPath) as Map).entries)
+        entry.key as String: _toStringMapList(entry.value as List),
+    };
 
+    final materials = [
+      for (final item in decode(acompMaterialsPath) as List)
+        MaterialModel.fromJson(item as Map<String, dynamic>),
+    ];
     final acompSpecs = [
       for (final item in decode(acompSpecsPath) as List)
         AcompSpecModel.fromJson(item as Map<String, dynamic>),
@@ -94,6 +114,15 @@ abstract final class ProductData {
     final ds8011 = _toDynamicMapList(decode(acompDs8011Path) as List);
     final manual = _toDynamicMapList(decode(acompManualPath) as List);
 
+    final packing = [
+      for (final item in decode(packingMachinesPath) as List)
+        PackingMachine.fromMap(item as Map<String, dynamic>),
+    ]..sort((a, b) => (a.stt ?? 0).compareTo(b.stt ?? 0));
+    final packingFeatures = {
+      for (final entry in (decode(packingFeaturesPath) as Map).entries)
+        entry.key as String: _toStringMapList(entry.value as List),
+    };
+
     _colorSorterSpecs = rice;
     _paddyColorSorterSpecs = paddy;
     _teaColorSorterSpecs = tea;
@@ -101,6 +130,8 @@ abstract final class ProductData {
     _agroColorSorterSpecs = agro;
     _auxEquipSpecsByModel = auxByModel;
     _teaAuxEquipData = teaAux;
+    _powerConsumptionData = powerByModel;
+    _materialDataList = materials;
     _acompSpecData = acompSpecs;
     _acompModelsFlowData = [
       for (final spec in acompSpecs)
@@ -117,6 +148,8 @@ abstract final class ProductData {
     _commonErrorsOilLoss = errorsOilLoss;
     _ds8011Parameters = ds8011;
     _manualSummary = manual;
+    _packingMachines = List.unmodifiable(packing);
+    _packingFeatureSets = packingFeatures;
   }
 
   static List<Map<String, String>> _toStringMapList(List items) => [
@@ -159,6 +192,8 @@ List<Map<String, String>>? _mineralColorSorterSpecs;
 List<Map<String, String>>? _agroColorSorterSpecs;
 Map<String, List<Map<String, String>>>? _auxEquipSpecsByModel;
 List<Map<String, dynamic>>? _teaAuxEquipData;
+Map<String, List<Map<String, String>>>? _powerConsumptionData;
+List<MaterialModel>? _materialDataList;
 List<AcompSpecModel>? _acompSpecData;
 List<Map<String, dynamic>>? _acompModelsFlowData;
 List<Map<String, String>>? _acompMccbData;
@@ -168,6 +203,8 @@ List<Map<String, String>>? _commonErrorsController;
 List<Map<String, String>>? _commonErrorsOilLoss;
 List<Map<String, dynamic>>? _ds8011Parameters;
 List<Map<String, dynamic>>? _manualSummary;
+List<PackingMachine>? _packingMachines;
+Map<String, List<Map<String, String>>>? _packingFeatureSets;
 
 T _loaded<T>(T? value) {
   if (value == null) {
@@ -206,6 +243,11 @@ Map<String, List<Map<String, String>>> get auxEquipSpecsByModel =>
 /// Thiết bị phụ trợ dây chuyền trà — `color_sorter/tea_aux_equipment.json`.
 List<Map<String, dynamic>> get teaAuxEquipData => _loaded(_teaAuxEquipData);
 
+/// Điện năng tiêu thụ cả dây chuyền theo model SC —
+/// `color_sorter/power_consumption.json`.
+Map<String, List<Map<String, String>>> get powerConsumptionData =>
+    _loaded(_powerConsumptionData);
+
 // ── Máy nén khí ACOMP ───────────────────────────────────────────────────────
 
 /// Thông số máy nén khí — `air_compressor/specs.json`.
@@ -239,3 +281,17 @@ List<Map<String, dynamic>> get ds8011Parameters => _loaded(_ds8011Parameters);
 
 /// Tóm tắt hướng dẫn vận hành — `air_compressor/operation_manual.json`.
 List<Map<String, dynamic>> get manualSummary => _loaded(_manualSummary);
+
+/// Nguyên liệu và hệ số khí cho màn chọn máy nén khí theo máy tách màu —
+/// `air_compressor/materials.json`.
+List<MaterialModel> get materialDataList => _loaded(_materialDataList);
+
+// ── Cân đóng gói ────────────────────────────────────────────────────────────
+
+/// Máy cân đóng gói, sắp theo `stt` — `packing_scale/machines.json`.
+List<PackingMachine> get packingMachines => _loaded(_packingMachines);
+
+/// Các bộ đặc điểm nổi bật theo tên bộ — `packing_scale/features.json`.
+/// Mỗi máy chọn bộ của mình qua trường `feature_set`.
+Map<String, List<Map<String, String>>> get packingFeatureSets =>
+    _loaded(_packingFeatureSets);

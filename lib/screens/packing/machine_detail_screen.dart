@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../../data/packing_feature_data.dart';
+import '../../models/packing_feature.dart';
 import '../../features/drive_docs/services/drive_docs_service.dart';
 import '../../features/drive_docs/widgets/drive_file_loader.dart';
 import '../../models/packing_machine.dart';
@@ -687,7 +687,7 @@ class PackingCatalogViewerScreen extends StatelessWidget {
           ),
         ],
       ),
-      // Catalog lưu trên Google Drive; packing.db vẫn ghi đường dẫn asset cũ
+      // Catalog lưu trên Google Drive; machines.json vẫn ghi đường dẫn asset cũ
       // nên chỉ lấy tên file để tìm trong thư viện tài liệu.
       body: DriveFileLoader(
         load: () =>

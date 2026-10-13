@@ -10,4 +10,14 @@ class MaterialModel {
     required this.cm,
     required this.optimalPressure,
   });
+
+  /// Đọc một vật liệu từ assets/database/air_compressor/materials.json.
+  factory MaterialModel.fromJson(Map<String, dynamic> json) {
+    return MaterialModel(
+      id: (json['id'] as num).toInt(),
+      name: json['name'] as String,
+      cm: (json['cm'] as num).toDouble(),
+      optimalPressure: (json['optimalPressure'] as num).toDouble(),
+    );
+  }
 }

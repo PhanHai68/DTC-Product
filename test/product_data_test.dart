@@ -1,4 +1,5 @@
 import 'package:dtc_product/data/product_data.dart';
+import 'package:dtc_product/models/packing_feature.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Kiểm tra dữ liệu trong assets/database/color_sorter/ sau mỗi lần sửa JSON:
@@ -164,6 +165,67 @@ void main() {
         );
         expect(section['items'], isA<List<String>>());
       }
+    });
+  });
+
+  group('Cân đóng gói', () {
+    test('machines.json: model và stt không trùng', () {
+      final models = [for (final m in packingMachines) m.model];
+      final stts = [for (final m in packingMachines) m.stt];
+      expect(models, everyElement(isNotEmpty));
+      expect(models.toSet().length, models.length, reason: 'model bị trùng');
+      expect(stts, everyElement(isNotNull), reason: 'máy thiếu stt');
+      expect(stts.toSet().length, stts.length, reason: 'stt bị trùng');
+    });
+
+    test('machines.json: feature_set nào cũng có trong features.json', () {
+      for (final machine in packingMachines) {
+        expect(
+          packingFeatureSets.keys,
+          contains(machine.featureSet),
+          reason:
+              '${machine.model}: feature_set "${machine.featureSet}" '
+              'không có trong features.json',
+        );
+      }
+    });
+
+    test('features.json: đủ nội dung và icon có trong app', () {
+      packingFeatureSets.forEach((name, features) {
+        expect(features, isNotEmpty, reason: 'bộ $name rỗng');
+        for (final feature in features) {
+          expect(feature['title']?.trim(), isNotEmpty, reason: 'bộ $name');
+          expect(
+            packingFeatureIcons.keys,
+            contains(feature['icon']),
+            reason:
+                '$name / ${feature['title']}: icon "${feature['icon']}" '
+                'chưa có trong packingFeatureIcons',
+          );
+        }
+      });
+    });
+  });
+
+  group('Dữ liệu dùng chung', () {
+    test('air_compressor/materials.json: id không trùng, hệ số dương', () {
+      final ids = [for (final m in materialDataList) m.id];
+      expect(ids.toSet().length, ids.length, reason: 'id bị trùng');
+      for (final m in materialDataList) {
+        expect(m.name.trim(), isNotEmpty);
+        expect(m.cm, greaterThan(0), reason: m.name);
+        expect(m.optimalPressure, greaterThan(0), reason: m.name);
+      }
+    });
+
+    test('color_sorter/power_consumption.json: model nào cũng có số liệu', () {
+      expect(powerConsumptionData, isNotEmpty);
+      powerConsumptionData.forEach((model, rows) {
+        expect(rows, isNotEmpty, reason: model);
+        for (final row in rows) {
+          expect(row['Tiêu chí']?.trim(), isNotEmpty, reason: model);
+        }
+      });
     });
   });
 

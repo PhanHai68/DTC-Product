@@ -1,5 +1,5 @@
 // Model Dart đại diện cho một máy cân đóng gói.
-// Ánh xạ trực tiếp từ bảng packing_machines trong SQLite database.
+// Đọc từ assets/database/packing_scale/machines.json (tên trường snake_case).
 
 class PackingMachine {
   final int id;
@@ -39,6 +39,7 @@ class PackingMachine {
   final String? diagramImagePath; // Đường dẫn sơ đồ
   final String? catalogAssetPath; // Đường dẫn asset PDF catalog
   final int? catalogPage; // Trang cụ thể trong catalog
+  final String? featureSet; // Bộ đặc điểm nổi bật trong features.json
 
   const PackingMachine({
     required this.id,
@@ -78,9 +79,10 @@ class PackingMachine {
     this.diagramImagePath,
     this.catalogAssetPath,
     this.catalogPage,
+    this.featureSet,
   });
 
-  /// Tạo PackingMachine từ Map (kết quả từ SQLite query)
+  /// Tạo PackingMachine từ một mục trong machines.json
   factory PackingMachine.fromMap(Map<String, dynamic> map) {
     return PackingMachine(
       id: (map['id'] as num?)?.toInt() ?? 0,
@@ -120,6 +122,7 @@ class PackingMachine {
       diagramImagePath: map['diagram_image_path'] as String?,
       catalogAssetPath: map['catalog_asset_path'] as String?,
       catalogPage: (map['catalog_page'] as num?)?.toInt(),
+      featureSet: map['feature_set'] as String?,
     );
   }
 

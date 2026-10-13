@@ -106,6 +106,7 @@ flutter:
     - assets/database/
     - assets/database/color_sorter/
     - assets/database/air_compressor/
+    - assets/database/packing_scale/
     - assets/fonts/
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../providers/electricity_bill_provider.dart';
 import '../../providers/processing_profit_provider.dart';
 import '../../core/input/localized_number.dart';
-import '../../data/power_consumption_data.dart';
+import '../../data/product_data.dart';
 
 class ProcessingProfitScreen extends StatefulWidget {
   const ProcessingProfitScreen({super.key});

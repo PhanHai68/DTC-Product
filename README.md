@@ -47,7 +47,7 @@ docs_database/   kho tài liệu gốc Excel/PDF/ảnh — chỉ lưu local, kh�
 
 ## Dữ liệu cục bộ
 
-- Database danh mục cân đóng gói: `assets/database/packing.db`, chỉ đọc khi chạy ứng dụng.
+- Thông số sản phẩm (máy tách màu, máy nén khí, cân đóng gói, máy nghiền...): file JSON trong `assets/database/`, nạp một lần khi mở app. Cách sửa: xem `assets/database/README.md`.
 - Database bảo trì: `user_data.db`, được tạo trong vùng dữ liệu riêng của ứng dụng.
 - Ảnh và PDF lưu mẫu trên native: thư mục tài liệu ứng dụng `DTCProduct/LuuMau`.
 - Trên Web, ảnh bản nháp được giữ ở phía trình duyệt và PDF được tải trực tiếp xuống máy.

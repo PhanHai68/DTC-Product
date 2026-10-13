@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/power_consumption_data.dart';
+import '../data/product_data.dart';
 
 class PowerConsumptionProvider extends ChangeNotifier {
   List<Map<String, String>>? _specs;

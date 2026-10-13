@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'package:dtc_product/core/database/packing_database.dart';
-import 'package:dtc_product/data/packing_feature_data.dart';
+import 'package:dtc_product/models/packing_feature.dart';
 import 'package:dtc_product/repositories/packing_machine_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -10,9 +9,35 @@ void main() {
 
   final repository = PackingMachineRepository();
 
-  tearDownAll(PackingDatabase.instance.close);
+  test(
+    'tìm được từ khoá tiếng Việt có dấu, không phân biệt hoa thường',
+    () async {
+      // Bản SQLite cũ không viết hoa được chữ có dấu nên "túi" ra 0 kết quả.
+      final lower = await repository.searchMachines('túi');
+      final upper = await repository.searchMachines('TÚI');
+      expect(lower, isNotEmpty);
+      expect(upper.map((m) => m.model), lower.map((m) => m.model));
+      expect(await repository.searchMachines('bao dệt pp'), isNotEmpty);
+    },
+  );
 
-  test('database đóng gói từ asset có thể đọc và tra cứu', () async {
+  test('tìm kiếm xếp máy khớp model lên trước', () async {
+    final results = await repository.searchMachines('LCS');
+    final firstNonModel = results.indexWhere(
+      (m) => !m.model.toUpperCase().contains('LCS'),
+    );
+    if (firstNonModel != -1) {
+      expect(
+        results
+            .skip(firstNonModel)
+            .every((m) => !m.model.toUpperCase().contains('LCS')),
+        isTrue,
+      );
+    }
+    expect(results.first.model, startsWith('LCS'));
+  });
+
+  test('dữ liệu cân đóng gói từ JSON có thể đọc và tra cứu', () async {
     final machines = await repository.getAllMachines();
     final groups = await repository.getDistinctProductGroups();
     final bagMaterials = await repository.getDistinctBagMaterials();
@@ -26,7 +51,7 @@ void main() {
     expect(results.any((machine) => machine.model.contains('LZB-600')), isTrue);
   });
 
-  test('database chỉ có đúng 3 kiểu túi từ nguồn dữ liệu', () async {
+  test('dữ liệu chỉ có đúng 3 kiểu túi', () async {
     final bagEdges = await repository.getDistinctBagEdges();
 
     expect(bagEdges, hasLength(3));

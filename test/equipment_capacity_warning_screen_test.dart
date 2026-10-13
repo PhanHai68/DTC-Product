@@ -1,4 +1,4 @@
-import 'package:dtc_product/data/material_data.dart';
+import 'package:dtc_product/data/product_data.dart';
 import 'package:dtc_product/providers/acomp_suitable_provider.dart';
 import 'package:dtc_product/providers/acomp_tank_provider.dart';
 import 'package:dtc_product/screens/acomp/acomp_suitable_screen.dart';

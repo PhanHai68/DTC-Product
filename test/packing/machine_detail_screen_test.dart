@@ -16,6 +16,7 @@ class _FakePackingMachineRepository extends PackingMachineRepository {
         machineLine: 'Máy trộn gạo',
         imageMainPath: 'assets/images/packing/lcj_icon.png',
         image2Path: 'assets/images/packing/lcj_background.png',
+        featureSet: 'rice_mixer',
       );
 }
 
