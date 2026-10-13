@@ -102,32 +102,6 @@ void main() {
     expect(items[4].opensInDrive, isTrue);
   });
 
-  test('tìm thư mục theo đường dẫn tên, bỏ qua hoa thường và dấu', () async {
-    final drive = _FakeDrive(
-      folders: {
-        _root: [_folder('p', 'MAY TACH MAU'), _folder('q', 'Cân đóng gói')],
-        'p': [_folder('m', 'Video/Hình ảnh'), _folder('c', 'Catalogue')],
-        'q': [],
-      },
-    );
-    final service = _service(drive);
-
-    expect(
-      await service.findFolderByPath([
-        ['Máy tách màu'],
-        ['Video - hình ảnh'],
-      ]),
-      'm',
-    );
-    expect(
-      await service.findFolderByPath([
-        ['Cân đóng gói'],
-        ['Catalogue'],
-      ]),
-      isNull,
-    );
-  });
-
   test('mất mạng: dùng danh sách thư mục đã lưu lần trước', () async {
     final drive = _FakeDrive(
       folders: {

@@ -3,68 +3,62 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../drive_docs_config.dart';
 import '../models/drive_item.dart';
 import '../services/drive_docs_service.dart';
 import '../widgets/drive_file_loader.dart';
 
-/// Danh sách thư mục con và file trong một thư mục Google Drive.
-///
-/// Xác định thư mục bằng [folderId], hoặc bằng [folderPath] (tên từng cấp
-/// tính từ thư mục gốc, ví dụ sản phẩm → loại tài liệu). Cả hai null = thư
-/// mục gốc.
+/// Xếp các mục có tên trong [order] lên trước, đúng thứ tự đó (không phân
+/// biệt hoa thường); các mục còn lại giữ thứ tự sẵn có ở phía sau.
+@visibleForTesting
+List<DriveItem> orderByNames(List<DriveItem> items, List<String> order) {
+  final rank = {
+    for (var i = 0; i < order.length; i++) order[i].trim().toLowerCase(): i,
+  };
+  int rankOf(DriveItem item) =>
+      rank[item.name.trim().toLowerCase()] ?? order.length;
+  final indexed = items.indexed.toList()
+    ..sort((a, b) {
+      final byRank = rankOf(a.$2).compareTo(rankOf(b.$2));
+      return byRank != 0 ? byRank : a.$1.compareTo(b.$1);
+    });
+  return [for (final (_, item) in indexed) item];
+}
+
+/// Thư viện tài liệu: thư mục con và file trong một thư mục Google Drive.
+/// [folderId] null = thư mục gốc, xếp theo [driveDocsRootOrder].
 class DriveDocsScreen extends StatefulWidget {
-  const DriveDocsScreen({
-    super.key,
-    this.folderId,
-    this.folderPath,
-    this.title,
-    this.subtitle,
-    this.missingFolderHint,
-  });
+  const DriveDocsScreen({super.key, this.folderId, this.title});
 
   final String? folderId;
-  final List<List<String>>? folderPath;
   final String? title;
-  final String? subtitle;
-
-  /// Đường dẫn thư mục cần tạo trên Drive, hiện khi [folderPath] chưa có.
-  final String? missingFolderHint;
 
   @override
   State<DriveDocsScreen> createState() => _DriveDocsScreenState();
 }
 
-class _FolderListing {
-  const _FolderListing(this.items, {this.folderMissing = false});
-  final List<DriveItem> items;
-  final bool folderMissing;
-}
-
 class _DriveDocsScreenState extends State<DriveDocsScreen> {
   final _service = DriveDocsService.instance;
   final _searchController = TextEditingController();
-  late Future<_FolderListing> _future = _load();
+  late Future<List<DriveItem>> _future = _load();
   String _query = '';
 
-  Future<_FolderListing> _load({bool refresh = false}) async {
-    final path = widget.folderPath;
-    if (path == null) {
-      final folderId = widget.folderId ?? _service.rootFolderId;
-      return _FolderListing(
-        await _service.listFolder(folderId, refresh: refresh),
-      );
+  Future<List<DriveItem>> _load({bool refresh = false}) async {
+    final folderId = widget.folderId;
+    if (folderId != null) {
+      return _service.listFolder(folderId, refresh: refresh);
     }
-    final folderId = await _service.findFolderByPath(path, refresh: refresh);
-    if (folderId == null) return const _FolderListing([], folderMissing: true);
-    return _FolderListing(
-      await _service.listFolder(folderId, refresh: refresh),
+    final items = await _service.listFolder(
+      _service.rootFolderId,
+      refresh: refresh,
     );
+    return orderByNames(items, driveDocsRootOrder);
   }
 
   Future<void> _refresh() async {
     final future = _load(refresh: true);
     setState(() => _future = future);
-    await future.catchError((_) => const _FolderListing([]));
+    await future.catchError((_) => <DriveItem>[]);
   }
 
   @override
@@ -105,19 +99,7 @@ class _DriveDocsScreenState extends State<DriveDocsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.title ?? 'Tất cả tài liệu'),
-            if (widget.subtitle != null)
-              Text(
-                widget.subtitle!,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-          ],
-        ),
-      ),
+      appBar: AppBar(title: Text(widget.title ?? 'Thư viện tài liệu')),
       body: !_service.isConfigured
           ? const Center(
               child: Padding(
@@ -128,7 +110,7 @@ class _DriveDocsScreenState extends State<DriveDocsScreen> {
                 ),
               ),
             )
-          : FutureBuilder<_FolderListing>(
+          : FutureBuilder<List<DriveItem>>(
               future: _future,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -149,8 +131,7 @@ class _DriveDocsScreenState extends State<DriveDocsScreen> {
     );
   }
 
-  Widget _buildList(_FolderListing listing) {
-    final items = listing.items;
+  Widget _buildList(List<DriveItem> items) {
     final query = _query.trim().toLowerCase();
     final visible = query.isEmpty
         ? items
@@ -186,7 +167,7 @@ class _DriveDocsScreenState extends State<DriveDocsScreen> {
             ),
             const SizedBox(height: 12),
           ],
-          if (visible.isEmpty) _buildEmpty(listing),
+          if (visible.isEmpty) _buildEmpty(items),
           for (final item in visible)
             Card(
               margin: const EdgeInsets.only(bottom: 8),
@@ -207,17 +188,10 @@ class _DriveDocsScreenState extends State<DriveDocsScreen> {
     );
   }
 
-  Widget _buildEmpty(_FolderListing listing) {
-    final String message;
-    if (listing.items.isNotEmpty) {
-      message = 'Không có tài liệu khớp "$_query".';
-    } else if (listing.folderMissing && widget.missingFolderHint != null) {
-      message =
-          'Chưa có tài liệu.\n\nQuản trị viên tạo thư mục trên Google Drive '
-          'rồi tải file vào:\n${widget.missingFolderHint}';
-    } else {
-      message = 'Chưa có tài liệu.';
-    }
+  Widget _buildEmpty(List<DriveItem> items) {
+    final message = items.isEmpty
+        ? 'Chưa có tài liệu.'
+        : 'Không có tài liệu khớp "$_query".';
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 64, 16, 0),
       child: Column(

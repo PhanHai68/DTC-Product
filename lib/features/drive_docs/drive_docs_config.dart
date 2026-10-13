@@ -13,3 +13,13 @@
 // công khai trong thư mục này — tương đương PDF đóng gói trong APK trước đây.
 const String driveDocsApiKey = 'AIzaSyAad0YX8DYbJFv4eLmS-gHFgXV8bVsh-68';
 const String driveDocsRootFolderId = '1WbpcwZPkGk5wEGpdSNsKw_l9eWfkL6yt';
+
+/// Thứ tự thư mục ở cấp gốc, giống màn hình chính. Thư mục khác xếp sau
+/// theo bảng chữ cái.
+const List<String> driveDocsRootOrder = [
+  'Máy tách màu',
+  'Cân đóng gói',
+  'Máy nén khí',
+  'Máy nghiền',
+  'Xay xát lúa gạo',
+];

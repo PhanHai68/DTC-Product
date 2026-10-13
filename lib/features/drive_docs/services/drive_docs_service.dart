@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../document_library_catalog.dart';
 import '../drive_docs_config.dart';
 import '../models/drive_item.dart';
 import 'drive_doc_cache.dart';
@@ -115,28 +114,6 @@ class DriveDocsService {
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
     return items;
-  }
-
-  /// Đi lần lượt từ thư mục gốc theo [path]; mỗi cấp là danh sách tên chấp
-  /// nhận được, so khớp bằng [normalizeDriveName]. Trả null nếu thư mục chưa
-  /// được tạo trên Drive.
-  Future<String?> findFolderByPath(
-    List<List<String>> path, {
-    bool refresh = false,
-  }) async {
-    _ensureConfigured();
-    var folderId = rootFolderId;
-    for (final names in path) {
-      final wanted = names.map(normalizeDriveName).toSet();
-      final items = await listFolder(folderId, refresh: refresh);
-      final match = items.where(
-        (item) =>
-            item.isFolder && wanted.contains(normalizeDriveName(item.name)),
-      );
-      if (match.isEmpty) return null;
-      folderId = match.first.id;
-    }
-    return folderId;
   }
 
   /// Tìm file PDF theo đúng tên (không phân biệt hoa thường) trong toàn bộ
