@@ -19,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _submitting = false;
+  bool _resettingPassword = false;
   String? _error;
 
   @override
@@ -29,7 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _submit() async {
-    if (_submitting || !_formKey.currentState!.validate()) return;
+    if (_submitting ||
+        _resettingPassword ||
+        !_formKey.currentState!.validate()) {
+      return;
+    }
     FocusScope.of(context).unfocus();
     setState(() {
       _submitting = true;
@@ -46,15 +51,20 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _resetPassword() async {
+    if (_submitting || _resettingPassword) return;
     final email = _emailController.text.trim();
     if (!_looksLikeEmail(email)) {
       setState(() => _error = 'Nhập email trước rồi bấm "Quên mật khẩu?".');
       return;
     }
-    final messenger = ScaffoldMessenger.of(context);
+    setState(() {
+      _resettingPassword = true;
+      _error = null;
+    });
     try {
       await _auth.sendPasswordReset(email);
-      messenger.showSnackBar(
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             'Nếu $email có tài khoản, email hướng dẫn đặt lại mật khẩu '
@@ -64,6 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } on AuthException catch (error) {
       if (mounted) setState(() => _error = error.message);
+    } finally {
+      if (mounted) setState(() => _resettingPassword = false);
     }
   }
 
@@ -155,7 +167,10 @@ class _LoginScreenState extends State<LoginScreen> {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               autocorrect: false,
-              autofillHints: const [AutofillHints.email, AutofillHints.username],
+              autofillHints: const [
+                AutofillHints.email,
+                AutofillHints.username,
+              ],
               decoration: const InputDecoration(
                 labelText: 'Email',
                 prefixIcon: Icon(Icons.mail_outline_rounded),
@@ -201,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 20),
             FilledButton(
               key: const Key('login_submit'),
-              onPressed: _submitting ? null : _submit,
+              onPressed: _submitting || _resettingPassword ? null : _submit,
               child: _submitting
                   ? const SizedBox.square(
                       dimension: 22,
@@ -211,7 +226,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 4),
             TextButton(
-              onPressed: _submitting ? null : _resetPassword,
+              onPressed: _submitting || _resettingPassword
+                  ? null
+                  : _resetPassword,
               child: const Text('Quên mật khẩu?'),
             ),
           ],

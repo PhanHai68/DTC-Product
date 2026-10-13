@@ -10,5 +10,5 @@ const String firebaseWebApiKey = 'AIzaSyCch5bZCSY09EQ2IVq9Ybj6vC1ic1cL-9w';
 /// Thời gian tối đa được dùng app mà không xác minh lại tài khoản qua mạng.
 const Duration authOfflineGrace = Duration(days: 7);
 
-/// Khoảng cách tối thiểu giữa 2 lần xác minh lại khi app mở/quay lại.
+/// Khoảng cách tối thiểu giữa 2 lần xác minh khi app mở/quay lại hoặc mở liên tục.
 const Duration authRecheckInterval = Duration(hours: 1);

@@ -15,6 +15,15 @@ http.Response _error(String code) => _json(400, {
   'error': {'code': 400, 'message': code},
 });
 
+AuthService _createAuth({
+  required http.Client client,
+  DateTime Function()? now,
+}) {
+  final auth = AuthService.test(client: client, now: now);
+  addTearDown(auth.dispose);
+  return auth;
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -37,7 +46,7 @@ void main() {
 
   test('đăng nhập đúng lưu phiên', () async {
     final prefs = await SharedPreferences.getInstance();
-    final auth = AuthService.test(
+    final auth = _createAuth(
       now: clock,
       client: MockClient((request) async {
         expect(request.url.path, contains('signInWithPassword'));
@@ -58,7 +67,7 @@ void main() {
   });
 
   test('sai mật khẩu báo lỗi tiếng Việt', () async {
-    final auth = AuthService.test(
+    final auth = _createAuth(
       now: clock,
       client: MockClient((_) async => _error('INVALID_LOGIN_CREDENTIALS')),
     );
@@ -79,7 +88,7 @@ void main() {
 
   test('tài khoản bị khoá thì bị đăng xuất khi xác minh', () async {
     final prefs = await prefsWithSession(now.subtract(const Duration(days: 1)));
-    final auth = AuthService.test(
+    final auth = _createAuth(
       now: clock,
       client: MockClient((_) async => _error('USER_DISABLED')),
     );
@@ -95,7 +104,7 @@ void main() {
 
   test('mất mạng trong 7 ngày vẫn dùng được', () async {
     final prefs = await prefsWithSession(now.subtract(const Duration(days: 6)));
-    final auth = AuthService.test(
+    final auth = _createAuth(
       now: clock,
       client: MockClient((_) async => throw http.ClientException('offline')),
     );
@@ -108,7 +117,7 @@ void main() {
 
   test('quá 7 ngày không xác minh được thì phải đăng nhập lại', () async {
     final prefs = await prefsWithSession(now.subtract(const Duration(days: 8)));
-    final auth = AuthService.test(
+    final auth = _createAuth(
       now: clock,
       client: MockClient((_) async => throw http.ClientException('offline')),
     );
@@ -121,8 +130,10 @@ void main() {
   });
 
   test('quá 7 ngày nhưng có mạng thì tự xác minh lại', () async {
-    final prefs = await prefsWithSession(now.subtract(const Duration(days: 30)));
-    final auth = AuthService.test(
+    final prefs = await prefsWithSession(
+      now.subtract(const Duration(days: 30)),
+    );
+    final auth = _createAuth(
       now: clock,
       client: MockClient((request) async {
         expect(request.url.host, 'securetoken.googleapis.com');
@@ -139,7 +150,7 @@ void main() {
 
   test('đăng xuất xoá phiên, giữ email', () async {
     final prefs = await prefsWithSession(now);
-    final auth = AuthService.test(
+    final auth = _createAuth(
       now: clock,
       client: MockClient((_) async => _json(200, {})),
     );
@@ -153,7 +164,7 @@ void main() {
   });
 
   testWidgets('màn hình đăng nhập hiện lỗi khi sai mật khẩu', (tester) async {
-    final auth = AuthService.test(
+    final auth = _createAuth(
       now: clock,
       client: MockClient((_) async => _error('INVALID_PASSWORD')),
     );

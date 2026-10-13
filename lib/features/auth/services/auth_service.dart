@@ -9,16 +9,13 @@ import '../auth_config.dart';
 
 class AuthException implements Exception {
   const AuthException(this.message);
-
   final String message;
-
   @override
   String toString() => message;
 }
 
-/// Phiên đăng nhập của app. Tài khoản do quản trị viên tạo/khoá trên Firebase
-/// Console; app lưu refresh token và xác minh lại mỗi khi có mạng. Không xác
-/// minh được quá [authOfflineGrace] thì buộc đăng nhập lại.
+/// Giữ hạn offline hiện có và xác minh cả khi app mở liên tục.
+/// Chỉ phản hồi thuộc phiên hiện tại được phép cập nhật trạng thái.
 class AuthService extends ChangeNotifier {
   AuthService._({http.Client? client, DateTime Function()? now, String? apiKey})
     : _client = client ?? http.Client(),
@@ -33,57 +30,154 @@ class AuthService extends ChangeNotifier {
   }) => AuthService._(client: client, now: now, apiKey: apiKey);
 
   static final AuthService instance = AuthService._();
-
   static const _kEmail = 'auth_email';
   static const _kRefreshToken = 'auth_refresh_token';
   static const _kLastVerified = 'auth_last_verified_ms';
   static const _timeout = Duration(seconds: 15);
+  static const _sessionCheckInterval = Duration(minutes: 1);
+  static const _invalidSessionCodes = {
+    'USER_DISABLED',
+    'USER_NOT_FOUND',
+    'TOKEN_EXPIRED',
+    'INVALID_REFRESH_TOKEN',
+  };
 
   final http.Client _client;
   final DateTime Function() _now;
   final String _apiKey;
-
   SharedPreferences? _prefs;
   AppLifecycleListener? _lifecycleListener;
+  Timer? _sessionTimer;
+  bool _foreground = true;
+  bool _disposed = false;
   bool _signedIn = false;
   bool _verifying = false;
+  bool _signingIn = false;
+  int _sessionVersion = 0;
   Future<void>? _inFlight;
+  Future<void> _storageQueue = Future.value();
   String? _email;
   String? _refreshToken;
   DateTime? _lastVerified;
+  DateTime? _lastVerifyAttempt;
   String? _notice;
 
   bool get isSignedIn => _signedIn;
   bool get isVerifying => _verifying;
   String? get email => _email;
-
-  /// Thông báo hiển thị trên màn hình đăng nhập (bị khoá, hết hạn offline...).
   String? get notice => _notice;
-
-  /// Còn phiên cũ nhưng chưa xác minh được (quá hạn offline, mất mạng).
   bool get canRetryVerify => !_signedIn && _refreshToken != null;
 
+  bool _isCurrent(int version) => !_disposed && version == _sessionVersion;
+
+  int _invalidateWork() {
+    _sessionVersion++;
+    _inFlight = null;
+    _verifying = false;
+    _signingIn = false;
+    _lastVerifyAttempt = null;
+    _sessionTimer?.cancel();
+    _sessionTimer = null;
+    return _sessionVersion;
+  }
+
   Future<void> restore(SharedPreferences prefs) async {
+    final version = _invalidateWork();
+    _signedIn = false;
+    _refreshToken = null;
+    _lastVerified = null;
+    await _storageQueue;
+    if (!_isCurrent(version)) return;
     _prefs = prefs;
     _email = prefs.getString(_kEmail);
-    _refreshToken = prefs.getString(_kRefreshToken);
+    final savedToken = prefs.getString(_kRefreshToken);
+    _refreshToken = savedToken != null && savedToken.trim().isNotEmpty
+        ? savedToken
+        : null;
     final verifiedMs = prefs.getInt(_kLastVerified);
-    _lastVerified = verifiedMs == null
-        ? null
-        : DateTime.fromMillisecondsSinceEpoch(verifiedMs);
+    if (verifiedMs != null) {
+      try {
+        _lastVerified = DateTime.fromMillisecondsSinceEpoch(verifiedMs);
+      } on ArgumentError {
+        _lastVerified = null;
+      }
+    }
     _signedIn = _refreshToken != null && _withinOfflineGrace;
-    _lifecycleListener ??= AppLifecycleListener(onResume: verify);
+    _notice = null;
+    _foreground = _isForeground(WidgetsBinding.instance.lifecycleState);
+    _lifecycleListener ??= AppLifecycleListener(onStateChange: _onLifecycle);
+    _applyOfflinePolicy();
+    notifyListeners();
+    _startSessionChecks();
     if (_refreshToken != null) unawaited(verify(force: !_signedIn));
   }
 
-  bool get _withinOfflineGrace =>
-      _lastVerified != null &&
-      _now().difference(_lastVerified!) <= authOfflineGrace;
+  bool get _withinOfflineGrace {
+    final verified = _lastVerified;
+    if (verified == null) return false;
+    final age = _now().difference(verified);
+    return !age.isNegative && age <= authOfflineGrace;
+  }
+
+  bool _isForeground(AppLifecycleState? state) =>
+      state == null || state == AppLifecycleState.resumed;
+
+  void _onLifecycle(AppLifecycleState state) {
+    _foreground = _isForeground(state);
+    if (_foreground) {
+      _checkSession();
+      _startSessionChecks();
+    } else {
+      _sessionTimer?.cancel();
+      _sessionTimer = null;
+    }
+  }
+
+  void _startSessionChecks() {
+    if (_disposed ||
+        !_foreground ||
+        _refreshToken == null ||
+        _sessionTimer != null) {
+      return;
+    }
+    _sessionTimer = Timer.periodic(
+      _sessionCheckInterval,
+      (_) => _checkSession(),
+    );
+  }
+
+  void _checkSession() {
+    if (_disposed || _refreshToken == null) return;
+    if (_applyOfflinePolicy()) notifyListeners();
+    unawaited(verify());
+  }
+
+  bool _applyOfflinePolicy({String? failure}) {
+    if (_refreshToken == null || _withinOfflineGrace) return false;
+    final wasSignedIn = _signedIn;
+    final oldNotice = _notice;
+    _signedIn = false;
+    final verified = _lastVerified;
+    final reason = verified == null
+        ? 'Chưa có lần xác minh tài khoản hợp lệ.'
+        : _now().isBefore(verified)
+        ? 'Thời gian thiết bị hoặc thời điểm xác minh đã lưu không hợp lệ.'
+        : 'Đã quá ${authOfflineGrace.inDays} ngày chưa xác minh tài khoản.';
+    _notice =
+        '${failure == null ? "" : "$failure "}$reason '
+        'Kết nối mạng rồi bấm "Thử lại", hoặc đăng nhập lại.';
+    return wasSignedIn || oldNotice != _notice;
+  }
 
   Future<void> signIn(String email, String password) async {
     _ensureConfigured();
-    final Map<String, dynamic> data;
+    // Nhập thông tin đăng nhập mới kết thúc phiên cũ, kể cả nếu đăng nhập thất bại.
+    final clearing = _endSession();
+    final version = _sessionVersion;
+    _signingIn = true;
     try {
+      await clearing;
+      if (!_isCurrent(version)) return;
       final response = await _client
           .post(
             _identityUri('accounts:signInWithPassword'),
@@ -95,23 +189,30 @@ class AuthService extends ChangeNotifier {
             }),
           )
           .timeout(_timeout);
-      data = _decode(response.body);
+      if (!_isCurrent(version)) return;
+      final data = _decode(response.body);
       if (response.statusCode != 200) {
         throw AuthException(_messageFor(_errorCode(data)));
       }
+      final token = _requiredString(data, 'refreshToken');
+      _requiredString(data, 'idToken');
+      final accountEmail = _requiredString(data, 'email');
+      await _acceptSession(version, accountEmail, token);
     } on AuthException {
-      rethrow;
+      if (_isCurrent(version)) rethrow;
     } catch (_) {
-      throw const AuthException(
-        'Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.',
-      );
+      if (_isCurrent(version)) {
+        throw const AuthException(
+          'Không kết nối được máy chủ hoặc không lưu được phiên. Kiểm tra mạng rồi thử lại.',
+        );
+      }
+    } finally {
+      if (_isCurrent(version)) {
+        _signingIn = false;
+        _startSessionChecks();
+        notifyListeners();
+      }
     }
-    _email = (data['email'] as String?) ?? email.trim();
-    _refreshToken = data['refreshToken'] as String?;
-    _signedIn = true;
-    _notice = null;
-    await _markVerified();
-    notifyListeners();
   }
 
   Future<void> sendPasswordReset(String email) async {
@@ -139,71 +240,135 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  Future<void> signOut() async {
-    _notice = null;
-    await _clearSession();
+  Future<void> signOut() => _endSession();
+
+  Future<void> _endSession({String? notice}) {
+    _invalidateWork();
+    _signedIn = false;
+    _refreshToken = null;
+    _lastVerified = null;
+    _notice = notice;
     notifyListeners();
+    // Xếp sau mọi lần ghi đang chạy; chỉ xóa khóa của phiên, giữ dữ liệu app.
+    final prefs = _prefs;
+    if (prefs == null) return Future.value();
+    return _queueStorage(() async {
+      await prefs.remove(_kRefreshToken);
+      await prefs.remove(_kLastVerified);
+    });
   }
 
-  /// Xác minh lại tài khoản bằng refresh token. Tài khoản bị khoá/xoá/đổi mật
-  /// khẩu → đăng xuất. Mất mạng → giữ đăng nhập nếu còn trong hạn offline.
   Future<void> verify({bool force = false}) {
+    if (_disposed || _signingIn) return Future.value();
+    if (_applyOfflinePolicy()) notifyListeners();
     if (_inFlight != null) return _inFlight!;
-    if (_refreshToken == null || _apiKey.isEmpty) return Future.value();
-    if (!force &&
-        _signedIn &&
-        _lastVerified != null &&
-        _now().difference(_lastVerified!) < authRecheckInterval) {
-      return Future.value();
+    final token = _refreshToken;
+    if (token == null || _apiKey.isEmpty) return Future.value();
+    final previousAttempt = _lastVerifyAttempt ?? _lastVerified;
+    if (!force && previousAttempt != null) {
+      final elapsed = _now().difference(previousAttempt);
+      if (!elapsed.isNegative && elapsed < authRecheckInterval) {
+        return Future.value();
+      }
     }
-    return _inFlight = _refresh().whenComplete(() => _inFlight = null);
+    final version = _sessionVersion;
+    _lastVerifyAttempt = _now();
+    // Khởi chạy sau khi gán _inFlight, tránh listener tạo thêm yêu cầu.
+    return _inFlight = Future<void>.microtask(() => _refresh(version, token))
+        .whenComplete(() {
+          if (_isCurrent(version)) _inFlight = null;
+        });
   }
 
-  Future<void> _refresh() async {
+  Future<void> _refresh(int version, String token) async {
+    if (!_isCurrent(version)) return;
     _verifying = true;
     notifyListeners();
+    String? failure;
     try {
       final response = await _client
           .post(
-            Uri.parse('https://securetoken.googleapis.com/v1/token?key=$_apiKey'),
-            body: {
-              'grant_type': 'refresh_token',
-              'refresh_token': _refreshToken!,
-            },
+            Uri.parse(
+              'https://securetoken.googleapis.com/v1/token?key=$_apiKey',
+            ),
+            body: {'grant_type': 'refresh_token', 'refresh_token': token},
           )
           .timeout(_timeout);
+      if (!_isCurrent(version)) return;
       final data = _decode(response.body);
       if (response.statusCode == 200) {
-        _refreshToken = (data['refresh_token'] as String?) ?? _refreshToken;
-        _signedIn = true;
-        _notice = null;
-        await _markVerified();
-      } else if (response.statusCode == 400) {
-        _notice = _messageFor(_errorCode(data));
-        await _clearSession();
+        final refreshedToken = _requiredString(data, 'refresh_token');
+        _requiredString(data, 'id_token');
+        await _acceptSession(version, _email, refreshedToken);
+      } else {
+        final code = _errorCode(data);
+        if (response.statusCode >= 400 &&
+            response.statusCode < 500 &&
+            _invalidSessionCodes.contains(code)) {
+          await _endSession(notice: _messageFor(code));
+          return;
+        }
+        failure = 'Chưa xác minh được tài khoản với máy chủ.';
       }
-      // Lỗi máy chủ khác (5xx...) coi như tạm thời mất kết nối.
+    } on AuthException catch (error) {
+      failure = error.message;
     } catch (_) {
-      // Mất mạng: xử lý theo hạn offline bên dưới.
+      failure = 'Không kết nối được máy chủ hoặc không lưu được phiên.';
     } finally {
-      _verifying = false;
-      if (_refreshToken != null && !_withinOfflineGrace) {
-        _signedIn = false;
-        _notice =
-            'Đã quá ${authOfflineGrace.inDays} ngày chưa xác minh tài khoản. '
-            'Kết nối mạng rồi bấm "Thử lại", hoặc đăng nhập lại.';
+      if (_isCurrent(version)) {
+        _verifying = false;
+        _applyOfflinePolicy(failure: failure);
+        _startSessionChecks();
+        notifyListeners();
       }
-      notifyListeners();
     }
+  }
+
+  // Các lần ghi/xóa chạy tuần tự. Không đọc trạng thái phiên mới ở giữa lần ghi cũ.
+  Future<void> _queueStorage(Future<void> Function() operation) {
+    final write = _storageQueue.then((_) => operation());
+    _storageQueue = write.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return write;
+  }
+
+  Future<void> _acceptSession(int version, String? email, String token) async {
+    final verifiedAt = _now();
+    final prefs = _prefs;
+    await _queueStorage(() async {
+      if (!_isCurrent(version) || prefs == null) return;
+      if (email != null) await prefs.setString(_kEmail, email);
+      await prefs.setString(_kRefreshToken, token);
+      await prefs.setInt(_kLastVerified, verifiedAt.millisecondsSinceEpoch);
+    });
+    if (!_isCurrent(version)) return;
+    _email = email;
+    _refreshToken = token;
+    _lastVerified = verifiedAt;
+    _signedIn = true;
+    _notice = null;
   }
 
   @visibleForTesting
   void debugSetSignedIn(String email) {
+    _invalidateWork();
     _email = email;
     _refreshToken = 'debug';
     _lastVerified = _now();
     _signedIn = true;
+    _notice = null;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _invalidateWork();
+    _lifecycleListener?.dispose();
+    _client.close();
+    super.dispose();
   }
 
   void _ensureConfigured() {
@@ -218,38 +383,26 @@ class AuthService extends ChangeNotifier {
     'https://identitytoolkit.googleapis.com/v1/$method?key=$_apiKey',
   );
 
-  Future<void> _markVerified() async {
-    _lastVerified = _now();
-    final prefs = _prefs;
-    if (prefs == null) return;
-    if (_email != null) await prefs.setString(_kEmail, _email!);
-    if (_refreshToken != null) {
-      await prefs.setString(_kRefreshToken, _refreshToken!);
-    }
-    await prefs.setInt(_kLastVerified, _lastVerified!.millisecondsSinceEpoch);
-  }
-
-  /// Xoá phiên nhưng giữ email để điền sẵn ở lần đăng nhập sau.
-  Future<void> _clearSession() async {
-    _signedIn = false;
-    _refreshToken = null;
-    _lastVerified = null;
-    final prefs = _prefs;
-    if (prefs == null) return;
-    await prefs.remove(_kRefreshToken);
-    await prefs.remove(_kLastVerified);
-  }
-
   static Map<String, dynamic> _decode(String body) {
     try {
       final decoded = jsonDecode(body);
-      return decoded is Map<String, dynamic> ? decoded : const {};
+      if (decoded is Map<String, dynamic>) return decoded;
     } on FormatException {
-      return const {};
+      // Phản hồi 200 với JSON lỗi không phải là xác minh thành công.
     }
+    throw const AuthException(
+      'Máy chủ trả dữ liệu không hợp lệ. Vui lòng thử lại.',
+    );
   }
 
-  /// Firebase trả lỗi dạng {"error": {"message": "CODE : mô tả"}}.
+  static String _requiredString(Map<String, dynamic> data, String key) {
+    final value = data[key];
+    if (value is String && value.trim().isNotEmpty) return value;
+    throw const AuthException(
+      'Máy chủ trả dữ liệu phiên không đầy đủ. Vui lòng thử lại.',
+    );
+  }
+
   static String _errorCode(Map<String, dynamic> data) {
     final error = data['error'];
     final message = error is Map ? error['message'] : error;
