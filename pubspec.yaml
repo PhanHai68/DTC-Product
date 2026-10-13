@@ -101,10 +101,8 @@ flutter:
     - assets/images/
     - assets/images/color_sorter/
     - assets/images/packing/
-    - assets/docs/
     - assets/models/
     - assets/videos/
-    - assets/catalogs/
     - assets/database/
     - assets/fonts/
   # For details regarding adding assets from package dependencies, see

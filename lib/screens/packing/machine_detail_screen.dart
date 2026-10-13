@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../data/packing_feature_data.dart';
+import '../../features/drive_docs/services/drive_docs_service.dart';
+import '../../features/drive_docs/widgets/drive_pdf_loader.dart';
 import '../../models/packing_machine.dart';
 import '../../providers/compare_provider.dart';
 import '../../repositories/packing_machine_repository.dart';
@@ -685,11 +687,17 @@ class PackingCatalogViewerScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SfPdfViewer.asset(
-        assetPath,
-        initialPageNumber: initialPage,
-        canShowScrollHead: true,
-        canShowScrollStatus: true,
+      // Catalog lưu trên Google Drive; packing.db vẫn ghi đường dẫn asset cũ
+      // nên chỉ lấy tên file để tìm trong thư viện tài liệu.
+      body: DrivePdfLoader(
+        load: () =>
+            DriveDocsService.instance.loadPdfByName(assetPath.split('/').last),
+        builder: (context, bytes) => SfPdfViewer.memory(
+          bytes,
+          initialPageNumber: initialPage,
+          canShowScrollHead: true,
+          canShowScrollStatus: true,
+        ),
       ),
     );
   }

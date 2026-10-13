@@ -18,6 +18,9 @@ import '../screens/storage/stored_image_viewer_screen.dart';
 import '../screens/storage/stored_model_viewer_screen.dart';
 import '../models/stored_file.dart';
 import '../screens/sample_record/sample_record_screen.dart';
+import '../features/drive_docs/models/drive_item.dart';
+import '../features/drive_docs/screens/drive_docs_screen.dart';
+import '../features/drive_docs/screens/drive_pdf_viewer_screen.dart';
 import '../features/maintenance_report/screens/maintenance_report_list_screen.dart';
 import '../features/maintenance_report/screens/maintenance_report_form_screen.dart';
 import '../features/maintenance_report/screens/maintenance_report_workspace_screen.dart';
@@ -231,6 +234,30 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/extensions',
       builder: (context, state) => const ExtensionsScreen(),
+    ),
+    GoRoute(
+      path: '/documents',
+      builder: (context, state) => DriveDocsScreen(
+        folderId: state.uri.queryParameters['folder'],
+        title: state.uri.queryParameters['title'],
+      ),
+    ),
+    GoRoute(
+      path: '/documents/view',
+      builder: (context, state) {
+        // Mở từ thư viện: extra là DriveItem. Mở từ màn hình khác (hoặc tải
+        // lại trang web, mất extra): tìm theo ?name=<tên file>.
+        final item = state.extra as DriveItem?;
+        final query = state.uri.queryParameters;
+        final fileName = query['name'];
+        if (item == null && fileName == null) return const DriveDocsScreen();
+        return DrivePdfViewerScreen(
+          item: item,
+          fileName: fileName,
+          title: query['title'] ?? item?.name ?? fileName!,
+          initialPage: int.tryParse(query['page'] ?? '') ?? 1,
+        );
+      },
     ),
     GoRoute(
       path: '/sales-goal',

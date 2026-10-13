@@ -1,5 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+
+import '../../features/drive_docs/services/drive_docs_service.dart';
 
 class ColorSorterManualScreen extends StatefulWidget {
   const ColorSorterManualScreen({super.key});
@@ -10,8 +14,12 @@ class ColorSorterManualScreen extends StatefulWidget {
 }
 
 class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
+  /// PDF lưu trên Google Drive (thư viện tài liệu), tìm theo tên file.
+  static const _pdfFileName = 'SC16Pro_VanHanh.pdf';
+
   final PdfViewerController _pdfController = PdfViewerController();
   final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
+  late Future<Uint8List> _pdfFuture = _loadPdf();
   bool _isLoading = true;
   bool _hasError = false;
   int _currentPage = 1;
@@ -186,11 +194,40 @@ class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
     );
   }
 
+  Future<Uint8List> _loadPdf() =>
+      DriveDocsService.instance.loadPdfByName(_pdfFileName);
+
+  void _retryLoad() {
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+      _pdfFuture = _loadPdf();
+    });
+  }
+
   Widget _buildPdfViewer() {
+    return FutureBuilder<Uint8List>(
+      future: _pdfFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          final error = snapshot.error;
+          return _buildErrorOverlay(
+            message: error is DriveDocsException
+                ? error.message
+                : 'Vui lòng thử lại sau.',
+          );
+        }
+        if (!snapshot.hasData) return _buildLoadingOverlay();
+        return _buildPdfStack(snapshot.data!);
+      },
+    );
+  }
+
+  Widget _buildPdfStack(Uint8List bytes) {
     return Stack(
       children: [
-        SfPdfViewer.asset(
-          'assets/docs/SC16Pro_VanHanh.pdf',
+        SfPdfViewer.memory(
+          bytes,
           key: _pdfViewerKey,
           controller: _pdfController,
           pageLayoutMode: PdfPageLayoutMode.continuous,
@@ -263,7 +300,7 @@ class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
     );
   }
 
-  Widget _buildErrorOverlay() {
+  Widget _buildErrorOverlay({String message = 'Vui lòng thử lại sau.'}) {
     return Container(
       color: const Color(0xFF1E1E2E),
       child: Center(
@@ -281,9 +318,19 @@ class _ColorSorterManualScreenState extends State<ColorSorterManualScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              'Vui lòng kiểm tra lại ứng dụng',
-              style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: _retryLoad,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Thử lại'),
             ),
           ],
         ),

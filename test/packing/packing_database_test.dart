@@ -73,10 +73,12 @@ void main() {
         isTrue,
         reason: '${machine.model} trỏ tới ảnh nền không tồn tại',
       );
+      // Catalog nằm trên Google Drive, app tìm theo tên file (phần cuối
+      // đường dẫn) nên chỉ kiểm tra tên file PDF hợp lệ.
       expect(
-        File(machine.catalogAssetPath!).existsSync(),
-        isTrue,
-        reason: '${machine.model} trỏ tới catalog không tồn tại',
+        machine.catalogAssetPath!.split('/').last,
+        matches(RegExp(r'^DTC-Packing-.+\.pdf$')),
+        reason: '${machine.model} trỏ tới catalog không hợp lệ',
       );
       expect(
         packingFeaturesFor(machine),

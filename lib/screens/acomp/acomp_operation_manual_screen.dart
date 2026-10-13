@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../data/acomp_manual_data.dart';
 
 class AcompOperationManualScreen extends StatelessWidget {
   const AcompOperationManualScreen({super.key});
 
-  Future<void> _openOriginalPdf() async {
-    final Uri url = Uri.parse('assets/docs/HUONG_DAN_VAN_HANH_5.pdf');
-    if (!await launchUrl(url)) {
-      debugPrint('Could not launch \$url');
-    }
+  /// PDF gốc lưu trên Google Drive (thư viện tài liệu), tìm theo tên file.
+  static const pdfFileName = 'HUONG_DAN_VAN_HANH_5.pdf';
+
+  void _openOriginalPdf(BuildContext context) {
+    context.push(
+      Uri(
+        path: '/documents/view',
+        queryParameters: {
+          'name': pdfFileName,
+          'title': 'Hướng dẫn vận hành máy nén khí',
+        },
+      ).toString(),
+    );
   }
 
   IconData _getIcon(String iconName) {
@@ -37,7 +45,7 @@ class AcompOperationManualScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
             tooltip: 'Mở PDF gốc',
-            onPressed: _openOriginalPdf,
+            onPressed: () => _openOriginalPdf(context),
           ),
         ],
       ),
@@ -109,7 +117,7 @@ class AcompOperationManualScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openOriginalPdf,
+        onPressed: () => _openOriginalPdf(context),
         icon: const Icon(Icons.download_rounded),
         label: const Text('Xem file PDF chi tiết'),
       ),

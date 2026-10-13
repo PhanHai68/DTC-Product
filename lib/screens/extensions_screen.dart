@@ -48,6 +48,13 @@ class ExtensionsScreen extends StatelessWidget {
           onTap: () => context.push('/fault-bank'),
         ),
         TechnologyMenuEntry(
+          id: 'extension_documents',
+          title: 'Thư Viện Tài Liệu',
+          icon: Icons.folder_copy_outlined,
+          featured: true,
+          onTap: () => context.push('/documents'),
+        ),
+        TechnologyMenuEntry(
           id: 'extension_maintenance_report',
           title: 'Báo Cáo Tình Trạng Máy',
           icon: Icons.build_rounded,
