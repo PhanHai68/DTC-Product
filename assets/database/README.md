@@ -9,13 +9,14 @@ Không cần sửa code Dart.
 | File | Nội dung | Màn hình trong app |
 |---|---|---|
 | `color_sorter/sc_rice.json` | Máy tách màu gạo SC4 → SC16 Pro, S+80D | Máy tách màu → Gạo |
-| `color_sorter/sf7_paddy.json` | Máy tách màu thóc SF7D Pro | Máy tách màu → Thóc và gạo xô |
+| `color_sorter/sf7_paddy.json` | Máy tách màu thóc dòng SF Pro (SF3D → SF12D) | Máy tách màu → Thóc và gạo xô |
 | `color_sorter/df_tea.json` | Máy tách màu trà DF12 → DF53 Pro | Máy tách màu → Trà |
 | `color_sorter/sx8_mineral.json` | Máy tách quang khoáng sản SX8 | Máy tách màu → Khoáng sản |
-| `color_sorter/h7_agro.json` | Máy tách màu hạt H7 | Máy tách màu → Nông sản |
+| `color_sorter/h7_agro.json` | Máy tách màu hạt dòng H (H1 → H12) | Máy tách màu → Nông sản |
 | `color_sorter/aux_equipment.json` | Thiết bị phụ trợ theo model (SC4…SC16, SF7D Pro) | Thiết bị phụ trợ |
 | `color_sorter/tea_aux_equipment.json` | Thiết bị phụ trợ dây chuyền trà | Trà → Thiết bị phụ trợ |
 | `color_sorter/power_consumption.json` | Điện năng tiêu thụ cả dây chuyền theo model SC | Phân tích hoàn vốn → Điện năng, hoá đơn điện, lợi nhuận |
+| `color_sorter/common_errors.json` | Tra cứu lỗi máy tách màu (dùng chung mọi dòng máy): `common` lỗi thường gặp, `detailed` nguyên nhân – khắc phục, `poorSorting` tách màu kém, `blocks` nguồn cấp – kết nối, `etmOutputs` ngõ ra ETM. Nguồn: `docs_database/01_May_Tach_Mau/00_Du_Lieu_Chung/CAC_LOI_THUONG_GAP_MAY_TACH_MAU.xlsx` | Máy tách màu (mọi dòng) → Tra cứu lỗi |
 | `air_compressor/specs.json` | Thông số máy nén khí ACOMP (PM VSD, Fixed Speed) | Máy nén khí → Thông số; cũng là nguồn lưu lượng cho màn tính ống khí nén và thời gian nạp bình |
 | `air_compressor/mccb_cable.json` | MCCB và cáp điện theo model | Máy nén khí → Chọn MCCB và cáp điện |
 | `air_compressor/pipe_standard.json` | Bảng ống tiêu chuẩn DN ↔ mm | Máy nén khí → Tính ống khí nén |
@@ -42,6 +43,23 @@ Không cần sửa code Dart.
   sau nó (nhớ dấu phẩy `,` giữa hai khối), rồi sửa giá trị.
 - Các file `df_tea.json`, `sx8_mineral.json`, `h7_agro.json` có trường `id`
   — mỗi máy phải có `id` riêng, không trùng.
+- `h7_agro.json` không ghi máy nén khí và bình tích khí: app tự tính từ
+  `ejector_qty` theo nguyên liệu "Các loại đậu" (`materials.json`), giống
+  màn "Lựa chọn công suất máy nén" và "Tính thể tích bình chứa".
+- `sf7_paddy.json` không ghi áp suất, lưu lượng khí, máy nén khí và bình
+  tích khí: app lấy từ máy gạo (`sc_rice.json`) cùng "Số máng"; không có máy
+  gạo cùng số máng thì lấy máy gần nhất (cách đều thì lấy máy ít máng hơn).
+- Máy thóc không có trong `power_consumption.json`: phân tích hoàn vốn dùng
+  bảng của máy gạo **cùng đúng số máng** (không có thì model đó không có hoàn
+  vốn), thay "Năng suất" bằng trung bình mức thấp – cao của máy thóc và
+  "Máy tách màu (kW)" bằng "Công suất điện (kW)" của máy thóc; tối đa = tổng
+  các thiết bị, trung bình = 80% tối đa. Thiết bị phụ trợ cũng theo máy gạo
+  cùng số máng (trừ model đã có danh sách riêng trong `aux_equipment.json`).
+- Máy trà: phân tích hoàn vốn chỉ có cho model máy tách màu nằm trong
+  `tea_aux_equipment.json` (hiện là DF53 Pro). App cộng công suất × số lượng
+  các thiết bị trong danh sách thành "Công suất lớn nhất (kW)" và dùng số này
+  để tính tiền điện (máy trà không có công suất trung bình); năng suất lấy từ
+  `capacity_max_kg_h`.
 
 ## Quy tắc khi sửa file máy nén khí
 
@@ -74,6 +92,14 @@ Không cần sửa code Dart.
 - Ảnh (`image_main_path`, `image_2_path`) phải trỏ tới file có thật trong
   `assets/images/packing/`; catalog PDF được tìm trên Google Drive theo tên
   file ở cuối `catalog_asset_path`.
+- Trường tùy chọn cho model hãng khác (VD `R-APF-18` của APACK), máy DTC bỏ
+  trống: `brand` (hãng, hiện nhãn "Hãng …"), `capacity_text` (năng suất ghi
+  sẵn, VD "18 tấn/h", thay cho dải min – max), `weight_text` (dải khối lượng
+  ghi sẵn, VD "5 - 50 kg (gạo)\n5 - 40 kg (lúa)"; vẫn ghi `weight_min_kg`/
+  `weight_max_kg` để lọc khi chọn máy), `batch_weight_max_kg` (cân mẻ:
+  thay dòng "Trọng lượng/túi" bằng "Khối lượng mẻ"), `accuracy` (sai số, dạng
+  chữ), `components` (danh sách `{ "name", "origin", "note" }` — mục "Xuất xứ
+  thiết bị").
 
 ## Kiểm tra sau khi sửa
 

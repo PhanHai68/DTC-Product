@@ -180,7 +180,8 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       return _SearchItem(
         title: model,
         subtitle: 'Máy tách màu Nông sản',
-        location: '/agro_color_sorter',
+        location:
+            '/agro_color_sorter?model=${Uri.encodeQueryComponent(model)}',
         icon: Icons.spa_rounded,
         keywords: spec.values.join(' '),
       );

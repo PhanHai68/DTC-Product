@@ -30,11 +30,13 @@ class MineralColorSorterMenuScreen extends StatelessWidget {
           icon: Icons.query_stats_rounded,
           statusLabel: 'Sắp có',
         ),
-        const TechnologyMenuEntry(
+        TechnologyMenuEntry(
           id: 'mineral_color_sorter_errors_btn',
           title: 'Tra cứu lỗi',
           icon: Icons.troubleshoot_rounded,
-          statusLabel: 'Sắp có',
+          onTap: () => context.push(
+            '/color_sorter_errors?line=${Uri.encodeQueryComponent('Máy tách màu Khoáng sản')}',
+          ),
         ),
       ],
     );

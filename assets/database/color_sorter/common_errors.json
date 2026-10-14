@@ -1,0 +1,354 @@
+{
+  "common": [
+    {
+      "error": "Màn hình LCD không lên",
+      "checks": [
+        "Kiểm tra nguồn 12VDC cấp cho LCD.",
+        "Dây nguồn, giắc cắm nguồn LCD.",
+        "Cầu chì, bộ nguồn 12VDC."
+      ]
+    },
+    {
+      "error": "Không có hình ảnh camera / báo mất kết nối camera",
+      "checks": [
+        "Kiểm tra cáp USB từ LCD → Hub USB → mạch camera.",
+        "Hub USB (thử cắm thẳng mạch camera vào LCD để loại trừ Hub).",
+        "Nguồn 12VDC cấp cho mạch camera.",
+        "Khởi động lại máy sau khi cắm lại cáp."
+      ]
+    },
+    {
+      "error": "LED hiển thị không sáng",
+      "checks": [
+        "Kiểm tra nguồn 5VDC cấp cho LED hiển thị.",
+        "Dây kết nối từ mạch camera tới LED hiển thị.",
+        "Mạch camera có nguồn 12VDC và đang hoạt động."
+      ]
+    },
+    {
+      "error": "LCD báo mất kết nối với ETM",
+      "checks": [
+        "Kiểm tra cáp kết nối 0#A giữa LCD và ETM.",
+        "Nguồn 12VDC cấp cho ETM.",
+        "Giắc cắm lỏng, oxy hóa.",
+        "Nhiễu: dây tín hiệu đi chung máng với dây động lực 220VAC."
+      ]
+    },
+    {
+      "error": "Một vài súng không bắn",
+      "checks": [
+        "Kiểm tra cụm súng (van) bị kẹt, bám bụi, cháy cuộn.",
+        "Dây nối từ mạch súng động lực tới súng tương ứng.",
+        "Kênh tương ứng trên mạch súng động lực.",
+        "Đổi chéo súng sang kênh khác để xác định lỗi ở súng hay ở mạch."
+      ]
+    },
+    {
+      "error": "Toàn bộ súng không bắn",
+      "checks": [
+        "Kiểm tra áp suất khí nén cấp vào máy.",
+        "Nguồn 48VDC cấp cho mạch súng động lực.",
+        "Ngõ ra ETM #5 → contactor súng có đóng không.",
+        "Tín hiệu nguồn súng 48VDC báo về ETM.",
+        "Nguồn 12VDC cấp cho mạch súng điều khiển.",
+        "Cáp mạch camera → mạch súng điều khiển → mạch súng động lực."
+      ]
+    },
+    {
+      "error": "Súng bắn liên tục / bắn sai",
+      "checks": [
+        "Kiểm tra thông số độ nhạy, ngưỡng tách cài đặt trên LCD.",
+        "Kính quan sát bẩn, đèn chiếu sáng không đều (xem lỗi 13, 14).",
+        "Mạch nền GN1/GN2.",
+        "Súng bị kẹt ở trạng thái mở.",
+        "Kênh tương ứng trên mạch súng động lực."
+      ]
+    },
+    {
+      "error": "Báo lỗi áp suất khí (P3)",
+      "checks": [
+        "Kiểm tra áp suất khí nén cấp vào máy.",
+        "Đường ống, van khóa, lọc khí có tắc hoặc rò rỉ không.",
+        "Cảm biến áp suất khí P3 và dây kết nối về ETM.",
+        "Nếu áp nguồn thấp: tra lỗi máy nén khí, máy sấy khí."
+      ]
+    },
+    {
+      "error": "Bộ rung không rung",
+      "checks": [
+        "Kiểm tra ngõ ra ETM #6 (cấp 220VAC cho mạch rung).",
+        "Cáp kết nối #3 giữa ETM và mạch rung.",
+        "Nguồn 12VDC và 220VAC cấp cho mạch rung.",
+        "Cầu chì mạch rung.",
+        "Dây nối từ mạch rung tới bộ rung, cuộn rung."
+      ]
+    },
+    {
+      "error": "Rung yếu / rung không đều giữa các máng",
+      "checks": [
+        "Kiểm tra thông số biên độ rung từng kênh (#1 … #n).",
+        "Cảm biến độ rung và tín hiệu về mạch rung.",
+        "Khe hở nam châm, lò xo/lá nhíp bộ rung.",
+        "Máng rung bám bụi, dính nguyên liệu, vật lạ chèn.",
+        "Kênh tương ứng trên mạch rung."
+      ]
+    },
+    {
+      "error": "Không cấp liệu / phễu cạn hoặc tràn liệu",
+      "checks": [
+        "Kiểm tra cảm biến mức liệu P8 (bẩn, lệch vị trí).",
+        "Nguồn 12VDC cấp cho mạch cảm biến mức liệu.",
+        "Nút điều khiển tay/auto đang ở chế độ nào.",
+        "Tín hiệu cổng K2, K3 tới thiết bị cấp liệu bên ngoài.",
+        "Thiết bị cấp liệu bên ngoài (gàu tải, băng tải) có hoạt động không."
+      ]
+    },
+    {
+      "error": "Đèn chiếu sáng không sáng",
+      "checks": [
+        "Xác định đèn nào tắt: #1 trước/trên, #2 trước/dưới, #3 sau.",
+        "Ngõ ra ETM tương ứng (#1, #2, #3).",
+        "Nguồn 44V cấp cho đèn.",
+        "Dây và giắc nối tới đèn."
+      ]
+    },
+    {
+      "error": "Đèn chiếu sáng yếu / sáng không đều",
+      "checks": [
+        "Kiểm tra nguồn 44V có bị sụt áp không.",
+        "Bóng/LED bị lão hóa hoặc hỏng một phần.",
+        "Kính đèn bám bụi."
+      ]
+    },
+    {
+      "error": "Lau kính không hoạt động",
+      "checks": [
+        "Kiểm tra ngõ ra ETM #4.",
+        "Van solenoid lau kính (cuộn, kẹt van).",
+        "Áp suất khí nén cấp cho cơ cấu lau.",
+        "Cơ cấu lau, chổi lau bị kẹt hoặc mòn."
+      ]
+    },
+    {
+      "error": "Máy không bật/tắt được",
+      "checks": [
+        "Kiểm tra nguồn 220VAC cấp vào máy.",
+        "Ngõ ra ETM #7 (tắt/mở máy).",
+        "Nguồn 12VDC cấp cho ETM.",
+        "Cầu chì, CB, nút dừng khẩn cấp (nếu có)."
+      ]
+    },
+    {
+      "error": "Không có báo động / đèn, còi báo không hoạt động",
+      "checks": [
+        "Kiểm tra cáp kết nối 0#B giữa LCD và mạch báo động.",
+        "Nguồn 12VDC cấp cho mạch báo động.",
+        "Các nguồn báo động 44VDC (báo động màu #) và 30VDC (báo động màu đỏ).",
+        "Tín hiệu 220VAC nguồn máy về mạch báo động.",
+        "Đèn, còi báo động."
+      ]
+    },
+    {
+      "error": "Tách màu kém (lọt hạt xấu hoặc hao hạt tốt)",
+      "checks": [
+        "Kiểm tra kính quan sát, đèn chiếu sáng, mạch nền GN1/GN2.",
+        "Thông số tách cài đặt trên LCD.",
+        "Lưu lượng cấp liệu, độ rung.",
+        "Áp suất khí, súng.",
+        "Xem chi tiết tại tab \"Tách màu kém\"."
+      ]
+    }
+  ],
+  "detailed": [
+    {
+      "error": "Màn hình LCD không lên / không hiển thị",
+      "causes": [
+        { "cause": "Không có nguồn 12VDC cấp cho LCD.", "fix": "Kiểm tra bộ nguồn 12VDC, cầu chì, dây nguồn." },
+        { "cause": "Giắc nguồn lỏng hoặc oxy hóa.", "fix": "Cắm lại, vệ sinh hoặc thay giắc." },
+        { "cause": "LCD hỏng.", "fix": "Sửa chữa hoặc thay thế." }
+      ]
+    },
+    {
+      "error": "Mất hình camera / mất kết nối camera",
+      "causes": [
+        { "cause": "Cáp USB lỏng hoặc đứt (LCD – Hub USB – mạch camera).", "fix": "Kiểm tra, cắm lại hoặc thay cáp." },
+        { "cause": "Hub USB hỏng.", "fix": "Cắm thẳng mạch camera vào LCD để thử; thay Hub nếu cần." },
+        { "cause": "Mất nguồn 12VDC mạch camera.", "fix": "Kiểm tra nguồn, cầu chì, dây nguồn mạch camera." },
+        { "cause": "Mạch camera hoặc camera hỏng.", "fix": "Sửa chữa hoặc thay thế." }
+      ]
+    },
+    {
+      "error": "LCD mất kết nối với ETM",
+      "causes": [
+        { "cause": "Cáp 0#A lỏng, đứt hoặc chập.", "fix": "Kiểm tra, cắm lại hoặc thay cáp." },
+        { "cause": "Mất nguồn 12VDC cấp cho ETM.", "fix": "Kiểm tra nguồn, cầu chì ETM." },
+        { "cause": "Nhiễu do dây tín hiệu đi chung với dây động lực.", "fix": "Đi lại dây tách riêng, kiểm tra tiếp địa." },
+        { "cause": "ETM hỏng.", "fix": "Sửa chữa hoặc thay thế." }
+      ]
+    },
+    {
+      "error": "Súng không bắn",
+      "causes": [
+        { "cause": "Áp suất khí nén cấp vào máy thấp hoặc mất khí.", "fix": "Kiểm tra máy nén khí, đường ống, van khóa, lọc khí." },
+        { "cause": "Mất nguồn 48VDC mạch súng động lực.", "fix": "Kiểm tra bộ nguồn 48VDC, cầu chì." },
+        { "cause": "Contactor súng không đóng (ngõ ra ETM #5).", "fix": "Kiểm tra ngõ ra #5, cuộn hút và tiếp điểm contactor." },
+        { "cause": "Mất nguồn 12VDC mạch súng điều khiển.", "fix": "Kiểm tra nguồn, cầu chì mạch súng điều khiển." },
+        { "cause": "Cáp mạch camera → mạch súng điều khiển → mạch súng động lực lỏng hoặc đứt.", "fix": "Kiểm tra, cắm lại hoặc thay cáp." },
+        { "cause": "Súng bị kẹt, cháy cuộn.", "fix": "Vệ sinh hoặc thay súng." },
+        { "cause": "Kênh trên mạch súng động lực hỏng.", "fix": "Đổi chéo súng để xác định; sửa chữa hoặc thay mạch." }
+      ]
+    },
+    {
+      "error": "Báo lỗi áp suất khí",
+      "causes": [
+        { "cause": "Áp suất khí nén nguồn thấp.", "fix": "Kiểm tra máy nén khí, máy sấy khí (tra bảng lỗi máy nén khí)." },
+        { "cause": "Đường ống rò rỉ, lọc khí tắc.", "fix": "Kiểm tra rò rỉ, vệ sinh hoặc thay lõi lọc." },
+        { "cause": "Cảm biến áp suất P3 hỏng hoặc lỏng dây.", "fix": "Kiểm tra dây, sửa chữa hoặc thay cảm biến." },
+        { "cause": "Ngưỡng cài đặt áp suất không đúng.", "fix": "Kiểm tra, cài đặt lại thông số." }
+      ]
+    },
+    {
+      "error": "Bộ rung không rung / rung yếu / không đều",
+      "causes": [
+        { "cause": "Ngõ ra ETM #6 không cấp 220VAC cho mạch rung.", "fix": "Kiểm tra ngõ ra #6, relay, cầu chì." },
+        { "cause": "Cáp #3 giữa ETM và mạch rung lỏng hoặc đứt.", "fix": "Kiểm tra, cắm lại hoặc thay cáp." },
+        { "cause": "Mất nguồn 12VDC hoặc 220VAC mạch rung.", "fix": "Kiểm tra nguồn, cầu chì mạch rung." },
+        { "cause": "Thông số biên độ rung cài đặt thấp hoặc khác nhau giữa các kênh.", "fix": "Cài đặt lại biên độ từng kênh #1 … #n." },
+        { "cause": "Cảm biến độ rung hỏng hoặc sai tín hiệu.", "fix": "Kiểm tra dây, sửa chữa hoặc thay cảm biến." },
+        { "cause": "Cuộn rung hỏng, khe hở nam châm sai, lò xo/lá nhíp gãy.", "fix": "Chỉnh khe hở, thay lò xo hoặc cuộn rung." },
+        { "cause": "Máng rung bám bẩn, dính nguyên liệu, có vật lạ.", "fix": "Vệ sinh máng rung." }
+      ]
+    },
+    {
+      "error": "Không cấp liệu / phễu cạn hoặc tràn liệu",
+      "causes": [
+        { "cause": "Cảm biến mức liệu P8 bẩn, lệch hoặc hỏng.", "fix": "Vệ sinh, chỉnh vị trí hoặc thay cảm biến." },
+        { "cause": "Mất nguồn 12VDC mạch cảm biến mức liệu.", "fix": "Kiểm tra nguồn, cầu chì." },
+        { "cause": "Nút điều khiển đang ở chế độ tay.", "fix": "Chuyển về chế độ auto." },
+        { "cause": "Không có tín hiệu cổng K2/K3 tới thiết bị cấp liệu bên ngoài.", "fix": "Kiểm tra dây, relay cổng K2/K3." },
+        { "cause": "Thiết bị cấp liệu bên ngoài (gàu tải, băng tải) dừng.", "fix": "Kiểm tra thiết bị cấp liệu." }
+      ]
+    },
+    {
+      "error": "Đèn chiếu sáng không sáng / sáng yếu",
+      "causes": [
+        { "cause": "Ngõ ra ETM #1, #2, #3 không tác động.", "fix": "Kiểm tra ngõ ra tương ứng trên ETM." },
+        { "cause": "Mất nguồn 44V hoặc sụt áp.", "fix": "Kiểm tra bộ nguồn 44V, cầu chì." },
+        { "cause": "Dây, giắc nối tới đèn lỏng.", "fix": "Kiểm tra, cắm lại." },
+        { "cause": "Đèn lão hóa hoặc hỏng một phần.", "fix": "Thay đèn." },
+        { "cause": "Kính đèn bám bụi.", "fix": "Vệ sinh kính đèn." }
+      ]
+    },
+    {
+      "error": "Lau kính không hoạt động",
+      "causes": [
+        { "cause": "Ngõ ra ETM #4 không tác động.", "fix": "Kiểm tra ngõ ra #4." },
+        { "cause": "Van solenoid hỏng cuộn hoặc kẹt.", "fix": "Vệ sinh hoặc thay van." },
+        { "cause": "Mất khí nén cấp cho cơ cấu lau.", "fix": "Kiểm tra đường khí, van khóa." },
+        { "cause": "Cơ cấu lau kẹt, chổi lau mòn.", "fix": "Vệ sinh, bôi trơn hoặc thay chổi lau." }
+      ]
+    },
+    {
+      "error": "Máy không bật/tắt được",
+      "causes": [
+        { "cause": "Mất nguồn 220VAC.", "fix": "Kiểm tra nguồn, CB, cầu chì." },
+        { "cause": "Ngõ ra ETM #7 không tác động.", "fix": "Kiểm tra ngõ ra #7, relay." },
+        { "cause": "Mất nguồn 12VDC cấp cho ETM.", "fix": "Kiểm tra nguồn, cầu chì ETM." }
+      ]
+    },
+    {
+      "error": "Báo động không hoạt động",
+      "causes": [
+        { "cause": "Cáp 0#B giữa LCD và mạch báo động lỏng hoặc đứt.", "fix": "Kiểm tra, cắm lại hoặc thay cáp." },
+        { "cause": "Mất nguồn 12VDC mạch báo động.", "fix": "Kiểm tra nguồn, cầu chì." },
+        { "cause": "Mất nguồn 44VDC (báo động màu #) hoặc 30VDC (báo động màu đỏ).", "fix": "Kiểm tra bộ nguồn tương ứng." },
+        { "cause": "Đèn, còi báo động hỏng.", "fix": "Thay thế." }
+      ]
+    }
+  ],
+  "poorSorting": [
+    {
+      "cause": "Kính quan sát bẩn",
+      "explanation": "Bụi cám, bụi lúa bám lên kính làm camera nhìn sai màu, hạt tốt bị nhận là hạt xấu và ngược lại.",
+      "fixes": ["Vệ sinh kính định kỳ.", "Kiểm tra cơ cấu lau kính hoạt động đúng chu kỳ."],
+      "note": "ETM #4, van solenoid"
+    },
+    {
+      "cause": "Đèn chiếu sáng yếu, tắt một bên hoặc không đều",
+      "explanation": "Ánh sáng không đều làm cùng một màu hạt cho ra tín hiệu khác nhau giữa các vị trí.",
+      "fixes": ["Kiểm tra đủ 3 nhóm đèn (#1, #2, #3) đều sáng.", "Kiểm tra nguồn 44V.", "Thay đèn lão hóa."],
+      "note": "ETM #1, #2, #3; nguồn 44V"
+    },
+    {
+      "cause": "Mạch nền (GN1/GN2) lỗi hoặc lệch",
+      "explanation": "Nền là chuẩn so sánh màu; nền sai làm toàn bộ ngưỡng tách bị lệch.",
+      "fixes": ["Kiểm tra mạch nền trước GN1, nền sau GN2.", "Hiệu chỉnh lại nền theo hướng dẫn."],
+      "note": "GN1, GN2 trên ETM"
+    },
+    {
+      "cause": "Thông số tách cài đặt không phù hợp",
+      "explanation": "Độ nhạy quá cao làm hao hạt tốt; quá thấp làm lọt hạt xấu. Mỗi loại nguyên liệu cần bộ thông số riêng.",
+      "fixes": ["Chọn đúng chương trình theo nguyên liệu.", "Điều chỉnh độ nhạy, lấy mẫu kiểm tra sau mỗi lần chỉnh."],
+      "note": "Cài đặt trên LCD"
+    },
+    {
+      "cause": "Lưu lượng cấp liệu quá lớn",
+      "explanation": "Hạt chồng lên nhau, súng thổi trúng cả hạt tốt bên cạnh hoặc bỏ sót hạt xấu.",
+      "fixes": ["Giảm biên độ rung, giảm lưu lượng.", "Kiểm tra cảm biến mức liệu P8 không để phễu tràn."],
+      "note": "Mạch rung, P8"
+    },
+    {
+      "cause": "Rung không đều giữa các máng",
+      "explanation": "Máng chảy nhiều, máng chảy ít làm hiệu quả tách khác nhau giữa các kênh.",
+      "fixes": ["Cân chỉnh biên độ từng kênh #1 … #n.", "Kiểm tra cảm biến độ rung, vệ sinh máng."],
+      "note": "Mạch rung, bộ rung"
+    },
+    {
+      "cause": "Áp suất khí không ổn định",
+      "explanation": "Áp thấp thổi không bay hạt xấu; áp cao thổi bay cả hạt tốt bên cạnh.",
+      "fixes": ["Ổn định áp khí nén theo khuyến cáo.", "Kiểm tra cảm biến P3, máy nén khí, máy sấy khí."],
+      "note": "Cảm biến P3"
+    },
+    {
+      "cause": "Súng bị kẹt, phản hồi chậm",
+      "explanation": "Súng mở chậm hoặc không đóng kín làm thổi sai thời điểm.",
+      "fixes": ["Vệ sinh, thay súng hỏng.", "Kiểm tra nguồn 48VDC mạch súng động lực."],
+      "note": "Mạch súng động lực, cụm súng"
+    },
+    {
+      "cause": "Khí nén có nước, dầu",
+      "explanation": "Nước, dầu bám vào súng và kính làm súng kẹt, kính mờ.",
+      "fixes": ["Kiểm tra máy sấy khí, lọc khí, xả nước ngưng.", "Tra bảng lỗi máy nén khí."],
+      "note": "Lỗi máy nén khí"
+    },
+    {
+      "cause": "Nguyên liệu đầu vào quá bẩn, nhiều tạp chất",
+      "explanation": "Bụi, rơm rác, đá làm bẩn kính và che hạt, giảm độ chính xác.",
+      "fixes": ["Làm sạch sơ bộ trước khi vào máy tách màu.", "Tăng tần suất vệ sinh."],
+      "note": ""
+    }
+  ],
+  "blocks": [
+    { "block": "LCD", "power": "12VDC", "connections": "Hub USB; ETM (cáp 0#A); mạch báo động (cáp 0#B)", "note": "Màn hình điều khiển, cài đặt" },
+    { "block": "Hub USB", "power": "Qua cổng USB", "connections": "LCD; mạch camera", "note": "" },
+    { "block": "Mạch camera", "power": "12VDC", "connections": "Hub USB; LED hiển thị; mạch súng điều khiển", "note": "" },
+    { "block": "LED hiển thị", "power": "5VDC", "connections": "Mạch camera", "note": "" },
+    { "block": "Mạch súng điều khiển", "power": "12VDC", "connections": "Mạch camera; mạch súng động lực", "note": "" },
+    { "block": "Mạch súng động lực", "power": "48VDC", "connections": "Mạch súng điều khiển; cụm súng", "note": "Tín hiệu nguồn súng 48VDC báo về ETM" },
+    { "block": "Cụm súng", "power": "Qua mạch súng động lực", "connections": "Mạch súng động lực", "note": "Cần khí nén" },
+    { "block": "ETM", "power": "12VDC; ngõ ra #1 – #7: 220VAC", "connections": "LCD (0#A); mạch rung (#3)", "note": "Đầu vào: P8 cảm biến mức liệu, P3 cảm biến áp suất khí, GN1 mạch nền trước, GN2 mạch nền sau" },
+    { "block": "Mạch rung", "power": "12VDC; 220VAC", "connections": "ETM (#3); bộ rung; cảm biến độ rung", "note": "Kênh #1, #2, #3 … #n" },
+    { "block": "Bộ rung", "power": "Qua mạch rung", "connections": "Mạch rung", "note": "" },
+    { "block": "Mạch báo động", "power": "12VDC", "connections": "LCD (0#B)", "note": "Đầu vào: 220VAC nguồn máy, 44VDC báo động màu #, 30VDC báo động màu đỏ" },
+    { "block": "Mạch cảm biến mức liệu", "power": "12VDC", "connections": "Cổng K2 bên ngoài; nút điều khiển tay/auto; cổng K3 bên ngoài", "note": "" }
+  ],
+  "etmOutputs": [
+    { "output": "#1", "function": "Chiếu sáng trước/trên", "target": "Đèn", "note": "On/off IN, nguồn 44V" },
+    { "output": "#2", "function": "Chiếu sáng trước/dưới", "target": "Đèn", "note": "On/off IN, nguồn 44V" },
+    { "output": "#3", "function": "Chiếu sáng sau", "target": "Đèn", "note": "On/off IN, nguồn 44V" },
+    { "output": "#4", "function": "Lau kính", "target": "Van solenoid", "note": "" },
+    { "output": "#5", "function": "Súng hơi", "target": "Contactor súng", "note": "" },
+    { "output": "#6", "function": "Bộ rung", "target": "220VAC mạch rung", "note": "" },
+    { "output": "#7", "function": "Tắt/mở máy", "target": "", "note": "" }
+  ]
+}

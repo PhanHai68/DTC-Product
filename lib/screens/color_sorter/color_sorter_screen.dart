@@ -688,7 +688,6 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
           'Số ejector',
           'Số Camera',
           'Độ chính xác phân loại',
-          'Tỉ lệ phế phẩm',
           'Công suất điện (kW)',
           'Điện áp',
           'Áp suất khí nén',
@@ -2145,7 +2144,6 @@ class _ColorSorterScreenState extends State<ColorSorterScreen>
                                         'Số ejector/ máng',
                                         'Số Camera',
                                         'Độ chính xác phân loại',
-                                        'Tỉ lệ phế phẩm',
                                       ];
                                     } else {
                                       currentKeys = [

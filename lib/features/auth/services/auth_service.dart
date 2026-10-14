@@ -240,6 +240,81 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  /// Đổi mật khẩu cho tài khoản đang đăng nhập. Firebase chỉ cho đổi khi vừa
+  /// đăng nhập gần đây, nên xác minh lại bằng mật khẩu hiện tại để lấy
+  /// idToken mới, rồi lưu phiên mới (đổi mật khẩu làm mất hiệu lực mã phiên
+  /// cũ — các thiết bị khác sẽ phải đăng nhập lại).
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    _ensureConfigured();
+    final email = _email;
+    if (!_signedIn || email == null) {
+      throw const AuthException('Bạn cần đăng nhập để đổi mật khẩu.');
+    }
+    // Bỏ qua kết quả lần xác minh đang chạy bằng mã phiên cũ và tạm dừng xác
+    // minh mới cho tới khi lưu xong phiên mới.
+    final version = _invalidateWork();
+    _signingIn = true;
+    try {
+      final signInResponse = await _client
+          .post(
+            _identityUri('accounts:signInWithPassword'),
+            headers: const {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'email': email,
+              'password': currentPassword,
+              'returnSecureToken': true,
+            }),
+          )
+          .timeout(_timeout);
+      if (!_isCurrent(version)) return;
+      final signInData = _decode(signInResponse.body);
+      if (signInResponse.statusCode != 200) {
+        throw AuthException(
+          _changePasswordMessageFor(_errorCode(signInData)),
+        );
+      }
+      final idToken = _requiredString(signInData, 'idToken');
+
+      final updateResponse = await _client
+          .post(
+            _identityUri('accounts:update'),
+            headers: const {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'idToken': idToken,
+              'password': newPassword,
+              'returnSecureToken': true,
+            }),
+          )
+          .timeout(_timeout);
+      if (!_isCurrent(version)) return;
+      final updateData = _decode(updateResponse.body);
+      if (updateResponse.statusCode != 200) {
+        throw AuthException(
+          _changePasswordMessageFor(_errorCode(updateData)),
+        );
+      }
+      final token = _requiredString(updateData, 'refreshToken');
+      await _acceptSession(version, email, token);
+    } on AuthException {
+      if (_isCurrent(version)) rethrow;
+    } catch (_) {
+      if (_isCurrent(version)) {
+        throw const AuthException(
+          'Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.',
+        );
+      }
+    } finally {
+      if (_isCurrent(version)) {
+        _signingIn = false;
+        _startSessionChecks();
+        notifyListeners();
+      }
+    }
+  }
+
   Future<void> signOut() => _endSession();
 
   Future<void> _endSession({String? notice}) {
@@ -407,6 +482,28 @@ class AuthService extends ChangeNotifier {
     final error = data['error'];
     final message = error is Map ? error['message'] : error;
     return message is String ? message.split(':').first.trim() : '';
+  }
+
+  static String _changePasswordMessageFor(String code) {
+    switch (code) {
+      case 'INVALID_PASSWORD':
+      case 'INVALID_LOGIN_CREDENTIALS':
+        return 'Mật khẩu hiện tại không đúng.';
+      case 'WEAK_PASSWORD':
+        return 'Mật khẩu mới quá yếu: cần ít nhất 6 ký tự.';
+      case 'CREDENTIAL_TOO_OLD_LOGIN_AGAIN':
+      case 'INVALID_ID_TOKEN':
+        return 'Phiên xác minh đã hết hạn. Vui lòng thử lại.';
+      case 'TOO_MANY_ATTEMPTS_TRY_LATER':
+        return 'Nhập sai quá nhiều lần. Vui lòng thử lại sau ít phút.';
+      case 'USER_DISABLED':
+      case 'USER_NOT_FOUND':
+      case 'EMAIL_NOT_FOUND':
+        return _messageFor(code == 'EMAIL_NOT_FOUND' ? 'USER_NOT_FOUND' : code);
+      default:
+        return 'Không đổi được mật khẩu${code.isEmpty ? '' : ' ($code)'}. '
+            'Vui lòng thử lại.';
+    }
   }
 
   static String _messageFor(String code) {

@@ -63,6 +63,158 @@
       "icon": "print_outlined"
     }
   ],
+  "apack_batch_flow_scale": [
+    {
+      "title": "Phễu trên & máy in nhiệt",
+      "summary": "Trang bị sẵn phễu trên và máy in nhiệt.",
+      "detail": "Cân được trang bị sẵn phễu trên và máy in nhiệt, không cần mua thêm để đưa vào vận hành.",
+      "icon": "print_outlined"
+    },
+    {
+      "title": "Đo năng suất nhập/xuất",
+      "summary": "Xác định năng suất nhập và xuất hàng.",
+      "detail": "Xác định được năng suất nhập/xuất hàng — rất ít máy trên thị trường có chức năng này.",
+      "icon": "stacked_bar_chart_outlined"
+    },
+    {
+      "title": "Xử lý tín hiệu nhanh",
+      "summary": "Nhanh, chính xác và ổn định.",
+      "detail": "Bộ điều khiển cân Laumas (Ý) xử lý tín hiệu nhanh, chính xác và ổn định, bước nhảy nhỏ nhất 0.1 g.",
+      "icon": "speed_outlined"
+    },
+    {
+      "title": "Dễ kiểm tra, vệ sinh",
+      "summary": "Phần cứng đơn giản, thép sơn tĩnh điện.",
+      "detail": "Phần cứng được thiết kế đơn giản, dễ dàng kiểm tra và vệ sinh. Toàn bộ máy được làm từ thép sơn tĩnh điện.",
+      "icon": "cleaning_services_outlined"
+    },
+    {
+      "title": "Màn hình dễ vận hành",
+      "summary": "Giao diện đơn giản, sắc nét, độ trễ thấp.",
+      "detail": "Giao diện màn hình được thiết kế đơn giản, dễ vận hành. Màn hình sắc nét, độ trễ thấp.",
+      "icon": "touch_app_outlined"
+    },
+    {
+      "title": "Thiết bị thương hiệu uy tín",
+      "summary": "Zemic, Laumas, Schneider, Omron, Xinje, Airtac.",
+      "detail": "Thiết bị điện dùng các thương hiệu uy tín: loadcell Zemic (Hà Lan), bộ xử lý tín hiệu cân Laumas (Ý), CB/cầu chì Schneider (Đức), rơ-le Omron (Nhật), PLC/HMI Xinje (Trung Quốc). Toàn bộ thiết bị khí nén (xilanh, solenoid, lọc, van, dây hơi, đầu nối…) dùng thương hiệu Airtac.",
+      "icon": "verified_outlined"
+    },
+    {
+      "title": "Kết nối mở rộng (chọn thêm)",
+      "summary": "Phần mềm PC, điều khiển thiết bị, nhiều cân một màn hình.",
+      "detail": "Chức năng chọn thêm: kết nối phần mềm theo dõi trên PC (theo dõi đầy đủ thông tin sản xuất, lưu trữ, in dữ liệu, theo dõi từ xa); điều khiển bồ đài, sàn, băng tải… qua màn hình điều khiển của cân; kết nối nhiều cân dùng chung một màn hình điều khiển.",
+      "icon": "hub_outlined"
+    }
+  ],
+  "apack_ap_250": [
+    {
+      "title": "Xử lý tín hiệu nhanh",
+      "summary": "Nhanh, chính xác và ổn định.",
+      "detail": "Tốc độ xử lý tín hiệu nhanh, chính xác và ổn định nhờ bộ điều khiển cân Laumas (Ý), bước nhảy nhỏ nhất 0.1 g.",
+      "icon": "speed_outlined"
+    },
+    {
+      "title": "Dễ kiểm tra, vệ sinh",
+      "summary": "Phần cứng đơn giản, khung thép sơn tĩnh điện.",
+      "detail": "Phần cứng được thiết kế đơn giản, dễ dàng kiểm tra và vệ sinh. Khung máy làm từ thép sơn tĩnh điện.",
+      "icon": "cleaning_services_outlined"
+    },
+    {
+      "title": "Inox 304",
+      "summary": "Bộ phận tiếp xúc nguyên liệu làm từ inox 304.",
+      "detail": "Các bộ phận tiếp xúc trực tiếp với nguyên liệu được làm từ inox 304.",
+      "icon": "shield_outlined"
+    },
+    {
+      "title": "Màn hình dễ vận hành",
+      "summary": "Giao diện đơn giản, sắc nét, độ trễ thấp.",
+      "detail": "Giao diện màn hình được thiết kế đơn giản, dễ vận hành. Màn hình sắc nét, độ trễ thấp.",
+      "icon": "touch_app_outlined"
+    },
+    {
+      "title": "Thiết bị thương hiệu uy tín",
+      "summary": "Zemic, Laumas, Schneider, Omron, Xinje, Airtac.",
+      "detail": "Thiết bị điện dùng các thương hiệu uy tín: loadcell Zemic (Hà Lan), bộ xử lý tín hiệu cân Laumas (Ý), CB/cầu chì Schneider (Đức), rơ-le Omron (Nhật), PLC/HMI Xinje (Trung Quốc). Toàn bộ thiết bị khí nén (xilanh, solenoid, lọc, van, dây hơi, đầu nối…) dùng thương hiệu Airtac.",
+      "icon": "verified_outlined"
+    },
+    {
+      "title": "Kết nối mở rộng (chọn thêm)",
+      "summary": "Máy in nhiệt, phần mềm PC, điều khiển thiết bị.",
+      "detail": "Chức năng chọn thêm: máy in nhiệt; kết nối phần mềm theo dõi trên PC (theo dõi đầy đủ thông tin sản xuất, lưu trữ, in dữ liệu, theo dõi từ xa); điều khiển bồ đài, sàn, băng tải… qua màn hình điều khiển của cân; kết nối nhiều cân dùng chung một màn hình điều khiển.",
+      "icon": "hub_outlined"
+    },
+    {
+      "title": "Thiết bị chọn thêm",
+      "summary": "Băng tải, máy may, phễu trên, máy ép nhiệt.",
+      "detail": "Lựa chọn thêm: băng tải C30-300 300×3000 mm (nội địa); băng tải SFJ-2800G 350×2800 mm (hàng nhập); máy may cầm tay (nội địa); bộ trụ máy may cắt chỉ tự động FJ-G (hàng nhập); phễu trên 400 L; máy ép nhiệt Apack 1370L/T.\n\nNguồn điện và kích thước trong bảng thông số chỉ tính thân máy.",
+      "icon": "inventory_2_outlined"
+    }
+  ],
+  "apack_ap10_1200": [
+    {
+      "title": "Màn hình cảm ứng",
+      "summary": "Điều khiển qua màn hình cảm ứng.",
+      "detail": "Toàn bộ thao tác điều khiển được thực hiện qua màn hình cảm ứng.",
+      "icon": "touch_app_outlined"
+    },
+    {
+      "title": "Tinh chỉnh sai số",
+      "summary": "Tinh chỉnh sai số khối lượng.",
+      "detail": "Cho phép tinh chỉnh sai số khối lượng để đạt độ chính xác ≤ 5 g.",
+      "icon": "tune_rounded"
+    },
+    {
+      "title": "Kết nối máy tính, wifi",
+      "summary": "Kết nối máy tính; theo dõi từ xa (tùy chọn).",
+      "detail": "Kết nối được với máy tính. Theo dõi từ xa, truyền dữ liệu qua wifi là chức năng tùy chọn theo yêu cầu.",
+      "icon": "hub_outlined"
+    },
+    {
+      "title": "Băng tải đi kèm",
+      "summary": "Belt PVC 220×2600×2 mm, cao 240 – 680 mm.",
+      "detail": "Thông số băng tải: dây belt PVC 220×2600×2 mm; tốc độ có thể điều chỉnh (tùy chọn); hướng băng tải có thể đảo chiều (tùy chọn); độ cao 240 – 680 mm; nguồn điện 380VAC – 3 pha – 0.37 kW.",
+      "icon": "linear_scale_rounded"
+    },
+    {
+      "title": "May / ép nhiệt theo yêu cầu",
+      "summary": "Trang bị máy may hoặc máy ép nhiệt.",
+      "detail": "Máy may, máy ép nhiệt được trang bị theo yêu cầu khách hàng.",
+      "icon": "content_cut_rounded"
+    }
+  ],
+  "apack_ap50_1000": [
+    {
+      "title": "Màn hình cảm ứng",
+      "summary": "Điều khiển qua màn hình cảm ứng.",
+      "detail": "Toàn bộ thao tác điều khiển được thực hiện qua màn hình cảm ứng.",
+      "icon": "touch_app_outlined"
+    },
+    {
+      "title": "Tinh chỉnh sai số",
+      "summary": "Tinh chỉnh sai số khối lượng.",
+      "detail": "Cho phép tinh chỉnh sai số khối lượng để đạt độ chính xác ≤ 10 g.",
+      "icon": "tune_rounded"
+    },
+    {
+      "title": "Kết nối máy tính, wifi",
+      "summary": "Kết nối máy tính; theo dõi từ xa (tùy chọn).",
+      "detail": "Kết nối được với máy tính. Theo dõi từ xa, truyền dữ liệu qua wifi là chức năng tùy chọn theo yêu cầu.",
+      "icon": "hub_outlined"
+    },
+    {
+      "title": "Băng tải đi kèm",
+      "summary": "Belt PVC 350×3000×3 mm, cao 200 – 680 mm.",
+      "detail": "Thông số băng tải: dây belt PVC 350×3000×3 mm; tốc độ có thể điều chỉnh (tùy chọn); hướng băng tải có thể đảo chiều (tùy chọn); độ cao 200 – 680 mm; nguồn điện 380VAC – 3 pha – 0.75 kW.",
+      "icon": "linear_scale_rounded"
+    },
+    {
+      "title": "May bao theo yêu cầu",
+      "summary": "Trang bị máy may bao.",
+      "detail": "Máy may được trang bị theo yêu cầu khách hàng.",
+      "icon": "content_cut_rounded"
+    }
+  ],
   "pe_2_edge_auto": [
     {
       "title": "Hai dây đóng túi song song",

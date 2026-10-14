@@ -12,6 +12,7 @@
     "ejector_qty": "2048",
     "chutes_qty": "8",
     "ejector_per_chute": "128",
+    "finished_quality_min_pct": "≥ 99.9%",
     "power_kw": "9.1",
     "voltage_v": "380",
     "frequency_hz": "50",

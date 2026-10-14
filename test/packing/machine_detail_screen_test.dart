@@ -20,7 +20,59 @@ class _FakePackingMachineRepository extends PackingMachineRepository {
       );
 }
 
+class _ApackRepository extends PackingMachineRepository {
+  @override
+  Future<PackingMachine?> getMachineByModel(String model) async =>
+      const PackingMachine(
+        id: 47,
+        model: 'R-APF-18',
+        productGroup: 'Định lượng',
+        machineLine: 'Cân lưu lượng',
+        brand: 'APACK',
+        batchWeightMaxKg: 65,
+        accuracy: '±50 g/mẻ',
+        capacityMin: 18,
+        capacityMax: 18,
+        capacityUnit: 'tấn/giờ',
+        components: [
+          PackingComponent(name: 'Loadcell', origin: 'Zemic – Hà Lan'),
+        ],
+        featureSet: 'apack_batch_flow_scale',
+      );
+}
+
 void main() {
+  testWidgets('model hãng khác hiện hãng, khối lượng mẻ, sai số, xuất xứ', (
+    tester,
+  ) async {
+    // Màn hình đủ cao để thấy hết nội dung mà không cần cuộn.
+    await tester.binding.setSurfaceSize(const Size(390, 2400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => CompareProvider(),
+        child: MaterialApp(
+          home: MachineDetailScreen(
+            modelName: 'R-APF-18',
+            showCatalog: false,
+            repository: _ApackRepository(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hãng APACK'), findsOneWidget);
+    expect(find.text('Khối lượng mẻ (tối đa)'), findsOneWidget);
+    expect(find.text('65 kg/mẻ'), findsOneWidget);
+    expect(find.text('Trọng lượng/túi'), findsNothing);
+    expect(find.text('Sai số'), findsOneWidget);
+    expect(find.text('±50 g/mẻ'), findsOneWidget);
+    expect(find.text('XUẤT XỨ THIẾT BỊ'), findsOneWidget);
+    expect(find.text('Zemic – Hà Lan'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'trang chi tiết hiển thị và mở đặc điểm nổi bật trên điện thoại',
     (tester) async {

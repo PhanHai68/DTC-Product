@@ -5,7 +5,10 @@ import '../../providers/power_consumption_provider.dart';
 import '../../data/product_data.dart';
 
 class PowerConsumptionScreen extends StatefulWidget {
-  const PowerConsumptionScreen({super.key});
+  const PowerConsumptionScreen({super.key, this.line = ColorSorterLine.rice});
+
+  /// Dòng máy đang phân tích: chỉ liệt kê model của dòng này.
+  final ColorSorterLine line;
 
   @override
   State<PowerConsumptionScreen> createState() => _PowerConsumptionScreenState();
@@ -39,7 +42,7 @@ class _PowerConsumptionScreenState extends State<PowerConsumptionScreen> {
                     label: const Text('Chọn tên model máy'),
                     enableFilter: true,
                     leadingIcon: const Icon(Icons.search),
-                    dropdownMenuEntries: powerConsumptionData.keys
+                    dropdownMenuEntries: powerConsumptionModels(widget.line)
                         .map(
                           (modelName) => DropdownMenuEntry<String>(
                             value: modelName,

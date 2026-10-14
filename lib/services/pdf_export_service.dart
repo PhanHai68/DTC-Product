@@ -566,7 +566,7 @@ abstract final class DtcPdfExportService {
       ('Số máng', specs['Số máng'] ?? '--'),
       ('Số ejector', specs['Số ejector'] ?? '--'),
       ('Số camera', specs['Số camera'] ?? specs['Số Camera'] ?? '--'),
-      ('Độ chính xác', specs['Độ phân loại chính xác (%)'] != null ? '≥ ${specs['Độ phân loại chính xác (%)']}%' : specs['Độ chính xác phân loại'] ?? '--'),
+      ('Độ chính xác', specs['Độ chính xác phân loại'] ?? '--'),
       ('Công suất điện', '${specs['Công suất (kW)'] ?? specs['Công suất điện (kW)'] ?? '--'} kW'),
       ('Điện áp', specs['Điện áp (V)'] ?? specs['Điện áp'] ?? '--'),
       ('Áp suất khí nén', specs['Áp suất khí nén (Mpa)'] ?? specs['Áp suất khí nén'] ?? '--'),

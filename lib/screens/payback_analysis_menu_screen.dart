@@ -3,13 +3,26 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../data/product_data.dart';
 import '../providers/electricity_bill_provider.dart';
 import '../providers/payback_period_provider.dart';
 import '../providers/processing_profit_provider.dart';
 import '../providers/self_business_provider.dart';
 
 class PaybackAnalysisMenuScreen extends StatelessWidget {
-  const PaybackAnalysisMenuScreen({super.key});
+  const PaybackAnalysisMenuScreen({super.key, this.line = ColorSorterLine.rice});
+
+  /// Dòng máy đang phân tích (gạo, thóc hoặc trà) — quyết định danh sách model.
+  final ColorSorterLine line;
+
+  /// Máy trà mới tính được tiền điện (bước 2) và lợi nhuận gia công (bước 3);
+  /// các bước sau chưa có dữ liệu.
+  static const _teaComingSoonFromStep = 4;
+
+  static const _lineNames = {
+    ColorSorterLine.paddy: 'Máy tách màu Thóc',
+    ColorSorterLine.tea: 'Máy tách màu Trà',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +35,27 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
       symbol: '₫',
       decimalDigits: 0,
     );
+    final lineQuery = line == ColorSorterLine.rice ? '' : '?line=${line.name}';
+    final isTea = line == ColorSorterLine.tea;
 
-    final hasElectricity = electricity.totalBill != null;
-    final hasProcessing = processing.totalProfit != null;
-    final hasPayback = payback.machinePaybackDays != null;
-    final hasBusiness = business.netProfit != null;
+    // Kết quả đang có thuộc model của dòng máy khác (VD đã tính máy gạo rồi
+    // mở từ menu máy thóc): không dùng tiếp, phải bắt đầu phương án mới.
+    final selectedModel = electricity.selectedModel;
+    final otherLinePlan =
+        selectedModel != null &&
+        !powerConsumptionModels(line).contains(selectedModel);
+
+    final hasElectricity = !otherLinePlan && electricity.totalBill != null;
+    final hasProcessing = !otherLinePlan && processing.totalProfit != null;
+    final hasPayback = !otherLinePlan && payback.machinePaybackDays != null;
+    final hasBusiness = !otherLinePlan && business.netProfit != null;
     final canChart = hasProcessing && hasPayback && hasBusiness;
-    final completedCount = [
+    final results = [
       hasElectricity,
       hasProcessing,
-      hasPayback,
-      hasBusiness,
-    ].where((value) => value).length;
+      if (!isTea) ...[hasPayback, hasBusiness],
+    ];
+    final completedCount = results.where((value) => value).length;
 
     final steps = <_PaybackStep>[
       _PaybackStep(
@@ -42,7 +64,7 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
         description: 'Xem công suất theo model trước khi lập phương án.',
         icon: Icons.bolt_rounded,
         status: 'Tra cứu độc lập',
-        onTap: () => context.push('/power_consumption'),
+        onTap: () => context.push('/power_consumption$lineQuery'),
       ),
       _PaybackStep(
         number: 2,
@@ -52,7 +74,7 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
             : 'Chọn model và nhập thời gian vận hành theo từng khung giá.',
         icon: Icons.payments_rounded,
         completed: hasElectricity,
-        onTap: () => context.push('/electricity_bill'),
+        onTap: () => context.push('/electricity_bill$lineQuery'),
       ),
       _PaybackStep(
         number: 3,
@@ -66,7 +88,7 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
           context,
           ready: hasElectricity,
           target: '/processing_profit',
-          prerequisite: '/electricity_bill',
+          prerequisite: '/electricity_bill$lineQuery',
           message: 'Hãy hoàn thành bước 2: Tính tiền điện mỗi ngày.',
         ),
       ),
@@ -82,7 +104,7 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
           if (!hasElectricity) {
             _redirect(
               context,
-              '/electricity_bill',
+              '/electricity_bill$lineQuery',
               'Hãy hoàn thành bước 2 trước.',
             );
           } else {
@@ -108,7 +130,7 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
           context,
           ready: hasElectricity,
           target: '/self_business',
-          prerequisite: '/electricity_bill',
+          prerequisite: '/electricity_bill$lineQuery',
           message: 'Hãy hoàn thành bước 2: Tính tiền điện mỗi ngày.',
         ),
       ),
@@ -125,7 +147,7 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
           if (!hasElectricity) {
             _redirect(
               context,
-              '/electricity_bill',
+              '/electricity_bill$lineQuery',
               'Hãy hoàn thành bước 2 trước.',
             );
           } else if (!hasProcessing) {
@@ -153,11 +175,35 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
       ),
     ];
 
+    Future<void> startNewPlan() async {
+      final reset = await _confirmReset(
+        context,
+        electricity,
+        processing,
+        payback,
+        business,
+      );
+      if (reset && context.mounted) {
+        context.push('/electricity_bill$lineQuery');
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Phân tích hoàn vốn'),
+        title: _lineNames[line] == null
+            ? const Text('Phân tích hoàn vốn')
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Phân tích hoàn vốn'),
+                  Text(
+                    _lineNames[line]!,
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ],
+              ),
         actions: [
-          if (completedCount > 0)
+          if (completedCount > 0 || otherLinePlan)
             IconButton(
               tooltip: 'Bắt đầu lại',
               onPressed: () => _confirmReset(
@@ -180,12 +226,44 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _ProgressHeader(completed: completedCount, total: 4),
+                  _ProgressHeader(
+                    completed: completedCount,
+                    total: results.length,
+                  ),
                   const SizedBox(height: 14),
+                  if (otherLinePlan) ...[
+                    _OtherLinePlanCard(
+                      model: selectedModel,
+                      onStartNew: startNewPlan,
+                    ),
+                    const SizedBox(height: 14),
+                  ],
                   ...steps.map(
                     (step) => Padding(
                       padding: const EdgeInsets.only(bottom: 10),
-                      child: _PaybackStepCard(step: step),
+                      child: isTea && step.number >= _teaComingSoonFromStep
+                          ? _PaybackStepCard(
+                              step: step,
+                              comingSoon: true,
+                              onTap: () => ScaffoldMessenger.of(context)
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Bước này sắp có cho máy tách màu Trà.',
+                                    ),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                ),
+                            )
+                          : _PaybackStepCard(
+                              step: step,
+                              // Bước 1 chỉ tra cứu; các bước khác cần phương
+                              // án mới.
+                              onTap: otherLinePlan && step.number > 1
+                                  ? startNewPlan
+                                  : null,
+                            ),
                     ),
                   ),
                 ],
@@ -216,7 +294,8 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
     context.push(route);
   }
 
-  static Future<void> _confirmReset(
+  /// Hỏi rồi xóa kết quả phương án hiện tại; trả về `true` nếu đã xóa.
+  static Future<bool> _confirmReset(
     BuildContext context,
     ElectricityBillProvider electricity,
     ProcessingProfitProvider processing,
@@ -242,11 +321,56 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
         ],
       ),
     );
-    if (confirmed != true) return;
+    if (confirmed != true) return false;
     electricity.resetSession();
     processing.resetSession();
     payback.resetSession();
     business.resetSession();
+    return true;
+  }
+}
+
+class _OtherLinePlanCard extends StatelessWidget {
+  const _OtherLinePlanCard({required this.model, required this.onStartNew});
+
+  final String model;
+  final VoidCallback onStartNew;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Card(
+      color: colorScheme.tertiaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Đang có phương án tính cho model $model của dòng máy khác.',
+              style: TextStyle(
+                color: colorScheme.onTertiaryContainer,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Bắt đầu phương án mới để chọn model của dòng máy này.',
+              style: TextStyle(color: colorScheme.onTertiaryContainer),
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FilledButton.icon(
+                onPressed: onStartNew,
+                icon: const Icon(Icons.restart_alt_rounded),
+                label: const Text('Bắt đầu phương án mới'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -316,13 +440,44 @@ class _PaybackStep {
 }
 
 class _PaybackStepCard extends StatelessWidget {
-  const _PaybackStepCard({required this.step});
+  const _PaybackStepCard({
+    required this.step,
+    this.onTap,
+    this.comingSoon = false,
+  });
 
   final _PaybackStep step;
+
+  /// Thay cho [_PaybackStep.onTap] khi cần (VD phải bắt đầu phương án mới).
+  final VoidCallback? onTap;
+
+  /// Bước chưa có cho dòng máy này: hiện mờ, nhãn "Sắp có".
+  final bool comingSoon;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final shown = comingSoon
+        ? _PaybackStep(
+            number: step.number,
+            title: step.title,
+            description: 'Chưa có dữ liệu cho dòng máy này.',
+            icon: step.icon,
+            onTap: step.onTap,
+            status: 'Sắp có',
+          )
+        : step;
+    return Opacity(
+      opacity: comingSoon ? 0.6 : 1,
+      child: _buildCard(context, colorScheme, shown),
+    );
+  }
+
+  Widget _buildCard(
+    BuildContext context,
+    ColorScheme colorScheme,
+    _PaybackStep step,
+  ) {
     return Semantics(
       button: true,
       label: 'Bước ${step.number}: ${step.title}',
@@ -331,7 +486,7 @@ class _PaybackStepCard extends StatelessWidget {
         margin: EdgeInsets.zero,
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
-          onTap: step.onTap,
+          onTap: onTap ?? step.onTap,
           child: Padding(
             padding: const EdgeInsets.all(15),
             child: Row(

@@ -82,6 +82,7 @@ import '../screens/acomp/acomp_pipe_screen.dart';
 import '../screens/acomp/acomp_tank_fill_time_screen.dart';
 import '../screens/acomp/acomp_troubleshooting_menu_screen.dart';
 import '../screens/acomp/acomp_common_errors_screen.dart';
+import '../screens/color_sorter_errors/color_sorter_errors_screen.dart';
 import '../screens/acomp/acomp_ds8011_settings_screen.dart';
 // Packing module screens
 import '../screens/packing/packing_menu_screen.dart';
@@ -119,6 +120,12 @@ import '../features/site_layout/screens/site_elevation_screen.dart';
 import '../features/factory_location/models/factory_location.dart';
 import '../features/factory_location/screens/factory_location_list_screen.dart';
 import '../features/factory_location/screens/factory_location_form_screen.dart';
+import '../data/product_data.dart' show ColorSorterLine;
+
+/// `?line=paddy|tea` → luồng hoàn vốn của máy thóc/trà; mặc định máy gạo.
+ColorSorterLine _colorSorterLine(GoRouterState state) =>
+    ColorSorterLine.values.asNameMap()[state.uri.queryParameters['line']] ??
+    ColorSorterLine.rice;
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -539,7 +546,9 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/agro_color_sorter',
-      builder: (context, state) => const AgroColorSorterScreen(),
+      builder: (context, state) => AgroColorSorterScreen(
+        initialModel: state.uri.queryParameters['model'],
+      ),
     ),
     GoRoute(
       path: '/acomp_menu',
@@ -583,6 +592,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/acomp_common_errors',
       builder: (context, state) => const AcompCommonErrorsScreen(),
+    ),
+    GoRoute(
+      path: '/color_sorter_errors',
+      builder: (context, state) => ColorSorterErrorsScreen(
+        machineLine: state.uri.queryParameters['line'],
+      ),
     ),
     GoRoute(
       path: '/acomp_ds8011_settings',
@@ -630,15 +645,18 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/payback_analysis',
-      builder: (context, state) => const PaybackAnalysisMenuScreen(),
+      builder: (context, state) =>
+          PaybackAnalysisMenuScreen(line: _colorSorterLine(state)),
     ),
     GoRoute(
       path: '/power_consumption',
-      builder: (context, state) => const PowerConsumptionScreen(),
+      builder: (context, state) =>
+          PowerConsumptionScreen(line: _colorSorterLine(state)),
     ),
     GoRoute(
       path: '/electricity_bill',
-      builder: (context, state) => const ElectricityBillScreen(),
+      builder: (context, state) =>
+          ElectricityBillScreen(line: _colorSorterLine(state)),
     ),
     GoRoute(
       path: '/processing_profit',

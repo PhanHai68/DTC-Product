@@ -28,13 +28,16 @@ class TeaColorSorterMenuScreen extends StatelessWidget {
           id: 'tea_color_sorter_payback_btn',
           title: 'Phân tích hoàn vốn',
           icon: Icons.query_stats_rounded,
-          statusLabel: 'Sắp có',
+          subtitle: 'Hiện có cho DF53 Pro',
+          onTap: () => context.push('/payback_analysis?line=tea'),
         ),
         TechnologyMenuEntry(
           id: 'tea_color_sorter_errors_btn',
           title: 'Tra cứu lỗi',
           icon: Icons.troubleshoot_rounded,
-          statusLabel: 'Sắp có',
+          onTap: () => context.push(
+            '/color_sorter_errors?line=${Uri.encodeQueryComponent('Máy tách màu Trà')}',
+          ),
         ),
       ],
     );

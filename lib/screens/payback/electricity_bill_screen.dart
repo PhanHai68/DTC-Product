@@ -8,7 +8,10 @@ import '../../core/input/localized_number.dart';
 import 'package:intl/intl.dart';
 
 class ElectricityBillScreen extends StatefulWidget {
-  const ElectricityBillScreen({super.key});
+  const ElectricityBillScreen({super.key, this.line = ColorSorterLine.rice});
+
+  /// Dòng máy đang phân tích: chỉ liệt kê model của dòng này.
+  final ColorSorterLine line;
 
   @override
   State<ElectricityBillScreen> createState() => _ElectricityBillScreenState();
@@ -130,7 +133,9 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                     labelText: 'Chọn tên model máy',
                     border: OutlineInputBorder(),
                   ),
-                  items: powerConsumptionData.keys.map((String model) {
+                  items: powerConsumptionModels(widget.line).map((
+                    String model,
+                  ) {
                     return DropdownMenuItem<String>(
                       value: model,
                       child: Text(model),

@@ -6,6 +6,7 @@
 import 'dart:convert';
 
 import '../models/acomp_spec_model.dart';
+import '../models/color_sorter_errors.dart';
 import '../models/material_model.dart';
 import '../models/packing_machine.dart';
 
@@ -22,6 +23,7 @@ abstract final class ProductData {
   static const auxEquipmentPath = '$_colorSorterDir/aux_equipment.json';
   static const teaAuxEquipmentPath = '$_colorSorterDir/tea_aux_equipment.json';
   static const powerConsumptionPath = '$_colorSorterDir/power_consumption.json';
+  static const colorSorterErrorsPath = '$_colorSorterDir/common_errors.json';
 
   static const acompSpecsPath = '$_airCompressorDir/specs.json';
   static const acompMaterialsPath = '$_airCompressorDir/materials.json';
@@ -42,6 +44,7 @@ abstract final class ProductData {
     auxEquipmentPath,
     teaAuxEquipmentPath,
     powerConsumptionPath,
+    colorSorterErrorsPath,
     acompSpecsPath,
     acompMaterialsPath,
     acompMccbCablePath,
@@ -81,7 +84,10 @@ abstract final class ProductData {
     }
 
     final rice = _toStringMapList(decode(colorSorterRicePath) as List);
-    final paddy = _toStringMapList(decode(colorSorterPaddyPath) as List);
+    final paddy = _withRiceAirSystem(
+      _toStringMapList(decode(colorSorterPaddyPath) as List),
+      rice,
+    );
     final tea = _toStringMapList(decode(colorSorterTeaPath) as List);
     final mineral = _toStringMapList(decode(colorSorterMineralPath) as List);
     final agro = _toStringMapList(decode(colorSorterAgroPath) as List);
@@ -94,6 +100,29 @@ abstract final class ProductData {
       for (final entry in (decode(powerConsumptionPath) as Map).entries)
         entry.key as String: _toStringMapList(entry.value as List),
     };
+    // Máy thóc chưa có bảng điện năng riêng (để tính hoàn vốn): lấy của máy
+    // gạo cùng số máng, thay năng suất và công suất máy tách màu bằng thông số
+    // của chính máy thóc; không có máy gạo cùng số máng thì bỏ qua.
+    final paddyRice = _sameChuteRiceModels(paddy, rice);
+    for (final spec in paddy) {
+      final model = spec['Model'];
+      if (model == null || powerByModel.containsKey(model)) continue;
+      final source = (paddyRice[model] ?? const <String>[])
+          .where(powerByModel.containsKey)
+          .firstOrNull;
+      if (source == null) continue;
+      powerByModel[model] = _paddyPowerRows(powerByModel[source]!, spec);
+    }
+    // Máy trà: công suất cả dây chuyền tính từ danh sách thiết bị phụ trợ
+    // (tea_aux_equipment.json là dây chuyền của model máy tách màu có trong
+    // danh sách, hiện là DF53 Pro).
+    final teaLine = _teaLinePower(tea, teaAux);
+    if (teaLine != null && !powerByModel.containsKey(teaLine.$1)) {
+      powerByModel[teaLine.$1] = teaLine.$2;
+    }
+    final sorterErrors = ColorSorterErrors.fromJson(
+      decode(colorSorterErrorsPath) as Map<String, dynamic>,
+    );
 
     final materials = [
       for (final item in decode(acompMaterialsPath) as List)
@@ -128,6 +157,8 @@ abstract final class ProductData {
     _auxEquipSpecsByModel = auxByModel;
     _teaAuxEquipData = teaAux;
     _powerConsumptionData = powerByModel;
+    _paddyRiceModels = paddyRice;
+    _colorSorterErrors = sorterErrors;
     _materialDataList = materials;
     _acompSpecData = acompSpecs;
     _acompModelsFlowData = [
@@ -146,6 +177,181 @@ abstract final class ProductData {
     _ds8011Parameters = ds8011;
     _packingMachines = List.unmodifiable(packing);
     _packingFeatureSets = packingFeatures;
+  }
+
+  /// Các trường khí nén máy thóc lấy theo máy gạo.
+  static const _riceAirKeys = [
+    'Áp suất khí nén',
+    'Lưu lượng khí tiêu thụ',
+    'Máy nén khí đồng bộ',
+    'Bình tích khí đồng bộ',
+  ];
+
+  /// Máy thóc dùng hệ thống khí nén của máy gạo cùng số máng (cùng 96
+  /// ejector/máng); không có máy gạo cùng số máng thì lấy máy gần nhất,
+  /// cách đều hai bên thì lấy máy ít máng hơn (VD 8 máng → SC10 7 máng).
+  static List<Map<String, String>> _withRiceAirSystem(
+    List<Map<String, String>> paddy,
+    List<Map<String, String>> rice,
+  ) {
+    final riceByChutes = [
+      for (final spec in rice)
+        if (int.tryParse(spec['Số máng'] ?? '') case final chutes?)
+          (chutes, spec),
+    ];
+    if (riceByChutes.isEmpty) return paddy;
+    return [
+      for (final spec in paddy)
+        switch (int.tryParse(spec['Số máng'] ?? '')) {
+          null => spec,
+          final chutes => {
+            ...spec,
+            for (final MapEntry(:key, :value)
+                in _nearestByChutes(riceByChutes, chutes).entries)
+              if (_riceAirKeys.contains(key) && value.isNotEmpty) key: value,
+          },
+        },
+    ];
+  }
+
+  /// Model máy thóc → các model máy gạo có đúng cùng số máng (theo thứ tự
+  /// trong sc_rice.json). Máy thóc không có máy gạo cùng số máng thì không có
+  /// trong kết quả.
+  static Map<String, List<String>> _sameChuteRiceModels(
+    List<Map<String, String>> paddy,
+    List<Map<String, String>> rice,
+  ) {
+    final result = <String, List<String>>{};
+    for (final spec in paddy) {
+      final model = spec['Model'];
+      final chutes = spec['Số máng'];
+      if (model == null || chutes == null) continue;
+      final riceModels = [
+        for (final r in rice)
+          if (r['Số máng'] == chutes && r['Model'] != null) r['Model']!,
+      ];
+      if (riceModels.isNotEmpty) result[model] = riceModels;
+    }
+    return result;
+  }
+
+  static const _capacityRow = 'Năng suất (Tấn/h)';
+  static const _sorterPowerRow = 'Máy tách màu (kW)';
+  static const _maxPowerRow = 'Công suất tối đa (kW)';
+  static const _avgPowerRow = 'Công suất trung bình (kW)';
+
+  /// Bảng điện năng máy thóc từ bảng của máy gạo cùng số máng: năng suất =
+  /// trung bình mức thấp nhất và cao nhất của máy thóc, công suất máy tách
+  /// màu theo máy thóc; công suất tối đa = tổng các thiết bị, trung bình =
+  /// 80% tối đa (cùng cách tính trong power_consumption.json).
+  static List<Map<String, String>> _paddyPowerRows(
+    List<Map<String, String>> riceRows,
+    Map<String, String> paddySpec,
+  ) {
+    final range = (paddySpec['Năng suất (tấn/giờ)'] ?? '')
+        .split('-')
+        .map((part) => double.tryParse(part.trim()))
+        .nonNulls
+        .toList();
+    final capacity = range.isEmpty
+        ? null
+        : (range.first + range.last) / 2;
+    final sorterPower = paddySpec['Công suất điện (kW)'];
+
+    final rows = [
+      for (final row in riceRows)
+        {
+          ...row,
+          if (row['Tiêu chí'] == _capacityRow && capacity != null)
+            'Thông số': _formatFlow(capacity),
+          if (row['Tiêu chí'] == _sorterPowerRow && sorterPower != null)
+            'Thông số': sorterPower,
+        },
+    ];
+    var maxPower = 0.0;
+    for (final row in rows) {
+      final name = row['Tiêu chí'];
+      if (name == _capacityRow || name == _maxPowerRow || name == _avgPowerRow) {
+        continue;
+      }
+      maxPower += double.tryParse(row['Thông số'] ?? '') ?? 0;
+    }
+    return [
+      for (final row in rows)
+        switch (row['Tiêu chí']) {
+          _maxPowerRow => {...row, 'Thông số': maxPower.toStringAsFixed(2)},
+          _avgPowerRow => {
+            ...row,
+            'Thông số': (maxPower * 0.8).toStringAsFixed(2),
+          },
+          _ => row,
+        },
+    ];
+  }
+
+  static const _linePeakPowerRow = 'Công suất lớn nhất (kW)';
+
+  /// Bảng điện năng dây chuyền trà từ danh sách thiết bị phụ trợ: model là
+  /// máy tách màu trong danh sách; mỗi thiết bị một dòng (công suất × số
+  /// lượng); công suất lớn nhất = tổng; năng suất = năng suất tối đa của model.
+  /// Không có công suất trung bình — tính tiền điện dùng công suất lớn nhất.
+  static (String, List<Map<String, String>>)? _teaLinePower(
+    List<Map<String, String>> tea,
+    List<Map<String, dynamic>> teaAux,
+  ) {
+    final sorterModel = teaAux
+        .where((item) => item['name'] == 'Máy tách màu')
+        .map((item) => (item['model'] as String? ?? '').toLowerCase())
+        .firstOrNull;
+    final spec = tea
+        .where((s) => (s['model'] ?? '').toLowerCase() == sorterModel)
+        .firstOrNull;
+    if (spec == null) return null;
+
+    final rows = <Map<String, String>>[];
+    final capacityKg = double.tryParse(spec['capacity_max_kg_h'] ?? '');
+    if (capacityKg != null) {
+      rows.add({
+        'Tiêu chí': _capacityRow,
+        'Thông số': _formatFlow(capacityKg / 1000),
+      });
+    }
+    var total = 0.0;
+    for (final item in teaAux) {
+      final power = double.tryParse(
+        (item['power'] as String? ?? '').replaceAll('kW', '').trim(),
+      );
+      if (power == null) continue;
+      final quantity = int.tryParse(item['quantity'] as String? ?? '') ?? 1;
+      final linePower = power * quantity;
+      total += linePower;
+      rows.add({
+        'Tiêu chí': quantity > 1
+            ? '${item['name']} × $quantity (kW)'
+            : '${item['name']} (kW)',
+        'Thông số': _formatFlow(double.parse(linePower.toStringAsFixed(2))),
+      });
+    }
+    rows.add({
+      'Tiêu chí': _linePeakPowerRow,
+      'Thông số': total.toStringAsFixed(2),
+    });
+    return (spec['model']!, rows);
+  }
+
+  static Map<String, String> _nearestByChutes(
+    List<(int, Map<String, String>)> riceByChutes,
+    int chutes,
+  ) {
+    var best = riceByChutes.first;
+    for (final candidate in riceByChutes.skip(1)) {
+      final diff = (candidate.$1 - chutes).abs();
+      final bestDiff = (best.$1 - chutes).abs();
+      if (diff < bestDiff || (diff == bestDiff && candidate.$1 < best.$1)) {
+        best = candidate;
+      }
+    }
+    return best.$2;
   }
 
   static List<Map<String, String>> _toStringMapList(List items) => [
@@ -189,6 +395,8 @@ List<Map<String, String>>? _agroColorSorterSpecs;
 Map<String, List<Map<String, String>>>? _auxEquipSpecsByModel;
 List<Map<String, dynamic>>? _teaAuxEquipData;
 Map<String, List<Map<String, String>>>? _powerConsumptionData;
+ColorSorterErrors? _colorSorterErrors;
+Map<String, List<String>>? _paddyRiceModels;
 List<MaterialModel>? _materialDataList;
 List<AcompSpecModel>? _acompSpecData;
 List<Map<String, dynamic>>? _acompModelsFlowData;
@@ -227,7 +435,7 @@ List<Map<String, String>> get teaColorSorterSpecs =>
 List<Map<String, String>> get mineralColorSorterSpecs =>
     _loaded(_mineralColorSorterSpecs);
 
-/// Máy tách màu nông sản H7 — `color_sorter/h7_agro.json`.
+/// Máy tách màu nông sản dòng H (H1…H12) — `color_sorter/h7_agro.json`.
 List<Map<String, String>> get agroColorSorterSpecs =>
     _loaded(_agroColorSorterSpecs);
 
@@ -242,6 +450,51 @@ List<Map<String, dynamic>> get teaAuxEquipData => _loaded(_teaAuxEquipData);
 /// `color_sorter/power_consumption.json`.
 Map<String, List<Map<String, String>>> get powerConsumptionData =>
     _loaded(_powerConsumptionData);
+
+/// Dòng máy tách màu dùng chung luồng phân tích hoàn vốn.
+enum ColorSorterLine { rice, paddy, tea }
+
+/// Công suất dùng để tính tiền điện của [model]: công suất trung bình; model
+/// không có công suất trung bình (dây chuyền trà) dùng công suất lớn nhất.
+double? billingPowerKw(String model) {
+  final rows = powerConsumptionData[model];
+  if (rows == null) return null;
+  String? value(String name) =>
+      rows.where((r) => r['Tiêu chí'] == name).firstOrNull?['Thông số'];
+  final raw =
+      value('Công suất trung bình (kW)') ?? value('Công suất lớn nhất (kW)');
+  return raw == null ? null : double.tryParse(raw);
+}
+
+/// Các model có bảng điện năng (dùng trong phân tích hoàn vốn) của [line].
+/// Máy thóc lấy bảng của máy gạo cùng số máng (xem [riceModelForPaddy]);
+/// máy trà chỉ có model có danh sách thiết bị dây chuyền (DF53 Pro).
+List<String> powerConsumptionModels(ColorSorterLine line) {
+  final lineModels = {
+    for (final spec in switch (line) {
+      ColorSorterLine.rice => colorSorterSpecs,
+      ColorSorterLine.paddy => paddyColorSorterSpecs,
+      ColorSorterLine.tea => teaColorSorterSpecs,
+    })
+      ?(spec['Model'] ?? spec['model']),
+  };
+  return [
+    for (final model in powerConsumptionData.keys)
+      if (lineModels.contains(model)) model,
+  ];
+}
+
+/// Máy gạo cùng số máng với [paddyModel] (đầu tiên theo thứ tự sc_rice.json)
+/// có trong [available]; `null` nếu không có máy gạo cùng số máng.
+String? riceModelForPaddy(String paddyModel, Iterable<String> available) {
+  final candidates = _loaded(_paddyRiceModels)[paddyModel] ?? const [];
+  final keys = available.toSet();
+  return candidates.where(keys.contains).firstOrNull;
+}
+
+/// Tra cứu lỗi máy tách màu (dùng chung mọi dòng máy) —
+/// `color_sorter/common_errors.json`.
+ColorSorterErrors get colorSorterErrors => _loaded(_colorSorterErrors);
 
 // ── Máy nén khí ACOMP ───────────────────────────────────────────────────────
 

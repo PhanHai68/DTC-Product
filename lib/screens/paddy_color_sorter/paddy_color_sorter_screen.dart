@@ -99,7 +99,10 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
     if (m.contains('sc10')) return 'assets/images/color_sorter/sc10.jpeg';
     if (m.contains('sc8')) return 'assets/images/color_sorter/sc8.jpeg';
     if (m.contains('sc4')) return 'assets/images/color_sorter/sc4.jpeg';
-    if (m.contains('sf7d')) return 'assets/images/color_sorter/sf7d_pro.png';
+    // Cả dòng SF Pro (SF3D…SF12D) dùng chung ảnh SF7D Pro làm đại diện.
+    if (RegExp(r'^sf\d+d').hasMatch(m)) {
+      return 'assets/images/color_sorter/sf7d_pro.png';
+    }
     return null;
   }
 
@@ -236,6 +239,9 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
   }
 
   void _showTechApplicationDialog(BuildContext context, String modelName) {
+    // Nội dung chung cho cả dòng SFD Pro.
+    const description =
+        'Máy phân loại AI thông minh dòng SFD PRO được thiết kế chuyên dùng để phân loại lúa. Máy tích hợp sẵn mô hình lớn AI phân loại chất lượng, nhận diện chính xác và loại bỏ các yếu tố làm giảm chất lượng lúa như hạt nảy mầm bên trong, hạt nảy mầm bên ngoài, hạt biến màu, hạt đốm, hạt mốc và hạt non.';
     showDialog(
       context: context,
       builder: (context) {
@@ -288,9 +294,9 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.blue.shade200, width: 1.2),
                   ),
-                  child: const Text(
-                    'Máy tách màu lúa giống và lúa cựa lứt SF7D Pro dùng để phân loại thóc và gạo xô tại cối hồi hoặc phễu của gầu tải (Tuỳ gầu), lượng gạo xô sau khi phân loại sẽ đi qua giai đoạn xát trắng mà không cần quay trở lại máy bóc vỏ, giúp giảm tỷ lệ gãy / vỡ đến 96%.\n\nĐồng thời, SF7D Pro giúp tăng sản lượng gạo xô thu hồi đến 99.99% sau giai đoạn gầu tải thóc.\n\nMáy tách màu lúa giống và lúa cựa lứt SF7D Pro được trang bị 7 máng với năng suất đạt được 3.5 - 7 tấn trong một giờ giúp sản lượng thành phẩm thu hoạch đạt được gấp 10 lần năng suất thông thường. Tuy có năng suất lớn nhưng công suất điện tiêu thụ chỉ đạt 3.5kW giúp tiết kiệm điện năng tốt nhất.',
-                    style: TextStyle(
+                  child: Text(
+                    description,
+                    style: const TextStyle(
                       fontSize: 14,
                       height: 1.5,
                       color: Color(0xFF1E293B),
@@ -488,7 +494,6 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
           'Số ejector',
           'Số Camera',
           'Độ chính xác phân loại',
-          'Tỉ lệ phế phẩm',
           'Công suất điện (kW)',
           'Điện áp',
           'Áp suất khí nén',
@@ -1767,7 +1772,6 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                       'Số ejector/ máng',
                                       'Số Camera',
                                       'Độ chính xác phân loại',
-                                      'Tỉ lệ phế phẩm',
                                     ];
                                   } else {
                                     currentKeys = [

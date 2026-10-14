@@ -41,7 +41,8 @@ void main() {
     expect(find.text('Tra cứu lỗi'), findsOneWidget);
     // Tài liệu vận hành đã chuyển vào Thư viện tài liệu ở trang chủ.
     expect(find.text('Tài liệu vận hành'), findsNothing);
-    expect(find.text('Sắp có'), findsNWidgets(3));
+    // "Tra cứu lỗi" đã có; còn "Thiết bị phụ trợ" và "Phân tích hoàn vốn".
+    expect(find.text('Sắp có'), findsNWidgets(2));
   });
 
   testWidgets('màn hình SX8 hiển thị ảnh, thông số và nút mô hình 3D', (

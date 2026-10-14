@@ -40,6 +40,13 @@ class PackingMachine {
   final String? catalogAssetPath; // Đường dẫn asset PDF catalog
   final int? catalogPage; // Trang cụ thể trong catalog
   final String? featureSet; // Bộ đặc điểm nổi bật trong features.json
+  // Các trường tùy chọn cho model hãng khác (VD cân mẻ R-APF-18 của APACK):
+  final String? brand; // Hãng sản xuất (máy DTC để trống)
+  final double? batchWeightMaxKg; // Khối lượng mẻ tối đa (cân mẻ)
+  final String? accuracy; // Sai số, VD "±50 g/mẻ"
+  final String? capacityText; // Năng suất ghi sẵn, thay cho dải min – max
+  final String? weightText; // Dải khối lượng ghi sẵn, thay cho dải min – max
+  final List<PackingComponent> components; // Xuất xứ thiết bị chính
 
   const PackingMachine({
     required this.id,
@@ -80,6 +87,12 @@ class PackingMachine {
     this.catalogAssetPath,
     this.catalogPage,
     this.featureSet,
+    this.brand,
+    this.batchWeightMaxKg,
+    this.accuracy,
+    this.capacityText,
+    this.weightText,
+    this.components = const [],
   });
 
   /// Tạo PackingMachine từ một mục trong machines.json
@@ -123,6 +136,15 @@ class PackingMachine {
       catalogAssetPath: map['catalog_asset_path'] as String?,
       catalogPage: (map['catalog_page'] as num?)?.toInt(),
       featureSet: map['feature_set'] as String?,
+      brand: map['brand'] as String?,
+      batchWeightMaxKg: (map['batch_weight_max_kg'] as num?)?.toDouble(),
+      accuracy: map['accuracy'] as String?,
+      capacityText: map['capacity_text'] as String?,
+      weightText: map['weight_text'] as String?,
+      components: [
+        for (final item in map['components'] as List? ?? const [])
+          PackingComponent.fromMap(item as Map<String, dynamic>),
+      ],
     );
   }
 
@@ -130,6 +152,7 @@ class PackingMachine {
 
   /// Dải trọng lượng dạng text: "0.35 - 5 kg"
   String get weightRangeText {
+    if (weightText != null && weightText!.isNotEmpty) return weightText!;
     final unit = weightUnit ?? 'kg';
     if (weightMinKg != null && weightMaxKg != null) {
       final min = _formatNum(weightMinKg!);
@@ -143,6 +166,7 @@ class PackingMachine {
 
   /// Dải năng suất dạng text: "540 - 600 túi/giờ"
   String get capacityRangeText {
+    if (capacityText != null && capacityText!.isNotEmpty) return capacityText!;
     final unit = capacityUnit ?? '';
     if (capacityMin != null && capacityMax != null) {
       final min = _formatNum(capacityMin!);
@@ -231,4 +255,20 @@ class PackingMachine {
 
   @override
   int get hashCode => model.hashCode;
+}
+
+/// Một thiết bị chính trong máy và xuất xứ (VD "Loadcell" – "Zemic – Hà Lan").
+class PackingComponent {
+  final String name;
+  final String origin;
+  final String? note; // Điểm nổi bật (nếu có)
+
+  const PackingComponent({required this.name, required this.origin, this.note});
+
+  factory PackingComponent.fromMap(Map<String, dynamic> map) =>
+      PackingComponent(
+        name: map['name'] as String? ?? '',
+        origin: map['origin'] as String? ?? '',
+        note: map['note'] as String?,
+      );
 }

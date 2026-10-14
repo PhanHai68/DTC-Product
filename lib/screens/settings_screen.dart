@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../features/auth/screens/change_password_dialog.dart';
 import '../features/auth/services/auth_service.dart';
 import '../providers/settings_provider.dart';
 
@@ -110,6 +111,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (confirmed == true) await AuthService.instance.signOut();
   }
 
+  Future<void> _changePassword() async {
+    final changed = await showChangePasswordDialog(context);
+    if (changed != true || !mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Đã đổi mật khẩu.')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
@@ -122,13 +131,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _SettingsSection(
             icon: Icons.account_circle_outlined,
             title: 'Tài khoản',
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.person_outline_rounded),
-              title: Text(AuthService.instance.email ?? 'Đã đăng nhập'),
-              subtitle: const Text('Đăng xuất khỏi DTC Product trên máy này'),
-              trailing: const Icon(Icons.logout_rounded),
-              onTap: _signOut,
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.person_outline_rounded),
+                  title: Text(AuthService.instance.email ?? 'Đã đăng nhập'),
+                  subtitle: const Text(
+                    'Đăng xuất khỏi DTC Product trên máy này',
+                  ),
+                  trailing: const Icon(Icons.logout_rounded),
+                  onTap: _signOut,
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.lock_reset_rounded),
+                  title: const Text('Đổi mật khẩu'),
+                  subtitle: const Text('Cần nhập mật khẩu hiện tại và có mạng'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: _changePassword,
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),

@@ -112,14 +112,26 @@ class PaddyColorSorterProvider extends ChangeNotifier {
   }
 
   Map<String, dynamic>? suggestModelByCapacity(double requiredCapacity) {
-    // SF7D Pro is 3.5 - 7 t/h. We only have 1 model.
-    if (requiredCapacity <= 7) {
-      return {
-        'model': 'SF7D Pro',
-        'reason': 'Năng suất yêu cầu $requiredCapacity tấn/h nằm trong khoảng 3.5 - 7 tấn/h của model SF7D Pro.'
-      };
+    // Chọn model nhỏ nhất có năng suất tối đa đáp ứng được yêu cầu.
+    Map<String, String>? best;
+    double? bestMax;
+    for (final spec in paddyColorSorterSpecs) {
+      final range = spec['Năng suất (tấn/giờ)'] ?? '';
+      final max = double.tryParse(range.split('-').last.trim());
+      if (max == null || max < requiredCapacity) continue;
+      if (bestMax == null || max < bestMax) {
+        best = spec;
+        bestMax = max;
+      }
     }
-    return null;
+    if (best == null) return null;
+    final model = best['Model'] ?? '';
+    final range = best['Năng suất (tấn/giờ)'] ?? '';
+    return {
+      'model': model,
+      'reason':
+          'Model $model (năng suất $range tấn/h) là model nhỏ nhất đáp ứng năng suất yêu cầu $requiredCapacity tấn/h.',
+    };
   }
 
   Map<String, String>? getSpecByModel(String modelName) {

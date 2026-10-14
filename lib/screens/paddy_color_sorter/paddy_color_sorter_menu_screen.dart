@@ -25,18 +25,19 @@ class PaddyColorSorterMenuScreen extends StatelessWidget {
           icon: Icons.settings_outlined,
           onTap: () => context.push('/paddy_aux_equip'),
         ),
-        const TechnologyMenuEntry(
+        TechnologyMenuEntry(
           id: 'paddy_color_sorter_payback_btn',
           title: 'Phân tích hoàn vốn',
           icon: Icons.query_stats_rounded,
-          subtitle: 'Chờ dữ liệu riêng cho Thóc và Gạo xô',
-          statusLabel: 'Sắp có',
+          onTap: () => context.push('/payback_analysis?line=paddy'),
         ),
-        const TechnologyMenuEntry(
+        TechnologyMenuEntry(
           id: 'paddy_color_sorter_errors_btn',
           title: 'Tra cứu lỗi',
           icon: Icons.troubleshoot_rounded,
-          statusLabel: 'Sắp có',
+          onTap: () => context.push(
+            '/color_sorter_errors?line=${Uri.encodeQueryComponent('Máy tách màu Thóc')}',
+          ),
         ),
       ],
     );

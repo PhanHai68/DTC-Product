@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../data/product_data.dart';
 import '../../providers/aux_equip_provider.dart';
 import '../../services/pdf_export_service.dart';
 
@@ -16,10 +17,28 @@ class _PaddyAuxEquipScreenState extends State<PaddyAuxEquipScreen> {
   final _verticalScrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
   bool _isExportingPdf = false;
-  final String _modelName = 'SF7D Pro';
+
+  /// Model máy thóc → khóa danh sách thiết bị phụ trợ: danh sách riêng của
+  /// model nếu có (SF7D Pro), không thì của máy gạo cùng số máng. Model không
+  /// có máy gạo cùng số máng thì bỏ qua.
+  late final Map<String, String> _sources = {
+    for (final model in paddyColorSorterSpecs.map((s) => s['Model']).nonNulls)
+      model: ?_auxSourceFor(model),
+  };
+
+  static String? _auxSourceFor(String model) =>
+      auxEquipSpecsByModel.containsKey(model)
+      ? model
+      : riceModelForPaddy(model, auxEquipSpecsByModel.keys);
+  late String _modelName = _sources.containsKey('SF7D Pro')
+      ? 'SF7D Pro'
+      : _sources.keys.first;
+  late final AuxEquipProvider _provider = AuxEquipProvider()
+    ..selectModel(_sources[_modelName]!);
 
   @override
   void dispose() {
+    _provider.dispose();
     _verticalScrollController.dispose();
     _horizontalScrollController.dispose();
     super.dispose();
@@ -93,14 +112,20 @@ class _PaddyAuxEquipScreenState extends State<PaddyAuxEquipScreen> {
     );
   }
 
+  void _selectModel(String model) {
+    setState(() => _modelName = model);
+    _provider.selectModel(_sources[model]!);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) {
-        final provider = AuxEquipProvider();
-        provider.selectModel(_modelName);
-        return provider;
-      },
+    final source = _sources[_modelName];
+    final chutes = paddyColorSorterSpecs.firstWhere(
+      (s) => s['Model'] == _modelName,
+      orElse: () => const {},
+    )['Số máng'];
+    return ChangeNotifierProvider.value(
+      value: _provider,
       child: Scaffold(
         appBar: AppBar(title: Text('Thiết bị phụ trợ $_modelName')),
         body: Padding(
@@ -108,6 +133,31 @@ class _PaddyAuxEquipScreenState extends State<PaddyAuxEquipScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (final model in _sources.keys)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(model),
+                          selected: model == _modelName,
+                          onSelected: (_) => _selectModel(model),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (source != null && source != _modelName) ...[
+                const SizedBox(height: 8),
+                Text(
+                  'Theo danh sách thiết bị phụ trợ của máy gạo $source '
+                  '(cùng ${chutes ?? '?'} máng).',
+                  style: TextStyle(color: Colors.grey.shade700),
+                ),
+              ],
+              const SizedBox(height: 8),
               Consumer<AuxEquipProvider>(
                 builder: (context, provider, child) {
                   return Align(

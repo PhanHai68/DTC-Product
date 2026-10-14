@@ -253,6 +253,29 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
                                 ),
                               ),
                             ],
+                            if (machine.brand != null) ...[
+                              const SizedBox(height: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: colorScheme.outline,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Hãng ${machine.brand}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -329,16 +352,29 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
 
                   // ── Thông số trọng lượng & năng suất ─────────────────
                   const SpecSectionHeader(title: 'Hiệu suất'),
-                  SpecRow(
-                    icon: Icons.scale_outlined,
-                    label: 'Trọng lượng/túi',
-                    value: machine.weightRangeText,
-                  ),
+                  if (machine.batchWeightMaxKg != null)
+                    SpecRow(
+                      icon: Icons.scale_outlined,
+                      label: 'Khối lượng mẻ (tối đa)',
+                      value: '${_formatKg(machine.batchWeightMaxKg!)} kg/mẻ',
+                    )
+                  else
+                    SpecRow(
+                      icon: Icons.scale_outlined,
+                      label: 'Trọng lượng/túi',
+                      value: machine.weightRangeText,
+                    ),
                   SpecRow(
                     icon: Icons.speed_outlined,
                     label: 'Năng suất',
                     value: machine.capacityRangeText,
                   ),
+                  if (machine.accuracy != null)
+                    SpecRow(
+                      icon: Icons.track_changes_outlined,
+                      label: 'Sai số',
+                      value: machine.accuracy!,
+                    ),
                   if (machine.headsStations != null &&
                       machine.headsStations != '-')
                     SpecRow(
@@ -379,6 +415,19 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
                     label: 'Kích thước máy',
                     value: machine.dimensionText,
                   ),
+
+                  // ── Xuất xứ thiết bị (model hãng khác có ghi) ─────────
+                  if (machine.components.isNotEmpty) ...[
+                    const SpecSectionHeader(title: 'Xuất xứ thiết bị'),
+                    for (final component in machine.components)
+                      SpecRow(
+                        icon: Icons.memory_outlined,
+                        label: component.name,
+                        value: component.note == null
+                            ? component.origin
+                            : '${component.origin}\n${component.note}',
+                      ),
+                  ],
 
                   // ── Ghi chú ─────────────────────────────────────────
                   if (machine.notes != null && machine.notes!.isNotEmpty) ...[
@@ -432,6 +481,10 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
     );
   }
 }
+
+String _formatKg(double value) => value == value.truncateToDouble()
+    ? value.toInt().toString()
+    : value.toString();
 
 class _FeatureSection extends StatelessWidget {
   final List<PackingFeature> features;

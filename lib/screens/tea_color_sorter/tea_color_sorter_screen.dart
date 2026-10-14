@@ -184,7 +184,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
       case 'camera_qty':
         return 'Số camera';
       case 'finished_quality_min_pct':
-        return 'Độ phân loại chính xác (%)';
+        return 'Độ chính xác phân loại';
       case 'power_kw':
         return 'Công suất (kW)';
       case 'voltage_v':
@@ -220,7 +220,10 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     if (m.contains('df21')) return 'assets/images/color_sorter/DF21Pro.jpg';
     if (m.contains('df12')) return 'assets/images/color_sorter/DF12Pro.jpg';
     if (m == 'sx8') return 'assets/images/color_sorter/sx8.jpg';
-    if (m == 'h7') return 'assets/images/color_sorter/Hinh_anh H7.jpg';
+    // Cả dòng H (H1…H12) dùng chung ảnh H7 làm đại diện.
+    if (RegExp(r'^h\d+$').hasMatch(m)) {
+      return 'assets/images/color_sorter/Hinh_anh H7.jpg';
+    }
     return null;
   }
 

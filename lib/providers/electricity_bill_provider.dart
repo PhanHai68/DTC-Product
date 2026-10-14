@@ -65,21 +65,15 @@ class ElectricityBillProvider extends ChangeNotifier {
 
     _errorMessage = null;
     try {
-      var specs = powerConsumptionData[_selectedModel];
-      if (specs == null) {
+      // Công suất trung bình; dây chuyền trà chưa có nên dùng công suất lớn nhất.
+      final averagePower = billingPowerKw(_selectedModel!);
+      if (averagePower == null) {
         _errorMessage = 'Không tìm thấy dữ liệu cho model này';
         _totalHours = null;
         _totalBill = null;
         notifyListeners();
         return;
       }
-
-      var avgPowerStr =
-          specs.firstWhere(
-            (e) => e['Tiêu chí'] == 'Công suất trung bình (kW)',
-          )['Thông số'] ??
-          '0';
-      double averagePower = double.tryParse(avgPowerStr) ?? 0;
 
       _totalHours = _normalHours + _offPeakHours + _peakHours;
       double rawBill =

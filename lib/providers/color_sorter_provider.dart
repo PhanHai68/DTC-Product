@@ -169,7 +169,7 @@ class ColorSorterProvider extends ChangeNotifier {
         'model': 'SC10',
         'năng_suất': '10 - 12 tấn/giờ',
         'reason':
-            'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC10 (10-12 T/h, 6 máng) là lựa chọn lý tưởng cho các nhà máy công suất trung - lớn.',
+            'Với sản lượng ${capacity.toStringAsFixed(1)} T/h, model SC10 (10-12 T/h, 7 máng) là lựa chọn lý tưởng cho các nhà máy công suất trung - lớn.',
       };
     } else if (capacity <= 16.0) {
       return {
