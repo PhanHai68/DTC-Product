@@ -141,7 +141,10 @@ class _GrindingMachineHomeScreenState extends State<GrindingMachineHomeScreen> {
                     nameEn: series.nameEn,
                     machineCount: provider.machineCountOf(series.seriesCode),
                     onTap: () => context.push(
-                      '/grinding_machine/series',
+                      Uri(
+                        path: '/grinding_machine/series',
+                        queryParameters: {'code': series.seriesCode},
+                      ).toString(),
                       extra: series.seriesCode,
                     ),
                   ),

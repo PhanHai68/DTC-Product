@@ -6,6 +6,7 @@
 import 'dart:convert';
 
 import '../models/acomp_spec_model.dart';
+import '../models/acomp_vsd_compare_config.dart';
 import '../models/color_sorter_errors.dart';
 import '../models/material_model.dart';
 import '../models/packing_machine.dart';
@@ -31,6 +32,7 @@ abstract final class ProductData {
   static const acompPipeStandardPath = '$_airCompressorDir/pipe_standard.json';
   static const acompCommonErrorsPath = '$_airCompressorDir/common_errors.json';
   static const acompDs8011Path = '$_airCompressorDir/ds8011.json';
+  static const acompVsdComparePath = '$_airCompressorDir/vsd_compare.json';
 
   static const packingMachinesPath = '$_packingScaleDir/machines.json';
   static const packingFeaturesPath = '$_packingScaleDir/features.json';
@@ -51,6 +53,7 @@ abstract final class ProductData {
     acompPipeStandardPath,
     acompCommonErrorsPath,
     acompDs8011Path,
+    acompVsdComparePath,
     packingMachinesPath,
     packingFeaturesPath,
   ];
@@ -139,6 +142,9 @@ abstract final class ProductData {
     final errorsController = _toStringMapList(errors['controller'] as List);
     final errorsOilLoss = _toStringMapList(errors['oilLoss'] as List);
     final ds8011 = _toDynamicMapList(decode(acompDs8011Path) as List);
+    final vsdCompare = AcompVsdCompareConfig.fromJson(
+      decode(acompVsdComparePath) as Map<String, dynamic>,
+    );
 
     final packing = [
       for (final item in decode(packingMachinesPath) as List)
@@ -175,6 +181,7 @@ abstract final class ProductData {
     _commonErrorsController = errorsController;
     _commonErrorsOilLoss = errorsOilLoss;
     _ds8011Parameters = ds8011;
+    _acompVsdCompareConfig = vsdCompare;
     _packingMachines = List.unmodifiable(packing);
     _packingFeatureSets = packingFeatures;
   }
@@ -406,6 +413,7 @@ List<Map<String, String>>? _commonErrorsGeneral;
 List<Map<String, String>>? _commonErrorsController;
 List<Map<String, String>>? _commonErrorsOilLoss;
 List<Map<String, dynamic>>? _ds8011Parameters;
+AcompVsdCompareConfig? _acompVsdCompareConfig;
 List<PackingMachine>? _packingMachines;
 Map<String, List<Map<String, String>>>? _packingFeatureSets;
 
@@ -526,6 +534,11 @@ List<Map<String, String>> get commonErrorsOilLoss =>
 
 /// Tham số cài đặt bộ điều khiển DS8011 — `air_compressor/ds8011.json`.
 List<Map<String, dynamic>> get ds8011Parameters => _loaded(_ds8011Parameters);
+
+/// Giả định và ghi chú cho màn so sánh biến tần – cố định —
+/// `air_compressor/vsd_compare.json`.
+AcompVsdCompareConfig get acompVsdCompareConfig =>
+    _loaded(_acompVsdCompareConfig);
 
 /// Nguyên liệu và hệ số khí cho màn chọn máy nén khí theo máy tách màu —
 /// `air_compressor/materials.json`.

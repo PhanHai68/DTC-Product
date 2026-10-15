@@ -10,6 +10,9 @@ class AcompSpecModel {
   final double weight;
   final String dimensions;
 
+  /// Dung tích bình chứa khí tích hợp (L); chỉ máy 4 trong 1 có.
+  final double? airTank;
+
   AcompSpecModel({
     required this.modelCode,
     required this.series,
@@ -21,7 +24,13 @@ class AcompSpecModel {
     required this.lubricant,
     required this.weight,
     required this.dimensions,
+    this.airTank,
   });
+
+  /// Dòng máy 4 trong 1 (ACA): `4-IN-1 Fixed` hoặc `4-IN-1 VSD`.
+  bool get isFourInOne => series.startsWith('4-IN-1');
+
+  bool get isVsd => series == 'PM VSD' || series == '4-IN-1 VSD';
 
   /// Đọc một model từ assets/database/air_compressor/specs.json.
   factory AcompSpecModel.fromJson(Map<String, dynamic> json) {
@@ -36,6 +45,7 @@ class AcompSpecModel {
       lubricant: (json['lubricant'] as num).toDouble(),
       weight: (json['weight'] as num).toDouble(),
       dimensions: json['dimensions'] as String,
+      airTank: (json['airTank'] as num?)?.toDouble(),
     );
   }
 }

@@ -7,7 +7,7 @@
     "flow7Bar": 1.2,
     "flow8Bar": 1.1,
     "airOutlet": "DN15",
-    "lubricant": 5.0,
+    "lubricant": 6.0,
     "weight": 185.0,
     "dimensions": "930x620x820"
   },
@@ -45,7 +45,7 @@
     "airOutlet": "DN25",
     "lubricant": 15.0,
     "weight": 425.0,
-    "dimensions": "1300x950x1250"
+    "dimensions": "1300x850x1150"
   },
   {
     "modelCode": "ACP-40PV",
@@ -57,7 +57,7 @@
     "airOutlet": "DN40",
     "lubricant": 22.0,
     "weight": 460.0,
-    "dimensions": "1390x650x1150"
+    "dimensions": "1390x950x1250"
   },
   {
     "modelCode": "ACP-50PV",
@@ -129,7 +129,7 @@
     "airOutlet": "DN65",
     "lubricant": 70.0,
     "weight": 1900.0,
-    "dimensions": "2480x1400x1850"
+    "dimensions": "2480x1460x1850"
   },
   {
     "modelCode": "ACP-175PV",
@@ -160,7 +160,7 @@
     "series": "PM VSD",
     "powerKW": 185.0,
     "powerHP": 275.0,
-    "flow7Bar": 35.15,
+    "flow7Bar": 33.15,
     "flow8Bar": 32.15,
     "airOutlet": "DN75",
     "lubricant": 110.0,
@@ -187,7 +187,7 @@
     "flow7Bar": 1.2,
     "flow8Bar": 1.1,
     "airOutlet": "DN20",
-    "lubricant": 5.0,
+    "lubricant": 6.0,
     "weight": 185.0,
     "dimensions": "930x620x820"
   },
@@ -201,7 +201,7 @@
     "airOutlet": "DN25",
     "lubricant": 10.0,
     "weight": 245.0,
-    "dimensions": "1080x700x1080"
+    "dimensions": "1080x700x1060"
   },
   {
     "modelCode": "ACP-20F",
@@ -220,12 +220,12 @@
     "series": "Fixed Speed",
     "powerKW": 22.0,
     "powerHP": 30.0,
-    "flow7Bar": 3.6,
+    "flow7Bar": 3.8,
     "flow8Bar": 3.6,
     "airOutlet": "DN25",
     "lubricant": 15.0,
     "weight": 425.0,
-    "dimensions": "1300x650x1150"
+    "dimensions": "1300x850x1150"
   },
   {
     "modelCode": "ACP-40F",
@@ -284,8 +284,8 @@
     "flow8Bar": 12.6,
     "airOutlet": "DN50",
     "lubricant": 40.0,
-    "weight": 1900.0,
-    "dimensions": "1720x1220x1860"
+    "weight": 1250.0,
+    "dimensions": "1720x1220x1600"
   },
   {
     "modelCode": "ACP-125F",
@@ -308,8 +308,8 @@
     "flow8Bar": 19.8,
     "airOutlet": "DN65",
     "lubricant": 70.0,
-    "weight": 1250.0,
-    "dimensions": "2480x1460x1600"
+    "weight": 1900.0,
+    "dimensions": "2480x1460x1850"
   },
   {
     "modelCode": "ACP-175F",
@@ -344,7 +344,7 @@
     "flow8Bar": 36.9,
     "airOutlet": "DN75",
     "lubricant": 110.0,
-    "weight": 2500.0,
+    "weight": 2800.0,
     "dimensions": "2600x1550x1850"
   },
   {
@@ -358,5 +358,109 @@
     "lubricant": 130.0,
     "weight": 4500.0,
     "dimensions": "3350x1970x2440"
+  },
+  {
+    "modelCode": "ACA-10F",
+    "series": "4-IN-1 Fixed",
+    "powerKW": 7.5,
+    "powerHP": 10.0,
+    "flow7Bar": 1.2,
+    "flow8Bar": 1.1,
+    "airOutlet": "DN20",
+    "lubricant": 5.0,
+    "airTank": 380.0,
+    "weight": 380.0,
+    "dimensions": "1520x640x1490"
+  },
+  {
+    "modelCode": "ACA-15F",
+    "series": "4-IN-1 Fixed",
+    "powerKW": 11.0,
+    "powerHP": 15.0,
+    "flow7Bar": 1.6,
+    "flow8Bar": 1.5,
+    "airOutlet": "DN20",
+    "lubricant": 10.0,
+    "airTank": 500.0,
+    "weight": 480.0,
+    "dimensions": "1820x700x1740"
+  },
+  {
+    "modelCode": "ACA-20F",
+    "series": "4-IN-1 Fixed",
+    "powerKW": 15.0,
+    "powerHP": 20.0,
+    "flow7Bar": 2.5,
+    "flow8Bar": 2.3,
+    "airOutlet": "DN20",
+    "lubricant": 10.0,
+    "airTank": 500.0,
+    "weight": 500.0,
+    "dimensions": "1820x700x1740"
+  },
+  {
+    "modelCode": "ACA-30F",
+    "series": "4-IN-1 Fixed",
+    "powerKW": 22.0,
+    "powerHP": 30.0,
+    "flow7Bar": 3.8,
+    "flow8Bar": 3.6,
+    "airOutlet": "DN20",
+    "lubricant": 16.0,
+    "airTank": 500.0,
+    "weight": 600.0,
+    "dimensions": "2080x850x1840"
+  },
+  {
+    "modelCode": "ACA-10PV",
+    "series": "4-IN-1 VSD",
+    "powerKW": 7.5,
+    "powerHP": 10.0,
+    "flow7Bar": 1.2,
+    "flow8Bar": 1.1,
+    "airOutlet": "DN20",
+    "lubricant": 5.0,
+    "airTank": 380.0,
+    "weight": 380.0,
+    "dimensions": "1520x640x1490"
+  },
+  {
+    "modelCode": "ACA-15PV",
+    "series": "4-IN-1 VSD",
+    "powerKW": 11.0,
+    "powerHP": 15.0,
+    "flow7Bar": 1.6,
+    "flow8Bar": 1.5,
+    "airOutlet": "DN20",
+    "lubricant": 10.0,
+    "airTank": 500.0,
+    "weight": 480.0,
+    "dimensions": "1820x700x1740"
+  },
+  {
+    "modelCode": "ACA-20PV",
+    "series": "4-IN-1 VSD",
+    "powerKW": 15.0,
+    "powerHP": 20.0,
+    "flow7Bar": 2.5,
+    "flow8Bar": 2.3,
+    "airOutlet": "DN20",
+    "lubricant": 10.0,
+    "airTank": 500.0,
+    "weight": 500.0,
+    "dimensions": "1820x700x1740"
+  },
+  {
+    "modelCode": "ACA-30PV",
+    "series": "4-IN-1 VSD",
+    "powerKW": 22.0,
+    "powerHP": 30.0,
+    "flow7Bar": 3.8,
+    "flow8Bar": 3.6,
+    "airOutlet": "DN20",
+    "lubricant": 16.0,
+    "airTank": 500.0,
+    "weight": 600.0,
+    "dimensions": "2080x850x1840"
   }
 ]

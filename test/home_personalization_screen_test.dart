@@ -21,22 +21,6 @@ Future<void> _pumpApp(WidgetTester tester, SettingsProvider settings) async {
 }
 
 void main() {
-  testWidgets('bật thẻ Sales Goal rồi lưu áp dụng đúng trên Home', (
-    tester,
-  ) async {
-    SharedPreferences.setMockInitialValues({});
-    final prefs = await SharedPreferences.getInstance();
-    final settings = SettingsProvider(prefs);
-
-    await _pumpApp(tester, settings);
-    await tester.tap(find.byKey(const Key('sales_goal_home_enabled_switch')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FilledButton, 'Lưu thay đổi'));
-    await tester.pump();
-
-    expect(settings.homeSalesGoalEnabled, isTrue);
-  });
-
   testWidgets('mặc định tắt hiển thị thông báo "Đang tắt" ở phần Xem trước', (
     tester,
   ) async {

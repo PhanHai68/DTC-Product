@@ -1,0 +1,27 @@
+{
+  "assumptions": {
+    "unloadPowerRatio": 0.30,
+    "vsdBaseRatio": 0.10,
+    "vsdMinLoad": 0.30,
+    "fixedPressureBandBar": 0.5,
+    "energyPerBar": 0.07
+  },
+  "advice": {
+    "paybackYears": 3,
+    "nearFullLoadPercent": 90
+  },
+  "notes": {
+    "vsd": [
+      "Tự giảm tốc độ theo nhu cầu khí nên tiết kiệm điện khi tải dao động",
+      "Giữ áp suất ổn định (±0,1 bar), không phải đặt dải áp cao",
+      "Khởi động mềm qua biến tần: dòng khởi động thấp, không sụt áp lưới",
+      "Ít chu kỳ có tải/không tải nên giảm hao mòn cơ khí, có thể dùng bình chứa nhỏ hơn"
+    ],
+    "fixed": [
+      "Giá đầu tư ban đầu thấp hơn",
+      "Cấu tạo đơn giản, dễ sửa chữa, linh kiện phổ biến",
+      "Hiệu quả khi nhu cầu khí ổn định, gần đầy tải suốt ca",
+      "Ít nhạy với chất lượng điện lưới và nhiệt độ phòng máy"
+    ]
+  }
+}

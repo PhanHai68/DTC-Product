@@ -41,6 +41,13 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       keywords: 'khí nén acomp bình đường ống mccb',
     ),
     const _SearchItem(
+      title: 'So sánh máy nén biến tần – cố định',
+      subtitle: 'Tiền điện, hoàn vốn và thông số hai dòng máy cùng công suất',
+      location: '/acomp_vsd_compare',
+      icon: Icons.compare_arrows_rounded,
+      keywords: 'may nen khi bien tan vsd pm toc do co dinh fixed speed so sanh tiet kiem dien hoan von acp',
+    ),
+    const _SearchItem(
       title: 'Tính năng suất',
       subtitle: 'Đo thực tế và xuất biên bản PDF',
       location: '/productivity_calc',
@@ -170,7 +177,8 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       return _SearchItem(
         title: model,
         subtitle: 'Máy tách màu Khoáng sản',
-        location: '/mineral_color_sorter',
+        location:
+            '/mineral_color_sorter?model=${Uri.encodeQueryComponent(model)}',
         icon: Icons.terrain_rounded,
         keywords: spec.values.join(' '),
       );
@@ -180,8 +188,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       return _SearchItem(
         title: model,
         subtitle: 'Máy tách màu Nông sản',
-        location:
-            '/agro_color_sorter?model=${Uri.encodeQueryComponent(model)}',
+        location: '/agro_color_sorter?model=${Uri.encodeQueryComponent(model)}',
         icon: Icons.spa_rounded,
         keywords: spec.values.join(' '),
       );

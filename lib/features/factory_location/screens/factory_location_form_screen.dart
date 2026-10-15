@@ -37,6 +37,9 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
   double? _latitude;
   double? _longitude;
   double? _accuracy;
+
+  /// Lần định vị gần nhất chỉ có quyền "vị trí gần đúng".
+  bool _approximate = false;
   bool _locating = false;
   bool _resolvingLink = false;
   bool _saving = false;
@@ -98,9 +101,7 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
             minLines: 2,
             maxLines: 4,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              labelText: 'Ghi chú',
-            ),
+            decoration: const InputDecoration(labelText: 'Ghi chú'),
           ),
           const SizedBox(height: 12),
           _buildLocationCard(context),
@@ -143,6 +144,8 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
                 latitude: _latitude!,
                 longitude: _longitude!,
                 accuracy: _accuracy,
+                approximate: _approximate,
+                onOpenSettings: widget.locationService.openAppSettings,
               ),
               const SizedBox(height: 12),
             ],
@@ -247,11 +250,13 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
     });
     try {
       final position = await widget.locationService.getCurrentPosition();
+      final approximate = await widget.locationService.isApproximate();
       if (!mounted) return;
       setState(() {
         _latitude = position.latitude;
         _longitude = position.longitude;
         _accuracy = position.accuracy;
+        _approximate = approximate;
       });
     } on LocationFailure catch (failure) {
       if (!mounted) return;
@@ -306,6 +311,7 @@ class _FactoryLocationFormScreenState extends State<FactoryLocationFormScreen> {
         _latitude = coordinates.latitude;
         _longitude = coordinates.longitude;
         _accuracy = null;
+        _approximate = false;
         _locationFailure = null;
         _appliedLink = input;
       });
@@ -397,17 +403,22 @@ class _CoordinateSummary extends StatelessWidget {
     required this.latitude,
     required this.longitude,
     required this.accuracy,
+    this.approximate = false,
+    this.onOpenSettings,
   });
 
   final double latitude;
   final double longitude;
   final double? accuracy;
+  final bool approximate;
+  final VoidCallback? onOpenSettings;
 
   @override
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
     final accuracy = this.accuracy;
-    final poor = accuracy != null && accuracy > _poorAccuracyMeters;
+    final poor =
+        approximate || (accuracy != null && accuracy > _poorAccuracyMeters);
     final accuracyColor = poor ? Colors.orange.shade800 : Colors.green.shade700;
     return Container(
       padding: const EdgeInsets.all(12),
@@ -456,7 +467,25 @@ class _CoordinateSummary extends StatelessWidget {
             buildMapsUrl(latitude, longitude),
             style: TextStyle(color: palette.cyan, fontSize: 12.5),
           ),
-          if (poor) ...[
+          if (approximate) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Bạn đang cho phép "vị trí gần đúng" nên tọa độ có thể lệch '
+              '1–3 km. Hãy mở Cài đặt → Vị trí, bật "Vị trí chính xác" cho '
+              'DTC Product rồi nhấn "Định vị lại".',
+              key: const Key('factory_location_approximate'),
+              style: TextStyle(color: accuracyColor, fontSize: 12.5),
+            ),
+            if (onOpenSettings != null)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: onOpenSettings,
+                  icon: const Icon(Icons.settings_outlined, size: 18),
+                  label: const Text('Mở Cài đặt'),
+                ),
+              ),
+          ] else if (poor) ...[
             const SizedBox(height: 8),
             Text(
               'Độ chính xác thấp. Hãy ra khu vực thoáng rồi nhấn "Định vị lại".',

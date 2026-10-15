@@ -18,6 +18,12 @@ class MineralColorSorterMenuScreen extends StatelessWidget {
           featured: true,
           onTap: () => context.push('/mineral_color_sorter'),
         ),
+        TechnologyMenuEntry(
+          id: 'mineral_color_sorter_select_btn',
+          title: 'Chọn máy phù hợp',
+          icon: Icons.tune_rounded,
+          onTap: () => context.push('/mineral_color_sorter/select'),
+        ),
         const TechnologyMenuEntry(
           id: 'mineral_color_sorter_aux_btn',
           title: 'Thiết bị phụ trợ',

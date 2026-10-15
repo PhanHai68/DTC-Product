@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/acomp_spec_provider.dart';
 import '../../models/acomp_spec_model.dart';
+import '../../services/acomp_energy_calculator.dart';
 
 class AcompTechDetailScreen extends StatefulWidget {
-  final String categoryType; // 'PV' or 'F'
+  final String categoryType; // 'PV', 'F' hoặc '4IN1'
 
   const AcompTechDetailScreen({super.key, required this.categoryType});
 
@@ -20,8 +22,15 @@ class _AcompTechDetailScreenState extends State<AcompTechDetailScreen> {
   Widget build(BuildContext context) {
     final provider = Provider.of<AcompSpecProvider>(context);
     final isPV = widget.categoryType == 'PV';
-    final machineList = isPV ? provider.pvList : provider.fList;
-    final title = isPV
+    final isFourInOne = widget.categoryType == '4IN1';
+    final machineList = isFourInOne
+        ? provider.fourInOneList
+        : isPV
+        ? provider.pvList
+        : provider.fList;
+    final title = isFourInOne
+        ? 'Trục vít 4 trong 1 (ACA)'
+        : isPV
         ? 'Trục vít Biến tần (ACP-PV)'
         : 'Trục vít Tốc độ cố định (ACP-F)';
 
@@ -52,7 +61,12 @@ class _AcompTechDetailScreenState extends State<AcompTechDetailScreen> {
                     return DropdownMenuItem<AcompSpecModel>(
                       value: model,
                       child: Text(
-                        '${model.powerHP} HP (${model.powerKW} kW) - ${model.modelCode}',
+                        isFourInOne
+                            ? '${model.powerHP} HP (${model.powerKW} kW) - '
+                                  '${model.modelCode} '
+                                  '(${model.isVsd ? 'biến tần' : 'cố định'})'
+                            : '${model.powerHP} HP (${model.powerKW} kW) - ${model.modelCode}',
+                        overflow: TextOverflow.ellipsis,
                       ),
                     );
                   }).toList(),
@@ -81,6 +95,13 @@ class _AcompTechDetailScreenState extends State<AcompTechDetailScreen> {
                         textAlign: TextAlign.center,
                       ),
                       const Divider(height: 32),
+                      if (isFourInOne)
+                        _buildSpecRow(
+                          'Kiểu máy',
+                          _selectedModel!.isVsd
+                              ? 'Biến tần PM VSD'
+                              : 'Tốc độ cố định',
+                        ),
                       _buildSpecRow(
                         'Lưu lượng ở 7 bar',
                         '${_selectedModel!.flow7Bar} m³/phút',
@@ -93,6 +114,8 @@ class _AcompTechDetailScreenState extends State<AcompTechDetailScreen> {
                         'Kích thước lỗ thoát khí',
                         _selectedModel!.airOutlet,
                       ),
+                      if (_selectedModel!.airTank case final tank?)
+                        _buildSpecRow('Bình chứa khí tích hợp', '$tank Lít'),
                       _buildSpecRow(
                         'Dầu bôi trơn',
                         '${_selectedModel!.lubricant} Lít',
@@ -105,6 +128,28 @@ class _AcompTechDetailScreenState extends State<AcompTechDetailScreen> {
                         'Kích thước (D x R x C)',
                         '${_selectedModel!.dimensions} mm',
                       ),
+                      if (!isFourInOne) ...[
+                        const SizedBox(height: 16),
+                        OutlinedButton.icon(
+                          key: const Key('acomp_compare_same_size'),
+                          onPressed: () => context.push(
+                            Uri(
+                              path: '/acomp_vsd_compare',
+                              queryParameters: {
+                                'size': acompSizeCode(
+                                  _selectedModel!.modelCode,
+                                ),
+                              },
+                            ).toString(),
+                          ),
+                          icon: const Icon(Icons.compare_arrows_rounded),
+                          label: Text(
+                            isPV
+                                ? 'So sánh với máy tốc độ cố định cùng công suất'
+                                : 'So sánh với máy biến tần cùng công suất',
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

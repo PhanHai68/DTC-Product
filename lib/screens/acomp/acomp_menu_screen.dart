@@ -25,6 +25,12 @@ class AcompMenuScreen extends StatelessWidget {
           onTap: () => context.push('/acomp_suitable'),
         ),
         TechnologyMenuEntry(
+          id: 'acomp_vsd_compare_btn',
+          title: 'So sánh biến tần – cố định',
+          icon: Icons.compare_arrows_rounded,
+          onTap: () => context.push('/acomp_vsd_compare'),
+        ),
+        TechnologyMenuEntry(
           id: 'acomp_tank_btn',
           title: 'Tính thể tích bình chứa',
           icon: Icons.propane_tank_outlined,

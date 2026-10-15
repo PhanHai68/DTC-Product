@@ -27,7 +27,7 @@ Giá trị kỳ vọng gồm: giảm thời gian tìm kiếm tài liệu; chuẩ
 
 1.2. Đối tượng sử dụng
 
-• Nhân viên kinh doanh: tra cứu, so sánh, tư vấn và theo dõi mục tiêu doanh số/cơ hội.
+• Nhân viên kinh doanh: tra cứu, so sánh và tư vấn.
 • Kỹ sư và kỹ thuật viên: tính toán, khảo sát mặt bằng, ghi nhận mẫu, bảo trì và xử lý sự cố.
 • Quản lý dự án: theo dõi giai đoạn, lịch, ảnh hiện trường, nghiệm thu và hồ sơ.
 • Quản lý bộ phận: theo dõi tiến độ công việc và chuẩn hóa nguồn dữ liệu nội bộ.
@@ -56,7 +56,7 @@ Máy nghiền hỗ trợ tra cứu, tìm kiếm, lọc và so sánh; lựa chọ
 
 Project Timeline cho phép tạo dự án, gắn máy, theo dõi các giai đoạn, lịch thực hiện, checklist, ảnh hiện trường, kết quả chạy thử và nghiệm thu. Mỗi máy có thể tập hợp thông tin, lịch sử lắp đặt, hình ảnh, bảo trì, sự cố, tài liệu và timeline.
 
-Nhóm tiện ích còn có ghi chú và nhắc hẹn, mục tiêu hằng ngày, lịch bảo trì, mục tiêu doanh số, pipeline cơ hội, quản lý dung lượng tệp và tìm kiếm toàn cục.
+Nhóm tiện ích còn có ghi chú và nhắc hẹn, mục tiêu hằng ngày, lịch bảo trì, quản lý dung lượng tệp và tìm kiếm toàn cục.
 
 2.4. Báo cáo và chia sẻ
 

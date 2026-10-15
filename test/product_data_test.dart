@@ -86,12 +86,24 @@ void main() {
       for (final spec in acompSpecData) {
         expect(spec.modelCode.trim(), isNotEmpty);
         codes.add(spec.modelCode);
-        // AcompSpecProvider tách 2 danh sách theo đúng 2 tên series này.
+        // AcompSpecProvider tách danh sách theo đúng các tên series này.
         expect(
           spec.series,
-          anyOf('PM VSD', 'Fixed Speed'),
+          anyOf('PM VSD', 'Fixed Speed', '4-IN-1 Fixed', '4-IN-1 VSD'),
           reason:
-              '${spec.modelCode}: series phải là "PM VSD" hoặc "Fixed Speed"',
+              '${spec.modelCode}: series phải là "PM VSD", "Fixed Speed", '
+              '"4-IN-1 Fixed" hoặc "4-IN-1 VSD"',
+        );
+        // Chỉ máy 4 trong 1 (ACA) có bình chứa khí tích hợp.
+        expect(
+          spec.airTank != null,
+          spec.isFourInOne,
+          reason: '${spec.modelCode}: airTank chỉ dành cho máy 4 trong 1',
+        );
+        expect(
+          spec.modelCode.startsWith('ACA-'),
+          spec.isFourInOne,
+          reason: '${spec.modelCode}: máy 4 trong 1 dùng mã ACA',
         );
         for (final (name, value) in [
           ('powerKW', spec.powerKW),

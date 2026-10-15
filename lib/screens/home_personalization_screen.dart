@@ -53,7 +53,6 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
   late bool _dailyGoalsReminderEnabled;
   late int _dailyGoalsReminderHour;
   late int _dailyGoalsReminderMinute;
-  late bool _salesGoalEnabled;
   late final TextEditingController _nameController;
   late final TextEditingController _shortTextController;
   late final TextEditingController _dailyGoalsTitleController;
@@ -76,7 +75,6 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
     _dailyGoalsReminderEnabled = settings.homeDailyGoalsReminderEnabled;
     _dailyGoalsReminderHour = settings.homeDailyGoalsReminderHour;
     _dailyGoalsReminderMinute = settings.homeDailyGoalsReminderMinute;
-    _salesGoalEnabled = settings.homeSalesGoalEnabled;
     _nameController = TextEditingController(text: settings.homeDisplayName)
       ..addListener(() => setState(() {}));
     _shortTextController = TextEditingController(text: settings.homeShortText)
@@ -129,7 +127,6 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
       dailyGoalsReminderEnabled: _dailyGoalsReminderEnabled,
       dailyGoalsReminderHour: _dailyGoalsReminderHour,
       dailyGoalsReminderMinute: _dailyGoalsReminderMinute,
-      salesGoalEnabled: _salesGoalEnabled,
     );
     if (reminderActive) {
       await DailyGoalNotificationService.scheduleDailyReminder(
@@ -205,7 +202,6 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
           SettingsProvider.defaultHomeDailyGoalsReminderHour;
       _dailyGoalsReminderMinute =
           SettingsProvider.defaultHomeDailyGoalsReminderMinute;
-      _salesGoalEnabled = false;
       _nameController.text = '';
       _shortTextController.text = '';
       _dailyGoalsTitleController.text =
@@ -414,20 +410,6 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
                     ),
                   ),
               ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          _Section(
-            label: 'MỤC TIÊU DOANH SỐ',
-            child: SwitchListTile(
-              key: const Key('sales_goal_home_enabled_switch'),
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Hiển thị mục tiêu doanh số trên trang chủ'),
-              subtitle: const Text(
-                'Tắt chỉ ẩn thẻ khỏi trang chủ, không xóa dữ liệu doanh số',
-              ),
-              value: _salesGoalEnabled,
-              onChanged: (value) => setState(() => _salesGoalEnabled = value),
             ),
           ),
           const SizedBox(height: 16),

@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/errors/app_error_log.dart';
 import 'data/product_data.dart';
 import 'routes/app_routes.dart';
 import 'features/auth/services/auth_service.dart';
@@ -35,7 +36,6 @@ import 'features/equipment_catalog/providers/equipment_catalog_provider.dart';
 import 'features/grinding_machine/providers/grinding_selection_project_provider.dart';
 import 'features/grinding_machine/providers/grinding_proposal_provider.dart';
 import 'features/factory_location/providers/factory_location_provider.dart';
-import 'features/sales_goal/providers/sales_goal_provider.dart';
 import 'features/site_layout/providers/site_layout_provider.dart';
 
 // Projects Module
@@ -45,6 +45,9 @@ import 'features/projects/repositories/local_project_repository.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  // Bắt lỗi giao diện và lỗi trong Future chưa xử lý, ghi vào nhật ký trên
+  // máy (Cài đặt → Nhật ký lỗi) thay vì để app dừng im lặng.
+  AppErrorLog.instance.install(prefs);
   await AuthService.instance.restore(prefs);
   // Thông số máy (assets/database/*.json) phải có trước khi vẽ màn hình nào.
   await ProductData.load(rootBundle.loadString);
@@ -57,7 +60,6 @@ void main() async {
     }),
   );
 
-  FlutterError.onError = FlutterError.presentError;
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -221,7 +223,6 @@ class MyApp extends StatelessWidget {
           create: (_) => GrindingSelectionProjectProvider(),
         ),
         ChangeNotifierProvider(create: (_) => GrindingProposalProvider()),
-        ChangeNotifierProvider(create: (_) => SalesGoalProvider()),
         ChangeNotifierProvider(create: (_) => SiteLayoutProvider()),
         ChangeNotifierProvider(create: (_) => FactoryLocationProvider()),
       ],
@@ -229,6 +230,7 @@ class MyApp extends StatelessWidget {
         builder: (context, settings, _) {
           return MaterialApp.router(
             title: 'DTC Product',
+            scaffoldMessengerKey: AppErrorLog.instance.scaffoldMessengerKey,
             locale: const Locale('vi', 'VN'),
             supportedLocales: const [Locale('vi', 'VN')],
             localizationsDelegates: GlobalMaterialLocalizations.delegates,

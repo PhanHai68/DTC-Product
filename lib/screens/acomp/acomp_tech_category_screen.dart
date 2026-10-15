@@ -17,7 +17,7 @@ class AcompTechCategoryScreen extends StatelessWidget {
             subtitle: 'Model: ACP-PV',
             badgeText: 'PM\nVFD',
             onTap: () {
-              context.push('/acomp_tech_detail', extra: 'PV');
+              context.push('/acomp_tech_detail?type=PV', extra: 'PV');
             },
           ),
           _buildCategoryCard(
@@ -26,22 +26,16 @@ class AcompTechCategoryScreen extends StatelessWidget {
             subtitle: 'Model: ACP-F',
             badgeText: 'FIXED\nSPEED',
             onTap: () {
-              context.push('/acomp_tech_detail', extra: 'F');
+              context.push('/acomp_tech_detail?type=F', extra: 'F');
             },
           ),
           _buildCategoryCard(
             context,
             title: 'Máy nén khí trục vít 4 trong 1',
-            subtitle: 'Đang cập nhật dữ liệu',
+            subtitle: 'Model: ACA-F, ACA-PV',
             badgeText: '4 IN 1',
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Dữ liệu đang được cập nhật, vui lòng thử lại sau.',
-                  ),
-                ),
-              );
+              context.push('/acomp_tech_detail?type=4IN1', extra: '4IN1');
             },
           ),
         ],

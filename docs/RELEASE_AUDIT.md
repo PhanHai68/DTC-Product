@@ -15,7 +15,7 @@
 | Trung bình | 9 |
 | Thấp | 15 |
 
-## Trạng thái sửa (cập nhật 01/10/2026)
+## Trạng thái sửa (cập nhật 15/10/2026)
 
 | Mục | Trạng thái |
 |---|---|
@@ -26,8 +26,15 @@
 | H4 | ✅ Cỡ chữ = cỡ chữ hệ thống × hệ số của app, giới hạn trong 0,85–2,0 |
 | H5 | ⏳ Việc của chủ app (chính sách quyền riêng tư, Data safety, App Privacy) |
 | H6 | ✅ Đạt: `zipalign -c -P 16` thành công; `llvm-readelf` cho thấy mọi `.so` (arm64, x86_64) có LOAD align ≥ 0x4000 |
-| M1 | ✅ Thêm `runSalesGoalAction` (`lib/features/sales_goal/utils/sales_goal_action.dart`) cho mọi thao tác lưu/xóa trong "Mục tiêu doanh số"; danh sách doanh số có trạng thái lỗi kèm nút "Thử lại"; vuốt xóa việc cần làm chuyển sang `confirmDismiss` |
-| M7 | ✅ `flutter test`: 528 đạt, 1 bỏ qua (test tạo preview PDF tự bỏ qua khi thiếu ảnh mẫu cục bộ), 0 thất bại |
+| M1 | 🗑️ Không còn áp dụng: chức năng "Mục tiêu doanh số" đã bị xoá (2026-10-14). Trước đó: Thêm `runSalesGoalAction` (`lib/features/sales_goal/utils/sales_goal_action.dart`) cho mọi thao tác lưu/xóa trong "Mục tiêu doanh số"; danh sách doanh số có trạng thái lỗi kèm nút "Thử lại"; vuốt xóa việc cần làm chuyển sang `confirmDismiss` |
+| M2 | ✅ `AppErrorLog` (`lib/core/errors/app_error_log.dart`) bắt `FlutterError.onError` và `PlatformDispatcher.instance.onError`, lưu 50 lỗi gần nhất trên máy, báo SnackBar (tối đa 1 lần/5 giây). Cài đặt → Nhật ký lỗi để sao chép/chia sẻ. Chưa dùng Crashlytics/Sentry (cần khai báo quyền riêng tư khi lên store) |
+| M3 | ✅ Màn xem tệp (`/storage/pdf`, `/storage/image`, `/storage/model`) mất `extra` thì về Bộ nhớ & Tệp; series máy nghiền và danh mục thiết bị đọc `?code=`; thông số máy nén khí đọc `?type=`; đề xuất máy nghiền mất dữ liệu thì về màn chọn máy. Test: `test/route_reload_fallback_test.dart` |
+| M4 | ✅ Ảnh mặt bằng giới hạn 2400 px, chất lượng 85; thumbnail và ảnh báo cáo xử lý bằng `compute` |
+| M5 | ✅ `StoredImage` tự giải mã ảnh `BoxFit.cover` vừa ô (`thumbnailImageProvider`), xem phóng to (`contain`) giữ ảnh gốc; ô ảnh mặt bằng đọc file một lần |
+| M6 | ✅ Kiểm tra `getLocationAccuracy()`: vị trí gần đúng thì cảnh báo kèm nút Mở Cài đặt; iOS xin `requestTemporaryFullAccuracy` (khóa `FactoryLocation` trong Info.plist) |
+| M7 | ✅ `flutter test` (15/10/2026): 831 đạt, 1 bỏ qua (test tạo preview PDF tự bỏ qua khi thiếu ảnh mẫu cục bộ), 0 thất bại |
+| L1 | ✅ Gỡ quyền `CAMERA` (`tools:node="remove"`). **Cần thử chụp ảnh trên máy Android thật** ở các module: lưu mẫu, dự án, bảo trì, mặt bằng, ngân hàng lỗi |
+| L3 | ✅ Adaptive icon: nền `#F8FCF8`, lớp trước `tool/launcher_icon/app_icon_foreground.png` (chữ tách từ `app_icon.png`, nằm trong vùng an toàn) |
 | Commit/tag | ⏳ Chưa thực hiện, chờ chủ app xác nhận |
 
 **Kết quả công cụ**

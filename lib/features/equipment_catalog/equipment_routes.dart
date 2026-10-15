@@ -21,10 +21,15 @@ List<GoRoute> equipmentRoutes(EquipmentCatalogConfig config) => [
   ),
   GoRoute(
     path: '${config.routeBase}/series',
-    builder: (_, state) => EquipmentSeriesScreen(
-      config: config,
-      seriesCode: state.extra as String,
-    ),
+    builder: (_, state) {
+      // Mã series nằm trên địa chỉ (?code=) để tải lại trang web vẫn mở đúng;
+      // không có mã thì về trang chính của danh mục.
+      final code =
+          state.uri.queryParameters['code'] ??
+          (state.extra is String ? state.extra as String : null);
+      if (code == null) return EquipmentHomeScreen(config: config);
+      return EquipmentSeriesScreen(config: config, seriesCode: code);
+    },
   ),
   GoRoute(
     path: '${config.routeBase}/detail/:machineId',

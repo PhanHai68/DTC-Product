@@ -137,7 +137,10 @@ class _EquipmentHomeScreenState extends State<EquipmentHomeScreen> {
                       subtitle: series.nameEn,
                       machineCount: catalog.machineCountOf(series.seriesCode),
                       onTap: () => context.push(
-                        '${config.routeBase}/series',
+                        Uri(
+                          path: '${config.routeBase}/series',
+                          queryParameters: {'code': series.seriesCode},
+                        ).toString(),
                         extra: series.seriesCode,
                       ),
                     ),

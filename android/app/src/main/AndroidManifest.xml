@@ -1,7 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- Chụp ảnh qua app Camera của hệ thống (image_picker), không cần quyền
+         CAMERA. Nếu khai báo mà người dùng chưa cấp, Android chặn luôn việc mở
+         app Camera. Gỡ cả khi thư viện nào đó tự thêm vào. -->
+    <uses-permission
+        android:name="android.permission.CAMERA"
+        tools:node="remove"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- Lưu vị trí địa điểm (geolocator) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>

@@ -1,12 +1,16 @@
-import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 
 import '../models/site_layout_models.dart';
 import 'site_layout_file_storage.dart';
 
+/// Ảnh mặt bằng: giới hạn cạnh dài [maxEdge] khi chọn ảnh (ảnh điện thoại
+/// 12–50 MP) và tạo thumbnail ở isolate riêng để không làm đứng giao diện.
 class SitePhotoService {
+  static const maxEdge = 2400.0;
+  static const jpegQuality = 85;
+
   SitePhotoService({ImagePicker? picker}) : _picker = picker ?? ImagePicker();
 
   final ImagePicker _picker;
@@ -17,10 +21,20 @@ class SitePhotoService {
   }) async {
     final pickedFiles = source == ImageSource.camera
         ? <XFile>[
-            if (await _picker.pickImage(source: source) case final XFile file)
+            if (await _picker.pickImage(
+                  source: source,
+                  maxWidth: maxEdge,
+                  maxHeight: maxEdge,
+                  imageQuality: jpegQuality,
+                )
+                case final XFile file)
               file,
           ]
-        : await _picker.pickMultiImage();
+        : await _picker.pickMultiImage(
+            maxWidth: maxEdge,
+            maxHeight: maxEdge,
+            imageQuality: jpegQuality,
+          );
     final photos = <SitePhoto>[];
     for (var index = 0; index < pickedFiles.length; index++) {
       final picked = pickedFiles[index];
@@ -34,7 +48,7 @@ class SitePhotoService {
         fileName: '${id}_original.$extension',
         bytes: originalBytes,
       );
-      final thumbnailBytes = _thumbnail(originalBytes);
+      final thumbnailBytes = await compute(_thumbnail, originalBytes);
       final thumbnailPath = thumbnailBytes == null
           ? null
           : await saveSiteLayoutPhoto(
@@ -59,7 +73,7 @@ class SitePhotoService {
     return photos;
   }
 
-  Uint8List? _thumbnail(Uint8List bytes) {
+  static Uint8List? _thumbnail(Uint8List bytes) {
     final decoded = img.decodeImage(bytes);
     if (decoded == null) return null;
     final resized = decoded.width >= decoded.height
@@ -71,6 +85,10 @@ class SitePhotoService {
   static Future<Uint8List?> reportBytes(SitePhoto photo) async {
     final bytes = await readSiteLayoutFile(photo.originalPath);
     if (bytes == null) return null;
+    return compute(_reportJpeg, bytes);
+  }
+
+  static Uint8List _reportJpeg(Uint8List bytes) {
     final decoded = img.decodeImage(bytes);
     if (decoded == null) return bytes;
     img.Image resized = decoded;

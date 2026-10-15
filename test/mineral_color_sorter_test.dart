@@ -13,7 +13,9 @@ Future<void> _pumpAtPhoneSize(WidgetTester tester, Widget home) async {
 
 void main() {
   test('dữ liệu SX8 khớp bảng thông số và cấu hình khí nén DF53 Pro', () {
-    final specs = mineralColorSorterSpecs.single;
+    final specs = mineralColorSorterSpecs.firstWhere(
+      (spec) => spec['model'] == 'SX8',
+    );
 
     expect(specs['model'], 'SX8');
     expect(specs['layers_qty'], '2');

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/tea_color_sorter_provider.dart';
 import '../color_sorter/spec_image_export_dialog.dart';
+import '../../services/mineral_sorter_selector.dart';
 
 class TeaColorSorterScreen extends StatefulWidget {
   const TeaColorSorterScreen({
@@ -183,6 +184,22 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         return 'Số ejector/ máng';
       case 'camera_qty':
         return 'Số camera';
+      case 'camera_per_chute':
+        return 'Số camera/ máng';
+      case 'stone_type':
+        return 'Loại nguyên liệu';
+      case 'sorting_range':
+        return 'Phạm vi phân loại';
+      case 'ejector_per_layer':
+        return 'Số ejector/ tầng';
+      case 'camera_per_layer':
+        return 'Số camera/ tầng';
+      case 'recognition_width':
+        return 'Phạm vi nhận diện (theo chiều rộng)';
+      case 'ai_function':
+        return 'Chức năng AI';
+      case 'mix_ratio':
+        return 'Tỷ lệ lẫn (xấu : tốt)';
       case 'finished_quality_min_pct':
         return 'Độ chính xác phân loại';
       case 'power_kw':
@@ -220,6 +237,8 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     if (m.contains('df21')) return 'assets/images/color_sorter/DF21Pro.jpg';
     if (m.contains('df12')) return 'assets/images/color_sorter/DF12Pro.jpg';
     if (m == 'sx8') return 'assets/images/color_sorter/sx8.jpg';
+    // Máy tách quang ASORT (SA6-2C…): ảnh cắt từ catalog.
+    if (asortSorterImagePath(m) case final path?) return path;
     // Cả dòng H (H1…H12) dùng chung ảnh H7 làm đại diện.
     if (RegExp(r'^h\d+$').hasMatch(m)) {
       return 'assets/images/color_sorter/Hinh_anh H7.jpg';
@@ -780,6 +799,59 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         break;
       case 'Công nghệ hút bụi độc lập':
         description = '• Hệ thống ống hút bụi khí động học bố trí riêng biệt tại từng máng.\n• Ngăn bụi bám vào thấu kính camera và đèn LED chiếu sáng.\n• Duy trì độ chính xác phân loại liên tục suốt ca làm việc 24/7.';
+        break;
+      // Máy tách quang ASORT (khoáng sản) — mô tả theo catalog ngành đá.
+      case 'Thiết kế 2 tầng, 6 máng':
+      case 'Thiết kế 2 tầng, 8 máng':
+        description = 'Tăng khả năng xử lý nguyên liệu, nâng hiệu quả vận hành.';
+        break;
+      case 'Máng siêu nhẵn':
+        description = 'Máng đặc biệt 0.01µm siêu nhẵn đảm bảo trải đều nguyên liệu giúp phân loại chính xác.';
+        break;
+      case 'Tiết kiệm khí, van phun cao':
+        description = 'Van phun tốc độ cao với mức tiêu thụ khí nén tối ưu, giúp nâng cao hiệu quả vận hành.';
+        break;
+      case 'Hệ thống hút bụi mịn':
+        description = 'Thiết kế phù hợp cho môi trường bụi mịn, đảm bảo độ sạch và bền máy.';
+        break;
+      case 'Camera HD, 2 camera/máng':
+        description = 'Trang bị 2 camera/máng cho hình ảnh sắc nét, điều khiển chính xác với 128 van phun/máng.';
+        break;
+      case 'Camera HD, 4 camera/máng':
+        description = 'Trang bị 4 camera/máng độ nét cao cho hình ảnh sắc nét, điều khiển chính xác với 128 van phun/máng.';
+        break;
+      case 'Phạm vi phân loại đá dải nhỏ':
+        description = 'Phạm vi phân loại chuyên cho đá dải nhỏ từ 1.2mm đến 5mm, đáp ứng linh hoạt cho nhiều loại đá.';
+        break;
+      case 'Phạm vi phân loại rộng':
+        description = 'Hỗ trợ phân loại dải kích thước vật liệu rộng, đáp ứng linh hoạt cho nhiều loại đá (xem dải kích thước ở mục Năng suất).';
+        break;
+      case 'Thiết kế hai tầng tối ưu':
+        description = 'Cấu trúc 02 tầng phân loại giúp giảm thiểu tỷ lệ lẫn trong phế phẩm, nâng cao chất lượng thành phẩm.';
+        break;
+      case 'Van phun khí tần số cao':
+        description = 'Trang bị van phun khí chuyên biệt cho đá, giúp hoạt động ổn định và tăng độ chính xác hơn trong quá trình phân loại.';
+        break;
+      case 'Kết nối điều khiển từ xa':
+        description = 'Cho phép giám sát và vận hành thiết bị từ xa, giúp việc vận hành và bảo trì trở nên dễ dàng, nhanh chóng.';
+        break;
+      case 'Phân loại Deep Learning':
+        description = 'Áp dụng công nghệ Deep Learning, hệ thống cho phép tùy chỉnh linh hoạt theo từng loại nguyên liệu.';
+        break;
+      case 'Phân loại thông minh bằng AI':
+        description = 'Ứng dụng AI giúp phân loại nguyên liệu nhanh và chính xác, giảm tỷ lệ sai sót (có thể tuỳ chỉnh).';
+        break;
+      case 'Thiết kế phù hợp cho đá ướt':
+        description = 'Tối ưu hoá cho đá ẩm giúp giảm mài mòn, vận hành ổn định trong môi trường khắc nghiệt.';
+        break;
+      case 'Tăng sản lượng 50%':
+        description = 'Băng tải rộng, xử lý tốc độ cao giúp tăng công suất mà vẫn đảm bảo độ chính xác.';
+        break;
+      case 'Thiết kế cứng cáp, ổn định':
+        description = 'Kết cấu chắc chắn giúp máy hoạt động bền bỉ, ổn định trong thời gian dài và điều kiện khắc nghiệt.';
+        break;
+      case 'Vận hành bền bỉ':
+        description = 'Kết cấu kín chống nước, bụi giúp hoạt động liên tục 1.000 giờ, duy trì hiệu suất cao.';
         break;
       default:
         description = 'Thông tin chi tiết công nghệ đang được cập nhật...';
@@ -1725,12 +1797,20 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                   if (_tabController.index == 0) {
                                     // Sắp xếp đồng bộ thông tin theo thứ tự yêu cầu
                                     final List<String> orderedKeys = [
+                                      'stone_type',
+                                      'sorting_range',
                                       'capacity_display',
+                                      'mix_ratio',
                                       'layers_qty',
                                       'chutes_qty',
                                       'ejector_qty',
                                       'ejector_per_chute',
+                                      'ejector_per_layer',
                                       'camera_qty',
+                                      'camera_per_chute',
+                                      'camera_per_layer',
+                                      'recognition_width',
+                                      'ai_function',
                                       'finished_quality_min_pct',
                                       'power_kw',
                                       'voltage_v',

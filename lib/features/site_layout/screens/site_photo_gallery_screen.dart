@@ -8,6 +8,7 @@ import '../models/site_layout_models.dart';
 import '../providers/site_layout_provider.dart';
 import '../services/site_layout_file_storage.dart';
 import '../services/site_photo_service.dart';
+import '../../../widgets/thumbnail_image_provider.dart';
 
 class SitePhotoGalleryScreen extends StatefulWidget {
   const SitePhotoGalleryScreen({super.key, required this.projectId});
@@ -236,14 +237,30 @@ class _SitePhotoGalleryScreenState extends State<SitePhotoGalleryScreen> {
   }
 }
 
-class _StoredImage extends StatelessWidget {
+class _StoredImage extends StatefulWidget {
   const _StoredImage({required this.path});
   final String path;
 
   @override
+  State<_StoredImage> createState() => _StoredImageState();
+}
+
+class _StoredImageState extends State<_StoredImage> {
+  // Đọc file một lần, không đọc lại mỗi lần lưới ảnh vẽ lại.
+  late Future<Uint8List?> _bytes = readSiteLayoutFile(widget.path);
+
+  @override
+  void didUpdateWidget(_StoredImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.path != widget.path) {
+      _bytes = readSiteLayoutFile(widget.path);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<Uint8List?>(
-      future: readSiteLayoutFile(path),
+      future: _bytes,
       builder: (_, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator());
@@ -252,7 +269,18 @@ class _StoredImage extends StatelessWidget {
         if (bytes == null) {
           return const Center(child: Icon(Icons.broken_image_outlined));
         }
-        return Image.memory(bytes, fit: BoxFit.cover, gaplessPlayback: true);
+        return LayoutBuilder(
+          builder: (context, constraints) => Image(
+            image: thumbnailImageProvider(
+              MemoryImage(bytes),
+              constraints: constraints,
+              devicePixelRatio: MediaQuery.devicePixelRatioOf(context),
+              fit: BoxFit.cover,
+            ),
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+          ),
+        );
       },
     );
   }

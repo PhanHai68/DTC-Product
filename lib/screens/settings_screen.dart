@@ -114,9 +114,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _changePassword() async {
     final changed = await showChangePasswordDialog(context);
     if (changed != true || !mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã đổi mật khẩu.')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Đã đổi mật khẩu.')));
   }
 
   @override
@@ -253,12 +252,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _SettingsSection(
             icon: Icons.feedback_outlined,
             title: 'Góp ý',
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.rate_review_outlined),
-              title: const Text('Gửi góp ý cho DTC Product'),
-              subtitle: const Text('Mở biểu mẫu Google Form trên trình duyệt'),
-              onTap: _openFeedbackForm,
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.rate_review_outlined),
+                  title: const Text('Gửi góp ý cho DTC Product'),
+                  subtitle: const Text(
+                    'Mở biểu mẫu Google Form trên trình duyệt',
+                  ),
+                  onTap: _openFeedbackForm,
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  key: const Key('settings_error_log'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.bug_report_outlined),
+                  title: const Text('Nhật ký lỗi'),
+                  subtitle: const Text(
+                    'Xem và gửi các lỗi app đã ghi nhận trên máy này',
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/error_log'),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
@@ -306,10 +323,7 @@ class _SettingsSection extends StatelessWidget {
               children: [
                 Icon(icon, color: colorScheme.primary, size: 20),
                 const SizedBox(width: 10),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
               ],
             ),
             const SizedBox(height: 8),

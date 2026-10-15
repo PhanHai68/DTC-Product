@@ -57,6 +57,7 @@ class LocationService {
       throw const LocationFailure(LocationFailureType.permissionDenied);
     }
 
+    await _requestFullAccuracyOnIos();
     try {
       return await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
@@ -75,6 +76,37 @@ class LocationService {
       throw const LocationFailure(LocationFailureType.unknown);
     }
   }
+
+  /// iOS 14+: người dùng tắt "Vị trí chính xác" thì xin bật tạm thời cho lần
+  /// định vị này (khóa `FactoryLocation` trong Info.plist).
+  Future<void> _requestFullAccuracyOnIos() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) return;
+    try {
+      if (await Geolocator.getLocationAccuracy() ==
+          LocationAccuracyStatus.reduced) {
+        await Geolocator.requestTemporaryFullAccuracy(
+          purposeKey: 'FactoryLocation',
+        );
+      }
+    } catch (error) {
+      debugPrint('LocationService._requestFullAccuracyOnIos: $error');
+    }
+  }
+
+  /// Người dùng chỉ cấp "vị trí gần đúng" (Android 12+ hoặc iOS 14+ tắt Vị
+  /// trí chính xác): sai số 1–3 km, định vị lại cũng không cải thiện.
+  Future<bool> isApproximate() async {
+    if (kIsWeb) return false;
+    try {
+      return await Geolocator.getLocationAccuracy() ==
+          LocationAccuracyStatus.reduced;
+    } catch (error) {
+      debugPrint('LocationService.isApproximate: $error');
+      return false;
+    }
+  }
+
+  Future<bool> openAppSettings() => Geolocator.openAppSettings();
 
   Future<bool> openSettingsFor(LocationFailure failure) =>
       failure.type == LocationFailureType.serviceDisabled

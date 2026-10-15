@@ -226,6 +226,25 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Định vị lại'), findsOneWidget);
+      expect(
+        find.byKey(const Key('factory_location_approximate')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('chỉ có vị trí gần đúng: cảnh báo và nút Mở Cài đặt', (
+      tester,
+    ) async {
+      await pumpForm(tester, const _FakeLocationService(approximate: true));
+      await tester.tap(find.byKey(const Key('factory_location_locate')));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('factory_location_approximate')),
+        findsOneWidget,
+      );
+      expect(find.text('Mở Cài đặt'), findsOneWidget);
+      expect(find.textContaining('Độ chính xác thấp'), findsNothing);
     });
 
     testWidgets(
@@ -285,8 +304,15 @@ void main() {
 }
 
 class _FakeLocationService extends LocationService {
-  const _FakeLocationService({this.failure});
+  const _FakeLocationService({this.failure, this.approximate = false});
   final LocationFailure? failure;
+  final bool approximate;
+
+  @override
+  Future<bool> isApproximate() async => approximate;
+
+  @override
+  Future<bool> openAppSettings() async => true;
 
   @override
   Future<Position> getCurrentPosition() async {

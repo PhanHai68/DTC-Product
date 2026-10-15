@@ -5,6 +5,7 @@ import '../screens/home_screen.dart';
 import '../screens/global_search_screen.dart';
 import '../screens/extensions_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/error_log_screen.dart';
 import '../screens/home_personalization_screen.dart';
 import '../screens/notes/notes_list_screen.dart';
 import '../screens/notes/note_edit_screen.dart';
@@ -61,6 +62,7 @@ import '../screens/tea_color_sorter/tea_color_sorter_screen.dart';
 import '../screens/tea_color_sorter/tea_aux_equip_screen.dart';
 import '../screens/mineral_color_sorter_menu_screen.dart';
 import '../screens/mineral_color_sorter/mineral_color_sorter_screen.dart';
+import '../screens/mineral_color_sorter/mineral_sorter_selector_screen.dart';
 import '../screens/agro_color_sorter_menu_screen.dart';
 import '../screens/agro_color_sorter/agro_color_sorter_screen.dart';
 import '../screens/aux_equip/aux_equip_screen.dart';
@@ -80,6 +82,7 @@ import '../screens/acomp/acomp_tank_screen.dart';
 import '../screens/acomp/acomp_mccb_cable_screen.dart';
 import '../screens/acomp/acomp_pipe_screen.dart';
 import '../screens/acomp/acomp_tank_fill_time_screen.dart';
+import '../screens/acomp/acomp_vsd_compare_screen.dart';
 import '../screens/acomp/acomp_troubleshooting_menu_screen.dart';
 import '../screens/acomp/acomp_common_errors_screen.dart';
 import '../screens/color_sorter_errors/color_sorter_errors_screen.dart';
@@ -102,15 +105,6 @@ import '../screens/packing/compare_screen.dart';
 import '../screens/extensions/maintenance_list_screen.dart';
 import '../screens/extensions/maintenance_form_screen.dart';
 import '../models/maintenance_record.dart';
-import '../features/sales_goal/models/sales_entry.dart';
-import '../features/sales_goal/models/sales_opportunity.dart';
-import '../features/sales_goal/screens/sales_goal_dashboard_screen.dart';
-import '../features/sales_goal/screens/sales_target_form_screen.dart';
-import '../features/sales_goal/screens/sales_entry_list_screen.dart';
-import '../features/sales_goal/screens/sales_entry_form_screen.dart';
-import '../features/sales_goal/screens/sales_pipeline_screen.dart';
-import '../features/sales_goal/screens/sales_opportunity_form_screen.dart';
-import '../features/sales_goal/screens/sales_goal_history_screen.dart';
 import '../features/site_layout/screens/site_layout_home_screen.dart';
 import '../features/site_layout/screens/site_project_form_screen.dart';
 import '../features/site_layout/screens/site_layout_editor_screen.dart';
@@ -182,6 +176,10 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const HomePersonalizationScreen(),
     ),
     GoRoute(
+      path: '/settings/error_log',
+      builder: (context, state) => const ErrorLogScreen(),
+    ),
+    GoRoute(
       path: '/notes',
       builder: (context, state) => const NotesListScreen(),
     ),
@@ -223,18 +221,25 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/storage/pdf',
-      builder: (context, state) =>
-          StoredPdfViewerScreen(file: state.extra! as StoredFile),
+      builder: (context, state) => switch (state.extra) {
+        final StoredFile file => StoredPdfViewerScreen(file: file),
+        // Mất extra (tải lại trang web, hệ điều hành khôi phục app): về danh sách.
+        _ => const StorageOverviewScreen(),
+      },
     ),
     GoRoute(
       path: '/storage/image',
-      builder: (context, state) =>
-          StoredImageViewerScreen(file: state.extra! as StoredFile),
+      builder: (context, state) => switch (state.extra) {
+        final StoredFile file => StoredImageViewerScreen(file: file),
+        _ => const StorageOverviewScreen(),
+      },
     ),
     GoRoute(
       path: '/storage/model',
-      builder: (context, state) =>
-          StoredModelViewerScreen(file: state.extra! as StoredFile),
+      builder: (context, state) => switch (state.extra) {
+        final StoredFile file => StoredModelViewerScreen(file: file),
+        _ => const StorageOverviewScreen(),
+      },
     ),
     GoRoute(
       path: '/extensions',
@@ -285,37 +290,6 @@ final GoRouter appRouter = GoRouter(
           initialPage: int.tryParse(query['page'] ?? '') ?? 1,
         );
       },
-    ),
-    GoRoute(
-      path: '/sales-goal',
-      builder: (context, state) => const SalesGoalDashboardScreen(),
-    ),
-    GoRoute(
-      path: '/sales-goal/targets',
-      builder: (context, state) => const SalesTargetFormScreen(),
-    ),
-    GoRoute(
-      path: '/sales-goal/entries',
-      builder: (context, state) => const SalesEntryListScreen(),
-    ),
-    GoRoute(
-      path: '/sales-goal/entries/form',
-      builder: (context, state) =>
-          SalesEntryFormScreen(entry: state.extra as SalesEntry?),
-    ),
-    GoRoute(
-      path: '/sales-goal/pipeline',
-      builder: (context, state) => const SalesPipelineScreen(),
-    ),
-    GoRoute(
-      path: '/sales-goal/pipeline/form',
-      builder: (context, state) => SalesOpportunityFormScreen(
-        opportunity: state.extra as SalesOpportunity?,
-      ),
-    ),
-    GoRoute(
-      path: '/sales-goal/history',
-      builder: (context, state) => const SalesGoalHistoryScreen(),
     ),
     GoRoute(
       path: '/factory-locations',
@@ -398,8 +372,13 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/grinding_machine/series',
-      builder: (context, state) =>
-          GrindingSeriesMachinesScreen(seriesCode: state.extra as String),
+      builder: (context, state) {
+        final code =
+            state.uri.queryParameters['code'] ??
+            (state.extra is String ? state.extra as String : null);
+        if (code == null) return const GrindingMachineHomeScreen();
+        return GrindingSeriesMachinesScreen(seriesCode: code);
+      },
     ),
     GoRoute(
       path: '/grinding_machine/detail/:machineId',
@@ -478,7 +457,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/grinding_machine/recommendation',
       builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>;
+        // Kết quả tính không đưa lên địa chỉ được: mất extra thì quay về màn
+        // chọn máy để nhập lại.
+        final extra = state.extra;
+        if (extra is! Map ||
+            extra['request'] is! GrindingSelectionRequest ||
+            extra['materialName'] is! String) {
+          return const GrindingMachineSelectionScreen();
+        }
         return GrindingMachineRecommendationScreen(
           request: extra['request'] as GrindingSelectionRequest,
           materialName: extra['materialName'] as String,
@@ -538,7 +524,13 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/mineral_color_sorter',
-      builder: (context, state) => const MineralColorSorterScreen(),
+      builder: (context, state) => MineralColorSorterScreen(
+        initialModel: state.uri.queryParameters['model'],
+      ),
+    ),
+    GoRoute(
+      path: '/mineral_color_sorter/select',
+      builder: (context, state) => const MineralSorterSelectorScreen(),
     ),
     GoRoute(
       path: '/agro_color_sorter_menu',
@@ -561,7 +553,8 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/acomp_tech_detail',
       builder: (context, state) {
-        final categoryType = state.extra as String? ?? 'PV';
+        final categoryType =
+            state.uri.queryParameters['type'] ?? state.extra as String? ?? 'PV';
         return AcompTechDetailScreen(categoryType: categoryType);
       },
     ),
@@ -584,6 +577,11 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/acomp_tank_fill_time',
       builder: (context, state) => const AcompTankFillTimeScreen(),
+    ),
+    GoRoute(
+      path: '/acomp_vsd_compare',
+      builder: (context, state) =>
+          AcompVsdCompareScreen(initialSize: state.uri.queryParameters['size']),
     ),
     GoRoute(
       path: '/acomp_troubleshooting',
