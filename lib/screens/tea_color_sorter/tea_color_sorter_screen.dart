@@ -338,7 +338,13 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
     );
   }
 
-  void _showTechApplicationDialog(BuildContext context, String modelName) {
+  void _showTechApplicationDialog(
+    BuildContext context,
+    Map<String, String> specs,
+  ) {
+    final modelName = specs['model'] ?? 'DF';
+    // Máy tách quang ASORT (SA…): chỉ hiện loại nguyên liệu + phạm vi phân loại.
+    final isAsort = asortSorterImagePath(modelName) != null;
     showDialog(
       context: context,
       builder: (context) {
@@ -383,7 +389,42 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
             child: ListView(
               shrinkWrap: true,
               children: [
-                if (modelName.toLowerCase().startsWith('h') ||
+                if (isAsort)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.blue.shade50,
+                          Colors.indigo.shade50.withValues(alpha: 0.5),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.blue.shade300,
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildAsortApplicationRow(
+                          Icons.landscape_outlined,
+                          'Loại nguyên liệu',
+                          specs['stone_type'] ?? '—',
+                        ),
+                        Divider(height: 20, color: Colors.blue.shade100),
+                        _buildAsortApplicationRow(
+                          Icons.straighten,
+                          'Phạm vi phân loại',
+                          specs['sorting_range'] ?? '—',
+                        ),
+                      ],
+                    ),
+                  )
+                else if (modelName.toLowerCase().startsWith('h') ||
                     modelName.toLowerCase() == 'sx8')
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -537,6 +578,40 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
           ],
         );
       },
+    );
+  }
+
+  Widget _buildAsortApplicationRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade100,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: Colors.blue.shade800, size: 18),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            color: Colors.blue.shade900,
+          ),
+        ),
+      ],
     );
   }
 
@@ -821,7 +896,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
         description = 'Trang bị 4 camera/máng độ nét cao cho hình ảnh sắc nét, điều khiển chính xác với 128 van phun/máng.';
         break;
       case 'Phạm vi phân loại đá dải nhỏ':
-        description = 'Phạm vi phân loại chuyên cho đá dải nhỏ từ 1.2mm đến 5mm, đáp ứng linh hoạt cho nhiều loại đá.';
+        description = 'Phạm vi phân loại chuyên cho đá dải nhỏ từ 1.2mm đến 2.5mm, đáp ứng linh hoạt cho nhiều loại đá.';
         break;
       case 'Phạm vi phân loại rộng':
         description = 'Hỗ trợ phân loại dải kích thước vật liệu rộng, đáp ứng linh hoạt cho nhiều loại đá (xem dải kích thước ở mục Năng suất).';
@@ -1618,7 +1693,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                             InkWell(
                               onTap: () => _showTechApplicationDialog(
                                 context,
-                                specs['model'] ?? 'DF',
+                                specs,
                               ),
                               borderRadius: BorderRadius.circular(12),
                               child: Container(
@@ -1797,8 +1872,6 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                   if (_tabController.index == 0) {
                                     // Sắp xếp đồng bộ thông tin theo thứ tự yêu cầu
                                     final List<String> orderedKeys = [
-                                      'stone_type',
-                                      'sorting_range',
                                       'capacity_display',
                                       'mix_ratio',
                                       'layers_qty',
@@ -1818,6 +1891,7 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                     ];
 
                                     // Add any remaining keys that belong to tab 0 but weren't ordered
+                                    // (stone_type / sorting_range của dòng SA chỉ hiện trong "Chi Tiết Ứng Dụng").
                                     final otherKeys = specs.keys
                                         .where(
                                           (k) =>
@@ -1828,6 +1902,8 @@ class _TeaColorSorterScreenState extends State<TeaColorSorterScreen>
                                               k != 'model' &&
                                               k != 'product_name' &&
                                               k != 'key_features' &&
+                                              k != 'stone_type' &&
+                                              k != 'sorting_range' &&
                                               !k.contains('air_') &&
                                               !k.contains('dim_') &&
                                               k != 'dimensions_display_mm' &&

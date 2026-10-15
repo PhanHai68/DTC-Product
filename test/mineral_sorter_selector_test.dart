@@ -82,14 +82,16 @@ void main() {
       );
       expect(_spec('SA6-1SL')['capacity_display'], '30–80 mm: 20–50 t/h');
       expect(_spec('SA6-2SL')['weight_kg'], '3693');
-      // Bảng bổ sung: số máng, ejector, camera, chiều rộng nhận diện, AI.
+      // Bảng bổ sung: số máng, ejector, camera, AI.
       final al = _spec('SA6-2AL');
       expect(al['chutes_qty'], '5');
       expect(al['ejector_per_layer'], '768');
       expect(al['ejector_qty'], '1536'); // 768 × 2 tầng
       expect(al['camera_per_layer'], '12');
-      expect(al['recognition_width'], '1800 mm');
-      expect(al['sorting_range'], '1.2–5.0 mm');
+      // Không hiển thị phạm vi nhận diện; dòng SA dùng điện 380 V.
+      expect(al.containsKey('recognition_width'), isFalse);
+      expect(al['voltage_v'], '380');
+      expect(al['sorting_range'], '1.2–2.5 mm');
       expect(_spec('SA6-2C')['ejector_qty'], '1536'); // 128 × 6 × 2
       expect(_spec('SA6-2C')['camera_qty'], '24'); // 2 × 6 × 2
       expect(_spec('SA6-1SL')['ai_function'], 'Tùy chọn (Option)');
@@ -226,10 +228,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Loại nguyên liệu'), findsOneWidget);
-      expect(find.text('Phạm vi phân loại'), findsOneWidget);
-      expect(find.text('0.1–1.2 mm'), findsOneWidget);
-      expect(find.text('Đá bột'), findsWidgets);
+      // Loại nguyên liệu / phạm vi phân loại chỉ nằm trong "Chi Tiết Ứng Dụng".
+      expect(find.text('Loại nguyên liệu'), findsNothing);
+      expect(find.text('Phạm vi phân loại'), findsNothing);
       expect(find.text('Tỷ lệ lẫn (xấu : tốt)'), findsOneWidget);
       expect(
         find.byWidgetPredicate(
@@ -243,6 +244,16 @@ void main() {
       );
       // SX8 vẫn là một lựa chọn trong danh sách model.
       expect(find.widgetWithText(FilterChip, 'SX8'), findsOneWidget);
+
+      final appButton = find.text('Chi Tiết Ứng Dụng');
+      await tester.ensureVisible(appButton);
+      await tester.tap(appButton);
+      await tester.pumpAndSettle();
+      expect(find.text('Loại nguyên liệu'), findsOneWidget);
+      expect(find.text('Phạm vi phân loại'), findsOneWidget);
+      expect(find.text('Đá bột'), findsOneWidget);
+      expect(find.text('0.1–1.2 mm'), findsOneWidget);
+      expect(find.textContaining('DF PRO'), findsNothing);
     });
   });
 }

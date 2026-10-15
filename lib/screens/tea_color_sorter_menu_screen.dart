@@ -28,7 +28,6 @@ class TeaColorSorterMenuScreen extends StatelessWidget {
           id: 'tea_color_sorter_payback_btn',
           title: 'Phân tích hoàn vốn',
           icon: Icons.query_stats_rounded,
-          subtitle: 'Hiện có cho DF53 Pro',
           onTap: () => context.push('/payback_analysis?line=tea'),
         ),
         TechnologyMenuEntry(

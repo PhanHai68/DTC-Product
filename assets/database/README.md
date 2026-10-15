@@ -51,12 +51,13 @@ Không cần sửa code Dart.
     không được đề xuất.
   - Chỉ dòng ASORT (SA) có `stone_type` (hiển thị "Loại nguyên liệu": `Đá bột`,
     `Đá khô` hoặc `Đá ướt & khô`) và `sorting_range` ("Phạm vi phân loại", VD
-    `1.2–30 mm`). Chỉ model có chữ "ướt" trong `stone_type` mới được đề xuất
+    `1.2–30 mm`); hai trường này chỉ hiện trong hộp "Chi Tiết Ứng Dụng",
+    không hiện ở tab "Thông số kỹ thuật". Chỉ model có chữ "ướt" trong `stone_type` mới được đề xuất
     khi khách chọn đá ướt.
   - Trường riêng của dòng SA: `mix_ratio` (tỷ lệ lẫn xấu : tốt),
     `ejector_per_chute` / `ejector_per_layer`, `camera_per_chute` /
-    `camera_per_layer`, `recognition_width` (phạm vi nhận diện theo chiều
-    rộng), `ai_function`. `ejector_qty`, `camera_qty` là tổng = số mỗi máng ×
+    `camera_per_layer`, `ai_function`. Không ghi phạm vi nhận diện theo
+    chiều rộng (đã bỏ theo yêu cầu). Cả dòng SA dùng điện 380 V. `ejector_qty`, `camera_qty` là tổng = số mỗi máng ×
     số máng × số tầng (hoặc số mỗi tầng × số tầng). Thông tin không có (VD
     SA4-1L chưa có số máng, ejector, camera; máy nén khí của cả dòng) thì bỏ
     trống, app tự ẩn.
