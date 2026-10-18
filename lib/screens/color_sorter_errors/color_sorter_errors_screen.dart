@@ -84,7 +84,7 @@ class _ColorSorterErrorsScreenState extends State<ColorSorterErrorsScreen> {
             tabs: [
               Tab(text: 'Lỗi thường gặp (${common.length})'),
               Tab(text: 'Nguyên nhân (${detailed.length})'),
-              Tab(text: 'Tách màu kém (${poor.length})'),
+              Tab(text: 'Tách không đạt (${poor.length})'),
               Tab(text: 'Nguồn & kết nối (${blocks.length + outputs.length})'),
             ],
           ),

@@ -38,9 +38,8 @@
       "error": "Một vài súng không bắn",
       "checks": [
         "Kiểm tra cụm súng (van) bị kẹt, bám bụi, cháy cuộn.",
-        "Dây nối từ mạch súng động lực tới súng tương ứng.",
-        "Kênh tương ứng trên mạch súng động lực.",
-        "Đổi chéo súng sang kênh khác để xác định lỗi ở súng hay ở mạch."
+        "Cáp nối từ mạch súng động lực tới cụm súng tương ứng.",
+        "Đổi chéo mạch sang mạch bên cạnh để xác định lỗi ở cụm súng hay ở mạch."
       ]
     },
     {
@@ -55,13 +54,12 @@
       ]
     },
     {
-      "error": "Súng bắn liên tục / bắn sai",
+      "error": "Súng bắn liên tục",
       "checks": [
-        "Kiểm tra thông số độ nhạy, ngưỡng tách cài đặt trên LCD.",
+        "Kiểm tra tham số cài độ nhạy.",
         "Kính quan sát bẩn, đèn chiếu sáng không đều (xem lỗi 13, 14).",
         "Mạch nền GN1/GN2.",
-        "Súng bị kẹt ở trạng thái mở.",
-        "Kênh tương ứng trên mạch súng động lực."
+        "Súng bị kẹt ở trạng thái mở."
       ]
     },
     {
@@ -80,17 +78,17 @@
         "Cáp kết nối #3 giữa ETM và mạch rung.",
         "Nguồn 12VDC và 220VAC cấp cho mạch rung.",
         "Cầu chì mạch rung.",
-        "Dây nối từ mạch rung tới bộ rung, cuộn rung."
+        "Dây nối từ mạch rung tới bộ rung, cuộn rung.",
+        "Kiểm tra áp suất khí nén."
       ]
     },
     {
       "error": "Rung yếu / rung không đều giữa các máng",
       "checks": [
         "Kiểm tra thông số biên độ rung từng kênh (#1 … #n).",
-        "Cảm biến độ rung và tín hiệu về mạch rung.",
-        "Khe hở nam châm, lò xo/lá nhíp bộ rung.",
-        "Máng rung bám bụi, dính nguyên liệu, vật lạ chèn.",
-        "Kênh tương ứng trên mạch rung."
+        "Kiểm tra điều chỉnh ốc phía sau bộ rung.",
+        "Kiểm tra các lò xo bộ rung.",
+        "Máng rung bám bụi, dính nguyên liệu, vật lạ chèn."
       ]
     },
     {
@@ -149,13 +147,13 @@
       ]
     },
     {
-      "error": "Tách màu kém (lọt hạt xấu hoặc hao hạt tốt)",
+      "error": "Tách không đạt",
       "checks": [
         "Kiểm tra kính quan sát, đèn chiếu sáng, mạch nền GN1/GN2.",
         "Thông số tách cài đặt trên LCD.",
         "Lưu lượng cấp liệu, độ rung.",
         "Áp suất khí, súng.",
-        "Xem chi tiết tại tab \"Tách màu kém\"."
+        "Xem chi tiết tại tab \"Tách không đạt\"."
       ]
     }
   ],
