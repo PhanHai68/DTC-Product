@@ -300,6 +300,15 @@
 
 Trước khi build: tăng `version` trong `pubspec.yaml` (ví dụ `1.0.15+16`). `versionCode` phải luôn tăng cho mỗi lần tải lên Play, và build number cho mỗi lần tải lên App Store Connect.
 
+**Android: APK cài trực tiếp (cách phát hành hiện tại)**
+```powershell
+powershell -ExecutionPolicy Bypass -File tool\build_release_apk.ps1 -Label ten-ban
+# Kết quả: DTCProduct-<version>-<commit>-ten-ban.apk ở thư mục gốc,
+# file giải mã ở symbols\android\<version>\ (không có trên Git). Script tự chép
+# cả hai vào G:\My Drive\DTC Product - Phát hành\<version>\ (Google Drive).
+# Bản build thử: thêm -SkipBackup để không chép.
+```
+
 **Android: App Bundle cho Google Play**
 ```bash
 flutter clean

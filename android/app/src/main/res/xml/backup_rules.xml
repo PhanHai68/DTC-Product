@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sao lưu tự động của Android (Android 11 trở xuống): giữ dữ liệu app, chỉ
+     bỏ kho token đăng nhập (flutter_secure_storage). Khóa giải mã nằm trong
+     Keystore của máy cũ nên token khôi phục sang máy khác vừa không dùng
+     được vừa không nên mang theo — người dùng đăng nhập lại 1 lần. -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="FlutterSecureStorage.xml"/>
+    <exclude domain="sharedpref" path="FlutterSecureKeyStorage.xml"/>
+</full-backup-content>

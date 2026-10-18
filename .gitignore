@@ -60,6 +60,8 @@ app.*.map.json
 
 # Bản APK build thủ công và file nháp/tạm cục bộ
 /*.apk
+# File giải mã của bản build obfuscate (tool/build_release_apk.ps1) — sao lưu riêng
+/symbols/
 /.codex_tmp/
 /output/
 /tmp/

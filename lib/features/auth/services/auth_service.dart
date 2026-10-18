@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth_config.dart';
+import 'session_token_store.dart';
 
 class AuthException implements Exception {
   const AuthException(this.message);
@@ -17,21 +18,31 @@ class AuthException implements Exception {
 /// Giữ hạn offline hiện có và xác minh cả khi app mở liên tục.
 /// Chỉ phản hồi thuộc phiên hiện tại được phép cập nhật trạng thái.
 class AuthService extends ChangeNotifier {
-  AuthService._({http.Client? client, DateTime Function()? now, String? apiKey})
-    : _client = client ?? http.Client(),
-      _now = now ?? DateTime.now,
-      _apiKey = apiKey ?? firebaseWebApiKey;
+  AuthService._({
+    http.Client? client,
+    DateTime Function()? now,
+    String? apiKey,
+    SessionTokenStore? tokenStore,
+  }) : _client = client ?? http.Client(),
+       _now = now ?? DateTime.now,
+       _apiKey = apiKey ?? firebaseWebApiKey,
+       _tokenStore = tokenStore ?? SessionTokenStore.platformDefault();
 
   @visibleForTesting
   factory AuthService.test({
     required http.Client client,
     DateTime Function()? now,
     String apiKey = 'test-key',
-  }) => AuthService._(client: client, now: now, apiKey: apiKey);
+    SessionTokenStore tokenStore = const PrefsSessionTokenStore(),
+  }) => AuthService._(
+    client: client,
+    now: now,
+    apiKey: apiKey,
+    tokenStore: tokenStore,
+  );
 
   static final AuthService instance = AuthService._();
   static const _kEmail = 'auth_email';
-  static const _kRefreshToken = 'auth_refresh_token';
   static const _kLastVerified = 'auth_last_verified_ms';
   static const _timeout = Duration(seconds: 15);
   static const _sessionCheckInterval = Duration(minutes: 1);
@@ -45,6 +56,7 @@ class AuthService extends ChangeNotifier {
   final http.Client _client;
   final DateTime Function() _now;
   final String _apiKey;
+  final SessionTokenStore _tokenStore;
   SharedPreferences? _prefs;
   AppLifecycleListener? _lifecycleListener;
   Timer? _sessionTimer;
@@ -90,7 +102,13 @@ class AuthService extends ChangeNotifier {
     if (!_isCurrent(version)) return;
     _prefs = prefs;
     _email = prefs.getString(_kEmail);
-    final savedToken = prefs.getString(_kRefreshToken);
+    String? savedToken;
+    try {
+      savedToken = await _tokenStore.read(prefs);
+    } catch (error) {
+      debugPrint('AuthService: không đọc được phiên đã lưu ($error)');
+    }
+    if (!_isCurrent(version)) return;
     _refreshToken = savedToken != null && savedToken.trim().isNotEmpty
         ? savedToken
         : null;
@@ -328,7 +346,7 @@ class AuthService extends ChangeNotifier {
     final prefs = _prefs;
     if (prefs == null) return Future.value();
     return _queueStorage(() async {
-      await prefs.remove(_kRefreshToken);
+      await _tokenStore.delete(prefs);
       await prefs.remove(_kLastVerified);
     });
   }
@@ -415,7 +433,7 @@ class AuthService extends ChangeNotifier {
     await _queueStorage(() async {
       if (!_isCurrent(version) || prefs == null) return;
       if (email != null) await prefs.setString(_kEmail, email);
-      await prefs.setString(_kRefreshToken, token);
+      await _tokenStore.write(prefs, token);
       await prefs.setInt(_kLastVerified, verifiedAt.millisecondsSinceEpoch);
     });
     if (!_isCurrent(version)) return;

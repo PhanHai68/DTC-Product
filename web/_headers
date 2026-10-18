@@ -1,0 +1,15 @@
+# Header bảo mật cho bản web trên Cloudflare Workers (file này được chép
+# nguyên vào build/web khi build). Nếu sau này app tải thêm script, font, ảnh
+# hoặc gọi API từ tên miền mới, phải thêm tên miền đó vào Content-Security-Policy,
+# không thì phần đó bị trình duyệt chặn (xem lỗi "Refused to..." trong Console).
+#
+# - www.gstatic.com: bộ vẽ CanvasKit của Flutter, bộ giải nén mô hình 3D
+# - fonts.gstatic.com: font dự phòng của Flutter
+# - identitytoolkit / securetoken.googleapis.com: đăng nhập Firebase
+# - www.googleapis.com, *.googleusercontent.com: thư viện tài liệu Google Drive
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://www.gstatic.com https://www.googleapis.com https://*.googleusercontent.com; media-src 'self' data: blob: https://www.googleapis.com https://*.googleusercontent.com; connect-src 'self' data: blob: https://www.gstatic.com https://fonts.gstatic.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://*.googleusercontent.com; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(self), microphone=(), payment=(), usb=()
