@@ -3,7 +3,7 @@
     "unloadPowerRatio": 0.30,
     "vsdBaseRatio": 0.10,
     "vsdMinLoad": 0.30,
-    "fixedPressureBandBar": 0.5,
+    "fixedPressureBandBar": 1.0,
     "energyPerBar": 0.07
   },
   "advice": {

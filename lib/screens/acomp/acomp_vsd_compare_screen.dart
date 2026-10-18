@@ -80,9 +80,14 @@ class _AcompVsdCompareScreenState extends State<AcompVsdCompareScreen> {
     super.dispose();
   }
 
-  String _plain(double value) => value == value.roundToDouble()
-      ? value.toInt().toString()
-      : value.toString().replaceAll('.', ',');
+  /// Làm tròn 3 chữ số thập phân trước khi hiển thị để bỏ sai số dấu phẩy
+  /// động (0,07 × 100 = 7,000000000000001).
+  String _plain(double value) {
+    final rounded = double.parse(value.toStringAsFixed(3));
+    return rounded == rounded.roundToDouble()
+        ? rounded.toInt().toString()
+        : rounded.toString().replaceAll('.', ',');
+  }
 
   String _vnd(double value) {
     final abs = value.abs();
@@ -448,29 +453,46 @@ class _AcompVsdCompareScreenState extends State<AcompVsdCompareScreen> {
                   'Giả định nâng cao',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+                subtitle: const Text(
+                  'Các hệ số dùng để ước tính điện năng. Giữ mặc định nếu '
+                  'chưa có số đo thực tế của khách hàng.',
+                ),
                 children: [
+                  const SizedBox(height: 8),
                   _field(
                     _unloadCtrl,
                     'Công suất khi chạy không tải',
                     suffix: '% đầy tải',
+                    helper:
+                        'Máy cố định khi đủ áp vẫn quay nhưng không nén khí, '
+                        'vẫn tốn chừng này điện so với lúc chạy có tải.',
                   ),
                   _field(
                     _bandCtrl,
                     'Máy cố định đặt áp cao hơn',
                     suffix: 'bar',
                     helper:
-                        'Mỗi 1 bar tốn thêm khoảng '
-                        '${_plain(_config.assumptions.energyPerBar * 100)}% điện',
+                        'Máy cố định nén lên 7,5 bar thì nghỉ, tụt 6,5 bar mới '
+                        'chạy lại; máy biến tần giữ ổn định quanh 6,5 bar. '
+                        'Nhập độ rộng dải áp cài trên máy cố định (6,5–7,5 '
+                        'bar là 1 bar). Mỗi 1 bar tốn thêm khoảng '
+                        '${_plain(_config.assumptions.energyPerBar * 100)}% điện.',
                   ),
                   _field(
                     _baseCtrl,
                     'Phần công suất cố định của biến tần',
                     suffix: '% đầy tải',
+                    helper:
+                        'Hao phí luôn có (biến tần, quạt, ma sát) dù máy chạy '
+                        'chậm; phần còn lại tăng giảm theo lưu lượng khí.',
                   ),
                   _field(
                     _minLoadCtrl,
                     'Tốc độ tối thiểu của biến tần',
                     suffix: '% lưu lượng',
+                    helper:
+                        'Biến tần không chạy chậm hơn mức này. Nhu cầu khí '
+                        'thấp hơn thì máy chạy có tải/không tải như máy cố định.',
                   ),
                   Align(
                     alignment: Alignment.centerRight,
@@ -508,7 +530,7 @@ class _AcompVsdCompareScreenState extends State<AcompVsdCompareScreen> {
           labelText: label,
           hintText: hint,
           helperText: helper,
-          helperMaxLines: 2,
+          helperMaxLines: 4,
           suffixText: suffix,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           isDense: true,
