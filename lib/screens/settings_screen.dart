@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../features/auth/screens/change_password_dialog.dart';
 import '../features/auth/services/auth_service.dart';
+import '../features/data_backup/widgets/data_backup_tiles.dart';
 import '../providers/settings_provider.dart';
 
 const _feedbackFormUrl =
@@ -225,6 +226,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: 'Dữ liệu',
             child: Column(
               children: [
+                const DataBackupTiles(),
+                const Divider(height: 1),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.folder_copy_outlined),

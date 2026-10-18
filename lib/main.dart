@@ -11,6 +11,7 @@ import 'core/errors/app_error_log.dart';
 import 'data/product_data.dart';
 import 'routes/app_routes.dart';
 import 'features/auth/services/auth_service.dart';
+import 'features/data_backup/data_backup_service.dart';
 import 'providers/electricity_bill_provider.dart';
 import 'providers/processing_profit_provider.dart';
 import 'providers/self_business_provider.dart';
@@ -81,7 +82,37 @@ void main() async {
       ),
     );
   };
-  runApp(MyApp(settingsProvider: SettingsProvider(prefs)));
+  final settings = SettingsProvider(prefs);
+  runApp(MyApp(settingsProvider: settings));
+  // Sau khi khôi phục dữ liệu từ file sao lưu: đặt lại các nhắc hẹn.
+  unawaited(DataBackupService.runPostRestoreTasks(prefs, settings));
+  unawaited(_remindBackupLater(prefs));
+}
+
+/// Nhắc sao lưu dữ liệu khi đã quá 7 ngày chưa sao lưu (mỗi ngày tối đa 1
+/// lần, chỉ khi máy có dữ liệu người dùng tự tạo).
+Future<void> _remindBackupLater(SharedPreferences prefs) async {
+  await Future<void>.delayed(const Duration(seconds: 6));
+  if (!AuthService.instance.isSignedIn) return;
+  try {
+    final days = await DataBackupService.checkReminder(prefs);
+    if (days == null) return;
+    AppErrorLog.instance.scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 10),
+        content: Text(
+          '${days == 0 ? 'Bạn chưa sao lưu dữ liệu lần nào' : 'Đã $days ngày chưa sao lưu dữ liệu'}. '
+          'Sao lưu để không mất dữ liệu khi đổi hoặc hỏng điện thoại.',
+        ),
+        action: SnackBarAction(
+          label: 'Sao lưu',
+          onPressed: () => appRouter.push('/settings'),
+        ),
+      ),
+    );
+  } catch (error) {
+    debugPrint('Không kiểm tra được lịch sao lưu: $error');
+  }
 }
 
 /// Xây dựng ThemeData dùng chung cho cả bản sáng và tối từ cùng một cấu trúc,
