@@ -58,6 +58,7 @@ class DataBackupEngine {
     'maintenance_reports.db',
     'project_tracking.db',
     'site_layout.db',
+    'technical_dictionary.db',
   ];
 
   /// Bảng chứa dữ liệu người dùng tự tạo (không tính catalog nạp sẵn) — dùng
@@ -69,6 +70,7 @@ class DataBackupEngine {
     'maintenance_reports.db': ['maintenance_reports'],
     'project_tracking.db': ['projects'],
     'site_layout.db': ['site_layout_projects'],
+    'technical_dictionary.db': ['term_progress'],
     'grinding_machines.db': [
       'grinding_selection_projects',
       'grinding_proposals',

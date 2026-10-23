@@ -15,6 +15,7 @@ import '../projects/data/project_database.dart';
 import '../projects/repositories/local_project_repository.dart';
 import '../projects/services/project_notification_service.dart';
 import '../site_layout/data/site_layout_database.dart';
+import '../technical_dictionary/data/technical_dictionary_database.dart';
 import 'models/backup_manifest.dart';
 import 'services/data_backup_platform.dart'
     if (dart.library.io) 'services/data_backup_platform_io.dart';
@@ -45,6 +46,7 @@ class DataBackupService {
     await MaintenanceReportDatabase.instance.close();
     await ProjectDatabase.instance.close();
     await SiteLayoutDatabase.instance.close();
+    await TechnicalDictionaryDatabase.instance.close();
   }
 
   static Future<(String, int)> _appVersion() async {

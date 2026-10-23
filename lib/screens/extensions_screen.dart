@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/technical_dictionary/widgets/en_vi_badge.dart';
 import '../widgets/technology_menu.dart';
 
 class ExtensionsScreen extends StatelessWidget {
@@ -46,6 +47,14 @@ class ExtensionsScreen extends StatelessWidget {
           icon: Icons.menu_book_rounded,
           featured: true,
           onTap: () => context.push('/fault-bank'),
+        ),
+        TechnologyMenuEntry(
+          id: 'extension_technical_dictionary',
+          title: 'Từ Điển Chuyên Ngành',
+          icon: Icons.translate_rounded,
+          iconWidget: const EnViBadge(size: 24),
+          featured: true,
+          onTap: () => context.push('/technical-dictionary'),
         ),
         TechnologyMenuEntry(
           id: 'extension_maintenance_report',

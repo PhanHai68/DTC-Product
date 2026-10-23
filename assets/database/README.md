@@ -31,6 +31,7 @@ Không cần sửa code Dart.
 | `sifter_machine_catalog.json` | Máy sàng | Máy sàng |
 | `packing_machine_catalog.json` | Máy đóng gói | Máy đóng gói |
 | `rice_milling_catalog.json` | Dây chuyền xay xát | Dây chuyền xay xát |
+| `dictionary/technical_terms.json` | Từ điển chuyên ngành: thuật ngữ tiếng Anh, viết tắt, phiên âm, nghĩa, nhóm máy, loại, giải thích, câu mẫu, từ liên quan, tên gọi khác. **Không sửa tay** — sinh từ `docs_database/04_Cong_Cu_Tinh_Toan/4.7 Tu_dien_chuyen_nganh_DTC.xlsx` (xem mục Từ điển chuyên ngành bên dưới) | Công cụ & Tiện ích → Từ điển chuyên ngành |
 
 ## Quy tắc khi sửa file máy tách màu
 
@@ -120,6 +121,28 @@ Không cần sửa code Dart.
   thay dòng "Trọng lượng/túi" bằng "Khối lượng mẻ"), `accuracy` (sai số, dạng
   chữ), `components` (danh sách `{ "name", "origin", "note" }` — mục "Xuất xứ
   thiết bị").
+
+## Từ điển chuyên ngành
+
+Nguồn là file Excel `4.7 Tu_dien_chuyen_nganh_DTC.xlsx`, sheet `Tu dien`.
+Thêm hoặc sửa thuật ngữ trong Excel rồi chạy:
+
+```sh
+dart run tool/data/build_technical_dictionary.dart
+flutter test test/technical_dictionary
+```
+
+- Mỗi dòng phải có Thuật ngữ, Nghĩa tiếng Việt, Nhóm máy, Loại; Nhóm và Loại
+  phải đúng danh sách chọn sẵn trong Excel. STT không được trùng.
+- **Từ liên quan** cách nhau bằng dấu phẩy, ghi đúng tên thuật ngữ, viết tắt
+  hoặc tên gọi khác của mục khác thì trong app mới bấm mở được.
+- **Tên gọi khác** cách nhau bằng dấu chấm phẩy (`;`).
+- Ô gộp nhiều từ ghi `a / b` (có khoảng trắng hai bên dấu `/`) thì app tách
+  thành từng tên để tìm; viết tắt liền như `L/C` giữ nguyên.
+- Cột "Đã thuộc?" và "Ghi chú của bạn" không đưa vào app: trong app mỗi người
+  tự đánh dấu, lưu trong `technical_dictionary.db` (có trong bản sao lưu).
+- Trạng thái học lưu theo thuật ngữ tiếng Anh: sửa chữ ở cột Thuật ngữ thì
+  trạng thái đã đánh dấu cho từ cũ không còn khớp.
 
 ## Kiểm tra sau khi sửa
 

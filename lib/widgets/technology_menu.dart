@@ -9,6 +9,9 @@ class TechnologyMenuEntry {
   final String id;
   final String title;
   final IconData icon; // Fallback icon if imagePath is null
+  /// Hình tùy chỉnh thay cho [icon] (VD huy hiệu chữ); bỏ qua khi có
+  /// [imagePath].
+  final Widget? iconWidget;
   final String? imagePath;
   final VoidCallback? onTap;
   final bool featured;
@@ -21,6 +24,7 @@ class TechnologyMenuEntry {
     required this.id,
     required this.title,
     required this.icon,
+    this.iconWidget,
     this.imagePath,
     this.onTap,
     this.featured = false,
@@ -263,6 +267,8 @@ class _TechnologyActionCard extends StatelessWidget {
                               ),
                             ),
                           )
+                        : entry.iconWidget != null
+                        ? Center(child: entry.iconWidget)
                         : Icon(
                             entry.icon,
                             color: entry.iconColor ?? palette.navyLight,

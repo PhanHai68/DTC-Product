@@ -47,6 +47,7 @@ import '../features/grinding_machine/screens/grinding_proposal_editor_screen.dar
 import '../features/grinding_machine/models/grinding_selection_request.dart';
 import '../features/grinding_machine/models/grinding_selection_project.dart';
 import '../features/fault_bank/fault_bank_routes.dart';
+import '../features/technical_dictionary/technical_dictionary_routes.dart';
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/services/auth_service.dart';
 import '../screens/productivity/productivity_calc_screen.dart';
@@ -297,6 +298,8 @@ final GoRouter appRouter = GoRouter(
     ),
     // Ngân hàng lỗi (/fault-bank/...) — provider riêng của module.
     buildFaultBankRoutes(),
+    // Từ điển chuyên ngành (/technical-dictionary/...) — provider riêng.
+    buildTechnicalDictionaryRoutes(),
     GoRoute(
       path: '/factory-locations/form',
       builder: (context, state) => FactoryLocationFormScreen(

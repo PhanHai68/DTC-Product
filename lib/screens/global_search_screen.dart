@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/product_data.dart';
+import '../features/technical_dictionary/widgets/en_vi_badge.dart';
 
 class GlobalSearchScreen extends StatefulWidget {
   const GlobalSearchScreen({super.key});
@@ -60,6 +61,15 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       location: '/technical_converter',
       icon: Icons.swap_horiz_rounded,
       keywords: 'mesh micron mm inch dn bar psi cfm quy doi ky thuat',
+    ),
+    const _SearchItem(
+      title: 'Từ điển chuyên ngành',
+      subtitle: 'Thuật ngữ tiếng Anh, phiên âm, câu mẫu gửi nhà cung cấp',
+      location: '/technical-dictionary',
+      icon: Icons.translate_rounded,
+      iconWidget: EnViBadge(size: 22),
+      keywords:
+          'tu dien thuat ngu tieng anh english dich nghia phien am cau mau email nha cung cap viet tat',
     ),
     const _SearchItem(
       title: 'Ghi Chú & Nhắc Hẹn',
@@ -299,7 +309,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                             horizontal: 16,
                             vertical: 6,
                           ),
-                          leading: Icon(item.icon),
+                          leading: item.iconWidget ?? Icon(item.icon),
                           title: Text(
                             item.title,
                             style: const TextStyle(fontWeight: FontWeight.w700),
@@ -349,6 +359,7 @@ class _SearchItem {
     required this.subtitle,
     required this.location,
     required this.icon,
+    this.iconWidget,
     this.keywords = '',
   });
 
@@ -356,6 +367,9 @@ class _SearchItem {
   final String subtitle;
   final String location;
   final IconData icon;
+
+  /// Hình tùy chỉnh thay cho [icon] (VD huy hiệu E-V của Từ điển).
+  final Widget? iconWidget;
   final String keywords;
 }
 
