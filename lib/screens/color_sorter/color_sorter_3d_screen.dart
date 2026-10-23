@@ -121,11 +121,17 @@ class _ColorSorter3dScreenState extends State<ColorSorter3dScreen> {
     return widget.modelPath;
   }
 
-  String get _effectivePosterPath {
+  /// Trên Android/iOS, model_viewer_plus phục vụ trang qua proxy cục bộ và chỉ
+  /// biết trả về đúng file model ('/model'). Poster dạng đường dẫn asset bị
+  /// WebView xin lại thành '/assets/...', proxy rơi vào nhánh tính `url.origin`
+  /// của src (không có scheme) → ném "Cannot use origin without a scheme" mỗi
+  /// lần mở màn. Poster vốn không hiển thị được trên mobile, và màn đã có lớp
+  /// tiến độ tải riêng, nên chỉ dùng poster trên web.
+  String? get _effectivePosterPath {
     if (kIsWeb) {
       return 'assets/${widget.posterPath}';
     }
-    return widget.posterPath;
+    return null;
   }
 
   void _showHotspotDialog(String partName) {
