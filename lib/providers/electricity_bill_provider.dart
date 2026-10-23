@@ -26,6 +26,10 @@ class ElectricityBillProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  /// Số liệu của lần tính gần nhất, để giải thích công thức trên màn hình.
+  ElectricityBillInputs? _lastInputs;
+  ElectricityBillInputs? get lastInputs => _lastInputs;
+
   void setModel(String? model) {
     _selectedModel = model;
     notifyListeners();
@@ -82,6 +86,18 @@ class ElectricityBillProvider extends ChangeNotifier {
               _offPeakHours * offPeakRate +
               _peakHours * peakRate);
       _totalBill = rawBill.roundToDouble(); // làm tròn kết quả
+      _lastInputs = (
+        powerKw: averagePower,
+        averagePower: powerConsumptionData[_selectedModel!]!.any(
+          (r) => r['Tiêu chí'] == 'Công suất trung bình (kW)',
+        ),
+        normalHours: _normalHours,
+        offPeakHours: _offPeakHours,
+        peakHours: _peakHours,
+        normalRate: normalRate,
+        offPeakRate: offPeakRate,
+        peakRate: peakRate,
+      );
     } catch (e) {
       _errorMessage = 'Lỗi tính toán: ${e.toString()}';
       _totalHours = null;
@@ -98,6 +114,20 @@ class ElectricityBillProvider extends ChangeNotifier {
     _totalHours = null;
     _totalBill = null;
     _errorMessage = null;
+    _lastInputs = null;
     notifyListeners();
   }
 }
+
+/// [averagePower] = `false` khi model không có công suất trung bình và phải
+/// tính theo công suất lớn nhất.
+typedef ElectricityBillInputs = ({
+  double powerKw,
+  bool averagePower,
+  double normalHours,
+  double offPeakHours,
+  double peakHours,
+  double normalRate,
+  double offPeakRate,
+  double peakRate,
+});

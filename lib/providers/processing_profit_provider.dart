@@ -9,6 +9,10 @@ class ProcessingProfitProvider extends ChangeNotifier {
   double? _totalProfit;
   double? get totalProfit => _totalProfit;
 
+  /// Số liệu của lần tính gần nhất, để giải thích công thức trên màn hình.
+  ProcessingProfitInputs? _lastInputs;
+  ProcessingProfitInputs? get lastInputs => _lastInputs;
+
   void setProcessingPrice(String val) {
     _processingPrice = (parseLocalizedDouble(val) ?? 0) * 1000;
   }
@@ -25,6 +29,14 @@ class ProcessingProfitProvider extends ChangeNotifier {
     // Tổng lợi nhuận = (Giá gia công 1 tấn x Năng suất x Số giờ) - Tiền điện - Tiền lương
     double revenue = _processingPrice * capacity * totalHours;
     _totalProfit = (revenue - totalBill - _dailySalary).roundToDouble();
+    _lastInputs = (
+      processingPrice: _processingPrice,
+      dailySalary: _dailySalary,
+      capacity: capacity,
+      totalHours: totalHours,
+      totalBill: totalBill,
+      revenue: revenue,
+    );
     notifyListeners();
   }
 
@@ -32,6 +44,17 @@ class ProcessingProfitProvider extends ChangeNotifier {
     _processingPrice = 0;
     _dailySalary = 0;
     _totalProfit = null;
+    _lastInputs = null;
     notifyListeners();
   }
 }
+
+/// Đơn vị: giá gia công VNĐ/tấn, lương VNĐ/ngày, năng suất tấn/h.
+typedef ProcessingProfitInputs = ({
+  double processingPrice,
+  double dailySalary,
+  double capacity,
+  double totalHours,
+  double totalBill,
+  double revenue,
+});

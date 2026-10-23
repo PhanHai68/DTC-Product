@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../providers/processing_profit_provider.dart';
 import '../../providers/self_business_provider.dart';
 import '../../providers/payback_period_provider.dart';
+import '../../widgets/payback/formula_explainer.dart';
 
 class PaybackChartScreen extends StatelessWidget {
   const PaybackChartScreen({super.key});
@@ -313,10 +314,52 @@ class PaybackChartScreen extends StatelessWidget {
               ),
             ),
             ),
+            const SizedBox(height: 24),
+            FormulaExplainer(
+              formulas: const [
+                'Lợi nhuận tích lũy sau N ngày = Lợi nhuận/ngày × N',
+                'Ngày hòa vốn = Giá máy tách màu ÷ Lợi nhuận/ngày (điểm đường '
+                    'lợi nhuận cắt mốc tổng đầu tư)',
+              ],
+              workings: [
+                _breakEvenWorking(
+                  'Gia công',
+                  totalInvestment,
+                  processingProvider.totalProfit ?? 0,
+                  formatCurrency,
+                ),
+                _breakEvenWorking(
+                  'Tự kinh doanh',
+                  totalInvestment,
+                  selfBusinessProvider.netProfit ?? 0,
+                  formatCurrency,
+                ),
+              ],
+              notes: const [
+                'Lợi nhuận gia công lấy từ bước 3, lợi nhuận tự kinh doanh từ '
+                    'bước 5, giá máy từ bước 4 (không dùng giá trọn cụm).',
+                'Nhãn trên biểu đồ hiển thị phần nguyên của số ngày hòa vốn.',
+              ],
+            ),
           ],
         ),
       ),
     );
+  }
+
+  static String _breakEvenWorking(
+    String label,
+    double investment,
+    double dailyProfit,
+    NumberFormat currency,
+  ) {
+    if (dailyProfit <= 0) {
+      return '$label: lợi nhuận/ngày = ${currency.format(dailyProfit)} ≤ 0 '
+          'nên không hòa vốn.';
+    }
+    return '$label: ${currency.format(investment)} ÷ '
+        '${currency.format(dailyProfit)}/ngày = '
+        '${(investment / dailyProfit).toStringAsFixed(1)} ngày';
   }
 
   Widget _buildLegendItem(Color color, String text, {bool isDashed = false}) {

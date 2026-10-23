@@ -6,6 +6,7 @@ import '../../providers/electricity_bill_provider.dart';
 import '../../providers/self_business_provider.dart';
 import '../../core/input/localized_number.dart';
 import '../../data/product_data.dart';
+import '../../widgets/payback/formula_explainer.dart';
 
 class SelfBusinessScreen extends StatefulWidget {
   const SelfBusinessScreen({super.key});
@@ -219,12 +220,62 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                       ),
                     ),
                   ),
+                const SizedBox(height: 16),
+                _buildFormula(businessProvider),
               ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildFormula(SelfBusinessProvider provider) {
+    final inputs = provider.lastInputs;
+    final netProfit = provider.netProfit;
+    final c = formatCurrency.format;
+    const n = formulaNumber;
+    return FormulaExplainer(
+      formulas: const [
+        'Năng suất thành phẩm = Năng suất × 96,875%; Năng suất phế phẩm = '
+            'Năng suất × 3,125%',
+        'Chi phí nguyên liệu = Năng suất (tấn/h) × 1000 × Tổng giờ × Giá '
+            'nguyên liệu (VNĐ/kg)',
+        'Doanh thu thành phẩm = Năng suất thành phẩm × 1000 × Tổng giờ × Giá '
+            'thành phẩm',
+        'Doanh thu phế phẩm = Năng suất phế phẩm × 1000 × Tổng giờ × Giá phế '
+            'phẩm',
+        'Lợi nhuận ròng/ngày = Doanh thu thành phẩm + Doanh thu phế phẩm − Chi '
+            'phí nguyên liệu − Tiền điện/ngày − Lương',
+      ],
+      workings: inputs == null || netProfit == null
+          ? const []
+          : [
+              'Năng suất thành phẩm = ${n(inputs.capacity)} × 96,875% = '
+                  '${n(inputs.finishedCapacity)} tấn/h; phế phẩm = '
+                  '${n(inputs.capacity)} × 3,125% = '
+                  '${n(inputs.byProductCapacity)} tấn/h',
+              'Chi phí nguyên liệu = ${n(inputs.capacity)} × 1000 × '
+                  '${n(inputs.totalHours)} × ${c(inputs.rawMaterialPrice)} = '
+                  '${c(provider.costRawMaterial!)}',
+              'Doanh thu thành phẩm = ${n(inputs.finishedCapacity)} × 1000 × '
+                  '${n(inputs.totalHours)} × '
+                  '${c(inputs.finishedProductPrice)} = '
+                  '${c(provider.revenueFinished!)}',
+              'Doanh thu phế phẩm = ${n(inputs.byProductCapacity)} × 1000 × '
+                  '${n(inputs.totalHours)} × ${c(inputs.byProductPrice)} = '
+                  '${c(provider.revenueByProduct!)}',
+              'Lợi nhuận ròng = ${c(provider.revenueFinished!)} + '
+                  '${c(provider.revenueByProduct!)} − '
+                  '${c(provider.costRawMaterial!)} − '
+                  '${c(inputs.electricityBill)} − ${c(inputs.dailySalary)} = '
+                  '${c(netProfit)}',
+            ],
+      notes: const [
+        '× 1000 để đổi tấn sang kg. Tiền điện và số giờ lấy từ bước 2.',
+        'Bước này hiện chưa trừ lương nhân viên (lương tính = 0).',
+      ],
     );
   }
 

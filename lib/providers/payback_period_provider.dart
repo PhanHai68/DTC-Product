@@ -13,6 +13,10 @@ class PaybackPeriodProvider extends ChangeNotifier {
   double? get fullSetupPaybackDays => _fullSetupPaybackDays;
   double get machinePrice => _machinePrice;
 
+  /// Số liệu của lần tính gần nhất, để giải thích công thức trên màn hình.
+  PaybackPeriodInputs? _lastInputs;
+  PaybackPeriodInputs? get lastInputs => _lastInputs;
+
   void setMachinePrice(String val) {
     _machinePrice = (parseLocalizedDouble(val) ?? 0) * 1000;
   }
@@ -30,6 +34,11 @@ class PaybackPeriodProvider extends ChangeNotifier {
       _machinePaybackDays = (_machinePrice / totalProfit);
       _fullSetupPaybackDays = (_fullSetupPrice / totalProfit);
     }
+    _lastInputs = (
+      machinePrice: _machinePrice,
+      fullSetupPrice: _fullSetupPrice,
+      totalProfit: totalProfit,
+    );
     notifyListeners();
   }
 
@@ -38,6 +47,14 @@ class PaybackPeriodProvider extends ChangeNotifier {
     _fullSetupPrice = 0;
     _machinePaybackDays = null;
     _fullSetupPaybackDays = null;
+    _lastInputs = null;
     notifyListeners();
   }
 }
+
+/// Đơn vị: VNĐ (lợi nhuận tính theo ngày).
+typedef PaybackPeriodInputs = ({
+  double machinePrice,
+  double fullSetupPrice,
+  double totalProfit,
+});

@@ -6,6 +6,7 @@ import '../../providers/electricity_bill_provider.dart';
 import '../../providers/processing_profit_provider.dart';
 import '../../core/input/localized_number.dart';
 import '../../data/product_data.dart';
+import '../../widgets/payback/formula_explainer.dart';
 
 class ProcessingProfitScreen extends StatefulWidget {
   const ProcessingProfitScreen({super.key});
@@ -176,12 +177,43 @@ class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
                       ),
                     ),
                   ),
+                const SizedBox(height: 16),
+                _buildFormula(profitProvider),
               ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildFormula(ProcessingProfitProvider provider) {
+    final inputs = provider.lastInputs;
+    final totalProfit = provider.totalProfit;
+    final c = formatCurrency.format;
+    return FormulaExplainer(
+      formulas: const [
+        'Doanh thu gia công = Giá gia công (VNĐ/tấn) × Năng suất (tấn/h) '
+            '× Tổng giờ/ngày',
+        'Lợi nhuận gia công/ngày = Doanh thu gia công − Tiền điện/ngày '
+            '− Lương nhân viên/ngày',
+      ],
+      workings: inputs == null || totalProfit == null
+          ? const []
+          : [
+              'Doanh thu = ${c(inputs.processingPrice)}/tấn × '
+                  '${formulaNumber(inputs.capacity)} tấn/h × '
+                  '${formulaNumber(inputs.totalHours)} giờ '
+                  '= ${c(inputs.revenue)}',
+              'Lợi nhuận = ${c(inputs.revenue)} − ${c(inputs.totalBill)} '
+                  '− ${c(inputs.dailySalary)} = ${c(totalProfit)}',
+            ],
+      notes: const [
+        'Năng suất lấy theo thông số của model; tiền điện và số giờ lấy từ '
+            'bước 2.',
+        'Kết quả làm tròn đến đồng.',
+      ],
     );
   }
 }

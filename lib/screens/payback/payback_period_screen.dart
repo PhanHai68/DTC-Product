@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../providers/processing_profit_provider.dart';
 import '../../providers/payback_period_provider.dart';
 import '../../core/input/localized_number.dart';
+import '../../widgets/payback/formula_explainer.dart';
 
 class PaybackPeriodScreen extends StatefulWidget {
   const PaybackPeriodScreen({super.key});
@@ -182,12 +183,52 @@ class _PaybackPeriodScreenState extends State<PaybackPeriodScreen> {
                       ),
                     ),
                   ),
+                const SizedBox(height: 16),
+                _buildFormula(paybackProvider),
               ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildFormula(PaybackPeriodProvider provider) {
+    final inputs = provider.lastInputs;
+    final machineDays = provider.machinePaybackDays;
+    final fullSetupDays = provider.fullSetupPaybackDays;
+    final c = formatCurrency.format;
+    final List<String> workings;
+    if (inputs == null || machineDays == null || fullSetupDays == null) {
+      workings = const [];
+    } else if (inputs.totalProfit <= 0) {
+      workings = [
+        'Lợi nhuận gia công/ngày = ${c(inputs.totalProfit)} ≤ 0 nên không '
+            'thể hoàn vốn.',
+      ];
+    } else {
+      workings = [
+        'Chỉ máy = ${c(inputs.machinePrice)} ÷ ${c(inputs.totalProfit)}/ngày '
+            '= ${machineDays.toStringAsFixed(1)} ngày',
+        'Trọn cụm = ${c(inputs.fullSetupPrice)} ÷ '
+            '${c(inputs.totalProfit)}/ngày '
+            '= ${fullSetupDays.toStringAsFixed(1)} ngày',
+      ];
+    }
+    return FormulaExplainer(
+      formulas: const [
+        'Số ngày hoàn vốn (chỉ máy) = Giá máy tách màu ÷ Lợi nhuận gia '
+            'công/ngày',
+        'Số ngày hoàn vốn (trọn cụm) = Giá trọn cụm thiết bị ÷ Lợi nhuận gia '
+            'công/ngày',
+      ],
+      workings: workings,
+      notes: const [
+        'Lợi nhuận gia công/ngày lấy từ bước 3. Lợi nhuận ≤ 0 thì không thể '
+            'hoàn vốn.',
+        'Kết quả làm tròn 1 chữ số thập phân.',
+      ],
     );
   }
 }

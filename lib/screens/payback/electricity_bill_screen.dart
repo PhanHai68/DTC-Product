@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/electricity_bill_provider.dart';
 import '../../data/product_data.dart';
 import '../../core/input/localized_number.dart';
+import '../../widgets/payback/formula_explainer.dart';
 
 import 'package:intl/intl.dart';
 
@@ -277,12 +278,45 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                       ),
                     ),
                   ),
+                const SizedBox(height: 16),
+                _buildFormula(provider),
               ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildFormula(ElectricityBillProvider provider) {
+    final inputs = provider.lastInputs;
+    final totalBill = provider.totalBill;
+    const n = formulaNumber;
+    return FormulaExplainer(
+      formulas: const [
+        'Tổng giờ/ngày = Giờ bình thường + Giờ thấp điểm + Giờ cao điểm',
+        'Tiền điện/ngày = Công suất (kW) × (Giờ bình thường × Giá bình thường '
+            '+ Giờ thấp điểm × Giá thấp điểm + Giờ cao điểm × Giá cao điểm)',
+      ],
+      workings: inputs == null || totalBill == null
+          ? const []
+          : [
+              'Công suất ${inputs.averagePower ? 'trung bình' : 'lớn nhất'} '
+                  'của model: ${n(inputs.powerKw)} kW',
+              'Tổng giờ = ${n(inputs.normalHours)} + ${n(inputs.offPeakHours)} '
+                  '+ ${n(inputs.peakHours)} = ${n(provider.totalHours!)} giờ',
+              'Tiền điện = ${n(inputs.powerKw)} × '
+                  '(${n(inputs.normalHours)} × ${n(inputs.normalRate)} '
+                  '+ ${n(inputs.offPeakHours)} × ${n(inputs.offPeakRate)} '
+                  '+ ${n(inputs.peakHours)} × ${n(inputs.peakRate)}) '
+                  '= ${formatCurrency.format(totalBill)}',
+            ],
+      notes: const [
+        'Công suất lấy theo công suất trung bình của model; model chưa có số '
+            'liệu trung bình thì lấy công suất lớn nhất.',
+        'Đơn giá điện (VNĐ/kWh) chỉnh ở nút Cài đặt. Kết quả làm tròn đến đồng.',
+      ],
     );
   }
 }

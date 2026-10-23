@@ -17,6 +17,10 @@ class SelfBusinessProvider extends ChangeNotifier {
   double? get revenueByProduct => _revenueByProduct;
   double? get netProfit => _netProfit;
 
+  /// Số liệu của lần tính gần nhất, để giải thích công thức trên màn hình.
+  SelfBusinessInputs? _lastInputs;
+  SelfBusinessInputs? get lastInputs => _lastInputs;
+
   void setRawMaterialPrice(String val) {
     _rawMaterialPrice = parseLocalizedDouble(val) ?? 0;
   }
@@ -57,6 +61,17 @@ class SelfBusinessProvider extends ChangeNotifier {
         _costRawMaterial! -
         electricityBill -
         dailySalary;
+    _lastInputs = (
+      rawMaterialPrice: _rawMaterialPrice,
+      finishedProductPrice: _finishedProductPrice,
+      byProductPrice: _byProductPrice,
+      capacity: capacity,
+      finishedCapacity: finishedCapacity,
+      byProductCapacity: byProductCapacity,
+      totalHours: totalHours,
+      electricityBill: electricityBill,
+      dailySalary: dailySalary,
+    );
 
     notifyListeners();
   }
@@ -69,6 +84,20 @@ class SelfBusinessProvider extends ChangeNotifier {
     _revenueFinished = null;
     _revenueByProduct = null;
     _netProfit = null;
+    _lastInputs = null;
     notifyListeners();
   }
 }
+
+/// Đơn vị: giá VNĐ/kg, năng suất tấn/h, tiền điện và lương VNĐ/ngày.
+typedef SelfBusinessInputs = ({
+  double rawMaterialPrice,
+  double finishedProductPrice,
+  double byProductPrice,
+  double capacity,
+  double finishedCapacity,
+  double byProductCapacity,
+  double totalHours,
+  double electricityBill,
+  double dailySalary,
+});
