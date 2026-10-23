@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../features/technical_dictionary/repositories/technical_dictionary_repository.dart';
 import '../providers/settings_provider.dart';
 import '../services/daily_goal_notification_service.dart';
 import '../services/note_notification_service.dart';
@@ -53,6 +54,14 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
   late bool _dailyGoalsReminderEnabled;
   late int _dailyGoalsReminderHour;
   late int _dailyGoalsReminderMinute;
+  late bool _dailyWordEnabled;
+  late DailyWordMode _dailyWordMode;
+  late Set<String> _dailyWordGroups;
+  late bool _dailyWordReview;
+
+  /// Danh sách nhóm máy lấy từ Từ điển chuyên ngành (đúng thứ tự trong Excel).
+  late final Future<List<String>> _dictionaryGroups =
+      TechnicalDictionaryRepository().loadDictionary().then((d) => d.groups);
   late final TextEditingController _nameController;
   late final TextEditingController _shortTextController;
   late final TextEditingController _dailyGoalsTitleController;
@@ -75,6 +84,10 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
     _dailyGoalsReminderEnabled = settings.homeDailyGoalsReminderEnabled;
     _dailyGoalsReminderHour = settings.homeDailyGoalsReminderHour;
     _dailyGoalsReminderMinute = settings.homeDailyGoalsReminderMinute;
+    _dailyWordEnabled = settings.homeDailyWordEnabled;
+    _dailyWordMode = settings.homeDailyWordMode;
+    _dailyWordGroups = {...settings.homeDailyWordGroups};
+    _dailyWordReview = settings.homeDailyWordReviewLearned;
     _nameController = TextEditingController(text: settings.homeDisplayName)
       ..addListener(() => setState(() {}));
     _shortTextController = TextEditingController(text: settings.homeShortText)
@@ -127,6 +140,10 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
       dailyGoalsReminderEnabled: _dailyGoalsReminderEnabled,
       dailyGoalsReminderHour: _dailyGoalsReminderHour,
       dailyGoalsReminderMinute: _dailyGoalsReminderMinute,
+      dailyWordEnabled: _dailyWordEnabled,
+      dailyWordMode: _dailyWordMode,
+      dailyWordGroups: _dailyWordGroups.toList(),
+      dailyWordReviewLearned: _dailyWordReview,
     );
     if (reminderActive) {
       await DailyGoalNotificationService.scheduleDailyReminder(
@@ -202,6 +219,10 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
           SettingsProvider.defaultHomeDailyGoalsReminderHour;
       _dailyGoalsReminderMinute =
           SettingsProvider.defaultHomeDailyGoalsReminderMinute;
+      _dailyWordEnabled = true;
+      _dailyWordMode = DailyWordMode.perDay;
+      _dailyWordGroups = {};
+      _dailyWordReview = true;
       _nameController.text = '';
       _shortTextController.text = '';
       _dailyGoalsTitleController.text =
@@ -409,6 +430,99 @@ class _HomePersonalizationScreenState extends State<HomePersonalizationScreen> {
                       child: const Text('Đổi giờ'),
                     ),
                   ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          _Section(
+            label: 'TỪ VỰNG HÔM NAY',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SwitchListTile(
+                  key: const Key('daily_word_enabled_switch'),
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Hiển thị "Từ vựng hôm nay"'),
+                  subtitle: const Text(
+                    'Học thụ động một thuật ngữ trong Từ điển chuyên ngành',
+                  ),
+                  value: _dailyWordEnabled,
+                  onChanged: (value) =>
+                      setState(() => _dailyWordEnabled = value),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Đổi từ',
+                  style: TextStyle(color: palette.muted, fontSize: 12.5),
+                ),
+                const SizedBox(height: 8),
+                SegmentedButton<DailyWordMode>(
+                  key: const Key('daily_word_mode'),
+                  segments: [
+                    for (final mode in DailyWordMode.values)
+                      ButtonSegment(value: mode, label: Text(mode.label)),
+                  ],
+                  selected: {_dailyWordMode},
+                  onSelectionChanged: _dailyWordEnabled
+                      ? (value) => setState(() => _dailyWordMode = value.first)
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Nhóm máy ưu tiên',
+                  style: TextStyle(color: palette.muted, fontSize: 12.5),
+                ),
+                const SizedBox(height: 8),
+                FutureBuilder<List<String>>(
+                  future: _dictionaryGroups,
+                  builder: (context, snapshot) {
+                    final groups = snapshot.data;
+                    if (groups == null) {
+                      return Text(
+                        snapshot.hasError
+                            ? 'Không tải được danh sách nhóm máy.'
+                            : 'Đang tải nhóm máy…',
+                        style: TextStyle(color: palette.muted, fontSize: 13),
+                      );
+                    }
+                    return Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final group in groups)
+                          FilterChip(
+                            key: Key('daily_word_group_$group'),
+                            label: Text(group),
+                            selected: _dailyWordGroups.contains(group),
+                            onSelected: _dailyWordEnabled
+                                ? (selected) => setState(
+                                    () => selected
+                                        ? _dailyWordGroups.add(group)
+                                        : _dailyWordGroups.remove(group),
+                                  )
+                                : null,
+                          ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _dailyWordGroups.isEmpty
+                      ? 'Chưa chọn nhóm nào: lấy từ mọi nhóm máy.'
+                      : 'Chỉ lấy từ trong ${_dailyWordGroups.length} nhóm đã chọn.',
+                  style: TextStyle(color: palette.muted, fontSize: 12),
+                ),
+                const SizedBox(height: 4),
+                SwitchListTile(
+                  key: const Key('daily_word_review_switch'),
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Thỉnh thoảng ôn lại từ đã thuộc'),
+                  value: _dailyWordReview,
+                  onChanged: _dailyWordEnabled
+                      ? (value) => setState(() => _dailyWordReview = value)
+                      : null,
+                ),
               ],
             ),
           ),

@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// build các phần tử trong vùng nhìn thấy), nên cần phóng to bề mặt test để
 /// mọi khu vực (Xem trước, nút Lưu/Khôi phục) đều được build và tìm thấy.
 Future<void> _pumpApp(WidgetTester tester, SettingsProvider settings) async {
-  await tester.binding.setSurfaceSize(const Size(390, 2300));
+  await tester.binding.setSurfaceSize(const Size(390, 3400));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
     ChangeNotifierProvider<SettingsProvider>.value(

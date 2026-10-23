@@ -18,6 +18,20 @@ enum AppTextScale {
   );
 }
 
+/// Nhịp đổi từ của thẻ "Từ vựng hôm nay" trên Home.
+enum DailyWordMode {
+  perDay('Mỗi ngày một từ'),
+  perLaunch('Mỗi lần mở app');
+
+  const DailyWordMode(this.label);
+  final String label;
+
+  static DailyWordMode fromName(String? name) => values.firstWhere(
+    (m) => m.name == name,
+    orElse: () => DailyWordMode.perDay,
+  );
+}
+
 /// Lưu và áp dụng các tuỳ chọn cài đặt chung: giao diện sáng/tối, cỡ chữ.
 class SettingsProvider extends ChangeNotifier {
   SettingsProvider(this._prefs) {
@@ -57,6 +71,13 @@ class SettingsProvider extends ChangeNotifier {
   static const _homeDailyGoalsReminderMinuteKey =
       'home_daily_goals_reminder_minute';
 
+  // "Từ vựng hôm nay" trên Home — học thụ động từ Từ điển chuyên ngành. Mặc
+  // định BẬT để người dùng biết có chức năng; tắt chỉ ẩn thẻ.
+  static const _homeDailyWordEnabledKey = 'home_daily_word_enabled';
+  static const _homeDailyWordModeKey = 'home_daily_word_mode';
+  static const _homeDailyWordGroupsKey = 'home_daily_word_groups';
+  static const _homeDailyWordReviewKey = 'home_daily_word_review_learned';
+
   static const double defaultHomeNameFontSize = 18.0;
   static const double defaultHomeShortTextFontSize = 26.0;
   static const String defaultHomeDailyGoalsTitle = 'Mục tiêu hôm nay';
@@ -86,6 +107,10 @@ class SettingsProvider extends ChangeNotifier {
   bool _homeDailyGoalsReminderEnabled = false;
   int _homeDailyGoalsReminderHour = defaultHomeDailyGoalsReminderHour;
   int _homeDailyGoalsReminderMinute = defaultHomeDailyGoalsReminderMinute;
+  bool _homeDailyWordEnabled = true;
+  DailyWordMode _homeDailyWordMode = DailyWordMode.perDay;
+  List<String> _homeDailyWordGroups = const [];
+  bool _homeDailyWordReviewLearned = true;
 
   ThemeMode get themeMode => _themeMode;
   AppTextScale get textScale => _textScale;
@@ -107,6 +132,14 @@ class SettingsProvider extends ChangeNotifier {
   bool get homeDailyGoalsReminderEnabled => _homeDailyGoalsReminderEnabled;
   int get homeDailyGoalsReminderHour => _homeDailyGoalsReminderHour;
   int get homeDailyGoalsReminderMinute => _homeDailyGoalsReminderMinute;
+  bool get homeDailyWordEnabled => _homeDailyWordEnabled;
+  DailyWordMode get homeDailyWordMode => _homeDailyWordMode;
+
+  /// Nhóm máy ưu tiên; rỗng nghĩa là lấy từ mọi nhóm.
+  List<String> get homeDailyWordGroups => _homeDailyWordGroups;
+
+  /// Thỉnh thoảng hiện lại từ đã thuộc để ôn.
+  bool get homeDailyWordReviewLearned => _homeDailyWordReviewLearned;
 
   void _load() {
     final savedMode = _prefs.getString(_themeModeKey);
@@ -155,6 +188,23 @@ class SettingsProvider extends ChangeNotifier {
     _homeDailyGoalsReminderMinute =
         _prefs.getInt(_homeDailyGoalsReminderMinuteKey) ??
         defaultHomeDailyGoalsReminderMinute;
+    _homeDailyWordEnabled = _prefs.getBool(_homeDailyWordEnabledKey) ?? true;
+    _homeDailyWordMode = DailyWordMode.fromName(
+      _prefs.getString(_homeDailyWordModeKey),
+    );
+    _homeDailyWordGroups = List.unmodifiable(
+      _prefs.getStringList(_homeDailyWordGroupsKey) ?? const <String>[],
+    );
+    _homeDailyWordReviewLearned =
+        _prefs.getBool(_homeDailyWordReviewKey) ?? true;
+  }
+
+  /// Bật/tắt nhanh thẻ "Từ vựng hôm nay" (menu "Ẩn thẻ" trên Home).
+  Future<void> setHomeDailyWordEnabled(bool enabled) async {
+    if (_homeDailyWordEnabled == enabled) return;
+    _homeDailyWordEnabled = enabled;
+    notifyListeners();
+    await _prefs.setBool(_homeDailyWordEnabledKey, enabled);
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -200,6 +250,10 @@ class SettingsProvider extends ChangeNotifier {
     bool? dailyGoalsReminderEnabled,
     int? dailyGoalsReminderHour,
     int? dailyGoalsReminderMinute,
+    bool? dailyWordEnabled,
+    DailyWordMode? dailyWordMode,
+    List<String>? dailyWordGroups,
+    bool? dailyWordReviewLearned,
   }) async {
     _homePersonalizationEnabled = enabled;
     _homeDisplayName = displayName;
@@ -228,6 +282,14 @@ class SettingsProvider extends ChangeNotifier {
     }
     if (dailyGoalsReminderMinute != null) {
       _homeDailyGoalsReminderMinute = dailyGoalsReminderMinute;
+    }
+    if (dailyWordEnabled != null) _homeDailyWordEnabled = dailyWordEnabled;
+    if (dailyWordMode != null) _homeDailyWordMode = dailyWordMode;
+    if (dailyWordGroups != null) {
+      _homeDailyWordGroups = List.unmodifiable(dailyWordGroups);
+    }
+    if (dailyWordReviewLearned != null) {
+      _homeDailyWordReviewLearned = dailyWordReviewLearned;
     }
     notifyListeners();
     await Future.wait([
@@ -271,12 +333,21 @@ class SettingsProvider extends ChangeNotifier {
           _homeDailyGoalsReminderMinuteKey,
           dailyGoalsReminderMinute,
         ),
+      if (dailyWordEnabled != null)
+        _prefs.setBool(_homeDailyWordEnabledKey, dailyWordEnabled),
+      if (dailyWordMode != null)
+        _prefs.setString(_homeDailyWordModeKey, dailyWordMode.name),
+      if (dailyWordGroups != null)
+        _prefs.setStringList(_homeDailyWordGroupsKey, dailyWordGroups),
+      if (dailyWordReviewLearned != null)
+        _prefs.setBool(_homeDailyWordReviewKey, dailyWordReviewLearned),
     ]);
   }
 
   /// Khôi phục cá nhân hóa trang chủ về mặc định (tắt, xóa toàn bộ nội dung).
   /// "Mục tiêu hôm nay" cũng tắt hiển thị trên Home, nhưng KHÔNG xóa dữ liệu
   /// mục tiêu đã tạo (dữ liệu nằm ở SQLite, tách biệt khỏi setting hiển thị).
+  /// "Từ vựng hôm nay" về mặc định của nó (bật, mỗi ngày một từ, mọi nhóm).
   Future<void> resetHomePersonalization() => saveHomePersonalization(
     enabled: false,
     displayName: '',
@@ -296,5 +367,9 @@ class SettingsProvider extends ChangeNotifier {
     dailyGoalsReminderEnabled: false,
     dailyGoalsReminderHour: defaultHomeDailyGoalsReminderHour,
     dailyGoalsReminderMinute: defaultHomeDailyGoalsReminderMinute,
+    dailyWordEnabled: true,
+    dailyWordMode: DailyWordMode.perDay,
+    dailyWordGroups: const [],
+    dailyWordReviewLearned: true,
   );
 }

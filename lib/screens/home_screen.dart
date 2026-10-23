@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/technical_dictionary/daily_word/daily_word_home_card.dart';
 import '../widgets/daily_goals/daily_goal_home_card.dart';
 import '../widgets/home_personalization_widget.dart';
 import '../widgets/technology_menu.dart';
@@ -61,6 +62,7 @@ class HomeScreen extends StatelessWidget {
             const SliverToBoxAdapter(child: _BrandHeader()),
             const SliverToBoxAdapter(child: HomePersonalizationWidget()),
             const SliverToBoxAdapter(child: DailyGoalHomeCard()),
+            const SliverToBoxAdapter(child: DailyWordHomeCard()),
             const SliverToBoxAdapter(child: _QuickSearchBar()),
             SliverToBoxAdapter(
               child: Center(
