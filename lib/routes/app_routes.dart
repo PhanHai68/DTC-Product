@@ -117,10 +117,18 @@ import '../features/factory_location/screens/factory_location_list_screen.dart';
 import '../features/factory_location/screens/factory_location_form_screen.dart';
 import '../data/product_data.dart' show ColorSorterLine;
 
-/// `?line=paddy|tea` → luồng hoàn vốn của máy thóc/trà; mặc định máy gạo.
+/// `?line=paddy|brownRice|tea` → luồng hoàn vốn của máy lúa giống/lúa và gạo
+/// lứt/trà; mặc định máy gạo.
 ColorSorterLine _colorSorterLine(GoRouterState state) =>
     ColorSorterLine.values.asNameMap()[state.uri.queryParameters['line']] ??
     ColorSorterLine.rice;
+
+/// `?line=brownRice` → dòng Lúa và Gạo lứt; mặc định Lúa giống (màn dòng SF
+/// Pro dùng chung).
+ColorSorterLine _sfLine(GoRouterState state) =>
+    state.uri.queryParameters['line'] == ColorSorterLine.brownRice.name
+    ? ColorSorterLine.brownRice
+    : ColorSorterLine.paddy;
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -488,17 +496,19 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/paddy_color_sorter_menu',
-      builder: (context, state) => const PaddyColorSorterMenuScreen(),
+      builder: (context, state) =>
+          PaddyColorSorterMenuScreen(line: _sfLine(state)),
     ),
     GoRoute(
       path: '/paddy_color_sorter',
       builder: (context, state) => PaddyColorSorterScreen(
         initialModel: state.uri.queryParameters['model'],
+        line: _sfLine(state),
       ),
     ),
     GoRoute(
       path: '/paddy_aux_equip',
-      builder: (context, state) => const PaddyAuxEquipScreen(),
+      builder: (context, state) => PaddyAuxEquipScreen(line: _sfLine(state)),
     ),
     GoRoute(
       path: '/color_sorter_menu',

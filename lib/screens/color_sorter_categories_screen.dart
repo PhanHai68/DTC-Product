@@ -23,12 +23,21 @@ class ColorSorterCategoriesScreen extends StatelessWidget {
         ),
         TechnologyMenuEntry(
           id: 'category_paddy',
-          title: 'Thóc và Gạo xô',
+          title: 'Lúa giống',
           icon: Icons.grass_rounded,
           imagePath: 'assets/images/icon_paddy.jpg',
           iconColor: const Color(0xFFF57F17),
           iconBackgroundColor: const Color(0xFFFFFDE7),
           onTap: () => context.push('/paddy_color_sorter_menu'),
+        ),
+        TechnologyMenuEntry(
+          id: 'category_brown_rice',
+          title: 'Lúa và Gạo lứt',
+          icon: Icons.grain_rounded,
+          imagePath: 'assets/images/icon_paddy.jpg',
+          iconColor: const Color(0xFF8D6E63),
+          iconBackgroundColor: const Color(0xFFEFEBE9),
+          onTap: () => context.push('/paddy_color_sorter_menu?line=brownRice'),
         ),
         TechnologyMenuEntry(
           id: 'category_tea',

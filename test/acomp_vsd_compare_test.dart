@@ -220,11 +220,11 @@ void main() {
 
       await tester.enterText(
         find.byKey(const Key('vsd_compare_vsd_price')),
-        '360',
+        '360000000',
       );
       await tester.enterText(
         find.byKey(const Key('vsd_compare_fixed_price')),
-        '300',
+        '300000000',
       );
       await tester.pump();
       expect(find.byKey(const Key('vsd_compare_payback')), findsOneWidget);

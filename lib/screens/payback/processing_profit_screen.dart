@@ -6,6 +6,7 @@ import '../../providers/electricity_bill_provider.dart';
 import '../../providers/processing_profit_provider.dart';
 import '../../core/input/localized_number.dart';
 import '../../data/product_data.dart';
+import '../../widgets/money_form_field.dart';
 import '../../widgets/payback/formula_explainer.dart';
 
 class ProcessingProfitScreen extends StatefulWidget {
@@ -90,14 +91,9 @@ class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Giá gia công (nghìn đồng/tấn)',
-                    border: OutlineInputBorder(),
-                    suffixText: 'nghìn ₫',
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
+                MoneyFormField(
+                  labelText: 'Giá gia công (VNĐ/tấn)',
+                  unit: 'VNĐ/tấn',
                   onChanged: profitProvider.setProcessingPrice,
                   validator: (value) => validateRequiredPositiveNumber(
                     value,
@@ -105,15 +101,9 @@ class _ProcessingProfitScreenState extends State<ProcessingProfitScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Lương nhân viên/ngày (nghìn đồng)',
-                    border: OutlineInputBorder(),
-                    suffixText: 'nghìn ₫',
-                    helperText: 'Nhập 0 nếu không tính lương vào chi phí',
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
+                MoneyFormField(
+                  labelText: 'Lương nhân viên/ngày (VNĐ)',
+                  helperText: 'Nhập 0 nếu không tính lương vào chi phí',
                   onChanged: profitProvider.setDailySalary,
                   validator: (value) => validateRequiredNonNegativeNumber(
                     value,

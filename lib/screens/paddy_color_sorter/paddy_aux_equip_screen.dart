@@ -7,7 +7,10 @@ import '../../providers/aux_equip_provider.dart';
 import '../../services/pdf_export_service.dart';
 
 class PaddyAuxEquipScreen extends StatefulWidget {
-  const PaddyAuxEquipScreen({super.key});
+  const PaddyAuxEquipScreen({super.key, this.line = ColorSorterLine.paddy});
+
+  /// Lúa giống hoặc Lúa và Gạo lứt — quyết định danh sách model.
+  final ColorSorterLine line;
 
   @override
   State<PaddyAuxEquipScreen> createState() => _PaddyAuxEquipScreenState();
@@ -22,7 +25,9 @@ class _PaddyAuxEquipScreenState extends State<PaddyAuxEquipScreen> {
   /// model nếu có (SF7D Pro), không thì của máy gạo cùng số máng. Model không
   /// có máy gạo cùng số máng thì bỏ qua.
   late final Map<String, String> _sources = {
-    for (final model in paddyColorSorterSpecs.map((s) => s['Model']).nonNulls)
+    for (final model in sfLineSpecs(
+      widget.line,
+    ).map((s) => s['Model']).nonNulls)
       model: ?_auxSourceFor(model),
   };
 
@@ -120,7 +125,7 @@ class _PaddyAuxEquipScreenState extends State<PaddyAuxEquipScreen> {
   @override
   Widget build(BuildContext context) {
     final source = _sources[_modelName];
-    final chutes = paddyColorSorterSpecs.firstWhere(
+    final chutes = sfLineSpecs(widget.line).firstWhere(
       (s) => s['Model'] == _modelName,
       orElse: () => const {},
     )['Số máng'];

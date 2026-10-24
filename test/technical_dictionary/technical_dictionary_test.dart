@@ -275,4 +275,39 @@ void main() {
     ]);
     expect(rows!.single['status'], 'learned');
   });
+
+  // Shell có Navigator riêng: AppBar không tự hiện nút back ở màn đầu shell,
+  // Safari (không có nút back hệ thống) bị kẹt trong từ điển.
+  testWidgets('nút quay lại thoát khỏi từ điển về màn trước', (tester) async {
+    final (repository, db) = await tester.runAsync(_openRepository) ??
+        (throw StateError('Không mở được database test'));
+    addTearDown(db.close);
+    final router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, _) => Scaffold(
+            body: TextButton(
+              onPressed: () => context.push('/technical-dictionary'),
+              child: const Text('Mở từ điển'),
+            ),
+          ),
+        ),
+        buildTechnicalDictionaryRoutes(
+          createProvider: () =>
+              TechnicalDictionaryProvider(repository: repository),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.tap(find.text('Mở từ điển'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('dictionary_search')), findsOneWidget);
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    expect(find.text('Mở từ điển'), findsOneWidget);
+    expect(find.byKey(const Key('dictionary_search')), findsNothing);
+  });
 }

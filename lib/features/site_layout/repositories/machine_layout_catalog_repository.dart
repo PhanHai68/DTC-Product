@@ -105,7 +105,17 @@ class MachineLayoutCatalogRepository {
         _fromMap(
           data,
           sourceType: 'paddy_color_sorter',
-          category: 'Máy tách màu lúa',
+          category: 'Máy tách màu lúa giống',
+          dimensionKeys: const ['Kích thước (D x R x C mm)'],
+        ),
+      );
+    }
+    for (final data in brownRiceColorSorterSpecs) {
+      result.add(
+        _fromMap(
+          data,
+          sourceType: 'brown_rice_color_sorter',
+          category: 'Máy tách màu lúa và gạo lứt',
           dimensionKeys: const ['Kích thước (D x R x C mm)'],
         ),
       );

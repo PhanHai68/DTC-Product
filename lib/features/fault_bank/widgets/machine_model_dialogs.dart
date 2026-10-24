@@ -102,9 +102,7 @@ class _MachineModelEditorState extends State<_MachineModelEditor> {
                 controller: _name,
                 autofocus: true,
                 textCapitalization: TextCapitalization.characters,
-                decoration: const InputDecoration(
-                  labelText: 'Tên model máy *',
-                ),
+                decoration: const InputDecoration(labelText: 'Tên model máy *'),
                 onChanged: (_) {
                   if (_similar != null) setState(() => _similar = null);
                 },

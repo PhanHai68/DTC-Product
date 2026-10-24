@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/electricity_bill_provider.dart';
 import '../../data/product_data.dart';
 import '../../core/input/localized_number.dart';
+import '../../widgets/money_form_field.dart';
 import '../../widgets/payback/formula_explainer.dart';
 
 import 'package:intl/intl.dart';
@@ -31,44 +32,41 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
     ElectricityBillProvider provider,
   ) {
     final normalCtrl = TextEditingController(
-      text: provider.normalRate.toString(),
+      text: formatThousands(provider.normalRate),
     );
     final offPeakCtrl = TextEditingController(
-      text: provider.offPeakRate.toString(),
+      text: formatThousands(provider.offPeakRate),
     );
-    final peakCtrl = TextEditingController(text: provider.peakRate.toString());
+    final peakCtrl = TextEditingController(
+      text: formatThousands(provider.peakRate),
+    );
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Cài đặt giá điện'),
+          scrollable: true,
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              MoneyFormField(
                 controller: normalCtrl,
-                keyboardType: TextInputType.number,
-                inputFormatters: const [LocalizedDecimalTextInputFormatter()],
-                decoration: const InputDecoration(
-                  labelText: 'Giá bình thường (VNĐ)',
-                ),
+                labelText: 'Giá bình thường (VNĐ/kWh)',
+                unit: 'VNĐ/kWh',
+                border: null,
               ),
-              TextField(
+              MoneyFormField(
                 controller: offPeakCtrl,
-                keyboardType: TextInputType.number,
-                inputFormatters: const [LocalizedDecimalTextInputFormatter()],
-                decoration: const InputDecoration(
-                  labelText: 'Giá thấp điểm (VNĐ)',
-                ),
+                labelText: 'Giá thấp điểm (VNĐ/kWh)',
+                unit: 'VNĐ/kWh',
+                border: null,
               ),
-              TextField(
+              MoneyFormField(
                 controller: peakCtrl,
-                keyboardType: TextInputType.number,
-                inputFormatters: const [LocalizedDecimalTextInputFormatter()],
-                decoration: const InputDecoration(
-                  labelText: 'Giá cao điểm (VNĐ)',
-                ),
+                labelText: 'Giá cao điểm (VNĐ/kWh)',
+                unit: 'VNĐ/kWh',
+                border: null,
               ),
             ],
           ),
@@ -79,9 +77,15 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                final normal = parseLocalizedDouble(normalCtrl.text);
-                final offPeak = parseLocalizedDouble(offPeakCtrl.text);
-                final peak = parseLocalizedDouble(peakCtrl.text);
+                final normal = parseLocalizedDouble(
+                  stripThousandsSeparators(normalCtrl.text),
+                );
+                final offPeak = parseLocalizedDouble(
+                  stripThousandsSeparators(offPeakCtrl.text),
+                );
+                final peak = parseLocalizedDouble(
+                  stripThousandsSeparators(peakCtrl.text),
+                );
                 if (normal == null ||
                     offPeak == null ||
                     peak == null ||

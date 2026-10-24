@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../theme/dtc_palette.dart';
+import '../../../widgets/shell_back_button.dart';
 import '../models/fault_record.dart';
 import '../providers/fault_bank_provider.dart';
 import '../services/fault_record_pdf_service.dart';
@@ -163,6 +164,7 @@ class _FaultRecordDetailScreenState extends State<FaultRecordDetailScreen> {
               ),
             ),
       appBar: AppBar(
+        leading: const ShellBackButton(),
         title: const Text('Chi tiết lỗi'),
         actions: [
           if (record != null && record.isEditable) ...[

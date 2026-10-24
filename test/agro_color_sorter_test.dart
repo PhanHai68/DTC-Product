@@ -40,16 +40,17 @@ void main() {
 
   test('máy nén khí và bình chứa dòng H tính theo "Các loại đậu"', () {
     // Ejector × 6 L/phút → ×1.3 → ×6.2 kW → model ACOMP PM VSD; bình chứa từ
-    // lưu lượng 7 bar của model đó với thông số mặc định màn tính bình chứa.
+    // lưu lượng 7 bar của model đó với thông số mặc định màn tính bình chứa
+    // (bình tiêu chuẩn nhỏ nhất không nhỏ hơn dung tích lý thuyết).
     const expected = {
       'H1': ('15 HP', '300 lít'),
       'H2': ('15 HP', '300 lít'),
       'H3': ('15 HP', '300 lít'),
       'H4': ('20 HP', '500 lít'),
-      'H5': ('30 HP', '700 lít'),
-      'H7': ('30 HP', '700 lít'),
-      'H8': ('50 HP', '1000 lít'),
-      'H10': ('50 HP', '1000 lít'),
+      'H5': ('30 HP', '1000 lít'),
+      'H7': ('30 HP', '1000 lít'),
+      'H8': ('50 HP', '1500 lít'),
+      'H10': ('50 HP', '1500 lít'),
       'H12': ('60 HP', '1500 lít'),
     };
     for (final spec in agroColorSorterSpecs.map(withAgroAirSystem)) {

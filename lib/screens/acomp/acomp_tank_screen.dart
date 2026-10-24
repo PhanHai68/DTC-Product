@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/air_tank_spec.dart';
 import '../../providers/acomp_tank_provider.dart';
 import '../../core/input/localized_number.dart';
 
@@ -160,6 +162,53 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
     );
   }
 
+  /// Thông số bình đề xuất theo bảng bình tích khí tiêu chuẩn.
+  Widget _buildTankDetails(AirTankSpec tank) {
+    final number = NumberFormat('#,##0.##', 'vi');
+    final rows = [
+      ('Mã hàng', tank.model),
+      (
+        'Áp suất thiết kế',
+        '${number.format(tank.designPressureKgfCm2)} kgf/cm²',
+      ),
+      ('Áp suất thử tải', '${number.format(tank.testPressureKgfCm2)} kgf/cm²'),
+      ('Đường kính', '${number.format(tank.diameterMm)} mm'),
+      ('Trọng lượng', '${number.format(tank.weightKg)} kg'),
+    ];
+    return Container(
+      key: const Key('acomp_tank_recommended_details'),
+      margin: const EdgeInsets.only(top: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.shade100),
+      ),
+      child: Column(
+        children: [
+          for (final (label, value) in rows)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(label, style: const TextStyle(fontSize: 15)),
+                  ),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildResultSection(AcompTankProvider provider) {
     return Card(
       color: Colors.blue.shade50,
@@ -243,6 +292,8 @@ class _AcompTankScreenState extends State<AcompTankScreen> {
                 ],
               ),
             ),
+            if (provider.recommendedTank case final tank?)
+              _buildTankDetails(tank),
             if (provider.recommendationError != null) ...[
               const SizedBox(height: 12),
               Text(

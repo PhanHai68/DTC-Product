@@ -35,7 +35,7 @@ void main() {
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(320, 844));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      final provider = AcompTankProvider()..setQc('30');
+      final provider = AcompTankProvider()..setQc('100');
       addTearDown(provider.dispose);
       await tester.pumpWidget(
         ChangeNotifierProvider.value(
@@ -44,15 +44,28 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.textContaining('vượt 3.000 lít'), findsOneWidget);
-      expect(find.text('3000 Lít'), findsNothing);
+      expect(find.textContaining('vượt 15.000 lít'), findsOneWidget);
+      expect(find.text('15000 Lít'), findsNothing);
+      expect(
+        find.byKey(const Key('acomp_tank_recommended_details')),
+        findsNothing,
+      );
       expect(
         tester.widget<TextField>(find.byType(TextField).first).controller!.text,
-        '30.0',
+        '100.0',
       );
+      await tester.enterText(find.byType(TextField).first, '19,5');
+      await tester.pumpAndSettle();
+      expect(find.textContaining('vượt 15.000 lít'), findsNothing);
+      // 3.355,5 lít → bình nhỏ nhất không nhỏ hơn là V4000.
+      expect(find.text('4000 Lít'), findsOneWidget);
+      expect(find.text('V4000'), findsOneWidget);
+      expect(find.text('10 kgf/cm²'), findsOneWidget);
+      expect(find.text('15 kgf/cm²'), findsOneWidget);
+      expect(find.text('1.450 mm'), findsOneWidget);
+      expect(find.text('1.185 kg'), findsOneWidget);
       await tester.enterText(find.byType(TextField).first, '1,0');
       await tester.pumpAndSettle();
-      expect(find.textContaining('vượt 3.000 lít'), findsNothing);
       expect(find.text('200 Lít'), findsOneWidget);
       provider.setDeltaP('0');
       await tester.pump();

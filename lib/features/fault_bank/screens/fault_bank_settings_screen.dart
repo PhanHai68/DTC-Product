@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../theme/dtc_palette.dart';
+import '../../../widgets/shell_back_button.dart';
 import '../models/fault_machine_model.dart';
 import '../providers/fault_bank_provider.dart';
 import '../widgets/fault_profile_form.dart';
@@ -18,7 +19,10 @@ class FaultBankSettingsScreen extends StatelessWidget {
     final provider = context.watch<FaultBankProvider>();
     final profile = provider.profile;
     return Scaffold(
-      appBar: AppBar(title: const Text('Cài đặt Ngân hàng lỗi')),
+      appBar: AppBar(
+        leading: const ShellBackButton(),
+        title: const Text('Cài đặt Ngân hàng lỗi'),
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
         children: [
@@ -80,7 +84,10 @@ class FaultProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Hồ sơ kỹ sư')),
+      appBar: AppBar(
+        leading: const ShellBackButton(),
+        title: const Text('Hồ sơ kỹ sư'),
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         children: [
@@ -146,7 +153,10 @@ class FaultMachineModelsScreen extends StatelessWidget {
     final palette = DtcPalette.of(context);
     final models = context.watch<FaultBankProvider>().machineModels;
     return Scaffold(
-      appBar: AppBar(title: const Text('Danh mục model máy')),
+      appBar: AppBar(
+        leading: const ShellBackButton(),
+        title: const Text('Danh mục model máy'),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         key: const Key('fault_models_add'),
         onPressed: () => showMachineModelEditor(context),

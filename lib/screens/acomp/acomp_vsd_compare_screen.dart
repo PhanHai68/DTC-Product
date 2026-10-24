@@ -9,6 +9,7 @@ import '../../models/acomp_spec_model.dart';
 import '../../models/acomp_vsd_compare_config.dart';
 import '../../providers/electricity_bill_provider.dart';
 import '../../services/acomp_energy_calculator.dart';
+import '../../widgets/money_form_field.dart';
 
 /// So sánh máy nén khí biến tần (PM VSD) và tốc độ cố định cùng cỡ: tiền
 /// điện theo nhu cầu khí của khách, hoàn vốn phần chênh giá và thông số.
@@ -53,7 +54,7 @@ class _AcompVsdCompareScreenState extends State<AcompVsdCompareScreen> {
         .where((pair) => pair.sizeCode == widget.initialSize)
         .firstOrNull;
     final rate = context.read<ElectricityBillProvider>().normalRate;
-    _electricityCtrl = TextEditingController(text: _plain(rate));
+    _electricityCtrl = TextEditingController(text: formatThousands(rate));
     final a = _config.assumptions;
     _unloadCtrl = TextEditingController(text: _plain(a.unloadPowerRatio * 100));
     _baseCtrl = TextEditingController(text: _plain(a.vsdBaseRatio * 100));
@@ -155,13 +156,15 @@ class _AcompVsdCompareScreenState extends State<AcompVsdCompareScreen> {
     if (days == null || days <= 0 || days > 366) {
       return (null, 'Số ngày chạy mỗi năm phải từ 1 đến 366.');
     }
-    final electricity = parseLocalizedDouble(_electricityCtrl.text);
+    final electricity = parseLocalizedDouble(
+      stripThousandsSeparators(_electricityCtrl.text),
+    );
     if (electricity == null || electricity <= 0) {
       return (null, 'Giá điện phải lớn hơn 0.');
     }
     double? price(TextEditingController ctrl) {
-      final value = parseLocalizedDouble(ctrl.text);
-      return value == null || value <= 0 ? null : value * 1e6;
+      final value = parseLocalizedDouble(stripThousandsSeparators(ctrl.text));
+      return value == null || value <= 0 ? null : value;
     }
 
     return (
@@ -410,10 +413,10 @@ class _AcompVsdCompareScreenState extends State<AcompVsdCompareScreen> {
                 ),
               ],
             ),
-            _field(
+            _moneyField(
               _electricityCtrl,
               'Giá điện bình quân',
-              suffix: 'đ/kWh',
+              unit: 'VNĐ/kWh',
               key: const Key('vsd_compare_electricity'),
             ),
             const SizedBox(height: 4),
@@ -423,21 +426,20 @@ class _AcompVsdCompareScreenState extends State<AcompVsdCompareScreen> {
             ),
             const SizedBox(height: 8),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: _field(
+                  child: _moneyField(
                     _vsdPriceCtrl,
                     'Máy biến tần',
-                    suffix: 'triệu ₫',
                     key: const Key('vsd_compare_vsd_price'),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _field(
+                  child: _moneyField(
                     _fixedPriceCtrl,
                     'Máy cố định',
-                    suffix: 'triệu ₫',
                     key: const Key('vsd_compare_fixed_price'),
                   ),
                 ),
@@ -535,6 +537,26 @@ class _AcompVsdCompareScreenState extends State<AcompVsdCompareScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           isDense: true,
         ),
+        onChanged: (_) => setState(() {}),
+      ),
+    );
+  }
+
+  Widget _moneyField(
+    TextEditingController controller,
+    String label, {
+    String unit = 'VNĐ',
+    Key? key,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: MoneyFormField(
+        key: key,
+        controller: controller,
+        labelText: label,
+        unit: unit,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        isDense: true,
         onChanged: (_) => setState(() {}),
       ),
     );

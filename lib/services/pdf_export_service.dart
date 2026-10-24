@@ -702,7 +702,7 @@ abstract final class DtcPdfExportService {
         bounds: rect,
       );
       
-      const text = 'Máy tách màu lúa giống và lúa cựa lứt SF7D Pro dùng để phân loại thóc và gạo xô tại cối hồi hoặc phễu của gầu tải (Tuỳ gầu), lượng gạo xô sau khi phân loại sẽ đi qua giai đoạn xát trắng mà không cần quay trở lại máy bóc vỏ, giúp giảm tỷ lệ gãy / vỡ đến 96%.\n\nĐồng thời, SF7D Pro giúp tăng sản lượng gạo xô thu hồi đến 99.99% sau giai đoạn gầu tải thóc.\n\nMáy tách màu lúa giống và lúa cựa lứt SF7D Pro được trang bị 7 máng với năng suất đạt được 3.5 - 7 tấn trong một giờ giúp sản lượng thành phẩm thu hoạch đạt được gấp 10 lần năng suất thông thường. Tuy có năng suất lớn nhưng công suất điện tiêu thụ chỉ đạt 3.5kW giúp tiết kiệm điện năng tốt nhất.';
+      const text = 'Máy tách màu lúa giống và lúa cựa lứt SF7D Pro dùng để phân loại thóc và gạo xô tại cối hồi hoặc phễu của gầu tải (Tuỳ gầu), lượng gạo xô sau khi phân loại sẽ đi qua giai đoạn xát trắng mà không cần quay trở lại máy bóc vỏ, giúp giảm tỷ lệ gãy / vỡ đến 96%.\n\nĐồng thời, SF7D Pro giúp tăng sản lượng gạo xô thu hồi đến 99.99% sau giai đoạn gầu tải thóc.\n\nMáy tách màu lúa giống và lúa cựa lứt SF7D Pro được trang bị 7 máng với năng suất đạt được 2.0 - 4.0 tấn trong một giờ giúp sản lượng thành phẩm thu hoạch đạt được gấp 10 lần năng suất thông thường. Tuy có năng suất lớn nhưng công suất điện tiêu thụ chỉ đạt 3.5kW giúp tiết kiệm điện năng tốt nhất.';
       
       _drawText(
         graphics,

@@ -18,11 +18,11 @@ class PaybackPeriodProvider extends ChangeNotifier {
   PaybackPeriodInputs? get lastInputs => _lastInputs;
 
   void setMachinePrice(String val) {
-    _machinePrice = (parseLocalizedDouble(val) ?? 0) * 1000;
+    _machinePrice = parseLocalizedDouble(val) ?? 0;
   }
 
   void setFullSetupPrice(String val) {
-    _fullSetupPrice = (parseLocalizedDouble(val) ?? 0) * 1000;
+    _fullSetupPrice = parseLocalizedDouble(val) ?? 0;
   }
 
   void calculate(double totalProfit) {

@@ -14,11 +14,11 @@ class ProcessingProfitProvider extends ChangeNotifier {
   ProcessingProfitInputs? get lastInputs => _lastInputs;
 
   void setProcessingPrice(String val) {
-    _processingPrice = (parseLocalizedDouble(val) ?? 0) * 1000;
+    _processingPrice = parseLocalizedDouble(val) ?? 0;
   }
 
   void setDailySalary(String val) {
-    _dailySalary = (parseLocalizedDouble(val) ?? 0) * 1000;
+    _dailySalary = parseLocalizedDouble(val) ?? 0;
   }
 
   void calculate({

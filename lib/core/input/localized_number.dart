@@ -77,6 +77,82 @@ String? validateHoursInRange(String? value, {double max = 24}) {
   return null;
 }
 
+/// Removes the `,` thousands separators added by
+/// [ThousandsSeparatorInputFormatter], e.g. `1,000,000` → `1000000`.
+String stripThousandsSeparators(String raw) => raw.replaceAll(',', '');
+
+/// Formats [value] the way [ThousandsSeparatorInputFormatter] shows it, for
+/// pre-filling a controller (programmatic text skips input formatters),
+/// e.g. `1811` → `1,811`, `12500.5` → `12,500.5` with `decimalDigits: 2`.
+String formatThousands(num value, {int decimalDigits = 0}) {
+  final fixed = value.abs().toStringAsFixed(decimalDigits);
+  final dot = fixed.indexOf('.');
+  final intPart = dot < 0 ? fixed : fixed.substring(0, dot);
+  var fraction = dot < 0 ? '' : fixed.substring(dot + 1);
+  fraction = fraction.replaceFirst(RegExp(r'0+$'), '');
+  final sign = value < 0 ? '-' : '';
+  final grouped = ThousandsSeparatorInputFormatter._group(intPart);
+  return fraction.isEmpty ? '$sign$grouped' : '$sign$grouped.$fraction';
+}
+
+/// Accepts non-negative numbers and groups the integer part with `,` while
+/// typing, e.g. `1000000` → `1,000,000`. Whole numbers only unless
+/// [decimalDigits] > 0, in which case `.` starts the fraction (`12,500.50`).
+/// Read the value back through [stripThousandsSeparators] before parsing.
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  const ThousandsSeparatorInputFormatter({
+    this.decimalDigits = 0,
+    this.maxIntegerDigits = 15,
+  });
+
+  /// Digits allowed after `.`; 0 rejects any fraction.
+  final int decimalDigits;
+
+  /// Caps the integer part so the value stays exact as a `double`.
+  final int maxIntegerDigits;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final raw = newValue.text.replaceAll(',', '');
+    final pattern = decimalDigits > 0
+        ? RegExp('^\\d{0,$maxIntegerDigits}(\\.\\d{0,$decimalDigits})?\$')
+        : RegExp('^\\d{0,$maxIntegerDigits}\$');
+    if (!pattern.hasMatch(raw)) return oldValue;
+
+    final dot = raw.indexOf('.');
+    final formatted = dot < 0
+        ? _group(raw)
+        : '${_group(raw.substring(0, dot))}${raw.substring(dot)}';
+    // Keep the cursor after the same number of characters it had before
+    // grouping.
+    final cursor = newValue.selection.end.clamp(0, newValue.text.length);
+    final charsBeforeCursor =
+        newValue.text.substring(0, cursor).replaceAll(',', '').length;
+    var offset = 0;
+    var seen = 0;
+    while (offset < formatted.length && seen < charsBeforeCursor) {
+      if (formatted[offset] != ',') seen++;
+      offset++;
+    }
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: offset),
+    );
+  }
+
+  static String _group(String digits) {
+    final buffer = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      if (i > 0 && (digits.length - i) % 3 == 0) buffer.write(',');
+      buffer.write(digits[i]);
+    }
+    return buffer.toString();
+  }
+}
+
 /// Allows a signed decimal value and accepts both `,` and `.` while typing.
 class LocalizedDecimalTextInputFormatter extends TextInputFormatter {
   const LocalizedDecimalTextInputFormatter({this.allowNegative = false});

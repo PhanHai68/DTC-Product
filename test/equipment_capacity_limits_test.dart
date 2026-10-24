@@ -1,3 +1,4 @@
+import 'package:dtc_product/data/product_data.dart';
 import 'package:dtc_product/models/material_model.dart';
 import 'package:dtc_product/providers/acomp_suitable_provider.dart';
 import 'package:dtc_product/providers/acomp_tank_provider.dart';
@@ -123,14 +124,39 @@ void main() {
       expect(provider.vRec, 200);
       expect(provider.recommendationError, isNull);
     });
-    test('3.000 lít vẫn thuộc giới hạn; vượt giới hạn không ép về 3.000', () {
+    test('chọn bình tiêu chuẩn nhỏ nhất không nhỏ hơn dung tích lý thuyết', () {
       final provider = _tank('18');
       addTearDown(provider.dispose);
       expect(provider.vTh, closeTo(3000, 1e-10));
       expect(provider.vRec, 3000);
+      expect(provider.recommendedTank?.model, 'V3000');
       provider.setQc('18,001');
+      expect(provider.vRec, 4000);
+      final tank = provider.recommendedTank!;
+      expect(tank.model, 'V4000');
+      expect(tank.designPressureKgfCm2, 10);
+      expect(tank.testPressureKgfCm2, 15);
+      expect(tank.diameterMm, 1450);
+      expect(tank.weightKg, 1185);
+    });
+    test('15.000 lít vẫn thuộc giới hạn; vượt giới hạn không ép về 15.000', () {
+      final provider = _tank('90');
+      addTearDown(provider.dispose);
+      expect(provider.vTh, closeTo(15000, 1e-9));
+      expect(provider.vRec, 15000);
+      provider.setQc('90,001');
       expect(provider.vRec, isNull);
-      expect(provider.recommendationError, contains('vượt 3.000 lít'));
+      expect(provider.recommendedTank, isNull);
+      expect(provider.recommendationError, contains('vượt 15.000 lít'));
+    });
+    test('bảng bình tích khí đủ 14 cỡ V100 → V15000, tăng dần', () {
+      expect(airTankSpecs.map((t) => t.model), [
+        'V100', 'V200', 'V300', 'V500', 'V1000', 'V1500', 'V2000', //
+        'V3000', 'V4000', 'V5000', 'V6000', 'V8000', 'V10000', 'V15000',
+      ]);
+      for (final tank in airTankSpecs) {
+        expect(tank.volumeLiters, double.parse(tank.model.substring(1)));
+      }
     });
     for (final field in ['qc', 'tc', 'deltaP', 't0', 't1']) {
       test('chặn đầu vào không hữu hạn ở $field', () {

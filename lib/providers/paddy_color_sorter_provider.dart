@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import '../data/product_data.dart';
 
+/// Thông số dòng SF Pro: [line] là Lúa giống (mặc định) hoặc Lúa và Gạo lứt.
 class PaddyColorSorterProvider extends ChangeNotifier {
+  final ColorSorterLine line;
+
+  List<Map<String, String>> get _lineSpecs => sfLineSpecs(line);
+
   Map<String, String>? _specs;
   Map<String, String>? get specs => _specs;
 
@@ -14,7 +19,7 @@ class PaddyColorSorterProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  PaddyColorSorterProvider() {
+  PaddyColorSorterProvider({this.line = ColorSorterLine.paddy}) {
     selectModel('SF7D Pro');
   }
 
@@ -25,7 +30,7 @@ class PaddyColorSorterProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final found = paddyColorSorterSpecs.firstWhere(
+      final found = _lineSpecs.firstWhere(
         (e) => (e['Model'] ?? '').toLowerCase() == modelName.toLowerCase(),
         orElse: () => <String, String>{},
       );
@@ -61,7 +66,7 @@ class PaddyColorSorterProvider extends ChangeNotifier {
 
     try {
       Map<String, String>? result;
-      for (var row in paddyColorSorterSpecs) {
+      for (var row in _lineSpecs) {
         if (row['Model']?.toLowerCase() == modelName.toLowerCase().trim()) {
           result = row;
           break;
@@ -69,7 +74,7 @@ class PaddyColorSorterProvider extends ChangeNotifier {
       }
 
       if (result == null) {
-        for (var row in paddyColorSorterSpecs) {
+        for (var row in _lineSpecs) {
           if (row['Model']?.toLowerCase().contains(modelName.toLowerCase().trim()) == true) {
             result = row;
             break;
@@ -78,7 +83,7 @@ class PaddyColorSorterProvider extends ChangeNotifier {
       }
 
       if (result == null) {
-        for (var row in paddyColorSorterSpecs) {
+        for (var row in _lineSpecs) {
           bool matchFound = false;
           for (var value in row.values) {
             if (value.toLowerCase().contains(modelName.toLowerCase().trim())) {
@@ -115,7 +120,7 @@ class PaddyColorSorterProvider extends ChangeNotifier {
     // Chọn model nhỏ nhất có năng suất tối đa đáp ứng được yêu cầu.
     Map<String, String>? best;
     double? bestMax;
-    for (final spec in paddyColorSorterSpecs) {
+    for (final spec in _lineSpecs) {
       final range = spec['Năng suất (tấn/giờ)'] ?? '';
       final max = double.tryParse(range.split('-').last.trim());
       if (max == null || max < requiredCapacity) continue;
@@ -136,7 +141,7 @@ class PaddyColorSorterProvider extends ChangeNotifier {
 
   Map<String, String>? getSpecByModel(String modelName) {
     try {
-      final found = paddyColorSorterSpecs.firstWhere(
+      final found = _lineSpecs.firstWhere(
         (e) => (e['Model'] ?? '').toLowerCase() == modelName.toLowerCase(),
         orElse: () => <String, String>{},
       );

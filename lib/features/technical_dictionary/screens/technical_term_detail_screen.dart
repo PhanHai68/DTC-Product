@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../theme/dtc_palette.dart';
+import '../../../widgets/shell_back_button.dart';
 import '../models/technical_term.dart';
 import '../providers/technical_dictionary_provider.dart';
 
@@ -20,7 +21,10 @@ class TechnicalTermDetailScreen extends StatelessWidget {
     final term = provider.termById(termId);
     if (term == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Từ điển chuyên ngành')),
+        appBar: AppBar(
+          leading: const ShellBackButton(),
+          title: const Text('Từ điển chuyên ngành'),
+        ),
         body: Center(
           child: provider.loading || !provider.ready
               ? const CircularProgressIndicator()
@@ -30,7 +34,7 @@ class TechnicalTermDetailScreen extends StatelessWidget {
     }
     final progress = provider.progressOf(term);
     return Scaffold(
-      appBar: AppBar(title: Text(term.term)),
+      appBar: AppBar(leading: const ShellBackButton(), title: Text(term.term)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
         children: [
@@ -38,7 +42,10 @@ class TechnicalTermDetailScreen extends StatelessWidget {
           if (term.explanation.isNotEmpty)
             _Section(
               title: 'Giải thích',
-              child: Text(term.explanation, style: const TextStyle(height: 1.45)),
+              child: Text(
+                term.explanation,
+                style: const TextStyle(height: 1.45),
+              ),
             ),
           if (term.example.isNotEmpty)
             _Section(

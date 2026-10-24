@@ -3,7 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/input/localized_number.dart';
 import '../../../theme/dtc_palette.dart';
+import '../../../widgets/money_form_field.dart';
 import '../models/grinding_machine.dart';
 import '../models/grinding_proposal.dart';
 import '../models/grinding_proposal_line_item.dart';
@@ -18,6 +20,9 @@ import '../services/grinding_proposal_pdf_service.dart';
 import '../services/grinding_proposal_validation_service.dart';
 import '../utils/grinding_format.dart';
 import '../utils/grinding_number_parser.dart';
+
+/// Đơn vị hiển thị bên phải ô tiền: mã `VND` lưu trong hồ sơ hiện là "VNĐ".
+String _currencyUnit(String currency) => currency == 'VND' ? 'VNĐ' : currency;
 
 /// Tạo/sửa/Finalize/quản lý workflow thương mại 1 Proposal. [proposalId]
 /// `null` -> tạo mới (lấy máy chính của Project làm mặc định); có giá trị ->
@@ -105,6 +110,8 @@ class _GrindingProposalEditorScreenState
   }
 
   double? _parse(String text) => GrindingNumberParser.parseDouble(text);
+  double? _parseMoney(String text) =>
+      GrindingNumberParser.parseDouble(stripThousandsSeparators(text));
   static String _fmt(double v) =>
       v == v.roundToDouble() ? v.toInt().toString() : v.toString();
 
@@ -139,13 +146,19 @@ class _GrindingProposalEditorScreenState
         _currency = proposal.currency;
         _machineId = proposal.machineId;
         if (proposal.machineUnitPrice != null) {
-          _machineUnitPriceController.text = _fmt(proposal.machineUnitPrice!);
+          _machineUnitPriceController.text = formatThousands(
+            proposal.machineUnitPrice!,
+            decimalDigits: 2,
+          );
         }
         if (proposal.machineQuantity != null) {
           _machineQuantityController.text = _fmt(proposal.machineQuantity!);
         }
         if (proposal.discount != null) {
-          _discountController.text = _fmt(proposal.discount!);
+          _discountController.text = formatThousands(
+            proposal.discount!,
+            decimalDigits: 2,
+          );
         }
         if (proposal.vatPercent != null) {
           _vatController.text = _fmt(proposal.vatPercent!);
@@ -197,9 +210,9 @@ class _GrindingProposalEditorScreenState
       status: _status,
       currency: _currency,
       machineId: _machineId,
-      machineUnitPrice: _parse(_machineUnitPriceController.text),
+      machineUnitPrice: _parseMoney(_machineUnitPriceController.text),
       machineQuantity: _parse(_machineQuantityController.text),
-      discount: _parse(_discountController.text),
+      discount: _parseMoney(_discountController.text),
       vatPercent: _parse(_vatController.text),
       notes: _notesController.text.trim().isEmpty
           ? null
@@ -821,17 +834,15 @@ class _GrindingProposalEditorScreenState
               ],
             )
           else ...[
-            TextFormField(
+            MoneyFormField(
               key: const Key('grinding_proposal_machine_price_field'),
               controller: _machineUnitPriceController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Đơn giá máy',
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
+              labelText: 'Đơn giá máy',
+              unit: _currencyUnit(_currency),
+              showWords: _currency == 'VND',
+              decimalDigits: _currency == 'VND' ? 0 : 2,
+              isDense: true,
+              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 10),
             TextFormField(
@@ -893,18 +904,15 @@ class _GrindingProposalEditorScreenState
               ],
             )
           else ...[
-            TextFormField(
+            MoneyFormField(
               key: const Key('grinding_proposal_discount_field'),
               controller: _discountController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
+              labelText: 'Giảm giá (số tiền) — tuỳ chọn',
+              unit: _currencyUnit(_currency),
+              showWords: _currency == 'VND',
+              decimalDigits: _currency == 'VND' ? 0 : 2,
+              isDense: true,
               onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(
-                labelText: 'Giảm giá (số tiền) — tuỳ chọn',
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
             ),
             const SizedBox(height: 10),
             TextFormField(
@@ -1463,7 +1471,9 @@ class _LineItemRowState extends State<_LineItemRow> {
     text: widget.item.quantity == null ? '' : _num(widget.item.quantity!),
   );
   late final _priceController = TextEditingController(
-    text: widget.item.unitPrice == null ? '' : _num(widget.item.unitPrice!),
+    text: widget.item.unitPrice == null
+        ? ''
+        : formatThousands(widget.item.unitPrice!, decimalDigits: 2),
   );
 
   static String _num(double v) =>
@@ -1483,7 +1493,9 @@ class _LineItemRowState extends State<_LineItemRow> {
         name: _nameController.text.trim(),
         quantity: GrindingNumberParser.parseDouble(_quantityController.text),
         clearQuantity: _quantityController.text.trim().isEmpty,
-        unitPrice: GrindingNumberParser.parseDouble(_priceController.text),
+        unitPrice: GrindingNumberParser.parseDouble(
+          stripThousandsSeparators(_priceController.text),
+        ),
         clearUnitPrice: _priceController.text.trim().isEmpty,
       ),
     );
@@ -1504,51 +1516,64 @@ class _LineItemRowState extends State<_LineItemRow> {
         ),
       );
     }
+    // Hai hàng: Tên + nút xoá, rồi SL + Đơn giá — ô đơn giá đủ rộng cho đơn
+    // vị và dòng chữ đọc số tiền.
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
         children: [
-          Expanded(
-            flex: 3,
-            child: TextField(
-              key: Key(
-                'grinding_proposal_item_name_${widget.index}_${widget.key}',
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  key: Key(
+                    'grinding_proposal_item_name_${widget.index}_${widget.key}',
+                  ),
+                  controller: _nameController,
+                  onChanged: (_) => _emit(),
+                  decoration: const InputDecoration(
+                    hintText: 'Tên',
+                    isDense: true,
+                  ),
+                ),
               ),
-              controller: _nameController,
-              onChanged: (_) => _emit(),
-              decoration: const InputDecoration(hintText: 'Tên', isDense: true),
-            ),
+              IconButton(
+                icon: const Icon(Icons.close_rounded, size: 18),
+                onPressed: widget.onRemove,
+              ),
+            ],
           ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: TextField(
-              controller: _quantityController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _quantityController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  onChanged: (_) => _emit(),
+                  decoration: const InputDecoration(
+                    hintText: 'SL',
+                    isDense: true,
+                  ),
+                ),
               ),
-              onChanged: (_) => _emit(),
-              decoration: const InputDecoration(hintText: 'SL', isDense: true),
-            ),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            flex: 2,
-            child: TextField(
-              controller: _priceController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+              const SizedBox(width: 6),
+              Expanded(
+                flex: 3,
+                child: MoneyFormField(
+                  controller: _priceController,
+                  hintText: 'Đơn giá',
+                  unit: _currencyUnit(widget.currency),
+                  showWords: widget.currency == 'VND',
+                  decimalDigits: widget.currency == 'VND' ? 0 : 2,
+                  border: null,
+                  isDense: true,
+                  onChanged: (_) => _emit(),
+                ),
               ),
-              onChanged: (_) => _emit(),
-              decoration: const InputDecoration(
-                hintText: 'Đơn giá',
-                isDense: true,
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close_rounded, size: 18),
-            onPressed: widget.onRemove,
+            ],
           ),
         ],
       ),

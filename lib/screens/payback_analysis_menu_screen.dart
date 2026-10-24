@@ -12,17 +12,13 @@ import '../providers/self_business_provider.dart';
 class PaybackAnalysisMenuScreen extends StatelessWidget {
   const PaybackAnalysisMenuScreen({super.key, this.line = ColorSorterLine.rice});
 
-  /// Dòng máy đang phân tích (gạo, thóc hoặc trà) — quyết định danh sách model.
+  /// Dòng máy đang phân tích (gạo, lúa giống, lúa và gạo lứt hoặc trà) —
+  /// quyết định danh sách model.
   final ColorSorterLine line;
 
   /// Máy trà mới tính được tiền điện (bước 2) và lợi nhuận gia công (bước 3);
   /// các bước sau chưa có dữ liệu.
   static const _teaComingSoonFromStep = 4;
-
-  static const _lineNames = {
-    ColorSorterLine.paddy: 'Máy tách màu Thóc',
-    ColorSorterLine.tea: 'Máy tách màu Trà',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -190,14 +186,14 @@ class PaybackAnalysisMenuScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: _lineNames[line] == null
+        title: line == ColorSorterLine.rice
             ? const Text('Phân tích hoàn vốn')
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Phân tích hoàn vốn'),
                   Text(
-                    _lineNames[line]!,
+                    line.title,
                     style: const TextStyle(fontSize: 13),
                   ),
                 ],

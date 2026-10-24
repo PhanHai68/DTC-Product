@@ -128,9 +128,12 @@ void main() {
       // R1 Draft: prefill đúng giá của R0, badge DRAFT, title có "R1".
       expect(find.textContaining('lần 1'), findsWidgets);
       final priceField = tester.widget<TextFormField>(
-        find.byKey(const Key('grinding_proposal_machine_price_field')),
+        find.descendant(
+          of: find.byKey(const Key('grinding_proposal_machine_price_field')),
+          matching: find.byType(TextFormField),
+        ),
       );
-      expect(priceField.controller!.text, '400000000');
+      expect(priceField.controller!.text, '400,000,000');
 
       // Đổi giá trên R1.
       await tester.enterText(

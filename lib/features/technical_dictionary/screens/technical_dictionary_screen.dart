@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../theme/dtc_palette.dart';
+import '../../../widgets/shell_back_button.dart';
 import '../models/technical_term.dart';
 import '../providers/technical_dictionary_provider.dart';
 import '../widgets/term_status_icon.dart';
@@ -41,6 +42,7 @@ class _TechnicalDictionaryScreenState extends State<TechnicalDictionaryScreen> {
     final provider = context.watch<TechnicalDictionaryProvider>();
     return Scaffold(
       appBar: AppBar(
+        leading: const ShellBackButton(),
         title: const Text('Từ điển chuyên ngành'),
         actions: [
           if (provider.ready)
@@ -193,9 +195,7 @@ class _FilterBar extends StatelessWidget {
             value: provider.progressFilter?.label,
             options: [for (final f in ProgressFilter.values) f.label],
             onSelected: (label) => provider.setProgressFilter(
-              ProgressFilter.values
-                  .where((f) => f.label == label)
-                  .firstOrNull,
+              ProgressFilter.values.where((f) => f.label == label).firstOrNull,
             ),
           ),
           if (provider.hasFilter) ...[
@@ -376,10 +376,7 @@ class _ProgressSheet extends StatelessWidget {
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
         children: [
-          Text(
-            'Tiến độ học',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('Tiến độ học', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 4),
           Text(
             'Đã thuộc ${total.learned}/${total.total} · đang học '

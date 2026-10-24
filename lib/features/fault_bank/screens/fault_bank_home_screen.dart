@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../theme/dtc_palette.dart';
+import '../../../widgets/shell_back_button.dart';
 import '../providers/fault_bank_provider.dart';
 import '../services/fault_excel_export_service.dart';
 import '../widgets/fault_profile_form.dart';
@@ -28,7 +29,10 @@ class FaultBankHomeScreen extends StatelessWidget {
     }
     if (provider.isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Ngân hàng lỗi')),
+        appBar: AppBar(
+          leading: const ShellBackButton(),
+          title: const Text('Ngân hàng lỗi'),
+        ),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -55,7 +59,10 @@ class _ProfileSetup extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Ngân hàng lỗi')),
+      appBar: AppBar(
+        leading: const ShellBackButton(),
+        title: const Text('Ngân hàng lỗi'),
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
         children: [
@@ -201,6 +208,7 @@ class _SearchViewState extends State<_SearchView> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: const ShellBackButton(),
         title: const Text('Ngân hàng lỗi'),
         actions: [
           Builder(
@@ -432,7 +440,7 @@ class _Message extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = DtcPalette.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(leading: const ShellBackButton(), title: Text(title)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),

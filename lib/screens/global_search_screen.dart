@@ -25,7 +25,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       subtitle: 'Chọn nhóm nguyên liệu',
       location: '/color_sorter_categories',
       icon: Icons.auto_awesome_mosaic_rounded,
-      keywords: 'gạo thóc trà chè khoáng sản nông sản',
+      keywords: 'gạo thóc lúa giống gạo lứt trà chè khoáng sản nông sản',
     ),
     const _SearchItem(
       title: 'Cân đóng gói',
@@ -68,8 +68,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       location: '/technical-dictionary',
       icon: Icons.translate_rounded,
       iconWidget: EnViBadge(size: 22),
-      keywords:
-          'tu dien thuat ngu tieng anh english dich nghia phien am cau mau email nha cung cap viet tat',
+      keywords: 'tu dien thuat ngu tieng anh english dich nghia phien am cau mau email nha cung cap viet tat',
     ),
     const _SearchItem(
       title: 'Ghi Chú & Nhắc Hẹn',
@@ -161,17 +160,21 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         keywords: spec.values.join(' '),
       );
     }),
-    ...paddyColorSorterSpecs.map((spec) {
-      final model = spec['Model'] ?? '';
-      return _SearchItem(
-        title: model,
-        subtitle: 'Máy tách màu Thóc và Gạo xô',
-        location:
-            '/paddy_color_sorter?model=${Uri.encodeQueryComponent(model)}',
-        icon: Icons.grass_rounded,
-        keywords: spec.values.join(' '),
-      );
-    }),
+    for (final line in [ColorSorterLine.paddy, ColorSorterLine.brownRice])
+      ...sfLineSpecs(line).map((spec) {
+        final model = spec['Model'] ?? '';
+        return _SearchItem(
+          title: model,
+          subtitle: line.title,
+          location:
+              '/paddy_color_sorter?line=${line.name}'
+              '&model=${Uri.encodeQueryComponent(model)}',
+          icon: line == ColorSorterLine.brownRice
+              ? Icons.grain_rounded
+              : Icons.grass_rounded,
+          keywords: '${line.title} ${spec.values.join(' ')}',
+        );
+      }),
     ...teaColorSorterSpecs.map((spec) {
       final model = spec['model'] ?? '';
       return _SearchItem(

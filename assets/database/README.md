@@ -9,7 +9,7 @@ Không cần sửa code Dart.
 | File | Nội dung | Màn hình trong app |
 |---|---|---|
 | `color_sorter/sc_rice.json` | Máy tách màu gạo SC4 → SC16 Pro, S+80D | Máy tách màu → Gạo |
-| `color_sorter/sf7_paddy.json` | Máy tách màu thóc dòng SF Pro (SF3D → SF12D) | Máy tách màu → Thóc và gạo xô |
+| `color_sorter/sf7_paddy.json` | Máy tách màu lúa giống dòng SF Pro (SF3D, SF5D, SF7D, SF10D, SF12D) | Máy tách màu → Lúa giống |
 | `color_sorter/df_tea.json` | Máy tách màu trà DF12 → DF53 Pro | Máy tách màu → Trà |
 | `color_sorter/sx8_mineral.json` | Máy tách quang khoáng sản: SX8 và 11 model ASORT (catalog `docs_database/01_May_Tach_Mau/Dong_SX8_Khoang_San/AS-C-Da-250603.pdf`): đá bột SA6-2C, SA6-2SC, SA8-2C, SA8-2SC; đá khô SA6-2AL, SA4-1AL, SA4-2AL, SA4-2BL; đá ướt & khô SA4-1L, SA6-2SL, SA6-1SL | Máy tách màu → Khoáng sản → Thông số kỹ thuật, Chọn máy phù hợp |
 | `color_sorter/h7_agro.json` | Máy tách màu hạt dòng H (H1 → H12) | Máy tách màu → Nông sản |

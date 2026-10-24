@@ -11,12 +11,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  test('dòng SF Pro đủ SF3D → SF12D theo bảng thông số thóc', () {
+  test('dòng SF Pro lúa giống: SF3D, SF5D, SF7D, SF10D, SF12D (đã bỏ SF8D)', () {
     expect(paddyColorSorterSpecs.map((s) => s['Model']), [
       'SF3D Pro',
       'SF5D Pro',
       'SF7D Pro',
-      'SF8D Pro',
       'SF10D Pro',
       'SF12D Pro',
     ]);
@@ -38,7 +37,6 @@ void main() {
       'SF3D Pro': 'SC4',
       'SF5D Pro': 'SC8',
       'SF7D Pro': 'SC10', // cùng 7 máng
-      'SF8D Pro': 'SC10', // 8 máng → SC10 7 máng (gần nhất)
       'SF10D Pro': 'SC12',
       'SF12D Pro': 'SC16 Pro',
     };
@@ -62,7 +60,7 @@ void main() {
   });
 
   test('hoàn vốn máy thóc dùng bảng điện năng máy gạo cùng số máng', () {
-    // Chỉ model có máy gạo cùng số máng; SF8D (8 máng) bỏ qua.
+    // Mọi model đều có máy gạo cùng số máng.
     expect(powerConsumptionModels(ColorSorterLine.paddy), [
       'SF3D Pro',
       'SF5D Pro',
@@ -86,10 +84,10 @@ void main() {
     const expected = {
       // model: (năng suất, máy tách màu, tối đa, trung bình)
       'SF3D Pro': ('2.25', '1.7', '22.70', '18.16'), // theo SC4
-      'SF5D Pro': ('3.75', '2.6', '35.60', '28.48'), // theo SC8
-      'SF7D Pro': ('5.25', '3.5', '51.50', '41.20'), // theo SC10
-      'SF10D Pro': ('7.5', '5.0', '73.50', '58.80'), // theo SC12
-      'SF12D Pro': ('9', '5.9', '96.40', '77.12'), // theo SC16 Pro
+      'SF5D Pro': ('2.25', '2.6', '35.60', '28.48'), // theo SC8
+      'SF7D Pro': ('3', '3.5', '51.50', '41.20'), // theo SC10
+      'SF10D Pro': ('4.25', '5.0', '73.50', '58.80'), // theo SC12
+      'SF12D Pro': ('5.5', '5.9', '96.40', '77.12'), // theo SC16 Pro
     };
     expected.forEach((model, values) {
       final r = rows(model);
@@ -113,7 +111,6 @@ void main() {
     // SF7D Pro cùng 7 máng với SC10, nhưng màn phụ trợ vẫn ưu tiên danh sách
     // riêng của SF7D Pro.
     expect(riceModelForPaddy('SF7D Pro', keys), 'SC10');
-    expect(riceModelForPaddy('SF8D Pro', keys), isNull);
   });
 
   testWidgets('màn thiết bị phụ trợ thóc chọn được model có dữ liệu', (
@@ -128,7 +125,6 @@ void main() {
     for (final model in ['SF3D Pro', 'SF5D Pro', 'SF10D Pro', 'SF12D Pro']) {
       expect(find.widgetWithText(ChoiceChip, model), findsOneWidget);
     }
-    expect(find.widgetWithText(ChoiceChip, 'SF8D Pro'), findsNothing);
 
     await tester.tap(find.widgetWithText(ChoiceChip, 'SF3D Pro'));
     await tester.pumpAndSettle();
@@ -161,7 +157,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Máy tách màu Thóc'), findsOneWidget);
+    expect(find.text('Máy tách màu Lúa giống'), findsOneWidget);
     expect(find.text('Tiến độ phương án: 0/4 kết quả'), findsOneWidget);
     expect(find.text('Bắt đầu phương án mới'), findsOneWidget);
   });
@@ -169,9 +165,9 @@ void main() {
   test('tư vấn chọn model thóc theo năng suất', () {
     final provider = PaddyColorSorterProvider();
     expect(provider.suggestModelByCapacity(2)?['model'], 'SF3D Pro');
-    expect(provider.suggestModelByCapacity(5)?['model'], 'SF5D Pro');
-    expect(provider.suggestModelByCapacity(6)?['model'], 'SF7D Pro');
-    expect(provider.suggestModelByCapacity(11)?['model'], 'SF12D Pro');
-    expect(provider.suggestModelByCapacity(13), isNull);
+    expect(provider.suggestModelByCapacity(4)?['model'], 'SF7D Pro');
+    expect(provider.suggestModelByCapacity(5)?['model'], 'SF10D Pro');
+    expect(provider.suggestModelByCapacity(7)?['model'], 'SF12D Pro');
+    expect(provider.suggestModelByCapacity(9), isNull);
   });
 }

@@ -178,7 +178,9 @@ class _Card extends StatelessWidget {
                             PopupMenuItem(
                               value: _MenuAction.learned,
                               child: ListTile(
-                                leading: Icon(Icons.check_circle_outline_rounded),
+                                leading: Icon(
+                                  Icons.check_circle_outline_rounded,
+                                ),
                                 title: Text('Đã thuộc từ này'),
                                 contentPadding: EdgeInsets.zero,
                               ),

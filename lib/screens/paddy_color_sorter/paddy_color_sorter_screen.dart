@@ -7,9 +7,16 @@ import '../../data/product_data.dart';
 import '../color_sorter/spec_image_export_dialog.dart';
 
 class PaddyColorSorterScreen extends StatefulWidget {
-  const PaddyColorSorterScreen({super.key, this.initialModel});
+  const PaddyColorSorterScreen({
+    super.key,
+    this.initialModel,
+    this.line = ColorSorterLine.paddy,
+  });
 
   final String? initialModel;
+
+  /// Lúa giống hoặc Lúa và Gạo lứt — quyết định danh sách model.
+  final ColorSorterLine line;
 
   @override
   State<PaddyColorSorterScreen> createState() => _PaddyColorSorterScreenState();
@@ -24,14 +31,15 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+  }
+
+  PaddyColorSorterProvider _createProvider() {
+    final provider = PaddyColorSorterProvider(line: widget.line);
     final initialModel = widget.initialModel;
     if (initialModel != null && initialModel.trim().isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          context.read<PaddyColorSorterProvider>().selectModel(initialModel);
-        }
-      });
+      provider.selectModel(initialModel);
     }
+    return provider;
   }
 
   @override
@@ -242,6 +250,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
     // Nội dung chung cho cả dòng SFD Pro.
     const description =
         'Máy phân loại AI thông minh dòng SFD PRO được thiết kế chuyên dùng để phân loại lúa. Máy tích hợp sẵn mô hình lớn AI phân loại chất lượng, nhận diện chính xác và loại bỏ các yếu tố làm giảm chất lượng lúa như hạt nảy mầm bên trong, hạt nảy mầm bên ngoài, hạt biến màu, hạt đốm, hạt mốc và hạt non.';
+    final isBrownRice = widget.line == ColorSorterLine.brownRice;
     showDialog(
       context: context,
       builder: (context) {
@@ -294,14 +303,16 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.blue.shade200, width: 1.2),
                   ),
-                  child: Text(
-                    description,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      height: 1.5,
-                      color: Color(0xFF1E293B),
-                    ),
-                  ),
+                  child: isBrownRice
+                      ? const _BrownRiceApplication()
+                      : const Text(
+                          description,
+                          style: TextStyle(
+                            fontSize: 14,
+                            height: 1.5,
+                            color: Color(0xFF1E293B),
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -500,7 +511,6 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
           'Lưu lượng khí tiêu thụ',
           'Trọng lượng (kg)',
           'Kích thước (D x R x C mm)',
-          'Kích thước sàn đặt máy',
           'Máy nén khí đồng bộ',
           'Bình tích khí đồng bộ',
         ];
@@ -877,7 +887,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => PaddyColorSorterProvider(),
+      create: (_) => _createProvider(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Thông số kỹ thuật'),
@@ -918,7 +928,7 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: paddyColorSorterSpecs
+                      children: sfLineSpecs(widget.line)
                           .map((e) => e['Model'] ?? '')
                           .where((m) => m.isNotEmpty)
                           .map((m) {
@@ -1779,7 +1789,6 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                                       'Điện áp',
                                       'Trọng lượng (kg)',
                                       'Kích thước (D x R x C mm)',
-                                      'Kích thước sàn đặt máy',
                                     ];
                                   }
 
@@ -1948,7 +1957,9 @@ class _PaddyColorSorterScreenState extends State<PaddyColorSorterScreen>
                               // Sales & ROI Quick Actions
                               ElevatedButton.icon(
                                 onPressed: () {
-                                  context.push('/payback_analysis');
+                                  context.push(
+                                    '/payback_analysis?line=${widget.line.name}',
+                                  );
                                 },
                                 icon: const Icon(Icons.analytics_outlined),
                                 label: const Text('Phân tích hoàn vốn (ROI)'),
@@ -2011,4 +2022,81 @@ void showStatefulBuilderDialog({
     context: context,
     builder: (ctx) => StatefulBuilder(builder: builder),
   );
+}
+
+/// Nội dung "Chi Tiết Ứng Dụng Thực Tế" của dòng Lúa và Gạo lứt (theo tài
+/// liệu hãng), dùng chung cho mọi model.
+class _BrownRiceApplication extends StatelessWidget {
+  const _BrownRiceApplication();
+
+  static const _green = Color(0xFF2E7D32);
+  static const _bullets = [
+    'AI Super Agent PRO được ứng dụng vào công đoạn tách thóc/gạo lứt. Đây là giải pháp đầu tiên trong ngành áp dụng phân loại dòng vật liệu tuần hoàn sau bóc vỏ.',
+    'Được phát triển trên nền tảng PRO, thiết bị đem lại sự cải thiện kép cả về độ chính xác lẫn năng suất, thực sự giúp tăng tỉ lệ thu hồi gạo nguyên, giảm gãy gạo, nâng cao phẩm cấp và tối ưu hiệu suất toàn diện.',
+  ];
+  static const _stats = [
+    ('≤ 2%', 'Tỷ lệ vỡ gãy gạo lứt'),
+    ('≥ 3%', 'Tỷ lệ thu hồi gạo'),
+    ('≥ 5%', 'Năng lực sản xuất tổng thể'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    const body = TextStyle(fontSize: 14, height: 1.5, color: Color(0xFF1E293B));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Phân Loại Chất Lượng Lúa & Gạo Lứt Nâng Cao Chất Lượng và Giảm Gãy Vỡ',
+          style: TextStyle(
+            fontSize: 15,
+            height: 1.4,
+            fontWeight: FontWeight.bold,
+            color: _green,
+          ),
+        ),
+        const SizedBox(height: 8),
+        for (final text in _bullets)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('•  ', style: body),
+                Expanded(child: Text(text, style: body)),
+              ],
+            ),
+          ),
+        const SizedBox(height: 4),
+        for (final (value, label) in _stats)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Row(
+              children: [
+                Container(
+                  width: 76,
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.green.shade200),
+                  ),
+                  child: Text(
+                    value,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: _green,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: Text(label, style: body)),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }

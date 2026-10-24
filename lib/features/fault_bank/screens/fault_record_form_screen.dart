@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../theme/dtc_palette.dart';
+import '../../../widgets/shell_back_button.dart';
 import '../models/fault_record.dart';
 import '../providers/fault_bank_provider.dart';
 import '../utils/fault_duration.dart';
@@ -372,6 +373,7 @@ class _FaultRecordFormScreenState extends State<FaultRecordFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          leading: const ShellBackButton(),
           title: Text(widget.isEditing ? 'Sửa sự cố' : 'Ghi nhận sự cố'),
         ),
         bottomNavigationBar: _loading

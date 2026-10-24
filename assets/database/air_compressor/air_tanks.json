@@ -1,0 +1,16 @@
+[
+  {"model": "V100", "volumeLiters": 100, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 350, "weightKg": 35},
+  {"model": "V200", "volumeLiters": 200, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 450, "weightKg": 75},
+  {"model": "V300", "volumeLiters": 300, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 480, "weightKg": 95},
+  {"model": "V500", "volumeLiters": 500, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 600, "weightKg": 150},
+  {"model": "V1000", "volumeLiters": 1000, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 850, "weightKg": 500},
+  {"model": "V1500", "volumeLiters": 1500, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 1050, "weightKg": 565},
+  {"model": "V2000", "volumeLiters": 2000, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 1150, "weightKg": 845},
+  {"model": "V3000", "volumeLiters": 3000, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 1250, "weightKg": 985},
+  {"model": "V4000", "volumeLiters": 4000, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 1450, "weightKg": 1185},
+  {"model": "V5000", "volumeLiters": 5000, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 1600, "weightKg": 1365},
+  {"model": "V6000", "volumeLiters": 6000, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 1600, "weightKg": 1845},
+  {"model": "V8000", "volumeLiters": 8000, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 1700, "weightKg": 2260},
+  {"model": "V10000", "volumeLiters": 10000, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 1920, "weightKg": 2890},
+  {"model": "V15000", "volumeLiters": 15000, "designPressureKgfCm2": 10, "testPressureKgfCm2": 15, "diameterMm": 1920, "weightKg": 4050}
+]

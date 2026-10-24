@@ -6,6 +6,7 @@ import '../../providers/electricity_bill_provider.dart';
 import '../../providers/self_business_provider.dart';
 import '../../core/input/localized_number.dart';
 import '../../data/product_data.dart';
+import '../../widgets/money_form_field.dart';
 import '../../widgets/payback/formula_explainer.dart';
 
 class SelfBusinessScreen extends StatefulWidget {
@@ -98,13 +99,9 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Giá Gạo nguyên liệu mua vào (VNĐ/kg)',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
+                MoneyFormField(
+                  labelText: 'Giá Gạo nguyên liệu mua vào (VNĐ/kg)',
+                  unit: 'VNĐ/kg',
                   onChanged: businessProvider.setRawMaterialPrice,
                   validator: (value) => validateRequiredPositiveNumber(
                     value,
@@ -112,13 +109,9 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Giá Gạo thành phẩm bán ra (VNĐ/kg)',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
+                MoneyFormField(
+                  labelText: 'Giá Gạo thành phẩm bán ra (VNĐ/kg)',
+                  unit: 'VNĐ/kg',
                   onChanged: businessProvider.setFinishedProductPrice,
                   validator: (value) => validateRequiredPositiveNumber(
                     value,
@@ -126,14 +119,10 @@ class _SelfBusinessScreenState extends State<SelfBusinessScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Giá Gạo phế phẩm bán ra (VNĐ/kg)',
-                    border: OutlineInputBorder(),
-                    helperText: 'Nhập 0 nếu không bán phế phẩm',
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: const [LocalizedDecimalTextInputFormatter()],
+                MoneyFormField(
+                  labelText: 'Giá Gạo phế phẩm bán ra (VNĐ/kg)',
+                  unit: 'VNĐ/kg',
+                  helperText: 'Nhập 0 nếu không bán phế phẩm',
                   onChanged: businessProvider.setByProductPrice,
                   validator: (value) => validateRequiredNonNegativeNumber(
                     value,

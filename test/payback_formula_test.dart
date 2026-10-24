@@ -34,15 +34,15 @@ void main() {
     expect(tea.lastInputs!.averagePower, isFalse);
 
     final processing = ProcessingProfitProvider()
-      ..setProcessingPrice('100')
-      ..setDailySalary('300')
+      ..setProcessingPrice('100000')
+      ..setDailySalary('300000')
       ..calculate(capacity: 4, totalHours: 10, totalBill: 500000);
     expect(processing.lastInputs!.revenue, 100000 * 4 * 10);
     expect(processing.lastInputs!.dailySalary, 300000);
 
     final payback = PaybackPeriodProvider()
-      ..setMachinePrice('500000')
-      ..setFullSetupPrice('800000')
+      ..setMachinePrice('500000000')
+      ..setFullSetupPrice('800000000')
       ..calculate(3200000);
     expect(payback.lastInputs, (
       machinePrice: 500000000.0,
@@ -119,8 +119,8 @@ void main() {
     expect(find.text('Thay số lần tính gần nhất'), findsNothing);
 
     final fields = find.byType(TextFormField);
-    await tester.enterText(fields.at(0), '100');
-    await tester.enterText(fields.at(1), '300');
+    await tester.enterText(fields.at(0), '100000');
+    await tester.enterText(fields.at(1), '300000');
     await tester.ensureVisible(find.text('Xác nhận'));
     await tester.tap(find.text('Xác nhận'));
     await tester.pumpAndSettle();

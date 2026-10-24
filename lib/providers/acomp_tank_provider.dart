@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../core/input/localized_number.dart';
+import '../data/product_data.dart';
+import '../models/air_tank_spec.dart';
 
 class AcompTankProvider extends ChangeNotifier {
   double _qc = 0.0; // Lưu lượng máy nén khí (m³/min)
@@ -14,7 +17,9 @@ class AcompTankProvider extends ChangeNotifier {
   double get deltaP => _deltaP;
   double get t0 => _t0;
   double get t1 => _t1;
-  static const maxSupportedVolume = 3000.0;
+
+  /// Bình lớn nhất trong bảng tiêu chuẩn; lớn hơn thì cần tư vấn riêng.
+  static double get maxSupportedVolume => airTankSpecs.last.volumeLiters;
 
   void setQc(String value) {
     _qc = value.trim().isEmpty ? 0 : parseLocalizedDouble(value) ?? double.nan;
@@ -69,23 +74,23 @@ class AcompTankProvider extends ChangeNotifier {
       return 'Kết quả tính dung tích không hợp lệ. Vui lòng kiểm tra đầu vào.';
     }
     if (vTh > maxSupportedVolume) {
-      return 'Dung tích lý thuyết vượt 3.000 lít, ngoài dải lựa chọn hiện có. Cần tư vấn cấu hình bình chứa riêng.';
+      final max = NumberFormat('#,##0', 'vi').format(maxSupportedVolume);
+      return 'Dung tích lý thuyết vượt $max lít, ngoài dải lựa chọn hiện có. Cần tư vấn cấu hình bình chứa riêng.';
     }
     return null;
   }
 
-  // Giữ bảng lựa chọn hiện có trong dải hỗ trợ.
+  /// Bình tiêu chuẩn nhỏ nhất có dung tích không nhỏ hơn dung tích lý
+  /// thuyết; `null` khi đầu vào sai, vượt dải hoặc lưu lượng bằng 0.
+  AirTankSpec? get recommendedTank {
+    if (recommendationError != null || vTh <= 0) return null;
+    return airTankSpecs.where((t) => t.volumeLiters >= vTh).firstOrNull;
+  }
+
+  /// Dung tích bình đề xuất (lít); 0 khi lưu lượng bằng 0.
   double? get vRec {
     if (recommendationError != null) return null;
-    final v = vTh;
-    if (v <= 0) return 0;
-    if (v <= 250) return 200;
-    if (v <= 400) return 300;
-    if (v <= 600) return 500;
-    if (v <= 850) return 700;
-    if (v <= 1250) return 1000;
-    if (v <= 1750) return 1500;
-    if (v <= 2500) return 2000;
-    return 3000;
+    if (vTh <= 0) return 0;
+    return recommendedTank?.volumeLiters;
   }
 }

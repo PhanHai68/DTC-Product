@@ -7,6 +7,7 @@ import 'dart:convert';
 
 import '../models/acomp_spec_model.dart';
 import '../models/acomp_vsd_compare_config.dart';
+import '../models/air_tank_spec.dart';
 import '../models/color_sorter_errors.dart';
 import '../models/material_model.dart';
 import '../models/packing_machine.dart';
@@ -18,6 +19,8 @@ const _packingScaleDir = 'assets/database/packing_scale';
 abstract final class ProductData {
   static const colorSorterRicePath = '$_colorSorterDir/sc_rice.json';
   static const colorSorterPaddyPath = '$_colorSorterDir/sf7_paddy.json';
+  static const colorSorterBrownRicePath =
+      '$_colorSorterDir/sf_brown_rice.json';
   static const colorSorterTeaPath = '$_colorSorterDir/df_tea.json';
   static const colorSorterMineralPath = '$_colorSorterDir/sx8_mineral.json';
   static const colorSorterAgroPath = '$_colorSorterDir/h7_agro.json';
@@ -33,6 +36,7 @@ abstract final class ProductData {
   static const acompCommonErrorsPath = '$_airCompressorDir/common_errors.json';
   static const acompDs8011Path = '$_airCompressorDir/ds8011.json';
   static const acompVsdComparePath = '$_airCompressorDir/vsd_compare.json';
+  static const airTanksPath = '$_airCompressorDir/air_tanks.json';
 
   static const packingMachinesPath = '$_packingScaleDir/machines.json';
   static const packingFeaturesPath = '$_packingScaleDir/features.json';
@@ -40,6 +44,7 @@ abstract final class ProductData {
   static const assetPaths = [
     colorSorterRicePath,
     colorSorterPaddyPath,
+    colorSorterBrownRicePath,
     colorSorterTeaPath,
     colorSorterMineralPath,
     colorSorterAgroPath,
@@ -54,6 +59,7 @@ abstract final class ProductData {
     acompCommonErrorsPath,
     acompDs8011Path,
     acompVsdComparePath,
+    airTanksPath,
     packingMachinesPath,
     packingFeaturesPath,
   ];
@@ -91,6 +97,10 @@ abstract final class ProductData {
       _toStringMapList(decode(colorSorterPaddyPath) as List),
       rice,
     );
+    final brownRice = _withRiceAirSystem(
+      _toStringMapList(decode(colorSorterBrownRicePath) as List),
+      rice,
+    );
     final tea = _toStringMapList(decode(colorSorterTeaPath) as List);
     final mineral = _toStringMapList(decode(colorSorterMineralPath) as List);
     final agro = _toStringMapList(decode(colorSorterAgroPath) as List);
@@ -105,9 +115,12 @@ abstract final class ProductData {
     };
     // Máy thóc chưa có bảng điện năng riêng (để tính hoàn vốn): lấy của máy
     // gạo cùng số máng, thay năng suất và công suất máy tách màu bằng thông số
-    // của chính máy thóc; không có máy gạo cùng số máng thì bỏ qua.
-    final paddyRice = _sameChuteRiceModels(paddy, rice);
-    for (final spec in paddy) {
+    // của chính máy thóc; không có máy gạo cùng số máng thì bỏ qua. Dòng Lúa
+    // và Gạo lứt trùng tên model với Lúa giống thì dùng chung bảng (bảng tra
+    // theo tên model).
+    final sfLines = [...paddy, ...brownRice];
+    final paddyRice = _sameChuteRiceModels(sfLines, rice);
+    for (final spec in sfLines) {
       final model = spec['Model'];
       if (model == null || powerByModel.containsKey(model)) continue;
       final source = (paddyRice[model] ?? const <String>[])
@@ -145,6 +158,10 @@ abstract final class ProductData {
     final vsdCompare = AcompVsdCompareConfig.fromJson(
       decode(acompVsdComparePath) as Map<String, dynamic>,
     );
+    final airTanks = [
+      for (final item in decode(airTanksPath) as List)
+        AirTankSpec.fromJson(item as Map<String, dynamic>),
+    ]..sort((a, b) => a.volumeLiters.compareTo(b.volumeLiters));
 
     final packing = [
       for (final item in decode(packingMachinesPath) as List)
@@ -157,6 +174,7 @@ abstract final class ProductData {
 
     _colorSorterSpecs = rice;
     _paddyColorSorterSpecs = paddy;
+    _brownRiceColorSorterSpecs = brownRice;
     _teaColorSorterSpecs = tea;
     _mineralColorSorterSpecs = mineral;
     _agroColorSorterSpecs = agro;
@@ -182,6 +200,7 @@ abstract final class ProductData {
     _commonErrorsOilLoss = errorsOilLoss;
     _ds8011Parameters = ds8011;
     _acompVsdCompareConfig = vsdCompare;
+    _airTankSpecs = List.unmodifiable(airTanks);
     _packingMachines = List.unmodifiable(packing);
     _packingFeatureSets = packingFeatures;
   }
@@ -396,6 +415,7 @@ abstract final class ProductData {
 
 List<Map<String, String>>? _colorSorterSpecs;
 List<Map<String, String>>? _paddyColorSorterSpecs;
+List<Map<String, String>>? _brownRiceColorSorterSpecs;
 List<Map<String, String>>? _teaColorSorterSpecs;
 List<Map<String, String>>? _mineralColorSorterSpecs;
 List<Map<String, String>>? _agroColorSorterSpecs;
@@ -414,6 +434,7 @@ List<Map<String, String>>? _commonErrorsController;
 List<Map<String, String>>? _commonErrorsOilLoss;
 List<Map<String, dynamic>>? _ds8011Parameters;
 AcompVsdCompareConfig? _acompVsdCompareConfig;
+List<AirTankSpec>? _airTankSpecs;
 List<PackingMachine>? _packingMachines;
 Map<String, List<Map<String, String>>>? _packingFeatureSets;
 
@@ -434,6 +455,17 @@ List<Map<String, String>> get colorSorterSpecs => _loaded(_colorSorterSpecs);
 /// Máy tách màu thóc SF7 — `color_sorter/sf7_paddy.json`.
 List<Map<String, String>> get paddyColorSorterSpecs =>
     _loaded(_paddyColorSorterSpecs);
+
+/// Máy tách màu lúa và gạo lứt dòng SF Pro — `color_sorter/sf_brown_rice.json`.
+List<Map<String, String>> get brownRiceColorSorterSpecs =>
+    _loaded(_brownRiceColorSorterSpecs);
+
+/// Thông số dòng SF Pro dùng chung màn hình: [ColorSorterLine.brownRice] là
+/// Lúa và Gạo lứt, còn lại là Lúa giống.
+List<Map<String, String>> sfLineSpecs(ColorSorterLine line) =>
+    line == ColorSorterLine.brownRice
+    ? brownRiceColorSorterSpecs
+    : paddyColorSorterSpecs;
 
 /// Máy tách màu trà dòng DF — `color_sorter/df_tea.json`.
 List<Map<String, String>> get teaColorSorterSpecs =>
@@ -460,7 +492,16 @@ Map<String, List<Map<String, String>>> get powerConsumptionData =>
     _loaded(_powerConsumptionData);
 
 /// Dòng máy tách màu dùng chung luồng phân tích hoàn vốn.
-enum ColorSorterLine { rice, paddy, tea }
+enum ColorSorterLine {
+  rice('Máy tách màu Gạo'),
+  paddy('Máy tách màu Lúa giống'),
+  brownRice('Máy tách màu Lúa và Gạo lứt'),
+  tea('Máy tách màu Trà');
+
+  const ColorSorterLine(this.title);
+
+  final String title;
+}
 
 /// Công suất dùng để tính tiền điện của [model]: công suất trung bình; model
 /// không có công suất trung bình (dây chuyền trà) dùng công suất lớn nhất.
@@ -482,6 +523,7 @@ List<String> powerConsumptionModels(ColorSorterLine line) {
     for (final spec in switch (line) {
       ColorSorterLine.rice => colorSorterSpecs,
       ColorSorterLine.paddy => paddyColorSorterSpecs,
+      ColorSorterLine.brownRice => brownRiceColorSorterSpecs,
       ColorSorterLine.tea => teaColorSorterSpecs,
     })
       ?(spec['Model'] ?? spec['model']),
@@ -539,6 +581,10 @@ List<Map<String, dynamic>> get ds8011Parameters => _loaded(_ds8011Parameters);
 /// `air_compressor/vsd_compare.json`.
 AcompVsdCompareConfig get acompVsdCompareConfig =>
     _loaded(_acompVsdCompareConfig);
+
+/// Bình tích khí tiêu chuẩn, dung tích tăng dần —
+/// `air_compressor/air_tanks.json`.
+List<AirTankSpec> get airTankSpecs => _loaded(_airTankSpecs);
 
 /// Nguyên liệu và hệ số khí cho màn chọn máy nén khí theo máy tách màu —
 /// `air_compressor/materials.json`.

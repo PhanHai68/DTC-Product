@@ -64,9 +64,14 @@ abstract final class DailyWordPicker {
       // Đã gặp hết: chấp nhận lặp, chỉ tránh đúng từ đang hiện.
       [
         for (final t in pool)
-          if (t.key != exclude && (reviewLearned || statusOf(t) != TermStatus.learned)) t,
+          if (t.key != exclude &&
+              (reviewLearned || statusOf(t) != TermStatus.learned))
+            t,
       ],
-      [for (final t in pool) if (t.key != exclude) t],
+      [
+        for (final t in pool)
+          if (t.key != exclude) t,
+      ],
       pool,
     ];
     final candidates = ordered.firstWhere((list) => list.isNotEmpty);
