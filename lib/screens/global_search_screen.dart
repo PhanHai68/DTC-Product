@@ -39,7 +39,21 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       subtitle: 'Thông số, chọn công suất và tính toán',
       location: '/acomp_menu',
       icon: Icons.air_rounded,
-      keywords: 'khí nén acomp bình đường ống mccb',
+      keywords: 'khí nén acomp bình đường ống mccb máy sấy khí tác nhân lạnh acd',
+    ),
+    const _SearchItem(
+      title: 'Cấu hình hệ thống khí nén',
+      subtitle: 'Tính máy nén, máy sấy, lọc, bình chứa và vẽ sơ đồ lắp đặt',
+      location: '/air_system_config',
+      icon: Icons.account_tree_outlined,
+      keywords: 'cau hinh he thong khi nen so do lap dat may say hap thu say lanh loc tinh than hoat tinh vo trung binh chua iso 8573 diem suong pdp line bao gia',
+    ),
+    const _SearchItem(
+      title: 'Tính toán phòng lắp đặt',
+      subtitle: 'Kích thước phòng máy nén, thông gió, bản vẽ mặt bằng',
+      location: '/air_system_config?tab=room',
+      icon: Icons.meeting_room_outlined,
+      keywords: 'phong may nen khi phong lap dat mat bang bo tri thong gio cua lay gio kich thuoc phong',
     ),
     const _SearchItem(
       title: 'So sánh máy nén biến tần – cố định',

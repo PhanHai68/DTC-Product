@@ -59,6 +59,7 @@ class DataBackupEngine {
     'project_tracking.db',
     'site_layout.db',
     'technical_dictionary.db',
+    'air_system_config.db',
   ];
 
   /// Bảng chứa dữ liệu người dùng tự tạo (không tính catalog nạp sẵn) — dùng
@@ -71,6 +72,7 @@ class DataBackupEngine {
     'project_tracking.db': ['projects'],
     'site_layout.db': ['site_layout_projects'],
     'technical_dictionary.db': ['term_progress'],
+    'air_system_config.db': ['air_configs'],
     'grinding_machines.db': [
       'grinding_selection_projects',
       'grinding_proposals',

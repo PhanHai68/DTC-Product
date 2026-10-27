@@ -1,0 +1,37 @@
+[
+  { "model": "015", "capacityM3min": 1.5, "port": "1/2\" = DN20", "levels": [
+    { "level": "Q", "function": "Tách nước", "micron": 3 },
+    { "level": "P", "function": "Tách thô", "micron": 1 },
+    { "level": "S", "function": "Tách tinh", "micron": 0.01 }
+  ] },
+  { "model": "024", "capacityM3min": 2.5, "port": "1 1/2\" = DN40", "levels": [
+    { "level": "Q", "function": "Tách nước", "micron": 3 },
+    { "level": "P", "function": "Tách thô", "micron": 1 },
+    { "level": "S", "function": "Tách tinh", "micron": 0.01 }
+  ] },
+  { "model": "035", "capacityM3min": 3.8, "port": "1 1/2\" = DN40", "levels": [
+    { "level": "Q", "function": "Tách nước", "micron": 3 },
+    { "level": "P", "function": "Tách thô", "micron": 1 },
+    { "level": "S", "function": "Tách tinh", "micron": 0.01 }
+  ] },
+  { "model": "060", "capacityM3min": 6.8, "port": "1 1/2\" = DN40", "levels": [
+    { "level": "Q", "function": "Tách nước", "micron": 3 },
+    { "level": "P", "function": "Tách thô", "micron": 1 },
+    { "level": "S", "function": "Tách tinh", "micron": 0.01 }
+  ] },
+  { "model": "010", "capacityM3min": 11, "port": "2\" = DN50", "levels": [
+    { "level": "C", "function": "Tách nước", "micron": 3 },
+    { "level": "T", "function": "Tách thô", "micron": 1 },
+    { "level": "A", "function": "Tách tinh", "micron": 0.01 }
+  ] },
+  { "model": "013", "capacityM3min": 13, "port": "2\" = DN50", "levels": [
+    { "level": "C", "function": "Tách nước", "micron": 3 },
+    { "level": "T", "function": "Tách thô", "micron": 1 },
+    { "level": "A", "function": "Tách tinh", "micron": 0.01 }
+  ] },
+  { "model": "020", "capacityM3min": 20, "port": "2 1/2\" = DN65", "levels": [
+    { "level": "C", "function": "Tách nước", "micron": 3 },
+    { "level": "T", "function": "Tách thô", "micron": 1 },
+    { "level": "A", "function": "Tách tinh", "micron": 0.01 }
+  ] }
+]

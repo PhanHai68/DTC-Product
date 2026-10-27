@@ -80,6 +80,9 @@ import '../screens/acomp/acomp_tech_category_screen.dart';
 import '../screens/acomp/acomp_tech_detail_screen.dart';
 import '../screens/acomp/acomp_suitable_screen.dart';
 import '../screens/acomp/acomp_tank_screen.dart';
+import '../screens/acomp/acomp_oil_free_detail_screen.dart';
+import '../screens/acomp/acomp_refrigerated_dryer_screen.dart';
+import '../features/air_system_config/screens/air_config_editor_screen.dart';
 import '../screens/acomp/acomp_mccb_cable_screen.dart';
 import '../screens/acomp/acomp_pipe_screen.dart';
 import '../screens/acomp/acomp_tank_fill_time_screen.dart';
@@ -572,12 +575,26 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/acomp_refrigerated_dryer',
+      builder: (context, state) => const AcompRefrigeratedDryerScreen(),
+    ),
+    GoRoute(
+      path: '/acomp_oil_free',
+      builder: (context, state) => const AcompOilFreeDetailScreen(),
+    ),
+    GoRoute(
       path: '/acomp_suitable',
       builder: (context, state) => const AcompSuitableScreen(),
     ),
     GoRoute(
       path: '/acomp_tank',
       builder: (context, state) => const AcompTankScreen(),
+    ),
+    GoRoute(
+      path: '/air_system_config',
+      builder: (context, state) => AirConfigEditorScreen(
+        initialTab: state.uri.queryParameters['tab'] == 'room' ? 2 : 0,
+      ),
     ),
     GoRoute(
       path: '/acomp_mccb_cable',

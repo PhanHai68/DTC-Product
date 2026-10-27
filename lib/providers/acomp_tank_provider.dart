@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../core/input/localized_number.dart';
+import '../core/utils/air_tank_volume.dart';
 import '../data/product_data.dart';
 import '../models/air_tank_spec.dart';
 
 class AcompTankProvider extends ChangeNotifier {
   double _qc = 0.0; // Lưu lượng máy nén khí (m³/min)
-  double _tc = 20.0; // Thời gian chu kỳ nạp/xả (s)
-  double _deltaP = 0.5; // Độ chênh áp (bar)
-  double _t0 = 45.0; // Nhiệt độ trong bình chứa (°C)
-  double _t1 = 35.0; // Nhiệt độ tại đầu hút (°C)
+  double _tc = airTankDefaultCycleSeconds; // Thời gian chu kỳ nạp/xả (s)
+  double _deltaP = airTankDefaultDeltaPBar; // Độ chênh áp (bar)
+  double _t0 = airTankDefaultTankTempC; // Nhiệt độ trong bình chứa (°C)
+  double _t1 = airTankDefaultInletTempC; // Nhiệt độ tại đầu hút (°C)
 
   double get qc => _qc;
   double get tc => _tc;
@@ -59,13 +60,16 @@ class AcompTankProvider extends ChangeNotifier {
     return null;
   }
 
-  // V_th = (0.25 * (Q_c * 1000) * (T_0 + 273.15)) /
-  //        ((60 / t_c) * ΔP * (T_1 + 273.15)), đơn vị lít.
+  /// Dung tích lý thuyết (lít), xem [airTankTheoreticalLiters].
   double get vTh {
     if (inputError != null) return 0;
-    final numerator = 0.25 * (_qc * 1000) * (_t0 + 273.15);
-    final denominator = (60 / _tc) * _deltaP * (_t1 + 273.15);
-    return numerator / denominator;
+    return airTankTheoreticalLiters(
+      qc: _qc,
+      tc: _tc,
+      deltaP: _deltaP,
+      t0: _t0,
+      t1: _t1,
+    );
   }
 
   String? get recommendationError {

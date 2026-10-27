@@ -37,6 +37,19 @@ class AcompMenuScreen extends StatelessWidget {
           onTap: () => context.push('/acomp_tank'),
         ),
         TechnologyMenuEntry(
+          id: 'air_system_config_btn',
+          title: 'Cấu hình hệ thống khí nén',
+          icon: Icons.account_tree_outlined,
+          onTap: () => context.push('/air_system_config'),
+        ),
+        TechnologyMenuEntry(
+          id: 'air_room_layout_btn',
+          title: 'Tính toán phòng lắp đặt',
+          icon: Icons.meeting_room_outlined,
+          // Tab "Phòng lắp đặt" của Cấu hình hệ thống khí nén.
+          onTap: () => context.push('/air_system_config?tab=room'),
+        ),
+        TechnologyMenuEntry(
           id: 'acomp_mccb_btn',
           title: 'Chọn MCCB và dây điện',
           icon: Icons.electrical_services_rounded,

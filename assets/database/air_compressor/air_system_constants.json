@@ -1,0 +1,37 @@
+{
+  "purgeRates": {
+    "heatless": 0.15,
+    "heated": 0.07,
+    "blower": 0.02
+  },
+  "pressureDropsBar": {
+    "afterCooler": 0.10,
+    "waterSeparator": 0.10,
+    "desiccantDryer": 0.25,
+    "refrigeratedDryer": 0.20,
+    "coarseFilter": 0.10,
+    "fineFilter": 0.15,
+    "carbonFilter": 0.10,
+    "sterileFilter": 0.10,
+    "piping": 0.30
+  },
+  "specificPowerKwPerM3min": {
+    "pmVsd": 5.5,
+    "fixedSpeed": 5.5,
+    "fourInOne": 5.5,
+    "oilFree": 5.9,
+    "twoStage": 5.5
+  },
+  "powerPressureCorrectionPerBar": 0.06,
+  "powerReferencePressureBar": 7,
+  "motorSizesKw": [7.5, 11, 15, 18.5, 22, 30, 37, 45, 55, 75, 90, 110, 132, 160, 200, 250, 315, 355, 400],
+  "tankDesignPressureBar": [
+    { "maxWorkingBar": 8, "designBar": 10 },
+    { "maxWorkingBar": 11, "designBar": 13 },
+    { "maxWorkingBar": null, "designBar": 16 }
+  ],
+  "pressureRangeBar": [4, 16],
+  "marginOptionsPercent": [15, 20, 25, 30],
+  "refrigeratedDryerMaxPressureBar": 10,
+  "maxLines": 20
+}

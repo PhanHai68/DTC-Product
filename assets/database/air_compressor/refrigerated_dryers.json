@@ -1,0 +1,36 @@
+{
+  "groups": [
+    {
+      "workingPressure": "2–10 bar (16/20/30/40 bar đặt riêng)",
+      "dewPoint": "2–10 °C",
+      "operatingTemperature": "≤ 45 °C",
+      "voltage": "220V/50Hz/1 pha hoặc 220V/60Hz/1 pha hoặc điện áp khác",
+      "models": [
+        { "model": "ACD-1", "capacityM3min": 1.2, "maxInletTempC": 65, "refrigerant": "R134a", "matchingCompressorKw": [7.5, 11], "compressorKw": 0.5, "fanW": 80, "airOutlet": "DN25", "lengthMm": 650, "widthMm": 420, "heightMm": 620, "weightKg": 31 },
+        { "model": "ACD-2", "capacityM3min": 2.4, "maxInletTempC": 65, "refrigerant": "R134a", "matchingCompressorKw": [15], "compressorKw": 0.7, "fanW": 95, "airOutlet": "DN25", "lengthMm": 750, "widthMm": 420, "heightMm": 710, "weightKg": 38 },
+        { "model": "ACD-3", "capacityM3min": 3.6, "maxInletTempC": 65, "refrigerant": "R410a", "matchingCompressorKw": [22], "compressorKw": 0.9, "fanW": 120, "airOutlet": "DN40", "lengthMm": 800, "widthMm": 440, "heightMm": 800, "weightKg": 50 },
+        { "model": "ACD-6", "capacityM3min": 6.5, "maxInletTempC": 65, "refrigerant": "R410a", "matchingCompressorKw": [30, 37], "compressorKw": 1, "fanW": 240, "airOutlet": "DN40", "lengthMm": 930, "widthMm": 500, "heightMm": 910, "weightKg": 70 },
+        { "model": "ACD-8", "capacityM3min": 8.5, "maxInletTempC": 65, "refrigerant": "R410a", "matchingCompressorKw": [45], "compressorKw": 1.6, "fanW": 300, "airOutlet": "DN50", "lengthMm": 1000, "widthMm": 580, "heightMm": 1000, "weightKg": 87 },
+        { "model": "ACD-10", "capacityM3min": 11, "maxInletTempC": 65, "refrigerant": "R410a", "matchingCompressorKw": [55], "compressorKw": 2, "fanW": 380, "airOutlet": "DN50", "lengthMm": 1050, "widthMm": 600, "heightMm": 1030, "weightKg": 140 },
+        { "model": "ACD-13", "capacityM3min": 13.5, "maxInletTempC": 65, "refrigerant": "R410a", "matchingCompressorKw": [75], "compressorKw": 3, "fanW": 420, "airOutlet": "DN50", "lengthMm": 1280, "widthMm": 650, "heightMm": 1120, "weightKg": 167 }
+      ]
+    },
+    {
+      "workingPressure": "2–10 bar (16/20/30/40 bar đặt riêng)",
+      "dewPoint": "2–10 °C",
+      "operatingTemperature": "≤ 65 °C",
+      "voltage": "380V/50Hz/3 pha hoặc 220V/440V/60Hz/3 pha hoặc điện áp khác",
+      "models": [
+        { "model": "ACD-15", "capacityM3min": 17, "maxInletTempC": 65, "refrigerant": "R407C", "matchingCompressorKw": [90], "compressorKw": 3.1, "fanW": 480, "airOutlet": "DN50", "lengthMm": 1160, "widthMm": 700, "heightMm": 1230, "weightKg": 190 },
+        { "model": "ACD-20", "capacityM3min": 23, "maxInletTempC": 65, "refrigerant": "R407C", "matchingCompressorKw": [110], "compressorKw": 3.68, "fanW": 480, "airOutlet": "DN75", "lengthMm": 1500, "widthMm": 750, "heightMm": 1440, "weightKg": 220 },
+        { "model": "ACD-25", "capacityM3min": 25, "maxInletTempC": 65, "refrigerant": "R407C", "matchingCompressorKw": [132], "compressorKw": 4.41, "fanW": 480, "airOutlet": "DN75", "lengthMm": 1550, "widthMm": 750, "heightMm": 1600, "weightKg": 270 },
+        { "model": "ACD-30", "capacityM3min": 30, "maxInletTempC": 65, "refrigerant": "R407C", "matchingCompressorKw": [160], "compressorKw": 5.15, "fanW": 720, "airOutlet": "DN100", "lengthMm": 1770, "widthMm": 850, "heightMm": 1445, "weightKg": 360 },
+        { "model": "ACD-40", "capacityM3min": 40, "compressorKw": 6.62, "fanW": 720, "airOutlet": "DN100", "lengthMm": 1950, "widthMm": 900, "heightMm": 1560, "weightKg": 490 },
+        { "model": "ACD-50", "capacityM3min": 50, "compressorKw": 8.82, "fanW": 720, "airOutlet": "DN100", "lengthMm": 1950, "widthMm": 1050, "heightMm": 1600, "weightKg": 560 },
+        { "model": "ACD-60", "capacityM3min": 60, "compressorKw": 11.03, "fanW": 760, "airOutlet": "DN100", "lengthMm": 2200, "widthMm": 1325, "heightMm": 1585, "weightKg": 680 },
+        { "model": "ACD-80", "capacityM3min": 80, "compressorKw": 14.7, "fanW": 960, "airOutlet": "DN150", "lengthMm": 2500, "widthMm": 1325, "heightMm": 1695, "weightKg": 760 },
+        { "model": "ACD-100", "capacityM3min": 100, "compressorKw": 18.4, "fanW": 1440, "airOutlet": "DN150", "lengthMm": 2700, "widthMm": 1600, "heightMm": 2100, "weightKg": 970 }
+      ]
+    }
+  ]
+}

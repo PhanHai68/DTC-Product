@@ -5,11 +5,16 @@
 // trong main() bằng ProductData.load(rootBundle.loadString) trước khi chạy app.
 import 'dart:convert';
 
+import '../features/air_system_config/models/air_constants.dart';
+import '../features/air_system_config/room/room_constants.dart';
 import '../models/acomp_spec_model.dart';
 import '../models/acomp_vsd_compare_config.dart';
 import '../models/air_tank_spec.dart';
 import '../models/color_sorter_errors.dart';
 import '../models/material_model.dart';
+import '../models/oil_free_spec.dart';
+import '../models/line_filter_spec.dart';
+import '../models/refrigerated_dryer_spec.dart';
 import '../models/packing_machine.dart';
 
 const _colorSorterDir = 'assets/database/color_sorter';
@@ -19,8 +24,7 @@ const _packingScaleDir = 'assets/database/packing_scale';
 abstract final class ProductData {
   static const colorSorterRicePath = '$_colorSorterDir/sc_rice.json';
   static const colorSorterPaddyPath = '$_colorSorterDir/sf7_paddy.json';
-  static const colorSorterBrownRicePath =
-      '$_colorSorterDir/sf_brown_rice.json';
+  static const colorSorterBrownRicePath = '$_colorSorterDir/sf_brown_rice.json';
   static const colorSorterTeaPath = '$_colorSorterDir/df_tea.json';
   static const colorSorterMineralPath = '$_colorSorterDir/sx8_mineral.json';
   static const colorSorterAgroPath = '$_colorSorterDir/h7_agro.json';
@@ -37,6 +41,14 @@ abstract final class ProductData {
   static const acompDs8011Path = '$_airCompressorDir/ds8011.json';
   static const acompVsdComparePath = '$_airCompressorDir/vsd_compare.json';
   static const airTanksPath = '$_airCompressorDir/air_tanks.json';
+  static const oilFreeSpecsPath = '$_airCompressorDir/oil_free_specs.json';
+  static const refrigeratedDryersPath =
+      '$_airCompressorDir/refrigerated_dryers.json';
+  static const lineFiltersPath = '$_airCompressorDir/line_filters.json';
+  static const roomLayoutConstantsPath =
+      '$_airCompressorDir/room_layout_constants.json';
+  static const airSystemConstantsPath =
+      '$_airCompressorDir/air_system_constants.json';
 
   static const packingMachinesPath = '$_packingScaleDir/machines.json';
   static const packingFeaturesPath = '$_packingScaleDir/features.json';
@@ -60,6 +72,11 @@ abstract final class ProductData {
     acompDs8011Path,
     acompVsdComparePath,
     airTanksPath,
+    airSystemConstantsPath,
+    roomLayoutConstantsPath,
+    oilFreeSpecsPath,
+    refrigeratedDryersPath,
+    lineFiltersPath,
     packingMachinesPath,
     packingFeaturesPath,
   ];
@@ -162,6 +179,13 @@ abstract final class ProductData {
       for (final item in decode(airTanksPath) as List)
         AirTankSpec.fromJson(item as Map<String, dynamic>),
     ]..sort((a, b) => a.volumeLiters.compareTo(b.volumeLiters));
+    final oilFree = [
+      for (final item in decode(oilFreeSpecsPath) as List)
+        OilFreeSpec.fromJson(item as Map<String, dynamic>),
+    ];
+    final airSystemConstants = AirSystemConstants.fromJson(
+      decode(airSystemConstantsPath) as Map<String, dynamic>,
+    );
 
     final packing = [
       for (final item in decode(packingMachinesPath) as List)
@@ -201,6 +225,20 @@ abstract final class ProductData {
     _ds8011Parameters = ds8011;
     _acompVsdCompareConfig = vsdCompare;
     _airTankSpecs = List.unmodifiable(airTanks);
+    _airSystemConstants = airSystemConstants;
+    _roomLayoutConstants = RoomConstants.fromJson(
+      decode(roomLayoutConstantsPath) as Map<String, dynamic>,
+    );
+    _oilFreeSpecs = List.unmodifiable(oilFree);
+    _refrigeratedDryers = List.unmodifiable(
+      RefrigeratedDryerSpec.listFromJson(
+        decode(refrigeratedDryersPath) as Map<String, dynamic>,
+      ),
+    );
+    _lineFilters = List.unmodifiable([
+      for (final item in decode(lineFiltersPath) as List)
+        LineFilterSpec.fromJson(item as Map<String, dynamic>),
+    ]);
     _packingMachines = List.unmodifiable(packing);
     _packingFeatureSets = packingFeatures;
   }
@@ -232,8 +270,10 @@ abstract final class ProductData {
           null => spec,
           final chutes => {
             ...spec,
-            for (final MapEntry(:key, :value)
-                in _nearestByChutes(riceByChutes, chutes).entries)
+            for (final MapEntry(:key, :value) in _nearestByChutes(
+              riceByChutes,
+              chutes,
+            ).entries)
               if (_riceAirKeys.contains(key) && value.isNotEmpty) key: value,
           },
         },
@@ -279,9 +319,7 @@ abstract final class ProductData {
         .map((part) => double.tryParse(part.trim()))
         .nonNulls
         .toList();
-    final capacity = range.isEmpty
-        ? null
-        : (range.first + range.last) / 2;
+    final capacity = range.isEmpty ? null : (range.first + range.last) / 2;
     final sorterPower = paddySpec['Công suất điện (kW)'];
 
     final rows = [
@@ -297,7 +335,9 @@ abstract final class ProductData {
     var maxPower = 0.0;
     for (final row in rows) {
       final name = row['Tiêu chí'];
-      if (name == _capacityRow || name == _maxPowerRow || name == _avgPowerRow) {
+      if (name == _capacityRow ||
+          name == _maxPowerRow ||
+          name == _avgPowerRow) {
         continue;
       }
       maxPower += double.tryParse(row['Thông số'] ?? '') ?? 0;
@@ -435,6 +475,11 @@ List<Map<String, String>>? _commonErrorsOilLoss;
 List<Map<String, dynamic>>? _ds8011Parameters;
 AcompVsdCompareConfig? _acompVsdCompareConfig;
 List<AirTankSpec>? _airTankSpecs;
+AirSystemConstants? _airSystemConstants;
+RoomConstants? _roomLayoutConstants;
+List<OilFreeSpec>? _oilFreeSpecs;
+List<RefrigeratedDryerSpec>? _refrigeratedDryers;
+List<LineFilterSpec>? _lineFilters;
 List<PackingMachine>? _packingMachines;
 Map<String, List<Map<String, String>>>? _packingFeatureSets;
 
@@ -585,6 +630,26 @@ AcompVsdCompareConfig get acompVsdCompareConfig =>
 /// Bình tích khí tiêu chuẩn, dung tích tăng dần —
 /// `air_compressor/air_tanks.json`.
 List<AirTankSpec> get airTankSpecs => _loaded(_airTankSpecs);
+
+/// Hằng số cấu hình hệ thống khí nén —
+/// `air_compressor/air_system_constants.json`.
+AirSystemConstants get airSystemConstants => _loaded(_airSystemConstants);
+
+/// Hằng số tính phòng lắp đặt máy nén —
+/// `air_compressor/room_layout_constants.json`.
+RoomConstants get roomLayoutConstants => _loaded(_roomLayoutConstants);
+
+/// Máy nén khí trục vít không dầu (AFR-F, AFR-PV), theo thứ tự catalog —
+/// `air_compressor/oil_free_specs.json`.
+List<OilFreeSpec> get oilFreeSpecs => _loaded(_oilFreeSpecs);
+
+/// Máy sấy khí tác nhân lạnh ACD, lưu lượng tăng dần —
+/// `air_compressor/refrigerated_dryers.json`.
+List<RefrigeratedDryerSpec> get refrigeratedDryers =>
+    _loaded(_refrigeratedDryers);
+
+/// Lọc đường ống, theo thứ tự catalog — `air_compressor/line_filters.json`.
+List<LineFilterSpec> get lineFilters => _loaded(_lineFilters);
 
 /// Nguyên liệu và hệ số khí cho màn chọn máy nén khí theo máy tách màu —
 /// `air_compressor/materials.json`.

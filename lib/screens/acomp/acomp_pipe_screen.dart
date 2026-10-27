@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import '../../data/product_data.dart';
 import '../../core/input/localized_number.dart';
+import '../../core/utils/air_pipe_diameter.dart';
 
 class AcompPipeScreen extends StatefulWidget {
   const AcompPipeScreen({super.key});
@@ -63,21 +62,13 @@ class _AcompPipeScreenState extends State<AcompPipeScreen> {
       return;
     }
 
-    // Formula: ((1.6 * ((V/60)^1.85) * L * (10^8)) / (Δp * P_max)) ^ (1/5)
-    double vS = flow / 60.0;
-    double part1 = 1.6 * pow(vS, 1.85) * length * pow(10, 8);
-    double part2 = deltaP * pMax;
-
-    double diameter = pow(part1 / part2, 0.2).toDouble();
-
-    // Match standard pipe
-    Map<String, dynamic>? foundPipe;
-    for (var pipe in pipeStandardData) {
-      if ((pipe['mm'] as num).toDouble() >= diameter) {
-        foundPipe = pipe;
-        break;
-      }
-    }
+    final diameter = airPipeDiameterMm(
+      flow: flow,
+      lengthM: length,
+      dropBar: deltaP,
+      maxPressureBar: pMax,
+    );
+    final foundPipe = standardPipeFor(diameter, pipeStandardData);
 
     setState(() {
       calculatedDiameter = diameter;

@@ -1,0 +1,35 @@
+{
+  "clearancesMm": {
+    "compressor": { "front": 1000, "side": 800, "rear": 800 },
+    "dryer": { "front": 800, "side": 600, "rear": 600 },
+    "tank": { "front": 500, "side": 500, "rear": 500 },
+    "afterCooler": { "front": 800, "side": 600, "rear": 600 },
+    "panel": { "front": 1000, "side": 300, "rear": 0 }
+  },
+  "aisleMm": 1000,
+  "wallGapMm": 800,
+  "roundToMm": 500,
+  "headroomMm": 1000,
+  "minRoomHeightMm": 3000,
+  "filterPitchMm": 250,
+  "filterSizeMm": 160,
+  "standardSizesMm": {
+    "panel": [500, 400, 300],
+    "filter": [160, 160, 500],
+    "afterCooler": [1000, 600, 1100],
+    "desiccantDryer": [1200, 800, 1900],
+    "unknownCompressor": [1500, 1000, 1500],
+    "unknownDryer": [1000, 700, 1100]
+  },
+  "tankHeadFactor": 0.4,
+  "tankLegsMm": 300,
+  "door": { "minWidthMm": 1200, "marginMm": 200, "heightMm": 2400 },
+  "ventilation": {
+    "compressorFactor": 1.06,
+    "dryerFactor": 1.2,
+    "outsideTempC": 35,
+    "inletMaxTempC": 46,
+    "openingVelocityMs": 2.5
+  },
+  "pipe": { "lengthM": 50, "dropBar": 0.1 }
+}
