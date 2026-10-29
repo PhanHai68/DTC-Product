@@ -6,6 +6,9 @@ import '../l10n/air_strings.dart';
 import '../models/air_config.dart';
 import '../models/air_result.dart';
 import '../repositories/air_config_repository.dart';
+import '../pipe/install_kit.dart';
+import '../pipe/material_list.dart';
+import '../pipe/pipe_engine.dart';
 import '../room/room_drawing.dart';
 import '../room/room_engine.dart';
 
@@ -15,6 +18,8 @@ class AirConfigEditorController extends ChangeNotifier {
     required this._config,
     required this.engine,
     this.roomEngine,
+    this.pipeEngine,
+    this.installKits,
     this._repository,
     this.persisted = false,
     AirLang lang = AirLang.vi,
@@ -27,6 +32,12 @@ class AirConfigEditorController extends ChangeNotifier {
 
   /// Bộ tính tab "Phòng lắp đặt"; `null` thì tab không có dữ liệu.
   final RoomEngine? roomEngine;
+
+  /// Bộ bóc vật tư đường ống tab "Vật tư đường ống".
+  final PipeMaterialEngine? pipeEngine;
+
+  /// Vật tư lắp đặt cụm máy theo công suất; `null` thì không có mục này.
+  final InstallKits? installKits;
   final AirConfigRepository? _repository;
   final AirConfig _config;
   late AirResult _result;
@@ -34,6 +45,7 @@ class AirConfigEditorController extends ChangeNotifier {
   AirStrings _strings;
   AirDiagram? _diagram;
   RoomResult? _room;
+  PipeResult? _pipe;
   RoomDrawing? _roomDrawing;
   bool _dirty = false;
 
@@ -51,6 +63,18 @@ class AirConfigEditorController extends ChangeNotifier {
       _diagram ??= buildAirDiagram(_config, _result, _strings);
 
   RoomResult? get room => _room ??= roomEngine?.compute(_config, _result);
+
+  /// Vật tư đường ống (tab 4); `null` khi không có [pipeEngine].
+  PipeResult? get pipe => _pipe ??= pipeEngine?.compute(_config, _result);
+
+  /// Vật tư lắp đặt cụm máy theo công suất máy nén đã chọn; `null` khi chưa
+  /// chọn máy hoặc công suất chưa cập nhật.
+  InstallKit? get installKit =>
+      installKits?.forPowerKw(_result.compressor?.powerKw);
+
+  /// Danh sách vật tư [list] của tab "Vật tư lắp đặt", đã áp phần sửa tay.
+  List<MaterialRow> materialRows(MaterialList list) =>
+      buildMaterialRows(list, _config, kit: installKit, pipe: pipe);
 
   /// Bản vẽ mặt bằng phòng lắp đặt; `null` khi không có [roomEngine].
   RoomDrawing? get roomDrawing {
@@ -132,6 +156,7 @@ class AirConfigEditorController extends ChangeNotifier {
     _result = engine.compute(_config);
     _diagram = null;
     _room = null;
+    _pipe = null;
     _roomDrawing = null;
   }
 

@@ -12,6 +12,11 @@ import '../diagram/air_diagram_svg.dart';
 import '../l10n/air_strings.dart';
 import '../models/air_config.dart';
 import '../models/air_result.dart';
+import '../pipe/install_kit.dart';
+import '../pipe/material_list.dart';
+import '../pipe/pipe_engine.dart';
+import '../pipe/pipe_strings.dart';
+import 'air_po_excel.dart';
 
 /// Một file xuất: tên, kiểu MIME, nội dung.
 class AirExportFile {
@@ -150,6 +155,211 @@ abstract final class AirConfigExportService {
     }
     final bytes = book.encode()!;
     return AirExportFile('$base.xlsx', excelMime, Uint8List.fromList(bytes));
+  }
+
+  // ── Excel đề nghị vật tư (form PO) ───────────────────────────────────────
+
+  /// Phiếu "Đề nghị vật tư" theo form PO: thiết bị chính, vật tư lắp đặt cụm
+  /// máy, vật tư từ cụm máy đến thiết bị sử dụng khí nén, rồi van xả đáy bình
+  /// và vật tư điện khi đã tick chọn. Luôn tiếng Việt như form.
+  static AirExportFile po(
+    PoTemplate template,
+    AirConfig config,
+    AirResult result, {
+    required String base,
+    PipeResult? pipe,
+    InstallKits? kits,
+    DateTime? now,
+  }) => AirExportFile(
+    '${base}_DeNghiVatTu.xlsx',
+    excelMime,
+    buildPoWorkbook(
+      template,
+      poDocument(config, result, pipe: pipe, kits: kits, now: now),
+    ),
+  );
+
+  static PoDocument poDocument(
+    AirConfig config,
+    AirResult result, {
+    PipeResult? pipe,
+    InstallKits? kits,
+    DateTime? now,
+  }) {
+    final s = AirStrings(AirLang.vi);
+    final kw = result.compressor?.powerKw;
+    final kit = kits?.forPowerKw(kw);
+    final project = config.project.name.trim();
+    final power = kit != null
+        ? '${kit.hp}HP'
+        : kw == null
+        ? ''
+        : '${s.n2(kw)} kW';
+    String cap(String v) => v.isEmpty ? v : v[0].toUpperCase() + v.substring(1);
+
+    String? equipmentSpec(EquipmentItem e) {
+      final o = config.overrides[e.key]?.spec?.trim();
+      if (o != null && o.isNotEmpty) return o;
+      return switch (e.kind) {
+        EquipmentKind.compressor when kw != null =>
+          kit == null ? '${s.n2(kw)} kW' : '${kit.hp}HP – ${s.n0(kw)} kW',
+        EquipmentKind.tank =>
+          '${s.n2((e.params['tank'] as TankPick).volumeM3)} m³',
+        _ => null,
+      };
+    }
+
+    // Phiếu không ghi điện (có mục vật tư điện riêng), van xả tự động, bộ tách
+    // dầu – nước; máy sấy đứng ngay sau máy nén.
+    const skipped = {
+      EquipmentKind.mccb,
+      EquipmentKind.cable,
+      EquipmentKind.autoDrain,
+      EquipmentKind.oilWaterSeparator,
+    };
+    int rank(EquipmentItem e) => switch (e.kind) {
+      EquipmentKind.compressor => 0,
+      EquipmentKind.desiccantDryer || EquipmentKind.refrigeratedDryer => 1,
+      _ => 2,
+    };
+    final picked = [
+      for (final e in result.equipment)
+        if (!skipped.contains(e.kind)) e,
+    ];
+    // Sắp xếp ổn định: giữ thứ tự gốc trong cùng hạng.
+    final ordered = [
+      for (var r = 0; r <= 2; r++)
+        for (final e in picked)
+          if (rank(e) == r) e,
+    ];
+    // Lọc ghi "Bộ lọc …", bỏ phần nhóm sấy ("– nhóm sấy lạnh"…); tên sửa tay
+    // giữ nguyên.
+    String equipmentName(EquipmentItem e) {
+      final o = config.overrides[e.key]?.name?.trim();
+      if (o != null && o.isNotEmpty) return o;
+      final filter = switch (e.kind) {
+        EquipmentKind.waterSeparator => s.waterSeparator,
+        EquipmentKind.coarseFilter => s.coarseFilter,
+        EquipmentKind.fineFilter => s.fineFilter,
+        EquipmentKind.carbonFilter => s.carbon,
+        EquipmentKind.sterileFilter => s.sterile,
+        _ => null,
+      };
+      return filter == null
+          ? s.equipmentName(e)
+          : 'Bộ ${filter[0].toLowerCase()}${filter.substring(1)}';
+    }
+
+    // Cùng tên và quy cách (vd lọc tách thô của hai nhóm sấy): gộp, cộng
+    // số lượng.
+    final equipment = <PoLine>[];
+    for (final e in ordered) {
+      final line = PoLine(
+        name: equipmentName(e),
+        unit: switch (e.kind) {
+          EquipmentKind.compressor ||
+          EquipmentKind.desiccantDryer ||
+          EquipmentKind.refrigeratedDryer => 'Máy',
+          EquipmentKind.tank || EquipmentKind.extra => 'Bộ',
+          _ => 'Cái',
+        },
+        qty: e.qty,
+        spec: equipmentSpec(e),
+      );
+      final k = equipment.indexWhere(
+        (l) =>
+            l.name == line.name && l.spec == line.spec && l.unit == line.unit,
+      );
+      if (k < 0) {
+        equipment.add(line);
+      } else {
+        final old = equipment[k];
+        equipment[k] = PoLine(
+          name: old.name,
+          unit: old.unit,
+          qty: old.qty! + line.qty!,
+          spec: old.spec,
+        );
+      }
+    }
+
+    // Danh sách đã áp phần sửa tay (thêm / xoá / sửa) như trên app.
+    List<PoLine> lines(MaterialList list) => [
+      for (final r in buildMaterialRows(list, config, kit: kit, pipe: pipe))
+        PoLine(
+          code: r.code,
+          name: r.name,
+          unit: cap(r.unit),
+          qty: r.qty,
+          spec: r.spec,
+          note: r.note,
+        ),
+    ];
+    final kitLines = lines(MaterialList.kit);
+    final pipeLines = lines(MaterialList.pipe);
+
+    // Mục van xả / điện: ghi chú chung gộp dọc cột quy cách, trừ khi có dòng
+    // đã ghi quy cách (sửa tay) thì bỏ ghi chú chung để không che mất.
+    PoSection? optional(
+      InstallKitSection section,
+      MaterialList list,
+      PoBand band,
+    ) {
+      final rows = lines(list);
+      if (rows.isEmpty) return null;
+      return PoSection(
+        title: section.title,
+        band: band,
+        lines: rows,
+        note: rows.any((l) => l.spec?.isNotEmpty ?? false)
+            ? null
+            : section.note,
+      );
+    }
+
+    final sections = [
+      if (kitLines.isNotEmpty)
+        PoSection(
+          title: kit?.standard.title ?? 'VẬT TƯ LẮP ĐẶT CỤM MÁY',
+          band: PoBand.blue,
+          lines: kitLines,
+        )
+      else if (kit == null)
+        PoSection(
+          title: 'VẬT TƯ LẮP ĐẶT CỤM MÁY',
+          band: PoBand.blue,
+          numbered: false,
+          lines: [
+            PoLine(
+              name:
+                  '${s.kitNotUpdated}. ${s.kitNotUpdatedDetail(kw, [for (final k in kits?.kits ?? const <InstallKit>[]) k.hp])}',
+            ),
+          ],
+        ),
+      if (pipe != null)
+        PoSection(
+          title: 'VẬT TƯ TỪ CỤM MÁY ĐẾN THIẾT BỊ SỬ DỤNG KHÍ NÉN',
+          band: PoBand.blue,
+          numbered: pipeLines.isNotEmpty,
+          lines: pipeLines.isEmpty
+              ? [for (final w in pipe.warnings) PoLine(name: s.pipeWarning(w))]
+              : pipeLines,
+        ),
+      if (kit != null && config.pipe.drainKit)
+        ?optional(kit.drain, MaterialList.drain, PoBand.green),
+      if (kit != null && config.pipe.electricKit)
+        ?optional(kit.electric, MaterialList.electric, PoBand.yellow),
+    ];
+
+    return PoDocument(
+      projectTitle: [
+        'Vật tư lắp đặt hệ máy nén khí${power.isEmpty ? '' : ' $power'}',
+        if (project.isNotEmpty) project,
+      ].join(' – '),
+      date: DateFormat('dd/MM/yyyy').format(now ?? DateTime.now()),
+      equipment: equipment,
+      sections: sections,
+    );
   }
 
   // ── PDF ──────────────────────────────────────────────────────────────────

@@ -2,6 +2,7 @@ import '../../../data/product_data.dart';
 import '../engine/air_engine.dart';
 import '../models/air_config.dart';
 import '../models/catalog_compressor.dart';
+import '../pipe/pipe_engine.dart';
 import '../room/room_engine.dart';
 
 /// Bộ tính dùng dữ liệu đã nạp của app (model máy nén ACP/ACA và AFR, bình,
@@ -21,6 +22,10 @@ AirEngine appAirEngine() => AirEngine(
 /// Bộ tính phòng lắp đặt dùng hằng số và bảng ống của app.
 RoomEngine appRoomEngine() =>
     RoomEngine(constants: roomLayoutConstants, pipes: pipeStandardData);
+
+/// Bộ tính vật tư từ cụm máy đến thiết bị sử dụng khí nén (định mức 15 m).
+PipeMaterialEngine appPipeEngine() =>
+    PipeMaterialEngine(kit: pipeRunKit, installKits: installKits);
 
 enum AirConfigTemplate {
   food('Thực phẩm 3 line'),

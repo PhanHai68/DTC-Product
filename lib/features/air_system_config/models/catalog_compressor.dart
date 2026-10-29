@@ -14,6 +14,7 @@ class CatalogCompressor {
     this.isFourInOne = false,
     this.airTank,
     this.dimensionsMm,
+    this.outletDn,
   });
 
   factory CatalogCompressor.fromAcomp(AcompSpecModel m) => CatalogCompressor(
@@ -25,6 +26,7 @@ class CatalogCompressor {
     isFourInOne: m.isFourInOne,
     airTank: m.airTank,
     dimensionsMm: parseDimensionsMm(m.dimensions),
+    outletDn: parseDn(m.airOutlet),
   );
 
   factory CatalogCompressor.fromOilFree(OilFreeSpec s) => CatalogCompressor(
@@ -34,6 +36,7 @@ class CatalogCompressor {
     curve: [for (final e in s.flow.entries) (e.key, e.value)],
     isVsd: s.isVsd,
     dimensionsMm: parseDimensionsMm(s.dimensions),
+    outletDn: parseDn(s.airOutlet),
   );
 
   final String modelCode;
@@ -53,6 +56,9 @@ class CatalogCompressor {
 
   /// Kích thước dài × rộng × cao (mm) theo catalog; `null` khi thiếu.
   final (double, double, double)? dimensionsMm;
+
+  /// Cỡ lỗ thoát khí (DN) theo catalog, vd 50 với "DN50"; `null` khi thiếu.
+  final int? outletDn;
 
   double get maxPressure => curve.last.$1;
 
@@ -75,4 +81,10 @@ class CatalogCompressor {
       .toList();
   if (parts.length != 3 || parts.any((p) => p == null || p <= 0)) return null;
   return (parts[0]!, parts[1]!, parts[2]!);
+}
+
+/// Đọc cỡ ống "DN50" → 50; `null` khi không đúng dạng.
+int? parseDn(String? text) {
+  final m = RegExp(r'DN\s*(\d+)', caseSensitive: false).firstMatch(text ?? '');
+  return m == null ? null : int.parse(m.group(1)!);
 }

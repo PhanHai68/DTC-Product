@@ -1,0 +1,1300 @@
+{
+  "source": "docs_database/02_May_Nen_Khi/PO",
+  "kits": [
+    {
+      "hp": 30,
+      "kw": 22,
+      "title": "VẬT TƯ LẮP ĐẶT BỘ MÁY NÉN KHÍ 30HP TIÊU CHUẨN THEO SƠ ĐỒ",
+      "items": [
+        {
+          "name": "Van bi đồng DN25, PN16 ( loại tay gạt)",
+          "unit": "Cái",
+          "qty": 10,
+          "spec": "DN25,PN16"
+        },
+        {
+          "name": "Racco",
+          "unit": "Cái",
+          "qty": 14,
+          "spec": "DN25"
+        },
+        {
+          "name": "Co ren 90°",
+          "unit": "Cái",
+          "qty": 21,
+          "spec": "DN25"
+        },
+        {
+          "name": "Nối ren 2 đầu kép",
+          "unit": "Cái",
+          "qty": 33,
+          "spec": "DN25"
+        },
+        {
+          "name": "Sin làm kín Rắc-co Ø34 *3mm",
+          "unit": "Sợi",
+          "qty": 16,
+          "spec": "Ø34 *3mm"
+        },
+        {
+          "name": "Ngã chữ T",
+          "unit": "Cái",
+          "qty": 6,
+          "spec": "DN25"
+        },
+        {
+          "name": "Ống kẽm Ø34 *3.2mm*6000",
+          "unit": "Mét",
+          "qty": 15,
+          "spec": "Ø34 *3.2mm*6000mm"
+        },
+        {
+          "name": "Tê giảm ren 34/21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "DN25/15"
+        },
+        {
+          "code": "N2DRK21",
+          "name": "Nối ren 2 đầu kép 21/21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "DN15"
+        },
+        {
+          "code": "VANK2DR-21",
+          "name": "Van khóa đồng tay gạt 2 đầu ren trong 21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "Đường khí nén bảo trì"
+        },
+        {
+          "name": "V40 x3mm, dài 6m",
+          "unit": "Cây",
+          "qty": 1,
+          "spec": "Làm bát đỡ đường ống, cụm bypass"
+        },
+        {
+          "code": "SVS-MNK",
+          "name": "Súng xịt hơi + ống xoắn hơi 9m",
+          "unit": "Bộ",
+          "qty": 1,
+          "spec": "Lấy khí nén bảo trì máy"
+        },
+        {
+          "code": "CNR21-10",
+          "name": "Cút nối nhanh ren ngoài 21mm nối ống Ø10mm",
+          "unit": "Cái",
+          "qty": 4,
+          "spec": "Đồng thau Ren 21, ống Ø10"
+        },
+        {
+          "code": "CNR21-12",
+          "name": "Cút nối nhanh ren ngoài 21 nối ống Ø8mm",
+          "unit": "Cái",
+          "qty": 6,
+          "spec": "Đồng thau Ren 21, ống Ø8"
+        },
+        {
+          "code": "OHOI-8",
+          "name": "Ống mềm Ø8mm",
+          "unit": "Mét",
+          "qty": 10,
+          "spec": "Ø8"
+        },
+        {
+          "code": "OHOI-10",
+          "name": "Ống mềm Ø10mm",
+          "unit": "Mét",
+          "qty": 5,
+          "spec": "Ø10"
+        },
+        {
+          "name": "Cút Y nối nhanh ống khí nén Ф8mm",
+          "unit": "Cái",
+          "qty": 2
+        },
+        {
+          "name": "Măng song kẽm Ø34 ( nối ren trong ống 34)",
+          "unit": "Cái",
+          "qty": 2
+        },
+        {
+          "name": "Cùm U (ren M6) cố định ống 34",
+          "unit": "Cái",
+          "qty": 8
+        },
+        {
+          "name": "Cà rá kẽm ( Giảm Ø49-Ø34) Ren ngoài 49, ren trong 34",
+          "unit": "Cái",
+          "qty": 8,
+          "spec": "Do bộ lọc đường ống ren trong 49"
+        },
+        {
+          "code": "LEN_ORKN",
+          "name": "Len (cuộn tròn quấn ống ren khí nén)",
+          "unit": "Cuộn",
+          "qty": 15
+        },
+        {
+          "code": "BKN",
+          "name": "Băng keo non",
+          "unit": "Cuộn",
+          "qty": 60
+        },
+        {
+          "code": "DR-4.300",
+          "name": "Dây rút nhựa size 4x300mm",
+          "unit": "Bịch",
+          "qty": 1
+        },
+        {
+          "code": "ON21",
+          "name": "Ống nhựa Ø21mm",
+          "unit": "Mét",
+          "qty": 10
+        },
+        {
+          "code": "CNNT21",
+          "name": "Co nhựa nối ống 21 có 1 đầu ren 21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "TNO21",
+          "name": "Tê nối ống 21 có 1 đầu ren 21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "CTO21",
+          "name": "Co trơn ống Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "TNOT21",
+          "name": "Tê nối ống trơn Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "NOT21",
+          "name": "Nối ống trơn Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "C.OMG21",
+          "name": "Cùm Ômega Ø21",
+          "unit": "Cái",
+          "qty": 8
+        },
+        {
+          "code": "TKN8V",
+          "name": "Tắc kê nhựa 8 + vít",
+          "unit": "Bộ",
+          "qty": 10,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "KD-ON",
+          "name": "Keo dán ống nhựa 0.5kg",
+          "unit": "Hộp",
+          "qty": 1,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "COSON30",
+          "name": "Cọ sơn 30mm",
+          "unit": "Cái",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "DC100",
+          "name": "Đá cắt 100mm",
+          "unit": "Miếng",
+          "qty": 20,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "NHOT-MRO",
+          "name": "Nhớt máy ren ống",
+          "unit": "Lít",
+          "qty": 2,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "CLS50",
+          "name": "Con lăn sơn 50mm",
+          "unit": "Con",
+          "qty": 2,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Sơn bạc (Bạch Tuyết) 0.5Kg",
+          "unit": "Hộp",
+          "qty": 1,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Bao tay len",
+          "unit": "Đôi",
+          "qty": 15,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Giẻ lau",
+          "unit": "Kg",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Que hàn 2.5mm",
+          "unit": "Kg",
+          "qty": 2,
+          "note": "VT tiêu hao"
+        }
+      ],
+      "drain": {
+        "title": "VAN XẢ TỰ ĐỘNG ĐÁY BÌNH TÍCH KHÍ",
+        "items": [
+          {
+            "code": "VXD-MICB",
+            "name": "Van điện tử xả nước tự động Joc MIC-B (230V/15W)",
+            "unit": "Bộ",
+            "qty": 1
+          },
+          {
+            "code": "N2DRK21",
+            "name": "Nối hai đầu ren kép 21/21",
+            "unit": "Cái",
+            "qty": 2
+          },
+          {
+            "code": "COREN90-15",
+            "name": "Co ren 21",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "Dây điện 2x1.5mm²",
+            "unit": "Mét",
+            "qty": 3
+          }
+        ],
+        "note": "Đây là thiết bị khuyến nghị khách hàng gắn thêm (Nếu không sử dụng vui lòng bỏ qua phần này)."
+      },
+      "electric": {
+        "title": "VẬT TƯ ĐIỆN TẠM TÍNH",
+        "items": [
+          {
+            "name": "MCCB 3pha 63A",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "MCB - 10A cấp nguồn cho máy sấy khí",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "Dây điện cấp nguồn cho máy nén khí CV 3x25mm² + 1x10",
+            "unit": "Mét",
+            "qty": 5
+          },
+          {
+            "name": "Dây nguồn cấp điện cho máy sấy khí CV 3x2.0",
+            "unit": "Mét",
+            "qty": 8
+          }
+        ],
+        "note": "Tuỳ thuộc vào bố trí máy nén, máy sấy, cách đi dây và vị trí đặt MCCB cấp nguồn cho máy nén khí; sau khi giao và đưa máy vào vị trí mới xác định cụ thể vật tư điện."
+      }
+    },
+    {
+      "hp": 50,
+      "kw": 37,
+      "title": "VẬT TƯ LẮP ĐẶT BỘ MÁY NÉN KHÍ 50HP TIÊU CHUẨN THEO SƠ ĐỒ",
+      "items": [
+        {
+          "code": "VANBID40-16",
+          "name": "Van bi đồng DN40, PN16 ( loại tay gạt)",
+          "unit": "Cái",
+          "qty": 10,
+          "spec": "DN40,PN16"
+        },
+        {
+          "code": "RACCO-40",
+          "name": "Racco",
+          "unit": "Cái",
+          "qty": 14,
+          "spec": "DN40"
+        },
+        {
+          "code": "COREN90-40",
+          "name": "Co ren 90°",
+          "unit": "Cái",
+          "qty": 21,
+          "spec": "DN40"
+        },
+        {
+          "code": "N2DRK40",
+          "name": "Nối ren 2 đầu kép",
+          "unit": "Cái",
+          "qty": 33,
+          "spec": "DN40"
+        },
+        {
+          "name": "Sin làm kín Rắc-co Ø49 *3mm",
+          "unit": "Sợi",
+          "qty": 16,
+          "spec": "Ø49 *3mm"
+        },
+        {
+          "code": "NTRT-40",
+          "name": "Ngã chữ T",
+          "unit": "Cái",
+          "qty": 6,
+          "spec": "DN49"
+        },
+        {
+          "code": "THEPO.49*3.2*6000",
+          "name": "Ống kẽm Ø49 *3.2mm*6000",
+          "unit": "Mét",
+          "qty": 15,
+          "spec": "Ø49 *3.2mm*6000mm"
+        },
+        {
+          "name": "Tê giảm ren 49/21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "DN40/15"
+        },
+        {
+          "code": "N2DRK21",
+          "name": "Nối ren 2 đầu kép 21/21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "DN15"
+        },
+        {
+          "code": "VANK2DR-21",
+          "name": "Van khóa đồng tay gạt 2 đầu ren trong 21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "Đường khí nén bảo trì"
+        },
+        {
+          "code": "THEPV50",
+          "name": "V50 x5mm, dài 6m",
+          "unit": "Cây",
+          "qty": 1,
+          "spec": "Làm bát đỡ đường ống, cụm bypass"
+        },
+        {
+          "code": "SVS-MNK",
+          "name": "Súng xịt hơi + ống xoắn hơi 9m ( ống Ø8 )",
+          "unit": "Bộ",
+          "qty": 1,
+          "spec": "Lấy khí nén bảo trì máy"
+        },
+        {
+          "code": "CNR21-10",
+          "name": "Cút nối nhanh ren ngoài 21mm nối ống Ø10mm",
+          "unit": "Cái",
+          "qty": 6,
+          "spec": "Đồng thau Ren 21, ống Ø10"
+        },
+        {
+          "code": "CNR21-12",
+          "name": "Cút nối nhanh ren ngoài 21 nối ống Ø8mm",
+          "unit": "Cái",
+          "qty": 4,
+          "spec": "Đồng thau Ren 21, ống Ø8"
+        },
+        {
+          "code": "OHOI-8",
+          "name": "Ống mềm Ø8mm",
+          "unit": "Mét",
+          "qty": 10,
+          "spec": "Ø8"
+        },
+        {
+          "code": "OHOI-10",
+          "name": "Ống mềm Ø10mm",
+          "unit": "Mét",
+          "qty": 15,
+          "spec": "Ø10"
+        },
+        {
+          "code": "CYNOKN10",
+          "name": "Cút Y nối nhanh ống khí nén Ф10mm",
+          "unit": "Cái",
+          "qty": 2
+        },
+        {
+          "code": "MS-49",
+          "name": "Măng song kẽm Ø49 ( nối ren trong ống 49)",
+          "unit": "Cái",
+          "qty": 2
+        },
+        {
+          "name": "Cùm U (ren M8) cố định ống 49",
+          "unit": "Cái",
+          "qty": 8
+        },
+        {
+          "name": "Co giảm ren 49/34",
+          "unit": "Cái",
+          "qty": 1
+        },
+        {
+          "code": "LEN_ORKN",
+          "name": "Len (cuộn tròn quấn ống ren khí nén)",
+          "unit": "Cuộn",
+          "qty": 20
+        },
+        {
+          "code": "BKN",
+          "name": "Băng keo non",
+          "unit": "Cuộn",
+          "qty": 100
+        },
+        {
+          "code": "DR-4.300",
+          "name": "Dây rút nhựa size 4x300mm",
+          "unit": "Bịch",
+          "qty": 1
+        },
+        {
+          "code": "ON21",
+          "name": "Ống nhựa Ø21mm",
+          "unit": "Mét",
+          "qty": 10
+        },
+        {
+          "code": "CNNT21",
+          "name": "Co nhựa nối ống 21 có 1 đầu ren 21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "TNO21",
+          "name": "Tê nối ống 21 có 1 đầu ren 21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "CTO21",
+          "name": "Co trơn ống Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "TNOT21",
+          "name": "Tê nối ống trơn Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "NOT21",
+          "name": "Nối ống trơn Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "C.OMG21",
+          "name": "Cùm Ômega Ø21",
+          "unit": "Cái",
+          "qty": 8
+        },
+        {
+          "code": "TKN8V",
+          "name": "Tắc kê nhựa 8 + vít",
+          "unit": "Bộ",
+          "qty": 10,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "KD-ON",
+          "name": "Keo dán ống nhựa 0.5kg",
+          "unit": "Hộp",
+          "qty": 1,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "COSON30",
+          "name": "Cọ sơn 30mm",
+          "unit": "Cái",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "DC100",
+          "name": "Đá cắt 100mm",
+          "unit": "Miếng",
+          "qty": 20,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "NHOT-MRO",
+          "name": "Nhớt máy ren ống",
+          "unit": "Lít",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "CLS50",
+          "name": "Con lăn sơn 50mm",
+          "unit": "Con",
+          "qty": 2,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Sơn bạc (Bạch Tuyết) 0.5Kg",
+          "unit": "Hộp",
+          "qty": 2,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Bao tay len",
+          "unit": "Đôi",
+          "qty": 20,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Giẻ lau",
+          "unit": "Kg",
+          "qty": 4,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Que hàn 2.5mm",
+          "unit": "Kg",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        }
+      ],
+      "drain": {
+        "title": "VAN XẢ TỰ ĐỘNG ĐÁY BÌNH TÍCH KHÍ",
+        "items": [
+          {
+            "code": "VXD-MICB",
+            "name": "Van điện tử xả nước tự động Joc MIC-B (230V/15W)",
+            "unit": "Bộ",
+            "qty": 1
+          },
+          {
+            "code": "N2DRK21",
+            "name": "Nối hai đầu ren kép 21/21",
+            "unit": "Cái",
+            "qty": 2
+          },
+          {
+            "code": "COREN90-15",
+            "name": "Co ren 21",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "Dây điện 2x1.5mm²",
+            "unit": "Mét",
+            "qty": 3
+          }
+        ],
+        "note": "Đây là thiết bị khuyến nghị khách hàng gắn thêm (Nếu không sử dụng vui lòng bỏ qua phần này)."
+      },
+      "electric": {
+        "title": "VẬT TƯ ĐIỆN TẠM TÍNH",
+        "items": [
+          {
+            "name": "MCCB 3pha 100A",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "MCB - 10A cấp nguồn cho máy sấy khí",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "Dây điện cấp nguồn cho máy nén khí CV 3x35 + 1x16",
+            "unit": "Mét",
+            "qty": 5
+          },
+          {
+            "name": "Dây nguồn cấp điện cho máy sấy khí CV 3x2.0",
+            "unit": "Mét",
+            "qty": 8
+          }
+        ],
+        "note": "Tuỳ thuộc vào bố trí máy nén, máy sấy, cách đi dây và vị trí đặt MCCB cấp nguồn cho máy nén khí; sau khi giao và đưa máy vào vị trí mới xác định cụ thể vật tư điện."
+      }
+    },
+    {
+      "hp": 75,
+      "kw": 55,
+      "title": "VẬT TƯ LẮP ĐẶT BỘ MÁY NÉN KHÍ 75HP TIÊU CHUẨN THEO SƠ ĐỒ",
+      "items": [
+        {
+          "code": "VANBID50-16",
+          "name": "Van bi đồng DN50, PN16 ( loại tay gạt)",
+          "unit": "Cái",
+          "qty": 10,
+          "spec": "DN50,PN16"
+        },
+        {
+          "code": "RACCO-50",
+          "name": "Racco",
+          "unit": "Cái",
+          "qty": 14,
+          "spec": "DN50"
+        },
+        {
+          "code": "COREN90-50",
+          "name": "Co ren 90°",
+          "unit": "Cái",
+          "qty": 21,
+          "spec": "DN50"
+        },
+        {
+          "code": "N2DRK50",
+          "name": "Nối ren 2 đầu kép",
+          "unit": "Cái",
+          "qty": 33,
+          "spec": "DN50"
+        },
+        {
+          "code": "SRC-60",
+          "name": "Sin làm kín Rắc-co Ø60 *3mm",
+          "unit": "Sợi",
+          "qty": 16,
+          "spec": "Ø60 *3mm"
+        },
+        {
+          "code": "NTRT-50",
+          "name": "Ngã chữ T",
+          "unit": "Cái",
+          "qty": 6,
+          "spec": "DN50"
+        },
+        {
+          "code": "THEPO.60*3.2*6000",
+          "name": "Ống kẽm Ø60 *3.2mm*6000",
+          "unit": "Mét",
+          "qty": 15,
+          "spec": "Ø60 *3.2mm*6000mm"
+        },
+        {
+          "code": "TGR60-21",
+          "name": "Tê giảm ren 60/21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "DN50/15"
+        },
+        {
+          "code": "N2DRK21",
+          "name": "Nối ren 2 đầu kép 21/21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "DN15"
+        },
+        {
+          "code": "VANK2DR-21",
+          "name": "Van khóa đồng tay gạt 2 đầu ren trong 21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "Đường khí nén bảo trì"
+        },
+        {
+          "code": "THEPV50",
+          "name": "V50 x5mm, dài 6m",
+          "unit": "Cây",
+          "qty": 1,
+          "spec": "Làm bát đỡ đường ống, cụm bypass"
+        },
+        {
+          "code": "SVS-MNK",
+          "name": "Súng xịt hơi + ống xoắn hơi 9m",
+          "unit": "Bộ",
+          "qty": 1,
+          "spec": "Lấy khí nén bảo trì máy"
+        },
+        {
+          "code": "CNR21-10",
+          "name": "Cút nối nhanh ren ngoài 21mm nối ống Ø10mm",
+          "unit": "Cái",
+          "qty": 6,
+          "spec": "Đồng thau Ren 21, ống Ø10"
+        },
+        {
+          "code": "CNR21-12",
+          "name": "Cút nối nhanh ren ngoài 21 nối ống Ø12mm",
+          "unit": "Cái",
+          "qty": 4,
+          "spec": "Đồng thau Ren 21, ống Ø12"
+        },
+        {
+          "code": "OHOI-12",
+          "name": "Ống mềm Ø12mm",
+          "unit": "Mét",
+          "qty": 10,
+          "spec": "Ø12"
+        },
+        {
+          "code": "OHOI-10",
+          "name": "Ống mềm Ø10mm",
+          "unit": "Mét",
+          "qty": 15,
+          "spec": "Ø10"
+        },
+        {
+          "code": "CNR21-8",
+          "name": "Cút nối nhanh ren ngoài 21 nối ống Ø8mm",
+          "unit": "Cái",
+          "qty": 2,
+          "spec": "Đồng thau Ren 21, ống Ø8"
+        },
+        {
+          "code": "CYNOKN10",
+          "name": "Cút Y nối nhanh ống khí nén Ф10mm",
+          "unit": "Cái",
+          "qty": 2
+        },
+        {
+          "code": "MS-60",
+          "name": "Măng song kẽm Ø60 ( nối ren trong ống 60)",
+          "unit": "Cái",
+          "qty": 2
+        },
+        {
+          "code": "CUMU-RM8-O60",
+          "name": "Cùm U (ren M8) cố định ống 60",
+          "unit": "Cái",
+          "qty": 8
+        },
+        {
+          "code": "CGR60-49",
+          "name": "Co giảm ren 60/49",
+          "unit": "Cái",
+          "qty": 1
+        },
+        {
+          "code": "LEN_ORKN",
+          "name": "Len (cuộn tròn quấn ống ren khí nén)",
+          "unit": "Cuộn",
+          "qty": 20
+        },
+        {
+          "code": "BKN",
+          "name": "Băng keo non",
+          "unit": "Cuộn",
+          "qty": 120
+        },
+        {
+          "code": "DR-4.300",
+          "name": "Dây rút nhựa size 4x300mm",
+          "unit": "Bịch",
+          "qty": 1
+        },
+        {
+          "code": "ON21",
+          "name": "Ống nhựa Ø21mm",
+          "unit": "Mét",
+          "qty": 10
+        },
+        {
+          "code": "CNNT21",
+          "name": "Co nhựa nối ống 21 có 1 đầu ren 21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "TNO21",
+          "name": "Tê nối ống 21 có 1 đầu ren 21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "CTO21",
+          "name": "Co trơn ống Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "TNOT21",
+          "name": "Tê nối ống trơn Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "NOT21",
+          "name": "Nối ống trơn Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "C.OMG21",
+          "name": "Cùm Ômega Ø21",
+          "unit": "Cái",
+          "qty": 8
+        },
+        {
+          "code": "TKN8V",
+          "name": "Tắc kê nhựa 8 + vít",
+          "unit": "Bộ",
+          "qty": 10,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "KD-ON",
+          "name": "Keo dán ống nhựa 0.5kg",
+          "unit": "Hộp",
+          "qty": 1,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "COSON30",
+          "name": "Cọ sơn 30mm",
+          "unit": "Cái",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "DC100",
+          "name": "Đá cắt 100mm",
+          "unit": "Miếng",
+          "qty": 20,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "NHOT-MRO",
+          "name": "Nhớt máy ren ống",
+          "unit": "Lít",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "CLS50",
+          "name": "Con lăn sơn 50mm",
+          "unit": "Con",
+          "qty": 2,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Sơn bạc (Bạch Tuyết) 0.5Kg",
+          "unit": "Hộp",
+          "qty": 2,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Bao tay len",
+          "unit": "Đôi",
+          "qty": 20,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Giẻ lau",
+          "unit": "Kg",
+          "qty": 4,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Que hàn 2.5mm",
+          "unit": "Kg",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        }
+      ],
+      "drain": {
+        "title": "VAN XẢ TỰ ĐỘNG ĐÁY BÌNH TÍCH KHÍ",
+        "items": [
+          {
+            "code": "VXD-MICB",
+            "name": "Van điện tử xả nước tự động Joc MIC-B (230V/15W)",
+            "unit": "Bộ",
+            "qty": 1
+          },
+          {
+            "code": "N2DRK21",
+            "name": "Nối hai đầu ren kép 21/21",
+            "unit": "Cái",
+            "qty": 2
+          },
+          {
+            "code": "COREN90-15",
+            "name": "Co ren 21",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "Dây điện 2x1.5mm²",
+            "unit": "Mét",
+            "qty": 3
+          }
+        ],
+        "note": "Đây là thiết bị khuyến nghị khách hàng gắn thêm (Nếu không sử dụng vui lòng bỏ qua phần này)."
+      },
+      "electric": {
+        "title": "VẬT TƯ ĐIỆN TẠM TÍNH",
+        "items": [
+          {
+            "name": "MCCB 3pha LS 200A",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "MCB - 10A cấp nguồn cho máy sấy khí",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "Dây điện cấp nguồn cho máy nén khí CV 3x50 + 1x25",
+            "unit": "Mét",
+            "qty": 5
+          },
+          {
+            "name": "Dây nguồn cấp điện cho máy sấy khí CV 3x2.0",
+            "unit": "Mét",
+            "qty": 8
+          }
+        ],
+        "note": "Tuỳ thuộc vào bố trí máy nén, máy sấy, cách đi dây và vị trí đặt MCCB cấp nguồn cho máy nén khí; sau khi giao và đưa máy vào vị trí mới xác định cụ thể vật tư điện."
+      }
+    },
+    {
+      "hp": 100,
+      "kw": 75,
+      "title": "VẬT TƯ LẮP ĐẶT BỘ MÁY NÉN KHÍ 100HP TIÊU CHUẨN THEO SƠ ĐỒ",
+      "items": [
+        {
+          "code": "VANBID50-16",
+          "name": "Van bi đồng DN50, PN16 ( loại tay gạt)",
+          "unit": "Cái",
+          "qty": 10,
+          "spec": "DN50,PN16"
+        },
+        {
+          "code": "RACCO-50",
+          "name": "Racco",
+          "unit": "Cái",
+          "qty": 14,
+          "spec": "DN50"
+        },
+        {
+          "code": "COREN90-50",
+          "name": "Co ren 90°",
+          "unit": "Cái",
+          "qty": 21,
+          "spec": "DN50"
+        },
+        {
+          "code": "N2DRK50",
+          "name": "Nối ren 2 đầu kép",
+          "unit": "Cái",
+          "qty": 33,
+          "spec": "DN50"
+        },
+        {
+          "code": "SRC-60",
+          "name": "Sin làm kín Rắc-co Ø60 *3mm",
+          "unit": "Sợi",
+          "qty": 16,
+          "spec": "Ø60 *3mm"
+        },
+        {
+          "code": "NTRT-50",
+          "name": "Ngã chữ T",
+          "unit": "Cái",
+          "qty": 6,
+          "spec": "DN50"
+        },
+        {
+          "code": "THEPO.60*3.2*6000",
+          "name": "Ống kẽm Ø60 *3.2mm*6000",
+          "unit": "Mét",
+          "qty": 15,
+          "spec": "Ø60 *3.2mm*6000mm"
+        },
+        {
+          "code": "TGR60-21",
+          "name": "Tê giảm ren 60/21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "DN50/15"
+        },
+        {
+          "code": "N2DRK21",
+          "name": "Nối ren 2 đầu kép 21/21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "DN15"
+        },
+        {
+          "code": "VANK2DR-21",
+          "name": "Van khóa đồng tay gạt 2 đầu ren trong 21",
+          "unit": "Cái",
+          "qty": 1,
+          "spec": "Đường khí nén bảo trì"
+        },
+        {
+          "code": "THEPV50",
+          "name": "V50 x5mm, dài 6m",
+          "unit": "Cây",
+          "qty": 1,
+          "spec": "Làm bát đỡ đường ống, cụm bypass"
+        },
+        {
+          "code": "SVS-MNK",
+          "name": "Súng xịt hơi + ống xoắn hơi 9m ( ống 12 )",
+          "unit": "Bộ",
+          "qty": 1,
+          "spec": "Lấy khí nén bảo trì máy"
+        },
+        {
+          "code": "CNR21-10",
+          "name": "Cút nối nhanh ren ngoài 21mm nối ống Ø10mm",
+          "unit": "Cái",
+          "qty": 6,
+          "spec": "Đồng thau Ren 21, ống Ø10"
+        },
+        {
+          "code": "CNR21-12",
+          "name": "Cút nối nhanh ren ngoài 21 nối ống Ø12mm",
+          "unit": "Cái",
+          "qty": 4,
+          "spec": "Đồng thau Ren 21, ống Ø12"
+        },
+        {
+          "code": "OHOI-12",
+          "name": "Ống mềm Ø12mm",
+          "unit": "Mét",
+          "qty": 15,
+          "spec": "Ø12"
+        },
+        {
+          "code": "OHOI-10",
+          "name": "Ống mềm Ø10mm",
+          "unit": "Mét",
+          "qty": 15,
+          "spec": "Ø10"
+        },
+        {
+          "code": "CYNOKN10",
+          "name": "Cút Y nối nhanh ống khí nén Ф10mm",
+          "unit": "Cái",
+          "qty": 2
+        },
+        {
+          "code": "CNR21-8",
+          "name": "Cút nối nhanh ren ngoài 21 nối ống Ø8mm",
+          "unit": "Cái",
+          "qty": 2,
+          "spec": "Đồng thau Ren 21, ống Ø8"
+        },
+        {
+          "code": "MS-60",
+          "name": "Măng song kẽm Ø60 ( nối ren trong ống 60)",
+          "unit": "Cái",
+          "qty": 2
+        },
+        {
+          "code": "CUMU-RM8-O60",
+          "name": "Cùm U (ren M8) cố định ống 60",
+          "unit": "Cái",
+          "qty": 8
+        },
+        {
+          "code": "CGR60-49",
+          "name": "Co giảm ren 60/49",
+          "unit": "Cái",
+          "qty": 1
+        },
+        {
+          "code": "LEN_ORKN",
+          "name": "Len (cuộn tròn quấn ống ren khí nén)",
+          "unit": "Cuộn",
+          "qty": 20
+        },
+        {
+          "code": "BKN",
+          "name": "Băng keo non",
+          "unit": "Cuộn",
+          "qty": 120
+        },
+        {
+          "code": "DR-4.300",
+          "name": "Dây rút nhựa size 4x300mm",
+          "unit": "Bịch",
+          "qty": 1
+        },
+        {
+          "code": "ON21",
+          "name": "Ống nhựa Ø21mm",
+          "unit": "Mét",
+          "qty": 10
+        },
+        {
+          "code": "CNNT21",
+          "name": "Co nhựa nối ống 21 có 1 đầu ren 21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "TNO21",
+          "name": "Tê nối ống 21 có 1 đầu ren 21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "CTO21",
+          "name": "Co trơn ống Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "TNOT21",
+          "name": "Tê nối ống trơn Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "NOT21",
+          "name": "Nối ống trơn Ø21",
+          "unit": "Cái",
+          "qty": 4
+        },
+        {
+          "code": "C.OMG21",
+          "name": "Cùm Ômega Ø21",
+          "unit": "Cái",
+          "qty": 8
+        },
+        {
+          "code": "TKN8V",
+          "name": "Tắc kê nhựa 8 + vít",
+          "unit": "Bộ",
+          "qty": 10,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "KD-ON",
+          "name": "Keo dán ống nhựa 0.5kg",
+          "unit": "Hộp",
+          "qty": 1,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "COSON30",
+          "name": "Cọ sơn 30mm",
+          "unit": "Cái",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "DC100",
+          "name": "Đá cắt 100mm",
+          "unit": "Miếng",
+          "qty": 20,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "NHOT-MRO",
+          "name": "Nhớt máy ren ống",
+          "unit": "Lít",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        },
+        {
+          "code": "CLS50",
+          "name": "Con lăn sơn 50mm",
+          "unit": "Con",
+          "qty": 2,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Sơn bạc (Bạch Tuyết) 0.5Kg",
+          "unit": "Hộp",
+          "qty": 2,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Bao tay len",
+          "unit": "Đôi",
+          "qty": 20,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Giẻ lau",
+          "unit": "Kg",
+          "qty": 4,
+          "note": "VT tiêu hao"
+        },
+        {
+          "name": "Que hàn 2.5mm",
+          "unit": "Kg",
+          "qty": 3,
+          "note": "VT tiêu hao"
+        }
+      ],
+      "drain": {
+        "title": "VAN XẢ TỰ ĐỘNG ĐÁY BÌNH TÍCH KHÍ",
+        "items": [
+          {
+            "code": "VXD-MICB",
+            "name": "Van điện tử xả nước tự động Joc MIC-B (230V/15W)",
+            "unit": "Bộ",
+            "qty": 1
+          },
+          {
+            "code": "N2DRK21",
+            "name": "Nối hai đầu ren kép 21/21",
+            "unit": "Cái",
+            "qty": 2
+          },
+          {
+            "code": "COREN90-15",
+            "name": "Co ren 21",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "Dây điện 2x1.5mm²",
+            "unit": "Mét",
+            "qty": 3
+          }
+        ],
+        "note": "Đây là thiết bị khuyến nghị khách hàng gắn thêm (Nếu không sử dụng vui lòng bỏ qua phần này)."
+      },
+      "electric": {
+        "title": "VẬT TƯ ĐIỆN TẠM TÍNH",
+        "items": [
+          {
+            "code": "MCCB3.ABN203C.LS",
+            "name": "MCCB 3pha LS 250A ABN203C",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "MCB - 10A cấp nguồn cho máy sấy khí",
+            "unit": "Cái",
+            "qty": 1
+          },
+          {
+            "name": "Dây điện cấp nguồn cho máy nén khí CV 3x70 + 1x35",
+            "unit": "Mét",
+            "qty": 5
+          },
+          {
+            "name": "Dây nguồn cấp điện cho máy sấy khí CV 3x2.5",
+            "unit": "Mét",
+            "qty": 8
+          }
+        ],
+        "note": "Tuỳ thuộc vào bố trí máy nén, máy sấy, cách đi dây và vị trí đặt MCCB cấp nguồn cho máy nén khí; sau khi giao và đưa máy vào vị trí mới xác định cụ thể vật tư điện."
+      }
+    }
+  ]
+}

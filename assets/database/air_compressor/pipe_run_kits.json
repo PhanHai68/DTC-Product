@@ -1,0 +1,98 @@
+{
+  "source": "Bảng vật tư 15 m tuyến ống (DN50) người dùng gửi 2026-10-29; cỡ DN25 / DN40 lấy tên, mã, quy cách theo file PO 30HP / 50HP (docs_database/02_May_Nen_Khi/PO)",
+  "stepM": 15,
+  "dnByHp": { "30": 25, "50": 40, "75": 50, "100": 50 },
+  "items": [
+    {
+      "unit": "Cái",
+      "qty": 1,
+      "sizes": {
+        "25": { "name": "Van bi đồng DN25, PN16 ( loại tay gạt)", "spec": "DN25,PN16" },
+        "40": { "code": "VANBID40-16", "name": "Van bi đồng DN40, PN16 ( loại tay gạt)", "spec": "DN40,PN16" },
+        "50": { "code": "VANBID50-16", "name": "Van bi đồng DN50, PN16 ( loại tay gạt)", "spec": "DN50,PN16" }
+      }
+    },
+    {
+      "unit": "Cái",
+      "qty": 2,
+      "sizes": {
+        "25": { "name": "Racco", "spec": "DN25" },
+        "40": { "code": "RACCO-40", "name": "Racco", "spec": "DN40" },
+        "50": { "code": "RACCO-50", "name": "Racco", "spec": "DN50" }
+      }
+    },
+    {
+      "unit": "Cái",
+      "qty": 4,
+      "sizes": {
+        "25": { "name": "Co ren 90°", "spec": "DN25" },
+        "40": { "code": "COREN90-40", "name": "Co ren 90°", "spec": "DN40" },
+        "50": { "code": "COREN90-50", "name": "Co ren 90°", "spec": "DN50" }
+      }
+    },
+    {
+      "unit": "Sợi",
+      "qty": 4,
+      "sizes": {
+        "25": { "name": "Sin làm kín Rắc-co Ø34 *3mm", "spec": "Ø34 *3mm" },
+        "40": { "name": "Sin làm kín Rắc-co Ø49 *3mm", "spec": "Ø49 *3mm" },
+        "50": { "code": "SRC-60", "name": "Sin làm kín Rắc-co Ø60 *3mm", "spec": "Ø60 *3mm" }
+      }
+    },
+    {
+      "unit": "Mét",
+      "qty": 15,
+      "barM": 6,
+      "sizes": {
+        "25": { "name": "Ống kẽm Ø34 *3.2mm*6000", "spec": "Ø34 *3.2mm*6000mm" },
+        "40": { "code": "THEPO.49*3.2*6000", "name": "Ống kẽm Ø49 *3.2mm*6000", "spec": "Ø49 *3.2mm*6000mm" },
+        "50": { "code": "THEPO.60*3.2*6000", "name": "Ống kẽm Ø60 *3.2mm*6000", "spec": "Ø60 *3.2mm*6000mm" }
+      }
+    },
+    {
+      "unit": "Cây",
+      "qty": 0.5,
+      "sizes": {
+        "25": { "name": "V40 x3mm, dài 6m" },
+        "40": { "code": "THEPV50", "name": "V50 x5mm, dài 6m" },
+        "50": { "code": "THEPV50", "name": "V50 x5mm, dài 6m" }
+      }
+    },
+    {
+      "unit": "Cái",
+      "qty": 3,
+      "sizes": {
+        "25": { "name": "Măng song kẽm Ø34 ( nối ren trong ống 34)" },
+        "40": { "code": "MS-49", "name": "Măng song kẽm Ø49 ( nối ren trong ống 49)" },
+        "50": { "code": "MS-60", "name": "Măng song kẽm Ø60 ( nối ren trong ống 60)" }
+      }
+    },
+    {
+      "unit": "Cái",
+      "qty": 5,
+      "sizes": {
+        "25": { "name": "Cùm U (ren M6) cố định ống 34" },
+        "40": { "name": "Cùm U (ren M8) cố định ống 49" },
+        "50": { "code": "CUMU-RM8-O60", "name": "Cùm U (ren M8) cố định ống 60" }
+      }
+    },
+    {
+      "unit": "Cái",
+      "qty": 1,
+      "sizes": {
+        "25": { "name": "Cà rá kẽm ( Giảm Ø49-Ø34) Ren ngoài 49, ren trong 34" },
+        "40": { "name": "Co giảm ren 49/34" },
+        "50": { "code": "CGR60-49", "name": "Co giảm ren 60/49" }
+      }
+    },
+    { "code": "LEN_ORKN", "name": "Len (cuộn tròn quấn ống ren khí nén)", "unit": "Cuộn", "qty": 20, "note": "VT tiêu hao" },
+    { "code": "BKN", "name": "Băng keo non", "unit": "Cuộn", "qty": 25, "note": "VT tiêu hao" },
+    { "code": "COSON30", "name": "Cọ sơn 30mm", "unit": "Cái", "qty": 3, "note": "VT tiêu hao" },
+    { "code": "DC100", "name": "Đá cắt 100mm", "unit": "Miếng", "qty": 5, "note": "VT tiêu hao" },
+    { "code": "NHOT-MRO", "name": "Nhớt máy ren ống", "unit": "Lít", "qty": 2, "note": "VT tiêu hao" },
+    { "name": "Sơn bạc (Bạch Tuyết) 0.5Kg", "unit": "Hộp", "qty": 1, "note": "VT tiêu hao" },
+    { "name": "Bao tay len", "unit": "Đôi", "qty": 5, "note": "VT tiêu hao" },
+    { "name": "Giẻ lau", "unit": "Kg", "qty": 2, "note": "VT tiêu hao" },
+    { "name": "Que hàn 2.5mm", "unit": "Kg", "qty": 1, "note": "VT tiêu hao" }
+  ]
+}

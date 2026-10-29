@@ -368,6 +368,152 @@ class RoomConfig {
   );
 }
 
+/// Vật tư đường ống (tab "Vật tư đường ống"): tuyến thẳng từ phòng máy tới
+/// máy tách màu. `null` = dùng mặc định trong `pipe_material_constants.json`.
+class PipeConfig {
+  PipeConfig({
+    this.totalLengthM,
+    this.drainKit = false,
+    this.electricKit = false,
+    Map<String, MaterialListEdit>? edits,
+  }) : edits = edits ?? {};
+
+  /// Tổng chiều dài đường ống (m) — bắt buộc để tính vật tư (nhân theo bước
+  /// 15 m).
+  double? totalLengthM;
+
+  /// Vật tư lắp đặt cụm máy: kèm danh sách van xả tự động đáy bình tích khí
+  /// và vật tư điện tạm tính.
+  bool drainKit;
+  bool electricKit;
+
+  /// Sửa tay các danh sách vật tư của tab, theo khóa danh sách (`kit`,
+  /// `drain`, `electric`, `pipe`).
+  final Map<String, MaterialListEdit> edits;
+
+  Map<String, dynamic> toJson() => {
+    'totalLengthM': totalLengthM,
+    'drainKit': drainKit,
+    'electricKit': electricKit,
+    'edits': {
+      for (final e in edits.entries)
+        if (!e.value.isEmpty) e.key: e.value.toJson(),
+    },
+  };
+
+  factory PipeConfig.fromJson(Map<String, dynamic> j) => PipeConfig(
+    totalLengthM: _double(j['totalLengthM']),
+    drainKit: j['drainKit'] == true,
+    electricKit: j['electricKit'] == true,
+    edits: {
+      for (final e in (j['edits'] as Map<String, dynamic>? ?? {}).entries)
+        e.key: MaterialListEdit.fromJson(e.value as Map<String, dynamic>),
+    },
+  );
+}
+
+/// Sửa tay một dòng vật tư tự tính: trường `null` = giữ giá trị tự tính.
+class MaterialEdit {
+  MaterialEdit({
+    this.name,
+    this.spec,
+    this.unit,
+    this.qty,
+    this.removed = false,
+  });
+  String? name;
+  String? spec;
+  String? unit;
+  double? qty;
+
+  /// Đã xoá khỏi danh sách.
+  bool removed;
+
+  bool get isEmpty =>
+      !removed && name == null && spec == null && unit == null && qty == null;
+
+  Map<String, dynamic> toJson() => {
+    if (name != null) 'name': name,
+    if (spec != null) 'spec': spec,
+    if (unit != null) 'unit': unit,
+    if (qty != null) 'qty': qty,
+    if (removed) 'removed': true,
+  };
+
+  factory MaterialEdit.fromJson(Map<String, dynamic> j) => MaterialEdit(
+    name: j['name'] as String?,
+    spec: j['spec'] as String?,
+    unit: j['unit'] as String?,
+    qty: _double(j['qty']),
+    removed: j['removed'] == true,
+  );
+}
+
+/// Vật tư thêm tay vào một danh sách.
+class MaterialExtra {
+  MaterialExtra({
+    String? id,
+    this.name = '',
+    this.spec = '',
+    this.unit = '',
+    this.qty = 1,
+  }) : id = id ?? const Uuid().v4();
+  final String id;
+  String name;
+  String spec;
+  String unit;
+  double qty;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'spec': spec,
+    'unit': unit,
+    'qty': qty,
+  };
+
+  factory MaterialExtra.fromJson(Map<String, dynamic> j) => MaterialExtra(
+    id: j['id'] as String?,
+    name: j['name'] as String? ?? '',
+    spec: j['spec'] as String? ?? '',
+    unit: j['unit'] as String? ?? '',
+    qty: _double(j['qty']) ?? 1,
+  );
+}
+
+/// Phần sửa tay của một danh sách vật tư: sửa / xoá dòng tự tính (theo khóa
+/// dòng) và vật tư thêm tay.
+class MaterialListEdit {
+  MaterialListEdit({
+    Map<String, MaterialEdit>? rows,
+    List<MaterialExtra>? extras,
+  }) : rows = rows ?? {},
+       extras = extras ?? [];
+  final Map<String, MaterialEdit> rows;
+  final List<MaterialExtra> extras;
+
+  bool get isEmpty => rows.values.every((r) => r.isEmpty) && extras.isEmpty;
+
+  Map<String, dynamic> toJson() => {
+    'rows': {
+      for (final e in rows.entries)
+        if (!e.value.isEmpty) e.key: e.value.toJson(),
+    },
+    'extras': [for (final x in extras) x.toJson()],
+  };
+
+  factory MaterialListEdit.fromJson(Map<String, dynamic> j) => MaterialListEdit(
+    rows: {
+      for (final e in (j['rows'] as Map<String, dynamic>? ?? {}).entries)
+        e.key: MaterialEdit.fromJson(e.value as Map<String, dynamic>),
+    },
+    extras: [
+      for (final x in j['extras'] as List? ?? const [])
+        MaterialExtra.fromJson(x as Map<String, dynamic>),
+    ],
+  );
+}
+
 /// Một phép đo giữa hai điểm trên mặt bằng phòng (mm).
 class RoomMeasure {
   const RoomMeasure(this.ax, this.ay, this.bx, this.by);
@@ -439,6 +585,7 @@ class AirConfig {
     PretreatConfig? pretreat,
     AirTreatment? treatment,
     RoomConfig? room,
+    PipeConfig? pipe,
     this.regen = RegenType.heatless,
     List<AirLine>? lines,
     Map<String, EquipmentOverride>? overrides,
@@ -454,6 +601,7 @@ class AirConfig {
        pretreat = pretreat ?? PretreatConfig(),
        treatment = treatment ?? AirTreatment(),
        room = room ?? RoomConfig(),
+       pipe = pipe ?? PipeConfig(),
        lines = lines ?? [AirLine()],
        overrides = overrides ?? {},
        extraItems = extraItems ?? [],
@@ -470,6 +618,7 @@ class AirConfig {
   final PretreatConfig pretreat;
   final AirTreatment treatment;
   final RoomConfig room;
+  final PipeConfig pipe;
   RegenType regen;
   final List<AirLine> lines;
   final Map<String, EquipmentOverride> overrides;
@@ -487,6 +636,7 @@ class AirConfig {
     'pretreat': pretreat.toJson(),
     'treatment': treatment.toJson(),
     'room': room.toJson(),
+    'pipe': pipe.toJson(),
     'desiccant': {'regen': regen.name},
     'lines': [for (final l in lines) l.toJson()],
     'overrides': {
@@ -526,6 +676,7 @@ class AirConfig {
           ? AirTreatment.fromJson(map('treatment'))
           : AirTreatment.fromOldLines(oldLines),
       room: RoomConfig.fromJson(map('room')),
+      pipe: PipeConfig.fromJson(map('pipe')),
       regen: _enum(
         RegenType.values,
         map('desiccant')['regen'],

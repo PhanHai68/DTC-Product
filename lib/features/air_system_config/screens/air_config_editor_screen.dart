@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../../data/product_data.dart';
 import '../data/air_config_templates.dart';
 import '../l10n/air_strings.dart';
 import '../models/air_config.dart';
@@ -8,12 +10,15 @@ import '../providers/air_config_editor_controller.dart';
 import '../repositories/air_config_repository.dart';
 import '../services/air_config_export_service.dart';
 import '../services/air_file_saver.dart';
+import '../services/air_po_excel.dart';
 import '../widgets/air_config_form.dart';
+import '../pipe/pipe_strings.dart';
 import '../room/room_strings.dart';
 import '../widgets/air_config_results.dart';
+import '../widgets/air_pipe_view.dart';
 import '../widgets/air_room_view.dart';
 
-enum _ExportKind { pdf, png }
+enum _ExportKind { pdf, po, png }
 
 /// Màn cấu hình hệ thống khí nén: Nhập liệu | Kết quả (kèm sơ đồ) | Phòng
 /// lắp đặt.
@@ -33,7 +38,7 @@ class AirConfigEditorScreen extends StatefulWidget {
   final AirConfig? initial;
   final AirConfigRepository? repository;
 
-  /// Tab mở đầu: 0 Nhập liệu, 1 Kết quả, 2 Phòng lắp đặt.
+  /// Tab mở đầu: 0 Nhập liệu, 1 Kết quả, 2 Phòng lắp đặt, 3 Vật tư đường ống.
   final int initialTab;
 
   @override
@@ -71,6 +76,8 @@ class _AirConfigEditorScreenState extends State<AirConfigEditorScreen> {
         config: config ?? AirConfig(),
         engine: appAirEngine(),
         roomEngine: appRoomEngine(),
+        pipeEngine: appPipeEngine(),
+        installKits: installKits,
         repository: _repository,
         persisted: persisted,
       );
@@ -108,7 +115,7 @@ class _AirConfigEditorScreenState extends State<AirConfigEditorScreen> {
               if (!didPop) _confirmLeave(ctrl);
             },
             child: DefaultTabController(
-              length: 3,
+              length: 4,
               initialIndex: widget.initialTab,
               child: Scaffold(
                 appBar: AppBar(
@@ -147,6 +154,11 @@ class _AirConfigEditorScreenState extends State<AirConfigEditorScreen> {
                             s.exportPdf,
                             Icons.picture_as_pdf_outlined,
                           ),
+                          (
+                            _ExportKind.po,
+                            s.exportPo,
+                            Icons.table_chart_outlined,
+                          ),
                           (_ExportKind.png, s.exportPng, Icons.image_outlined),
                         ])
                           PopupMenuItem(
@@ -161,6 +173,14 @@ class _AirConfigEditorScreenState extends State<AirConfigEditorScreen> {
                     ),
                   ],
                   bottom: TabBar(
+                    // 4 tab: cuộn ngang trên điện thoại hẹp.
+                    isScrollable: MediaQuery.sizeOf(context).width < 600,
+                    labelPadding: MediaQuery.sizeOf(context).width < 600
+                        ? const EdgeInsets.symmetric(horizontal: 10)
+                        : null,
+                    tabAlignment: MediaQuery.sizeOf(context).width < 600
+                        ? TabAlignment.start
+                        : null,
                     tabs: [
                       Tab(text: s.tabInput),
                       Tab(
@@ -185,6 +205,7 @@ class _AirConfigEditorScreenState extends State<AirConfigEditorScreen> {
                         ),
                       ),
                       Tab(text: s.tabRoom),
+                      Tab(text: s.tabPipe),
                     ],
                   ),
                 ),
@@ -194,6 +215,7 @@ class _AirConfigEditorScreenState extends State<AirConfigEditorScreen> {
                     AirConfigForm(),
                     AirConfigResults(),
                     AirRoomView(),
+                    AirPipeView(),
                   ],
                 ),
               ),
@@ -233,6 +255,17 @@ class _AirConfigEditorScreenState extends State<AirConfigEditorScreen> {
           base,
           room: ctrl.roomDrawing,
           roomHeading: s.roomDrawingTitle,
+        ),
+        // Phiếu đề nghị vật tư theo form PO.
+        _ExportKind.po => AirConfigExportService.po(
+          await PoTemplate.load(
+            (path) async => (await rootBundle.load(path)).buffer.asUint8List(),
+          ),
+          ctrl.config,
+          ctrl.result,
+          base: base,
+          pipe: ctrl.pipe,
+          kits: ctrl.installKits,
         ),
         _ExportKind.png => await AirConfigExportService.png(ctrl.diagram, base),
       };

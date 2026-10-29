@@ -7,6 +7,8 @@ import 'dart:convert';
 
 import '../features/air_system_config/models/air_constants.dart';
 import '../features/air_system_config/room/room_constants.dart';
+import '../features/air_system_config/pipe/pipe_engine.dart';
+import '../features/air_system_config/pipe/install_kit.dart';
 import '../models/acomp_spec_model.dart';
 import '../models/acomp_vsd_compare_config.dart';
 import '../models/air_tank_spec.dart';
@@ -45,6 +47,8 @@ abstract final class ProductData {
   static const refrigeratedDryersPath =
       '$_airCompressorDir/refrigerated_dryers.json';
   static const lineFiltersPath = '$_airCompressorDir/line_filters.json';
+  static const installKitsPath = '$_airCompressorDir/install_kits.json';
+  static const pipeRunKitsPath = '$_airCompressorDir/pipe_run_kits.json';
   static const roomLayoutConstantsPath =
       '$_airCompressorDir/room_layout_constants.json';
   static const airSystemConstantsPath =
@@ -74,6 +78,8 @@ abstract final class ProductData {
     airTanksPath,
     airSystemConstantsPath,
     roomLayoutConstantsPath,
+    pipeRunKitsPath,
+    installKitsPath,
     oilFreeSpecsPath,
     refrigeratedDryersPath,
     lineFiltersPath,
@@ -226,8 +232,14 @@ abstract final class ProductData {
     _acompVsdCompareConfig = vsdCompare;
     _airTankSpecs = List.unmodifiable(airTanks);
     _airSystemConstants = airSystemConstants;
+    _pipeRunKit = PipeRunKit.fromJson(
+      decode(pipeRunKitsPath) as Map<String, dynamic>,
+    );
     _roomLayoutConstants = RoomConstants.fromJson(
       decode(roomLayoutConstantsPath) as Map<String, dynamic>,
+    );
+    _installKits = InstallKits.fromJson(
+      decode(installKitsPath) as Map<String, dynamic>,
     );
     _oilFreeSpecs = List.unmodifiable(oilFree);
     _refrigeratedDryers = List.unmodifiable(
@@ -477,6 +489,8 @@ AcompVsdCompareConfig? _acompVsdCompareConfig;
 List<AirTankSpec>? _airTankSpecs;
 AirSystemConstants? _airSystemConstants;
 RoomConstants? _roomLayoutConstants;
+PipeRunKit? _pipeRunKit;
+InstallKits? _installKits;
 List<OilFreeSpec>? _oilFreeSpecs;
 List<RefrigeratedDryerSpec>? _refrigeratedDryers;
 List<LineFilterSpec>? _lineFilters;
@@ -638,6 +652,14 @@ AirSystemConstants get airSystemConstants => _loaded(_airSystemConstants);
 /// Hằng số tính phòng lắp đặt máy nén —
 /// `air_compressor/room_layout_constants.json`.
 RoomConstants get roomLayoutConstants => _loaded(_roomLayoutConstants);
+
+/// Định mức vật tư từ cụm máy đến thiết bị sử dụng khí nén cho một bước
+/// tuyến ống (15 m) — `air_compressor/pipe_run_kits.json`.
+PipeRunKit get pipeRunKit => _loaded(_pipeRunKit);
+
+/// Vật tư lắp đặt cụm máy theo công suất máy nén —
+/// `air_compressor/install_kits.json`.
+InstallKits get installKits => _loaded(_installKits);
 
 /// Máy nén khí trục vít không dầu (AFR-F, AFR-PV), theo thứ tự catalog —
 /// `air_compressor/oil_free_specs.json`.
