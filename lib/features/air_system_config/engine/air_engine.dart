@@ -166,12 +166,9 @@ class AirEngine {
     final group = groups.single;
 
     // ── Áp suất cần = áp sử dụng + tổn áp xử lý + tuyến chính + ống ─────
-    final tankFilters = config.tank.enabled ? pre.tankFilters : 0;
     final double pretreatDrop =
         (pre.afterCooler != AfterCoolerType.none ? c.drop('afterCooler') : 0) +
-        (pre.hasWaterSeparator ? c.drop('waterSeparator') : 0) +
-        (tankFilters >= 1 ? c.drop('coarseFilter') : 0) +
-        (tankFilters >= 2 ? c.drop('fineFilter') : 0);
+        (pre.hasWaterSeparator ? c.drop('waterSeparator') : 0);
     final pressureNeed = usePressureOk
         ? round1(usePressure + drop + pretreatDrop + c.drop('piping'))
         : 0.0;
@@ -233,11 +230,9 @@ class AirEngine {
     // Hạt: lọc tốt nhất trên đường đi (vô trùng/tách tinh 0,01 µm → 1,
     // tách thô 1 µm → 2, chỉ tách nước 3 µm → 3). Dầu: máy không dầu → 0;
     // máy có dầu: than hoạt tính → 1, tách tinh → 2, không có → 4.
-    final mainCoarse = tankFilters >= 1;
-    final mainFine = tankFilters >= 2;
-    final particle = group.sterile || group.fine || mainFine
+    final particle = group.sterile || group.fine
         ? 1
-        : group.coarse || mainCoarse
+        : group.coarse
         ? 2
         : pre.hasWaterSeparator
         ? 3
@@ -246,7 +241,7 @@ class AirEngine {
         ? 0
         : group.carbon
         ? 1
-        : group.fine || mainFine
+        : group.fine
         ? 2
         : 4;
     final quality = [
@@ -261,7 +256,7 @@ class AirEngine {
     ];
 
     // ── Cảnh báo ────────────────────────────────────────────────────────
-    if (!comp.type.isOilFree && groups.any((g) => !g.fine && !mainFine)) {
+    if (!comp.type.isOilFree && groups.any((g) => !g.fine)) {
       warnings.add(
         const AirWarning(WarningLevel.caution, AirWarningCode.oilNoOilFilter),
       );
@@ -269,7 +264,6 @@ class AirEngine {
     // Máy có dầu: dầu tới thẳng hạt hút ẩm nếu không có tách tinh trước máy
     // sấy hấp thụ (tách tinh tiêu chuẩn nằm sau máy sấy).
     if (!comp.type.isOilFree &&
-        !mainFine &&
         groups.any((g) => g.kind == DryerKind.desiccant)) {
       warnings.add(
         const AirWarning(
@@ -315,7 +309,6 @@ class AirEngine {
       compressorQty: compressorQty,
       tank: tank,
       purgeRate: purgeRate,
-      tankFilters: tankFilters,
       dryerPicks: dryerPicks,
     );
 
@@ -346,8 +339,8 @@ class AirEngine {
       lineFilter: _pickLineFilter(
         math.max(flow, demand),
         water: pre.hasWaterSeparator,
-        coarse: group.coarse || tankFilters >= 1,
-        fine: group.fine || tankFilters >= 2,
+        coarse: group.coarse,
+        fine: group.fine,
       ),
       groups: groups,
       quality: quality,
@@ -583,7 +576,6 @@ class AirEngine {
     required int compressorQty,
     required TankPick? tank,
     required double purgeRate,
-    required int tankFilters,
     required Map<DryerKind, DryerPick> dryerPicks,
   }) {
     final pre = config.pretreat;
@@ -625,21 +617,6 @@ class AirEngine {
           kind: EquipmentKind.waterSeparator,
           qty: 1,
           params: {'flow': flow},
-        ),
-      // Lọc sau bình tích khí (Nâng cao): 1 = tách thô, 2 = thêm tách tinh.
-      if (tankFilters >= 1)
-        EquipmentItem(
-          key: 'tankCoarse',
-          kind: EquipmentKind.coarseFilter,
-          qty: 1,
-          params: {'flow': flow, 'afterTank': true},
-        ),
-      if (tankFilters >= 2)
-        EquipmentItem(
-          key: 'tankFine',
-          kind: EquipmentKind.fineFilter,
-          qty: 1,
-          params: {'flow': flow, 'afterTank': true},
         ),
     ];
     for (final g in groups) {
@@ -689,7 +666,6 @@ class AirEngine {
         'tank': tank != null ? 1 : 0,
         'afterCooler': pre.afterCooler != AfterCoolerType.none ? 1 : 0,
         'waterSeparator': pre.hasWaterSeparator ? 1 : 0,
-        'tankFilter': tankFilters,
         'coarseFilter': groups.where((g) => g.coarse).length,
         'fineFilter': groups.where((g) => g.fine).length,
         'refrigeratedDryer': groups

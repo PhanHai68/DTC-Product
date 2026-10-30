@@ -1,0 +1,93 @@
+{
+  "source": "Quy tắc bóc vật tư khảo sát tuyến ống khí nén — người dùng duyệt 2026-10-31. Tên, mã theo file PO (install_kits.json) và định mức đường ống (pipe_run_kits.json); cỡ không có trong PO dùng tên chung, không mã.",
+  "barLengthM": 6,
+  "reservePercent": 15,
+  "defaultConnectionHeightM": 2.5,
+  "defaultDn": 50,
+  "sizes": [15, 20, 25, 32, 40, 50, 65, 80, 100],
+  "outerDiameter": { "15": 21, "20": 27, "25": 34, "32": 42, "40": 49, "50": 60, "65": 76, "80": 90, "100": 114 },
+  "clampSpacingM": [[25, 2.0], [50, 2.5], [65, 3.0], [9999, 3.5]],
+  "tapeJointsPerRoll": [[25, 12], [50, 8], [9999, 6]],
+  "materials": [
+    {
+      "role": "pipe",
+      "unit": "Mét",
+      "generic": { "name": "Ống kẽm Ø{od} *3.2mm*6000", "spec": "Ø{od} *3.2mm*6000mm" },
+      "sizes": {
+        "25": { "name": "Ống kẽm Ø34 *3.2mm*6000", "spec": "Ø34 *3.2mm*6000mm" },
+        "40": { "code": "THEPO.49*3.2*6000", "name": "Ống kẽm Ø49 *3.2mm*6000", "spec": "Ø49 *3.2mm*6000mm" },
+        "50": { "code": "THEPO.60*3.2*6000", "name": "Ống kẽm Ø60 *3.2mm*6000", "spec": "Ø60 *3.2mm*6000mm" }
+      }
+    },
+    {
+      "role": "coupling",
+      "unit": "Cái",
+      "generic": { "name": "Nối ren 2 đầu kép", "spec": "DN{dn}" },
+      "sizes": {
+        "15": { "code": "N2DRK21", "name": "Nối ren 2 đầu kép 21/21", "spec": "DN15" },
+        "40": { "code": "N2DRK40", "name": "Nối ren 2 đầu kép", "spec": "DN40" },
+        "50": { "code": "N2DRK50", "name": "Nối ren 2 đầu kép", "spec": "DN50" }
+      }
+    },
+    {
+      "role": "elbow",
+      "unit": "Cái",
+      "generic": { "name": "Co ren 90°", "spec": "DN{dn}" },
+      "sizes": {
+        "15": { "code": "COREN90-15", "name": "Co ren 21", "spec": "DN15" },
+        "40": { "code": "COREN90-40", "name": "Co ren 90°", "spec": "DN40" },
+        "50": { "code": "COREN90-50", "name": "Co ren 90°", "spec": "DN50" }
+      }
+    },
+    {
+      "role": "tee",
+      "unit": "Cái",
+      "generic": { "name": "Ngã chữ T", "spec": "DN{dn}" },
+      "sizes": {
+        "40": { "code": "NTRT-40", "name": "Ngã chữ T", "spec": "DN40" },
+        "50": { "code": "NTRT-50", "name": "Ngã chữ T", "spec": "DN50" }
+      }
+    },
+    {
+      "role": "reducer",
+      "unit": "Cái",
+      "generic": { "name": "Co giảm ren {od}/{od2}", "spec": "DN{dn}/DN{dn2}" },
+      "sizes": {
+        "50x40": { "code": "CGR60-49", "name": "Co giảm ren 60/49", "spec": "DN50/DN40" },
+        "40x25": { "name": "Co giảm ren 49/34", "spec": "DN40/DN25" }
+      }
+    },
+    {
+      "role": "ballValve",
+      "unit": "Cái",
+      "generic": { "name": "Van bi đồng DN{dn}, PN16 ( loại tay gạt)", "spec": "DN{dn},PN16" },
+      "sizes": {
+        "15": { "code": "VANK2DR-21", "name": "Van khóa đồng tay gạt 2 đầu ren trong 21", "spec": "DN15" },
+        "40": { "code": "VANBID40-16", "name": "Van bi đồng DN40, PN16 ( loại tay gạt)", "spec": "DN40,PN16" },
+        "50": { "code": "VANBID50-16", "name": "Van bi đồng DN50, PN16 ( loại tay gạt)", "spec": "DN50,PN16" }
+      }
+    },
+    {
+      "role": "cap",
+      "unit": "Cái",
+      "generic": { "name": "Nút bịt ren", "spec": "DN{dn}" },
+      "sizes": {}
+    },
+    {
+      "role": "clamp",
+      "unit": "Cái",
+      "generic": { "name": "Cùm U cố định ống {od}", "spec": "DN{dn}" },
+      "sizes": {
+        "25": { "name": "Cùm U (ren M6) cố định ống 34", "spec": "DN25" },
+        "40": { "name": "Cùm U (ren M8) cố định ống 49", "spec": "DN40" },
+        "50": { "code": "CUMU-RM8-O60", "name": "Cùm U (ren M8) cố định ống 60", "spec": "DN50" }
+      }
+    },
+    {
+      "role": "tape",
+      "unit": "Cuộn",
+      "generic": { "code": "BKN", "name": "Băng keo non" },
+      "sizes": {}
+    }
+  ]
+}

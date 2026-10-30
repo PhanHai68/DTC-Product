@@ -60,6 +60,7 @@ class DataBackupEngine {
     'site_layout.db',
     'technical_dictionary.db',
     'air_system_config.db',
+    'pipe_survey.db',
   ];
 
   /// Bảng chứa dữ liệu người dùng tự tạo (không tính catalog nạp sẵn) — dùng
@@ -73,6 +74,7 @@ class DataBackupEngine {
     'site_layout.db': ['site_layout_projects'],
     'technical_dictionary.db': ['term_progress'],
     'air_system_config.db': ['air_configs'],
+    'pipe_survey.db': ['pipe_surveys'],
     'grinding_machines.db': [
       'grinding_selection_projects',
       'grinding_proposals',

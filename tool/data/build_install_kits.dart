@@ -165,7 +165,7 @@ Map<String, Object?> _readKit(_Book book, int hp) {
 
 /// Phần cố định của form: style (thêm 2 kiểu ô tên vật tư xuống dòng), theme,
 /// logo, bản vẽ đặt logo, cột và các dòng 1–12 (chuỗi inline, có chỗ điền
-/// `{{DATE}}`, `{{PROJECT}}`).
+/// `{{DATE}}`, `{{PROJECT}}`, thông tin người đề nghị `{{REQUESTER}}`…).
 void _writeTemplate(_Book book) {
   Directory(_templateDir).createSync(recursive: true);
   // Tên vật tư dài: căn trái, xuống dòng (form gốc không xuống dòng).
@@ -197,6 +197,8 @@ void _writeTemplate(_Book book) {
       .findAllElements('col')
       .where((c) => int.parse(c.getAttribute('min')!) <= 24);
   final rows = <String>[];
+  // Tên, địa chỉ, MST công ty (ô E1) — dùng lại cho đầu trang PDF.
+  var company = '';
   for (final row in sheet.findAllElements('row')) {
     final r = int.parse(row.getAttribute('r')!);
     if (r > 12) break;
@@ -208,9 +210,17 @@ void _writeTemplate(_Book book) {
         copy.children.remove(cell);
         continue;
       }
+      if (ref == 'E1') company = book.cellValue(cell).replaceAll('\r', '');
       final value = switch (ref) {
         'M10' => '{{PROJECT}}',
         'N2' => '{{DATE}}',
+        // Thông tin người đề nghị, nhập khi xuất file.
+        'D6' => '{{REQUESTER}}',
+        'H6' => '{{EMPLOYEE_ID}}',
+        'D8' => '{{POSITION}}',
+        'H8' => '{{DEPARTMENT}}',
+        'D10' => '{{PROJECT_CODE}}',
+        'H10' => '{{REQUEST_NO}}',
         _ => cell.getAttribute('t') == 's' ? book.cellValue(cell) : null,
       };
       if (value == null) continue;
@@ -239,6 +249,7 @@ void _writeTemplate(_Book book) {
   final head = {
     'source': '$_filePrefix${_templateHp}HP.xlsx',
     'sheetName': 'ĐỀ NGHỊ VẬT TƯ',
+    'company': company.split('\n').map((l) => _clean(l)).toList(),
     'xfItemName': count,
     'xfEquipmentName': count + 1,
     'cols': '<cols>${cols.map((c) => c.toXmlString()).join()}</cols>',

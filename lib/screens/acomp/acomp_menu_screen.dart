@@ -50,6 +50,13 @@ class AcompMenuScreen extends StatelessWidget {
           onTap: () => context.push('/air_system_config?tab=room'),
         ),
         TechnologyMenuEntry(
+          id: 'pipe_survey_btn',
+          title: 'Khảo sát tuyến ống',
+          icon: Icons.route_outlined,
+          // Vẽ tuyến ống tại công trình, bóc vật tư theo thực tế.
+          onTap: () => context.push('/pipe_survey'),
+        ),
+        TechnologyMenuEntry(
           id: 'acomp_mccb_btn',
           title: 'Chọn MCCB và dây điện',
           icon: Icons.electrical_services_rounded,

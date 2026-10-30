@@ -592,18 +592,14 @@ void main() {
     await tester.tap(find.text('Nâng cao'));
     await tester.pumpAndSettle();
     expect(find.text('After cooling'), findsOneWidget);
-    await tester.tap(find.text('Lọc sau bình tích khí'));
+    // Không còn lọc sau bình tích khí; After cooling chỉ Không dùng / Có.
+    expect(find.text('Lọc sau bình tích khí'), findsNothing);
+    await tester.tap(find.text('Không dùng'));
     await tester.pumpAndSettle();
-    expect(config.pretreat.tankFilter, isTrue);
-    expect(config.pretreat.tankFilterQty, 2);
-    await tester.tap(
-      find.descendant(
-        of: find.byKey(const ValueKey('tank_filter_qty')),
-        matching: find.text('1'),
-      ),
-    );
+    expect(find.text('Giải nhiệt nước'), findsNothing);
+    await tester.tap(find.text('Có').last);
     await tester.pumpAndSettle();
-    expect(config.pretreat.tankFilterQty, 1);
+    expect(config.pretreat.afterCooler, AfterCoolerType.air);
     expect(tester.takeException(), isNull);
   });
 

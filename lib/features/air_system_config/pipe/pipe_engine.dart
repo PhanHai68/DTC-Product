@@ -32,6 +32,8 @@ class PipeRunItem {
     this.sizes = const {},
     this.barM,
     this.note,
+    this.fixed = false,
+    this.stepM,
   });
 
   factory PipeRunItem.fromJson(Map<String, dynamic> j) => PipeRunItem(
@@ -46,6 +48,8 @@ class PipeRunItem {
     },
     barM: (j['barM'] as num?)?.toDouble(),
     note: j['note'] as String?,
+    fixed: j['fixed'] == true,
+    stepM: (j['stepM'] as num?)?.toDouble(),
   );
 
   final String unit;
@@ -60,6 +64,13 @@ class PipeRunItem {
 
   /// Ghi chú, vd "VT tiêu hao".
   final String? note;
+
+  /// Số lượng cố định, không nhân theo số bước (vd van bi đồng: luôn 1).
+  final bool fixed;
+
+  /// Bước riêng của vật tư (m): [qty] cho mỗi [stepM] mét (vd co ren 1 cái /
+  /// 6 m); `null` = bước chung của định mức.
+  final double? stepM;
 
   PipeRunVariant? variantFor(int dn) => sizes.isEmpty ? variant : sizes[dn];
 }
@@ -197,7 +208,11 @@ class PipeMaterialEngine {
     for (final (k, item) in kit.items.indexed) {
       final v = item.variantFor(dn);
       if (v == null) continue;
-      final raw = item.qty * steps;
+      // Số bước theo bước riêng của vật tư (nếu có), làm tròn lên.
+      final itemSteps = item.stepM == null
+          ? steps
+          : (length / item.stepM! - 1e-9).ceil();
+      final raw = item.fixed ? item.qty : item.qty * itemSteps;
       final bar = item.barM;
       // Ống mua nguyên cây; số lẻ (vd 0,5 cây × 3) làm tròn lên.
       final num qty = bar != null

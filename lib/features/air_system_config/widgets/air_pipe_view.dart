@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../l10n/air_strings.dart';
+import '../../../data/product_data.dart';
 import '../pipe/install_kit.dart';
+import '../pipe/material_catalog.dart';
 import '../pipe/material_list.dart';
 import '../pipe/pipe_engine.dart';
 import '../pipe/pipe_strings.dart';
 import '../providers/air_config_editor_controller.dart';
 import 'air_config_form.dart' show AirNumberField;
+import 'editable_material_table.dart';
 
 /// Tab "Vật tư lắp đặt": vật tư lắp đặt cụm máy theo công suất máy nén (kèm
 /// van xả đáy bình, vật tư điện khi tick chọn); vật tư từ cụm máy đến thiết
@@ -77,10 +79,9 @@ class _Section extends StatelessWidget {
   }
 }
 
-/// Bảng vật tư sửa được: STT, vật tư, quy cách, ĐVT, SL. Mặc định khoá để
-/// lướt không chạm nhầm; tick "Cho phép sửa" thì chạm một dòng để sửa / xoá,
-/// hiện nút thêm vật tư và khôi phục danh sách gốc.
-class _EditableBom extends StatefulWidget {
+/// Bảng vật tư sửa được của một danh sách trong tab (xem
+/// [EditableMaterialTable]); phần sửa tay lưu vào cấu hình.
+class _EditableBom extends StatelessWidget {
   const _EditableBom({
     required this.ctrl,
     required this.list,
@@ -91,315 +92,36 @@ class _EditableBom extends StatefulWidget {
   final String tableKey;
 
   @override
-  State<_EditableBom> createState() => _EditableBomState();
-}
-
-class _EditableBomState extends State<_EditableBom> {
-  bool _editing = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final ctrl = widget.ctrl;
-    final list = widget.list;
-    final tableKey = widget.tableKey;
-    final s = ctrl.strings;
-    final scheme = Theme.of(context).colorScheme;
-    final rows = ctrl.materialRows(list);
-    final edited = ctrl.config.pipe.edits[list.name] != null;
-    const bold = TextStyle(fontWeight: FontWeight.bold);
-    Widget cell(
-      String text,
-      int k, {
-      bool header = false,
-      VoidCallback? onTap,
-    }) {
-      final child = Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-        child: Text(
-          text,
-          textAlign: k == 0 || k >= 3 ? TextAlign.center : TextAlign.start,
-          style: header || k == 4 ? bold : null,
-        ),
-      );
-      return onTap == null
-          ? child
-          : TableRowInkWell(onTap: onTap, child: child);
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: FilterChip(
-              key: Key('${tableKey}_edit'),
-              avatar: _editing
-                  ? null
-                  : const Icon(Icons.edit_outlined, size: 18),
-              label: Text(s.matEditMode),
-              selected: _editing,
-              onSelected: (v) => setState(() => _editing = v),
-              visualDensity: VisualDensity.compact,
+  Widget build(BuildContext context) => EditableMaterialTable(
+    strings: ctrl.strings,
+    rows: ctrl.materialRows(list),
+    tableKey: tableKey,
+    edited: ctrl.config.pipe.edits[list.name] != null,
+    catalog: buildMaterialCatalog(kits: ctrl.installKits, run: pipeRunKit),
+    onSave: (row, d) => ctrl.edit(
+      (c) => row == null
+          ? c.addMaterial(
+              list,
+              code: d.code,
+              name: d.name,
+              spec: d.spec,
+              unit: d.unit,
+              qty: d.qty,
+            )
+          : c.saveMaterial(
+              list,
+              row,
+              code: d.code,
+              name: d.name,
+              spec: d.spec,
+              unit: d.unit,
+              qty: d.qty,
             ),
-          ),
-        ),
-        if (rows.isEmpty)
-          Text(s.matEmpty, style: TextStyle(color: scheme.onSurfaceVariant))
-        else
-          Table(
-            key: Key(tableKey),
-            border: TableBorder.all(color: scheme.outlineVariant),
-            columnWidths: const {
-              0: FixedColumnWidth(44),
-              1: FlexColumnWidth(3),
-              2: FlexColumnWidth(2),
-              3: FixedColumnWidth(48),
-              4: FixedColumnWidth(44),
-            },
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            children: [
-              TableRow(
-                decoration: BoxDecoration(color: scheme.secondaryContainer),
-                children: [
-                  for (final (k, t) in [
-                    s.pipeColNo,
-                    s.pipeColName,
-                    s.pipeColSpec,
-                    s.pipeColUnit,
-                    s.pipeColQty,
-                  ].indexed)
-                    cell(t, k, header: true),
-                ],
-              ),
-              for (final (k, r) in rows.indexed)
-                TableRow(
-                  key: ValueKey('${tableKey}_${r.key}'),
-                  // Dòng sửa / thêm tay tô vàng nhạt.
-                  decoration: r.isEdited || r.isExtra
-                      ? const BoxDecoration(color: Color(0xFFFFF7D6))
-                      : null,
-                  children: [
-                    for (final (c, t) in [
-                      '${k + 1}',
-                      r.name,
-                      (r.spec?.isNotEmpty ?? false) ? r.spec! : r.note ?? '—',
-                      r.unit,
-                      s.kitQty(r.qty),
-                    ].indexed)
-                      cell(
-                        t,
-                        c,
-                        onTap: _editing
-                            ? () => _editMaterial(context, ctrl, list, r)
-                            : null,
-                      ),
-                  ],
-                ),
-            ],
-          ),
-        if (_editing)
-          Wrap(
-            spacing: 4,
-            children: [
-              TextButton.icon(
-                key: Key('${tableKey}_add'),
-                onPressed: () => _editMaterial(context, ctrl, list, null),
-                icon: const Icon(Icons.add_rounded, size: 18),
-                label: Text(s.matAdd),
-              ),
-              if (edited)
-                TextButton.icon(
-                  key: Key('${tableKey}_reset'),
-                  onPressed: () => ctrl.edit((c) => c.resetMaterialList(list)),
-                  icon: const Icon(Icons.restore_rounded, size: 18),
-                  label: Text(s.matResetList),
-                ),
-            ],
-          ),
-      ],
-    );
-  }
-}
-
-/// Mở hộp sửa [row] (hoặc thêm mới khi `null`) rồi ghi vào cấu hình.
-Future<void> _editMaterial(
-  BuildContext context,
-  AirConfigEditorController ctrl,
-  MaterialList list,
-  MaterialRow? row,
-) async {
-  final result = await showDialog<_MaterialAction>(
-    context: context,
-    builder: (_) => _MaterialDialog(strings: ctrl.strings, row: row),
+    ),
+    onDelete: (row) => ctrl.edit((c) => c.removeMaterial(list, row)),
+    onReset: (row) => ctrl.edit((c) => c.resetMaterial(list, row)),
+    onResetList: () => ctrl.edit((c) => c.resetMaterialList(list)),
   );
-  switch (result) {
-    case null:
-      return;
-    case _MaterialSave(:final name, :final spec, :final unit, :final qty):
-      ctrl.edit(
-        (c) => row == null
-            ? c.addMaterial(list, name: name, spec: spec, unit: unit, qty: qty)
-            : c.saveMaterial(
-                list,
-                row,
-                name: name,
-                spec: spec,
-                unit: unit,
-                qty: qty,
-              ),
-      );
-    case _MaterialDelete():
-      ctrl.edit((c) => c.removeMaterial(list, row!));
-    case _MaterialReset():
-      ctrl.edit((c) => c.resetMaterial(list, row!));
-  }
-}
-
-sealed class _MaterialAction {
-  const _MaterialAction();
-}
-
-class _MaterialSave extends _MaterialAction {
-  const _MaterialSave(this.name, this.spec, this.unit, this.qty);
-  final String name;
-  final String spec;
-  final String unit;
-  final double qty;
-}
-
-class _MaterialDelete extends _MaterialAction {
-  const _MaterialDelete();
-}
-
-class _MaterialReset extends _MaterialAction {
-  const _MaterialReset();
-}
-
-class _MaterialDialog extends StatefulWidget {
-  const _MaterialDialog({required this.strings, this.row});
-  final AirStrings strings;
-  final MaterialRow? row;
-
-  @override
-  State<_MaterialDialog> createState() => _MaterialDialogState();
-}
-
-class _MaterialDialogState extends State<_MaterialDialog> {
-  late final _name = TextEditingController(text: widget.row?.name);
-  late final _spec = TextEditingController(text: widget.row?.spec);
-  late final _unit = TextEditingController(text: widget.row?.unit);
-  late final _qty = TextEditingController(
-    text: widget.row == null ? '1' : widget.strings.kitQty(widget.row!.qty),
-  );
-  String? _nameError;
-  String? _qtyError;
-
-  @override
-  void dispose() {
-    for (final c in [_name, _spec, _unit, _qty]) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  void _save() {
-    final s = widget.strings;
-    final name = _name.text.trim();
-    // Nhận cả "1,5" và "1.5".
-    final qty = double.tryParse(_qty.text.trim().replaceAll(',', '.'));
-    setState(() {
-      _nameError = name.isEmpty ? s.matNameRequired : null;
-      _qtyError = qty == null || qty <= 0 ? s.matQtyInvalid : null;
-    });
-    if (_nameError != null || _qtyError != null) return;
-    Navigator.pop(
-      context,
-      _MaterialSave(name, _spec.text.trim(), _unit.text.trim(), qty!),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final s = widget.strings;
-    final row = widget.row;
-    Widget field(
-      String key,
-      TextEditingController c,
-      String label, {
-      String? error,
-      TextInputType? type,
-    }) => Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: TextField(
-        key: Key('material_$key'),
-        controller: c,
-        keyboardType: type,
-        decoration: InputDecoration(
-          labelText: label,
-          errorText: error,
-          border: const OutlineInputBorder(),
-          isDense: true,
-        ),
-      ),
-    );
-
-    return AlertDialog(
-      title: Text(row == null ? s.matAdd : s.matEdit),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            field('name', _name, s.pipeColName, error: _nameError),
-            field('spec', _spec, s.pipeColSpec),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: field('unit', _unit, s.pipeColUnit)),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: field(
-                    'qty',
-                    _qty,
-                    s.matQty,
-                    error: _qtyError,
-                    type: const TextInputType.numberWithOptions(decimal: true),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        if (row != null)
-          TextButton(
-            key: const Key('material_delete'),
-            onPressed: () => Navigator.pop(context, const _MaterialDelete()),
-            style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFFDC2626),
-            ),
-            child: Text(s.matDelete),
-          ),
-        if (row != null && row.isEdited)
-          TextButton(
-            key: const Key('material_reset'),
-            onPressed: () => Navigator.pop(context, const _MaterialReset()),
-            child: Text(s.matReset),
-          ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(s.matCancel),
-        ),
-        FilledButton(
-          key: const Key('material_save'),
-          onPressed: _save,
-          child: Text(s.matSave),
-        ),
-      ],
-    );
-  }
 }
 
 /// Vật tư lắp đặt cụm máy theo công suất máy nén; tick để thêm van xả tự
@@ -452,7 +174,6 @@ class _KitCard extends StatelessWidget {
       title: s.kitTitle,
       icon: Icons.inventory_2_outlined,
       children: [
-        note(s.matEditHint),
         if (kit == null) ...[
           Container(
             key: const Key('kit_not_updated'),
@@ -486,7 +207,6 @@ class _KitCard extends StatelessWidget {
             tableKey: 'kit_table',
           ),
         ] else ...[
-          note(s.kitFor(kit, pick?.model?.modelCode ?? pick?.manualName)),
           if (ctrl.result.compressorQty > 1)
             note(s.kitUnitsNote(ctrl.result.compressorQty)),
           _EditableBom(
@@ -526,16 +246,10 @@ class _PipeInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = ctrl.strings;
     final p = ctrl.config.pipe;
-    final scheme = Theme.of(context).colorScheme;
     return _Section(
       title: s.pipeInputTitle,
       icon: Icons.plumbing_rounded,
       children: [
-        Text(
-          s.pipeInputHint(result),
-          style: TextStyle(color: scheme.onSurfaceVariant),
-        ),
-        const SizedBox(height: 12),
         AirNumberField(
           key: ValueKey('pipe_length_${ctrl.lang.name}'),
           label: s.pipeLength,
@@ -612,7 +326,6 @@ class _PipeTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = ctrl.strings;
-    final scheme = Theme.of(context).colorScheme;
     return _Section(
       title: s.pipeTableTitle,
       icon: Icons.list_alt_rounded,
@@ -622,13 +335,6 @@ class _PipeTable extends StatelessWidget {
           list: MaterialList.pipe,
           tableKey: 'pipe_bom_table',
         ),
-        if (result.items.isNotEmpty) ...[
-          const SizedBox(height: 6),
-          Text(
-            s.pipeNote(result),
-            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12.5),
-          ),
-        ],
       ],
     );
   }

@@ -1,0 +1,238 @@
+[
+  {
+    "category": "Mã cảnh báo trên màn hình",
+    "note": "Khi có cảnh báo, màn hình hiện luân phiên nhiệt độ và mã cảnh báo (Axx). Muốn xoá cảnh báo phải tắt rồi cấp điện lại cho bộ điều khiển.",
+    "items": [
+      {
+        "code": "A11",
+        "value": "Tín hiệu từ ngõ vào cảnh báo ngoài S1 (cọc 4–5) — xem cài đặt F50",
+        "description": "Cảnh báo ngoài"
+      },
+      {
+        "code": "A21",
+        "value": "Cảm biến điểm sương T1 đứt dây hoặc chập: nhiệt độ điểm sương hiện “OPE” (hở mạch) hoặc “SHr” (chập)",
+        "description": "Lỗi cảm biến nhiệt độ điểm sương"
+      },
+      {
+        "code": "A22",
+        "value": "Cảm biến dàn ngưng T2 đứt dây hoặc chập: nhấn ▼ sẽ hiện “SHr” hoặc “OPE”",
+        "description": "Lỗi cảm biến nhiệt độ dàn ngưng"
+      },
+      {
+        "code": "A31",
+        "value": "Điểm sương cao hơn giá trị cài F11; dừng máy hay chỉ báo theo F51. Không báo trong 5 phút đầu sau khi lốc nén khởi động",
+        "description": "Nhiệt độ điểm sương cao"
+      },
+      {
+        "code": "A32",
+        "value": "Nhiệt độ dàn ngưng cao hơn giá trị cài F12; dừng máy hay chỉ báo theo F52",
+        "description": "Nhiệt độ dàn ngưng cao"
+      }
+    ]
+  },
+  {
+    "category": "Thao tác phím và đèn báo",
+    "items": [
+      {
+        "code": "M",
+        "value": "Giữ phím M 5 giây. Nếu đã đặt mật khẩu, màn hình hiện “PAS”: dùng ▲ ▼ nhập mật khẩu, đúng thì hiện mã tham số",
+        "description": "Vào cài đặt tham số"
+      },
+      {
+        "code": "▼",
+        "value": "Màn hình mặc định hiện nhiệt độ điểm sương; nhấn ▼ để xem nhiệt độ dàn ngưng, nhấn lại để quay về",
+        "description": "Xem nhiệt độ dàn ngưng"
+      },
+      {
+        "code": "▲▼",
+        "value": "Nhấn đồng thời ▲ và ▼; đơn vị: giờ",
+        "description": "Xem tổng giờ chạy lốc nén"
+      },
+      {
+        "code": "❄",
+        "value": "Sáng: đang làm lạnh · Nhấp nháy: chờ khởi động lốc nén (trễ bảo vệ F21)",
+        "description": "Đèn làm lạnh"
+      },
+      {
+        "code": "Quạt",
+        "value": "Sáng: quạt dàn ngưng đang chạy",
+        "description": "Đèn quạt"
+      },
+      {
+        "code": "Xả đá",
+        "value": "Sáng: đang xả đá (chống đóng băng)",
+        "description": "Đèn xả đá"
+      },
+      {
+        "code": "Báo",
+        "value": "Nhấp nháy: đang có cảnh báo",
+        "description": "Đèn cảnh báo"
+      }
+    ]
+  },
+  {
+    "category": "Cài đặt cảnh báo nhiệt độ",
+    "items": [
+      {
+        "code": "F11",
+        "value": "10 – 45 ⁰C (Mặc định: 20 ⁰C) — báo khi điểm sương cao hơn giá trị cài",
+        "description": "Ngưỡng cảnh báo nhiệt độ điểm sương"
+      },
+      {
+        "code": "F12",
+        "value": "42 – 70 ⁰C (Mặc định: 65 ⁰C) — báo khi nhiệt độ dàn ngưng cao hơn giá trị cài",
+        "description": "Ngưỡng cảnh báo nhiệt độ dàn ngưng"
+      },
+      {
+        "code": "F18",
+        "value": "-20.0 ~ 20.0 ⁰C (Mặc định: 0.0 ⁰C)",
+        "description": "Hiệu chỉnh sai số cảm biến điểm sương"
+      },
+      {
+        "code": "F19",
+        "value": "-20.0 ~ 20.0 ⁰C (Mặc định: 0.0 ⁰C)",
+        "description": "Hiệu chỉnh sai số cảm biến dàn ngưng"
+      }
+    ]
+  },
+  {
+    "category": "Cài đặt lốc nén",
+    "items": [
+      {
+        "code": "F21",
+        "value": "0.0 – 10.0 phút (Mặc định: 1.0 phút) — sau khi cấp điện, lốc nén chờ hết thời gian này mới chạy (đèn làm lạnh nhấp nháy)",
+        "description": "Thời gian trễ khởi động lốc nén (bảo vệ lốc)"
+      }
+    ]
+  },
+  {
+    "category": "Cài đặt quạt và chống đóng băng",
+    "items": [
+      {
+        "code": "F31",
+        "value": "-5.0 – 10.0 ⁰C (Mặc định: 2.0 ⁰C) — bắt đầu khi điểm sương thấp hơn giá trị cài",
+        "description": "Nhiệt độ bắt đầu chống đóng băng"
+      },
+      {
+        "code": "F32",
+        "value": "1 – 5 ⁰C (Mặc định: 2.0 ⁰C) — dừng khi điểm sương cao hơn F31 + F32",
+        "description": "Chênh lệch dừng chống đóng băng"
+      },
+      {
+        "code": "F41",
+        "value": "OFF, 1 – 3 (Mặc định: 1) — OFF: tắt quạt; 1: quạt chạy theo nhiệt độ dàn ngưng; 2: quạt chạy cùng lốc nén; 3: dùng làm ngõ ra chống đóng băng",
+        "description": "Chế độ ngõ ra thứ hai (quạt)"
+      },
+      {
+        "code": "F42",
+        "value": "32 – 55 ⁰C (Mặc định: 42 ⁰C) — quạt bật khi nhiệt độ dàn ngưng từ giá trị cài trở lên",
+        "description": "Nhiệt độ bật quạt"
+      },
+      {
+        "code": "F43",
+        "value": "0.5 – 10.0 ⁰C (Mặc định: 2.0 ⁰C) — quạt tắt khi nhiệt độ dàn ngưng thấp hơn F42 − F43. Cảm biến dàn ngưng lỗi: quạt chạy theo lốc nén",
+        "description": "Chênh lệch tắt quạt"
+      }
+    ]
+  },
+  {
+    "category": "Cài đặt cảnh báo",
+    "items": [
+      {
+        "code": "F50",
+        "value": "0 – 4 (Mặc định: 0) — 0: không dùng; 1: thường mở, không khóa; 2: thường mở, có khóa; 3: thường đóng, không khóa; 4: thường đóng, có khóa. Khi báo: dừng lốc nén và quạt; “có khóa”: tín hiệu trở lại bình thường vẫn giữ cảnh báo, nhấn phím bất kỳ để xoá",
+        "description": "Chế độ cảnh báo ngoài (S1)"
+      },
+      {
+        "code": "F51",
+        "value": "0 – 1 (Mặc định: 1) — 0: chỉ báo, không dừng máy; 1: báo và dừng máy",
+        "description": "Xử lý khi cảnh báo nhiệt độ điểm sương"
+      },
+      {
+        "code": "F52",
+        "value": "0 – 1 (Mặc định: 1) — 0: chỉ báo, không dừng máy; 1: báo và dừng máy",
+        "description": "Xử lý khi cảnh báo nhiệt độ dàn ngưng"
+      }
+    ]
+  },
+  {
+    "category": "Cài đặt hệ thống",
+    "items": [
+      {
+        "code": "F80",
+        "value": "OFF, 0001 – 9999 (Mặc định: OFF) — OFF: không mật khẩu; nhập 0000 để xoá mật khẩu. Quên mật khẩu sẽ không vào được cài đặt",
+        "description": "Mật khẩu cài đặt"
+      },
+      {
+        "code": "F83",
+        "value": "YES – NO (Mặc định: YES)",
+        "description": "Nhớ trạng thái chạy / dừng khi mất điện"
+      },
+      {
+        "code": "F85",
+        "value": "Chỉ xem, đơn vị: giờ",
+        "description": "Tổng giờ chạy lốc nén"
+      },
+      {
+        "code": "F86",
+        "value": "NO – YES (Mặc định: NO) — YES: xoá tổng giờ chạy về 0",
+        "description": "Xoá tổng giờ chạy lốc nén"
+      },
+      {
+        "code": "F99",
+        "value": "Đóng lần lượt tất cả rơ-le để kiểm tra — không dùng khi máy đang chạy!",
+        "description": "Tự kiểm tra"
+      },
+      {
+        "code": "End",
+        "value": "Thoát khỏi chế độ cài đặt",
+        "description": "Thoát"
+      }
+    ]
+  },
+  {
+    "category": "Thông số kỹ thuật và đấu dây",
+    "items": [
+      {
+        "code": "Nguồn",
+        "value": "220V ±10% (theo nhãn sản phẩm), cọc 11–12",
+        "description": "Điện áp nguồn"
+      },
+      {
+        "code": "T1",
+        "value": "Cọc 1–2; cảm biến NTC R25 = 5 kΩ, B(25/50) = 3470K (dùng cảm biến của hãng)",
+        "description": "Cảm biến nhiệt độ điểm sương"
+      },
+      {
+        "code": "T2",
+        "value": "Cọc 2–3 (chung cọc 2 với T1)",
+        "description": "Cảm biến nhiệt độ dàn ngưng"
+      },
+      {
+        "code": "S1",
+        "value": "Cọc 4–5, tiếp điểm khô; chế độ cài ở F50",
+        "description": "Tín hiệu cảnh báo ngoài"
+      },
+      {
+        "code": "Lốc",
+        "value": "Cọc 6–7, rơ-le 20A / 250VAC. Lốc nén trên 1,5HP phải điều khiển qua khởi động từ (contactor)",
+        "description": "Ngõ ra lốc nén"
+      },
+      {
+        "code": "Quạt",
+        "value": "Cọc 8, rơ-le 8A / 250VAC; quạt không quá 200W",
+        "description": "Ngõ ra quạt"
+      },
+      {
+        "code": "L",
+        "value": "Cọc 9–10 nối dây L cấp cho tiếp điểm rơ-le; lốc nén và quạt về dây N",
+        "description": "Dây pha cho ngõ ra"
+      },
+      {
+        "code": "Dải",
+        "value": "-20 ~ 100 ⁰C, độ phân giải 0.1 ⁰C",
+        "description": "Dải hiển thị nhiệt độ"
+      }
+    ]
+  }
+]

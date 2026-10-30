@@ -7,6 +7,7 @@ import '../../providers/settings_provider.dart';
 import '../../services/daily_goal_notification_service.dart';
 import '../../services/note_notification_service.dart';
 import '../air_system_config/data/air_config_database.dart';
+import '../pipe_survey/data/pipe_survey_database.dart';
 import '../auth/services/auth_service.dart';
 import '../factory_location/data/factory_location_database.dart';
 import '../fault_bank/data/fault_bank_database.dart';
@@ -49,6 +50,7 @@ class DataBackupService {
     await SiteLayoutDatabase.instance.close();
     await TechnicalDictionaryDatabase.instance.close();
     await AirConfigDatabase.instance.close();
+    await PipeSurveyDatabase.instance.close();
   }
 
   static Future<(String, int)> _appVersion() async {

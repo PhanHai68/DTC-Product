@@ -108,7 +108,7 @@ List<MaterialRow> applyMaterialEdits(
       rows.add(
         MaterialRow(
           key: a.key,
-          code: a.code,
+          code: e.code == null ? a.code : text(e.code),
           name: e.name ?? a.name,
           spec: e.spec == null ? a.spec : text(e.spec),
           unit: e.unit ?? a.unit,
@@ -124,6 +124,7 @@ List<MaterialRow> applyMaterialEdits(
     for (final x in edit?.extras ?? const <MaterialExtra>[])
       MaterialRow(
         key: 'extra:${x.id}',
+        code: text(x.code),
         name: x.name,
         spec: text(x.spec),
         unit: x.unit,
@@ -144,23 +145,25 @@ List<MaterialRow> buildMaterialRows(
   config.pipe.edits[list.name],
 );
 
-/// Sửa danh sách vật tư [list] của [config] (gọi trong `ctrl.edit`).
-extension MaterialEditing on AirConfig {
-  MaterialListEdit _list(MaterialList list) =>
-      pipe.edits.putIfAbsent(list.name, MaterialListEdit.new);
+/// Sửa tay các danh sách vật tư theo khóa danh sách — dùng chung cho Cấu
+/// hình hệ thống khí nén (`PipeConfig.edits`) và Khảo sát tuyến ống.
+extension MaterialEdits on Map<String, MaterialListEdit> {
+  MaterialListEdit _list(String list) =>
+      putIfAbsent(list, MaterialListEdit.new);
 
-  void _tidy(MaterialList list) {
-    final e = pipe.edits[list.name];
+  void _tidy(String list) {
+    final e = this[list];
     if (e == null) return;
     e.rows.removeWhere((_, r) => r.isEmpty);
-    if (e.isEmpty) pipe.edits.remove(list.name);
+    if (e.isEmpty) remove(list);
   }
 
   /// Lưu giá trị mới của [row]; trường bằng giá trị tự tính thì không lưu
-  /// (để vẫn tự tính lại theo cấu hình).
+  /// (để vẫn tự tính lại theo dữ liệu).
   void saveMaterial(
-    MaterialList list,
+    String list,
     MaterialRow row, {
+    String code = '',
     required String name,
     required String spec,
     required String unit,
@@ -170,6 +173,7 @@ extension MaterialEditing on AirConfig {
     if (row.extraId case final id?) {
       final x = e.extras.firstWhere((x) => x.id == id);
       x
+        ..code = code
         ..name = name
         ..spec = spec
         ..unit = unit
@@ -177,6 +181,7 @@ extension MaterialEditing on AirConfig {
     } else {
       final a = row.auto;
       e.rows[row.key] = MaterialEdit(
+        code: code == (a.code ?? '') ? null : code,
         name: name == a.name ? null : name,
         spec: spec == (a.spec ?? '') ? null : spec,
         unit: unit == a.unit ? null : unit,
@@ -186,7 +191,7 @@ extension MaterialEditing on AirConfig {
     _tidy(list);
   }
 
-  void removeMaterial(MaterialList list, MaterialRow row) {
+  void removeMaterial(String list, MaterialRow row) {
     final e = _list(list);
     if (row.extraId case final id?) {
       e.extras.removeWhere((x) => x.id == id);
@@ -197,21 +202,68 @@ extension MaterialEditing on AirConfig {
   }
 
   /// Dòng tự tính về lại giá trị tự tính.
-  void resetMaterial(MaterialList list, MaterialRow row) {
-    pipe.edits[list.name]?.rows.remove(row.key);
+  void resetMaterial(String list, MaterialRow row) {
+    this[list]?.rows.remove(row.key);
     _tidy(list);
   }
 
   void addMaterial(
-    MaterialList list, {
+    String list, {
+    String code = '',
     required String name,
     required String spec,
     required String unit,
     required double qty,
-  }) =>
-      _list(list).extras
-          .add(MaterialExtra(name: name, spec: spec, unit: unit, qty: qty));
+  }) => _list(list).extras.add(
+    MaterialExtra(code: code, name: name, spec: spec, unit: unit, qty: qty),
+  );
 
   /// Bỏ mọi phần sửa tay của danh sách.
-  void resetMaterialList(MaterialList list) => pipe.edits.remove(list.name);
+  void resetMaterialList(String list) => remove(list);
+}
+
+/// Sửa danh sách vật tư [list] của [config] (gọi trong `ctrl.edit`).
+extension MaterialEditing on AirConfig {
+  void saveMaterial(
+    MaterialList list,
+    MaterialRow row, {
+    String code = '',
+    required String name,
+    required String spec,
+    required String unit,
+    required double qty,
+  }) => pipe.edits.saveMaterial(
+    list.name,
+    row,
+    code: code,
+    name: name,
+    spec: spec,
+    unit: unit,
+    qty: qty,
+  );
+
+  void removeMaterial(MaterialList list, MaterialRow row) =>
+      pipe.edits.removeMaterial(list.name, row);
+
+  void resetMaterial(MaterialList list, MaterialRow row) =>
+      pipe.edits.resetMaterial(list.name, row);
+
+  void addMaterial(
+    MaterialList list, {
+    String code = '',
+    required String name,
+    required String spec,
+    required String unit,
+    required double qty,
+  }) => pipe.edits.addMaterial(
+    list.name,
+    code: code,
+    name: name,
+    spec: spec,
+    unit: unit,
+    qty: qty,
+  );
+
+  void resetMaterialList(MaterialList list) =>
+      pipe.edits.resetMaterialList(list.name);
 }

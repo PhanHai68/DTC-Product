@@ -83,6 +83,7 @@ import '../screens/acomp/acomp_tank_screen.dart';
 import '../screens/acomp/acomp_oil_free_detail_screen.dart';
 import '../screens/acomp/acomp_refrigerated_dryer_screen.dart';
 import '../features/air_system_config/screens/air_config_editor_screen.dart';
+import '../features/pipe_survey/screens/pipe_survey_list_screen.dart';
 import '../screens/acomp/acomp_mccb_cable_screen.dart';
 import '../screens/acomp/acomp_pipe_screen.dart';
 import '../screens/acomp/acomp_tank_fill_time_screen.dart';
@@ -90,7 +91,7 @@ import '../screens/acomp/acomp_vsd_compare_screen.dart';
 import '../screens/acomp/acomp_troubleshooting_menu_screen.dart';
 import '../screens/acomp/acomp_common_errors_screen.dart';
 import '../screens/color_sorter_errors/color_sorter_errors_screen.dart';
-import '../screens/acomp/acomp_ds8011_settings_screen.dart';
+import '../screens/acomp/acomp_controller_settings_screen.dart';
 // Packing module screens
 import '../screens/packing/packing_menu_screen.dart';
 import '../screens/packing/packing_search_screen.dart';
@@ -118,7 +119,8 @@ import '../features/site_layout/screens/site_elevation_screen.dart';
 import '../features/factory_location/models/factory_location.dart';
 import '../features/factory_location/screens/factory_location_list_screen.dart';
 import '../features/factory_location/screens/factory_location_form_screen.dart';
-import '../data/product_data.dart' show ColorSorterLine;
+import '../data/product_data.dart'
+    show ColorSorterLine, ct8893dParameters, ds8011Parameters;
 
 /// `?line=paddy|brownRice|tea` → luồng hoàn vốn của máy lúa giống/lúa và gạo
 /// lứt/trà; mặc định máy gạo.
@@ -597,6 +599,10 @@ final GoRouter appRouter = GoRouter(
       ),
     ),
     GoRoute(
+      path: '/pipe_survey',
+      builder: (context, state) => const PipeSurveyListScreen(),
+    ),
+    GoRoute(
       path: '/acomp_mccb_cable',
       builder: (context, state) => const AcompMccbCableScreen(),
     ),
@@ -629,7 +635,17 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/acomp_ds8011_settings',
-      builder: (context, state) => const AcompDs8011SettingsScreen(),
+      builder: (context, state) => AcompControllerSettingsScreen(
+        title: 'Tham số cài đặt DS8011',
+        categories: ds8011Parameters,
+      ),
+    ),
+    GoRoute(
+      path: '/acomp_ct8893d_settings',
+      builder: (context, state) => AcompControllerSettingsScreen(
+        title: 'Tham số cài đặt CT8893D',
+        categories: ct8893dParameters,
+      ),
     ),
     GoRoute(
       path: '/color_sorter',

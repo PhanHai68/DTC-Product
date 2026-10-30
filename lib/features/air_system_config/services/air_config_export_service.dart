@@ -17,6 +17,7 @@ import '../pipe/material_list.dart';
 import '../pipe/pipe_engine.dart';
 import '../pipe/pipe_strings.dart';
 import 'air_po_excel.dart';
+import 'air_po_pdf.dart';
 
 /// Một file xuất: tên, kiểu MIME, nội dung.
 class AirExportFile {
@@ -157,11 +158,12 @@ abstract final class AirConfigExportService {
     return AirExportFile('$base.xlsx', excelMime, Uint8List.fromList(bytes));
   }
 
-  // ── Excel đề nghị vật tư (form PO) ───────────────────────────────────────
+  // ── Đề nghị vật tư (form PO): Excel / PDF ────────────────────────────────
 
   /// Phiếu "Đề nghị vật tư" theo form PO: thiết bị chính, vật tư lắp đặt cụm
   /// máy, vật tư từ cụm máy đến thiết bị sử dụng khí nén, rồi van xả đáy bình
-  /// và vật tư điện khi đã tick chọn. Luôn tiếng Việt như form.
+  /// và vật tư điện khi đã tick chọn. [merged]: gộp mã — mọi vật tư chung một
+  /// mục, mỗi vật tư một dòng. Luôn tiếng Việt như form.
   static AirExportFile po(
     PoTemplate template,
     AirConfig config,
@@ -170,14 +172,56 @@ abstract final class AirConfigExportService {
     PipeResult? pipe,
     InstallKits? kits,
     DateTime? now,
-  }) => AirExportFile(
-    '${base}_DeNghiVatTu.xlsx',
-    excelMime,
-    buildPoWorkbook(
-      template,
-      poDocument(config, result, pipe: pipe, kits: kits, now: now),
-    ),
-  );
+    bool merged = false,
+    PoRequester requester = const PoRequester(),
+  }) {
+    final doc = poDocument(
+      config,
+      result,
+      pipe: pipe,
+      kits: kits,
+      now: now,
+    ).withRequester(requester);
+    return AirExportFile(
+      '${base}_DeNghiVatTu${merged ? '_GopMa' : ''}.xlsx',
+      excelMime,
+      buildPoWorkbook(template, merged ? doc.merged() : doc),
+    );
+  }
+
+  /// Phiếu "Đề nghị vật tư" dạng PDF A4, cùng nội dung với [po].
+  static Future<AirExportFile> poPdf(
+    PoTemplate template,
+    AirConfig config,
+    AirResult result, {
+    required String base,
+    PipeResult? pipe,
+    InstallKits? kits,
+    DateTime? now,
+    bool merged = false,
+    PoRequester requester = const PoRequester(),
+  }) async {
+    Future<Uint8List> asset(String path) async =>
+        Uint8List.sublistView(await rootBundle.load(path));
+    final doc = poDocument(
+      config,
+      result,
+      pipe: pipe,
+      kits: kits,
+      now: now,
+    ).withRequester(requester);
+    return AirExportFile(
+      '${base}_DeNghiVatTu${merged ? '_GopMa' : ''}.pdf',
+      'application/pdf',
+      buildPoPdf(
+        merged ? doc.merged() : doc,
+        company: template.company,
+        regular: await asset('assets/fonts/Roboto-Regular.ttf'),
+        bold: await asset('assets/fonts/Roboto-Bold.ttf'),
+        logo: await asset('assets/images/DTCGroup-Slogan.png'),
+      ),
+    );
+  }
 
   static PoDocument poDocument(
     AirConfig config,

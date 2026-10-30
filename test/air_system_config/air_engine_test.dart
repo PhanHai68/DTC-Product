@@ -310,26 +310,9 @@ void main() {
       expect(keys(_run(config)), ['waterSeparator', 'fine_refrigerated']);
     });
 
-    test('lọc sau bình: 1 = thô, 2 = thô + tinh; bảo vệ máy sấy hấp thụ', () {
-      final config = _config(pdp: LinePdp.m40);
-      var r = _run(config);
+    test('máy có dầu + sấy hấp thụ: cảnh báo bảo vệ hạt hút ẩm', () {
+      final r = _run(_config(pdp: LinePdp.m40));
       expect(_has(r, AirWarningCode.desiccantNoOilFilter), isTrue);
-      final base = r.pressureNeed;
-      config.pretreat.tankFilter = true;
-      r = _run(config);
-      expect(
-        r.equipment
-            .where((e) => e.params['afterTank'] == true)
-            .map((e) => e.key),
-        ['tankCoarse', 'tankFine'],
-      );
-      expect(r.pressureNeed, closeTo(base + 0.25, 0.051));
-      expect(_has(r, AirWarningCode.desiccantNoOilFilter), isFalse);
-      config.tank.enabled = false;
-      expect(
-        _run(config).equipment.any((e) => e.params['afterTank'] == true),
-        isFalse,
-      );
     });
 
     test('máy có dầu không có tách tinh: dầu lớp 4', () {

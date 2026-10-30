@@ -258,6 +258,7 @@ class _AirDiagramBuilder {
     // Ô mỗi thiết bị vừa đủ cho ghi chú dài nhất (không quá [_MainNode.slot],
     // ghi chú dài thì xuống dòng), để các thiết bị đứng gần nhau. Ghi chú
     // của thiết bị cuối được tràn sang khoảng ống góp (tới mép máy sấy).
+    var lastLabelW = 0.0;
     for (final n in nodes) {
       final labelW = [
         for (var k = 0; k < n.label.length; k++)
@@ -274,16 +275,40 @@ class _AirDiagramBuilder {
         n.iconW + n.minGap,
         math.max(n.slot, n.iconW + n.minGap),
       );
+      lastLabelW = labelW;
     }
-    final mainEnd = _m + nodes.fold(0.0, (sum, n) => sum + n.slot) - 20;
+    // Khoảng ống từ thiết bị cuối (lọc sau bình) tới khung máy sấy thu còn
+    // 2/3; ghi chú nhóm máy sấy lùi phải khi chạm ghi chú thiết bị cuối.
+    final last = nodes.last;
+    final lastX = _m + nodes.fold(0.0, (sum, n) => sum + n.slot) - last.slot;
+    final shrink = (last.slot - last.iconW - 20 + _manifoldGap) / 3;
+    final mainEnd =
+        _m + nodes.fold(0.0, (sum, n) => sum + n.slot) - 20 - shrink;
     final manifoldX = mainEnd + 8;
     final groupX = mainEnd + _manifoldGap;
-    final filtersX = groupX + _frameW + 24;
+    final groupLabelX = math.max(groupX, lastX + lastLabelW + 12);
+    // Lọc sau máy sấy không chạm ghi chú nhóm máy sấy (khi ghi chú lùi phải).
+    final filtersX = groupLabelX + _frameW + 24;
     final busX = filtersX + 190;
     final lineX = busX + 46;
 
     // ── Các nhóm xếp dọc bên phải ────────────────────────────────────────
-    var rowTop = top;
+    // Thiết bị đứng trên nền chung (bình tích khí) có đáy thẳng hàng với
+    // máy nén, cao vượt lên trên. Phần nhô lên không chạm tiêu đề: đẩy cả
+    // tuyến chính lẫn các nhóm xuống để ghi chú vẫn thẳng hàng.
+    final floorDy = nodes.first.iconH / 2;
+    double above(_MainNode n) => n.onFloor ? n.iconH - floorDy : n.iconH / 2;
+    double below(_MainNode n) => n.onFloor ? floorDy : n.iconH / 2;
+    final tallPad = math.max(
+      0.0,
+      nodes.fold(0.0, (m, n) => math.max(m, above(n))) + 6 - 70,
+    );
+    // Hàng ghi chú dưới đáy thiết bị và van xả (~24 px).
+    final labelDy = math.max(
+      _labelDy,
+      nodes.fold(0.0, (m, n) => math.max(m, below(n))) + 24,
+    );
+    var rowTop = top + tallPad;
     final pipeYs = <double>[];
     for (final g in r.groups) {
       final names = [
@@ -351,13 +376,13 @@ class _AirDiagramBuilder {
       // Cùng hàng với ghi chú tuyến chính (tuyến chính nằm ngang ống nhóm).
       final groupLabelTop = math.max(
         g.hasDryer ? rowTop + _frameH + 20 : pipeY + 30,
-        pipeY + _labelDy,
+        pipeY + labelDy,
       );
       bottom = math.max(
         bottom,
         _block(
           s.diagramGroup(g, names, r.dryerPicks[g.kind]),
-          left: groupX,
+          left: groupLabelX,
           top: groupLabelTop,
           width: _frameW + 20,
           firstBold: true,
@@ -386,7 +411,7 @@ class _AirDiagramBuilder {
           _block(
             s.diagramPostFilters(g, start: start, drain: _drain),
             left: filtersX,
-            top: pipeY + _labelDy,
+            top: pipeY + labelDy,
             width: 175,
             size: 12.5,
             firstBold: true,
@@ -425,9 +450,10 @@ class _AirDiagramBuilder {
     final groupsBottom = r.groups.isEmpty ? top + 160 : rowTop - 40;
 
     // ── Vẽ tuyến chính ở giữa vùng các nhóm ──────────────────────────────
+    final minMainY = top + 70 + tallPad;
     final mainY = pipeYs.isEmpty
-        ? top + 70
-        : math.max(top + 70, (pipeYs.first + pipeYs.last) / 2);
+        ? minMainY
+        : math.max(minMainY, (pipeYs.first + pipeYs.last) / 2);
     _pipe([
       Offset(_m + nodes.first.iconW, mainY),
       Offset(manifoldX, mainY),
@@ -436,11 +462,18 @@ class _AirDiagramBuilder {
     var mainBottom = mainY;
     for (final node in nodes) {
       final cx = x + node.iconW / 2;
-      final icon = Rect.fromCenter(
-        center: Offset(cx, mainY),
-        width: node.iconW,
-        height: node.iconH,
-      );
+      final icon = node.onFloor
+          ? Rect.fromLTRB(
+              cx - node.iconW / 2,
+              mainY + floorDy - node.iconH,
+              cx + node.iconW / 2,
+              mainY + floorDy,
+            )
+          : Rect.fromCenter(
+              center: Offset(cx, mainY),
+              width: node.iconW,
+              height: node.iconH,
+            );
       if (node != nodes.first) {
         _arrowHead(Offset(icon.left - 2, mainY), AirDiagramColors.main);
       }
@@ -450,7 +483,7 @@ class _AirDiagramBuilder {
         _block(
           node.label,
           left: x,
-          top: mainY + _labelDy,
+          top: mainY + labelDy,
           width: node.slot - (identical(node, nodes.last) ? 0 : 12),
           firstBold: true,
         ),
@@ -518,10 +551,13 @@ class _AirDiagramBuilder {
     final tank = r.tank;
     if (tank != null) {
       nodes.add(
+        // Bình đứng cao hơn máy nén 2/3 (123 × 5/3 ≈ 205 px, tỷ lệ ảnh
+        // 147 × 451), đáy thẳng hàng với máy nén.
         _MainNode(
           slot: 130,
-          iconW: 47,
-          iconH: 130,
+          iconW: 67,
+          iconH: 205,
+          onFloor: true,
           label: s.diagramTank(
             tank,
             _name('tank', () => tank.spec?.model ?? ''),
@@ -539,7 +575,7 @@ class _AirDiagramBuilder {
           slot: 130,
           iconW: 86,
           iconH: 70,
-          label: [s.afterCoolerTitle, s.afterCooler(pre.afterCooler)],
+          label: [s.afterCoolerTitle],
           draw: (rect) {
             _afterCooler(rect);
             if (_drain) _drainIcon(Offset(rect.center.dx, rect.bottom));
@@ -578,12 +614,7 @@ class _AirDiagramBuilder {
   /// Lọc trên tuyến chính theo thứ tự dòng khí.
   List<String> get _mainFilters {
     final pre = config.pretreat;
-    final tankFilters = r.tank == null ? 0 : pre.tankFilters;
-    return [
-      if (pre.hasWaterSeparator) s.diagramWaterSeparator,
-      if (tankFilters >= 1) s.diagramCoarse,
-      if (tankFilters >= 2) s.diagramFine,
-    ];
+    return [if (pre.hasWaterSeparator) s.diagramWaterSeparator];
   }
 
   /// Lọc treo trên ống kèm số thứ tự trên đầu và van xả tự động bên dưới.
@@ -853,7 +884,12 @@ class _MainNode {
     required this.label,
     required this.draw,
     this.minGap = 30,
+    this.onFloor = false,
   });
+
+  /// Đáy ảnh trên nền chung với máy nén (ảnh cao hơn nhô lên trên) thay vì
+  /// căn giữa theo ống.
+  final bool onFloor;
 
   /// Độ rộng tối đa của ô; bố cục thu lại theo ghi chú.
   double slot;

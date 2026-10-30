@@ -49,6 +49,13 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       keywords: 'cau hinh he thong khi nen so do lap dat may say hap thu say lanh loc tinh than hoat tinh vo trung binh chua iso 8573 diem suong pdp line bao gia',
     ),
     const _SearchItem(
+      title: 'Khảo sát tuyến ống',
+      subtitle: 'Vẽ sơ đồ đường ống khí nén tại công trình, bóc vật tư',
+      location: '/pipe_survey',
+      icon: Icons.route_outlined,
+      keywords: 'khao sat tuyen ong khi nen so do duong ong cong trinh vat tu ong kem co ren te van bi',
+    ),
+    const _SearchItem(
       title: 'Tính toán phòng lắp đặt',
       subtitle: 'Kích thước phòng máy nén, thông gió, bản vẽ mặt bằng',
       location: '/air_system_config?tab=room',

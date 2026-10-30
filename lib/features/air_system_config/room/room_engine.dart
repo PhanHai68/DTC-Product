@@ -497,16 +497,10 @@ class RoomEngine {
     return out;
   }
 
-  /// Lọc tuyến chính theo dòng khí: tách nước, rồi lọc sau bình.
-  List<RoomFilterGrade> _mainFilters(AirConfig config, AirResult r) {
-    final pre = config.pretreat;
-    final tankFilters = r.tank == null ? 0 : pre.tankFilters;
-    return [
-      if (pre.hasWaterSeparator) RoomFilterGrade.water,
-      if (tankFilters >= 1) RoomFilterGrade.coarse,
-      if (tankFilters >= 2) RoomFilterGrade.fine,
-    ];
-  }
+  /// Lọc tuyến chính theo dòng khí: tách nước.
+  List<RoomFilterGrade> _mainFilters(AirConfig config, AirResult r) => [
+    if (config.pretreat.hasWaterSeparator) RoomFilterGrade.water,
+  ];
 
   List<RoomFilterGrade> _postFilters(AirResult r) {
     final g = r.groups.firstOrNull;

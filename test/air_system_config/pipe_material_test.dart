@@ -73,14 +73,30 @@ void main() {
     expect(r.warnings, isEmpty);
     expect(r.items, hasLength(18));
     final q = _qty(r);
-    expect(q['Van bi đồng DN50, PN16 ( loại tay gạt)'], 3);
+    // Van bi cố định 1 cái, không nhân theo bước.
+    expect(q['Van bi đồng DN50, PN16 ( loại tay gạt)'], 1);
     expect(q['Racco'], 6);
-    expect(q['Co ren 90°'], 12);
+    // Co ren 1 cái / 6 m: 40 m → 7 cái.
+    expect(q['Co ren 90°'], 7);
     // 15 m × 3 = 45 m → nguyên cây 6 m: 48 m.
     expect(q['Ống kẽm Ø60 *3.2mm*6000'], 48);
-    // 0,5 cây × 3 = 1,5 → 2 cây.
-    expect(q['V50 x5mm, dài 6m'], 2);
+    // V50 1 cây / 50 m: 40 m → 1 cây.
+    expect(q['V50 x5mm, dài 6m'], 1);
     expect(q['Băng keo non'], 75);
+    // Mỗi 15 m: len 5 cuộn, đá cắt 3 miếng, cọ sơn / nhớt / que hàn /
+    // giẻ lau / bao tay / sơn bạc 1.
+    expect(q['Len (cuộn tròn quấn ống ren khí nén)'], 15);
+    expect(q['Đá cắt 100mm'], 9);
+    for (final name in [
+      'Cọ sơn 30mm',
+      'Nhớt máy ren ống',
+      'Que hàn 2.5mm',
+      'Giẻ lau',
+      'Bao tay len',
+      'Sơn bạc (Bạch Tuyết) 0.5Kg',
+    ]) {
+      expect(q[name], 3, reason: name);
+    }
     final pipe = r.items.firstWhere((i) => i.name.startsWith('Ống kẽm'));
     expect(
       [pipe.code, pipe.unit, pipe.spec],
@@ -184,11 +200,6 @@ void main() {
           matching: find.text('Ống kẽm Ø60 *3.2mm*6000'),
         ),
         findsOneWidget,
-      );
-      await tester.scrollUntilVisible(
-        find.textContaining('Tính cho 45 m (3 bước × 15 m)'),
-        300,
-        scrollable: scrollable,
       );
       await tester.tap(find.byKey(const Key('air_config_save')));
       await tester.pumpAndSettle();

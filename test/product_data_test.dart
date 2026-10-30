@@ -151,6 +151,41 @@ void main() {
       expect(commonErrorsOilLoss, isNotEmpty);
     });
 
+    test('ct8893d.json: mã cảnh báo, tham số F11–F99, mỗi mục có mã, giá trị, '
+        'mô tả', () {
+      final codes = [
+        for (final category in ct8893dParameters)
+          for (final item in (category['items'] as List).cast<Map>())
+            item['code'] as String,
+      ];
+      for (final code in [
+        'A11',
+        'A21',
+        'A22',
+        'A31',
+        'A32',
+        'F11',
+        'F12',
+        'F21',
+        'F42',
+        'F50',
+        'F51',
+        'F80',
+        'F99',
+      ]) {
+        expect(codes, contains(code));
+      }
+      for (final category in ct8893dParameters) {
+        final items = category['items'] as List;
+        expect(items, isNotEmpty, reason: '${category['category']}');
+        for (final item in items.cast<Map<String, dynamic>>()) {
+          for (final key in ['code', 'value', 'description']) {
+            expect((item[key] as String).trim(), isNotEmpty);
+          }
+        }
+      }
+    });
+
     test('ds8011.json: mỗi tham số có mã và mô tả', () {
       for (final category in ds8011Parameters) {
         final items = category['items'] as List;

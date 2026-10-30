@@ -269,49 +269,29 @@ class AirConfigForm extends StatelessWidget {
                 tilePadding: EdgeInsets.zero,
                 childrenPadding: const EdgeInsets.only(top: 4),
                 initiallyExpanded:
-                    c.pretreat.afterCooler != AfterCoolerType.none ||
-                    c.pretreat.tankFilter,
+                    c.pretreat.afterCooler != AfterCoolerType.none,
                 title: Text(
                   s.advanced,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 children: [
+                  // Không dùng / Có (cấu hình cũ giải nhiệt nước hiện "Có").
                   _Dropdown<AfterCoolerType>(
                     key: ValueKey('after_cooler_${s.lang}'),
                     label: s.afterCoolerLabel,
-                    value: c.pretreat.afterCooler,
+                    value: c.pretreat.afterCooler == AfterCoolerType.none
+                        ? AfterCoolerType.none
+                        : AfterCoolerType.air,
                     items: {
-                      for (final v in AfterCoolerType.values)
+                      for (final v in [
+                        AfterCoolerType.none,
+                        AfterCoolerType.air,
+                      ])
                         v: s.afterCooler(v),
                     },
                     onChanged: (v) =>
                         ctrl.edit((c) => c.pretreat.afterCooler = v),
                   ),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(s.tankFilter),
-                    subtitle: Text(s.tankFilterHint),
-                    value: c.tank.enabled && c.pretreat.tankFilter,
-                    onChanged: c.tank.enabled
-                        ? (v) => ctrl.edit((c) => c.pretreat.tankFilter = v)
-                        : null,
-                  ),
-                  if (c.tank.enabled && c.pretreat.tankFilter)
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: SegmentedButton<int>(
-                        key: const ValueKey('tank_filter_qty'),
-                        showSelectedIcon: false,
-                        segments: const [
-                          ButtonSegment(value: 1, label: Text('1')),
-                          ButtonSegment(value: 2, label: Text('2')),
-                        ],
-                        selected: {c.pretreat.tankFilterQty.clamp(1, 2)},
-                        onSelectionChanged: (v) => ctrl.edit(
-                          (c) => c.pretreat.tankFilterQty = v.first,
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),

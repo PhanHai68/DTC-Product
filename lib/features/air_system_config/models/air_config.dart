@@ -171,8 +171,6 @@ class PretreatConfig {
     this.coarseFilter = true,
     this.fineFilter = true,
     this.afterCooler = AfterCoolerType.none,
-    this.tankFilter = false,
-    this.tankFilterQty = 2,
     this.autoDrain = true,
   });
 
@@ -182,18 +180,11 @@ class PretreatConfig {
   bool coarseFilter;
   bool fineFilter;
   AfterCoolerType afterCooler;
-  bool tankFilter;
-
-  /// 1 hoặc 2 lọc sau bình tích khí.
-  int tankFilterQty;
   bool autoDrain;
 
   bool get hasWaterSeparator => standard || waterSeparator;
   bool get hasCoarse => standard || coarseFilter;
   bool get hasFine => standard || fineFilter;
-
-  /// Số lọc sau bình (0 khi tắt).
-  int get tankFilters => tankFilter ? tankFilterQty.clamp(1, 2) : 0;
 
   Map<String, dynamic> toJson() => {
     'standard': standard,
@@ -201,8 +192,6 @@ class PretreatConfig {
     'coarseFilter': coarseFilter,
     'fineFilter': fineFilter,
     'afterCooler': afterCooler.name,
-    'tankFilter': tankFilter,
-    'tankFilterQty': tankFilterQty,
     'autoDrain': autoDrain,
   };
 
@@ -217,8 +206,6 @@ class PretreatConfig {
       j['afterCooler'],
       AfterCoolerType.none,
     ),
-    tankFilter: j['tankFilter'] as bool? ?? false,
-    tankFilterQty: (j['tankFilterQty'] as num?)?.toInt() ?? 2,
     autoDrain: j['autoDrain'] as bool? ?? true,
   );
 }
@@ -415,12 +402,16 @@ class PipeConfig {
 /// Sửa tay một dòng vật tư tự tính: trường `null` = giữ giá trị tự tính.
 class MaterialEdit {
   MaterialEdit({
+    this.code,
     this.name,
     this.spec,
     this.unit,
     this.qty,
     this.removed = false,
   });
+
+  /// Mã vật tư; `""` = xoá mã.
+  String? code;
   String? name;
   String? spec;
   String? unit;
@@ -430,9 +421,15 @@ class MaterialEdit {
   bool removed;
 
   bool get isEmpty =>
-      !removed && name == null && spec == null && unit == null && qty == null;
+      !removed &&
+      code == null &&
+      name == null &&
+      spec == null &&
+      unit == null &&
+      qty == null;
 
   Map<String, dynamic> toJson() => {
+    if (code != null) 'code': code,
     if (name != null) 'name': name,
     if (spec != null) 'spec': spec,
     if (unit != null) 'unit': unit,
@@ -441,6 +438,7 @@ class MaterialEdit {
   };
 
   factory MaterialEdit.fromJson(Map<String, dynamic> j) => MaterialEdit(
+    code: j['code'] as String?,
     name: j['name'] as String?,
     spec: j['spec'] as String?,
     unit: j['unit'] as String?,
@@ -453,12 +451,14 @@ class MaterialEdit {
 class MaterialExtra {
   MaterialExtra({
     String? id,
+    this.code = '',
     this.name = '',
     this.spec = '',
     this.unit = '',
     this.qty = 1,
   }) : id = id ?? const Uuid().v4();
   final String id;
+  String code;
   String name;
   String spec;
   String unit;
@@ -466,6 +466,7 @@ class MaterialExtra {
 
   Map<String, dynamic> toJson() => {
     'id': id,
+    'code': code,
     'name': name,
     'spec': spec,
     'unit': unit,
@@ -474,6 +475,7 @@ class MaterialExtra {
 
   factory MaterialExtra.fromJson(Map<String, dynamic> j) => MaterialExtra(
     id: j['id'] as String?,
+    code: j['code'] as String? ?? '',
     name: j['name'] as String? ?? '',
     spec: j['spec'] as String? ?? '',
     unit: j['unit'] as String? ?? '',

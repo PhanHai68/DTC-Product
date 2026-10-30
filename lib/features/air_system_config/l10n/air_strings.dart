@@ -96,8 +96,8 @@ class AirStrings {
   };
   String afterCooler(AfterCoolerType v) => switch (v) {
     AfterCoolerType.none => _t('Không dùng', 'None'),
-    AfterCoolerType.air => _t('Giải nhiệt gió', 'Air cooled'),
-    AfterCoolerType.water => _t('Giải nhiệt nước', 'Water cooled'),
+    // Chỉ còn Không dùng / Có; giải nhiệt nước của cấu hình cũ cũng là "Có".
+    AfterCoolerType.air || AfterCoolerType.water => _t('Có', 'Yes'),
   };
   String regen(RegenType v) => switch (v) {
     RegenType.heatless => _t('Không gia nhiệt', 'Heatless'),
@@ -186,12 +186,6 @@ class AirStrings {
   String get fineFilter => _t('Lọc tách tinh 0,01 µm', 'Fine filter 0.01 µm');
   String get advanced => _t('Nâng cao', 'Advanced');
   String get afterCoolerLabel => _t('After cooling', 'After cooling');
-  String get tankFilter =>
-      _t('Lọc sau bình tích khí', 'Filters after the receiver');
-  String get tankFilterHint => _t(
-    '1 = tách thô 1 µm · 2 = tách thô 1 µm + tách tinh 0,01 µm',
-    '1 = coarse 1 µm · 2 = coarse 1 µm + fine 0.01 µm',
-  );
   String get autoDrain => _t('Xả tự động', 'Automatic drain');
   String get sectionTreatment => _t('Xử lý khí', 'Air treatment');
   String get usePressure => _t('Áp suất sử dụng', 'Point-of-use pressure');
@@ -388,10 +382,8 @@ class AirStrings {
   };
 
   // ── Danh mục thiết bị ───────────────────────────────────────────────────
-  /// Hậu tố vị trí lọc: sau bình tích khí hoặc theo nhóm máy sấy.
-  String _filterSuffix(EquipmentItem e) => e.params['afterTank'] == true
-      ? _t(' – sau bình tích khí', ' – after receiver')
-      : _groupSuffix(e.group);
+  /// Hậu tố vị trí lọc theo nhóm máy sấy.
+  String _filterSuffix(EquipmentItem e) => _groupSuffix(e.group);
 
   String _groupSuffix(DryerKind? g) => switch (g) {
     DryerKind.desiccant => _t(' – nhóm sấy hấp thụ', ' – desiccant group'),
@@ -423,8 +415,7 @@ class AirStrings {
                 'Air receiver ${t.spec!.model}',
               );
       }(),
-      EquipmentKind.afterCooler =>
-        'After cooler ${afterCooler(p['type'] as AfterCoolerType).toLowerCase()}',
+      EquipmentKind.afterCooler => 'After cooler',
       EquipmentKind.waterSeparator => waterSeparator,
       EquipmentKind.desiccantDryer => _t(
         'Máy sấy hấp thụ (${regen(p['regen'] as RegenType).toLowerCase()})',
@@ -576,7 +567,6 @@ class AirStrings {
           'tank' => _t('bình chứa', 'receiver'),
           'afterCooler' => 'after cooler',
           'waterSeparator' => _t('lọc tách nước', 'water separator'),
-          'tankFilter' => _t('$n lọc sau bình', '$n filter(s) after receiver'),
           'coarseFilter' => _t('$n lọc tách thô', '$n coarse filter(s)'),
           'fineFilter' => _t('$n lọc tách tinh', '$n fine filter(s)'),
           'refrigeratedDryer' => _t(

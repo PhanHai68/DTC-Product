@@ -24,6 +24,12 @@ class AcompTroubleshootingMenuScreen extends StatelessWidget {
           icon: Icons.tune_rounded,
           onTap: () => context.push('/acomp_ds8011_settings'),
         ),
+        TechnologyMenuEntry(
+          id: 'acomp_ct8893d_settings_btn',
+          title: 'Tham số cài đặt bộ điều khiển CT8893D',
+          icon: Icons.ac_unit_rounded,
+          onTap: () => context.push('/acomp_ct8893d_settings'),
+        ),
       ],
     );
   }

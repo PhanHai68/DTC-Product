@@ -8,6 +8,7 @@ import 'dart:convert';
 import '../features/air_system_config/models/air_constants.dart';
 import '../features/air_system_config/room/room_constants.dart';
 import '../features/air_system_config/pipe/pipe_engine.dart';
+import '../features/pipe_survey/engine/survey_bom.dart';
 import '../features/air_system_config/pipe/install_kit.dart';
 import '../models/acomp_spec_model.dart';
 import '../models/acomp_vsd_compare_config.dart';
@@ -41,6 +42,7 @@ abstract final class ProductData {
   static const acompPipeStandardPath = '$_airCompressorDir/pipe_standard.json';
   static const acompCommonErrorsPath = '$_airCompressorDir/common_errors.json';
   static const acompDs8011Path = '$_airCompressorDir/ds8011.json';
+  static const acompCt8893dPath = '$_airCompressorDir/ct8893d.json';
   static const acompVsdComparePath = '$_airCompressorDir/vsd_compare.json';
   static const airTanksPath = '$_airCompressorDir/air_tanks.json';
   static const oilFreeSpecsPath = '$_airCompressorDir/oil_free_specs.json';
@@ -49,6 +51,8 @@ abstract final class ProductData {
   static const lineFiltersPath = '$_airCompressorDir/line_filters.json';
   static const installKitsPath = '$_airCompressorDir/install_kits.json';
   static const pipeRunKitsPath = '$_airCompressorDir/pipe_run_kits.json';
+  static const pipeSurveyConstantsPath =
+      '$_airCompressorDir/pipe_survey_constants.json';
   static const roomLayoutConstantsPath =
       '$_airCompressorDir/room_layout_constants.json';
   static const airSystemConstantsPath =
@@ -74,11 +78,13 @@ abstract final class ProductData {
     acompPipeStandardPath,
     acompCommonErrorsPath,
     acompDs8011Path,
+    acompCt8893dPath,
     acompVsdComparePath,
     airTanksPath,
     airSystemConstantsPath,
     roomLayoutConstantsPath,
     pipeRunKitsPath,
+    pipeSurveyConstantsPath,
     installKitsPath,
     oilFreeSpecsPath,
     refrigeratedDryersPath,
@@ -178,6 +184,7 @@ abstract final class ProductData {
     final errorsController = _toStringMapList(errors['controller'] as List);
     final errorsOilLoss = _toStringMapList(errors['oilLoss'] as List);
     final ds8011 = _toDynamicMapList(decode(acompDs8011Path) as List);
+    final ct8893d = _toDynamicMapList(decode(acompCt8893dPath) as List);
     final vsdCompare = AcompVsdCompareConfig.fromJson(
       decode(acompVsdComparePath) as Map<String, dynamic>,
     );
@@ -229,11 +236,15 @@ abstract final class ProductData {
     _commonErrorsController = errorsController;
     _commonErrorsOilLoss = errorsOilLoss;
     _ds8011Parameters = ds8011;
+    _ct8893dParameters = ct8893d;
     _acompVsdCompareConfig = vsdCompare;
     _airTankSpecs = List.unmodifiable(airTanks);
     _airSystemConstants = airSystemConstants;
     _pipeRunKit = PipeRunKit.fromJson(
       decode(pipeRunKitsPath) as Map<String, dynamic>,
+    );
+    _pipeSurveyConstants = SurveyConstants.fromJson(
+      decode(pipeSurveyConstantsPath) as Map<String, dynamic>,
     );
     _roomLayoutConstants = RoomConstants.fromJson(
       decode(roomLayoutConstantsPath) as Map<String, dynamic>,
@@ -485,11 +496,13 @@ List<Map<String, String>>? _commonErrorsGeneral;
 List<Map<String, String>>? _commonErrorsController;
 List<Map<String, String>>? _commonErrorsOilLoss;
 List<Map<String, dynamic>>? _ds8011Parameters;
+List<Map<String, dynamic>>? _ct8893dParameters;
 AcompVsdCompareConfig? _acompVsdCompareConfig;
 List<AirTankSpec>? _airTankSpecs;
 AirSystemConstants? _airSystemConstants;
 RoomConstants? _roomLayoutConstants;
 PipeRunKit? _pipeRunKit;
+SurveyConstants? _pipeSurveyConstants;
 InstallKits? _installKits;
 List<OilFreeSpec>? _oilFreeSpecs;
 List<RefrigeratedDryerSpec>? _refrigeratedDryers;
@@ -636,6 +649,10 @@ List<Map<String, String>> get commonErrorsOilLoss =>
 /// Tham số cài đặt bộ điều khiển DS8011 — `air_compressor/ds8011.json`.
 List<Map<String, dynamic>> get ds8011Parameters => _loaded(_ds8011Parameters);
 
+/// Tham số cài đặt, mã cảnh báo, thao tác phím và đấu dây bộ điều khiển máy
+/// sấy CT8893D — `air_compressor/ct8893d.json`.
+List<Map<String, dynamic>> get ct8893dParameters => _loaded(_ct8893dParameters);
+
 /// Giả định và ghi chú cho màn so sánh biến tần – cố định —
 /// `air_compressor/vsd_compare.json`.
 AcompVsdCompareConfig get acompVsdCompareConfig =>
@@ -656,6 +673,10 @@ RoomConstants get roomLayoutConstants => _loaded(_roomLayoutConstants);
 /// Định mức vật tư từ cụm máy đến thiết bị sử dụng khí nén cho một bước
 /// tuyến ống (15 m) — `air_compressor/pipe_run_kits.json`.
 PipeRunKit get pipeRunKit => _loaded(_pipeRunKit);
+
+/// Quy tắc + tên / mã vật tư khảo sát tuyến ống khí nén —
+/// `air_compressor/pipe_survey_constants.json`.
+SurveyConstants get pipeSurveyConstants => _loaded(_pipeSurveyConstants);
 
 /// Vật tư lắp đặt cụm máy theo công suất máy nén —
 /// `air_compressor/install_kits.json`.

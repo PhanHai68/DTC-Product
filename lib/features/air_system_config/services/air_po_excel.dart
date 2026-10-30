@@ -40,6 +40,10 @@ class PoTemplate {
   final String theme;
   final String drawing;
   final Uint8List logo;
+
+  /// Tên, địa chỉ, MST công ty như đầu form (dùng cho phiếu PDF).
+  List<String> get company =>
+      (head['company'] as List? ?? const []).cast<String>();
 }
 
 /// Màu dòng tiêu đề mục, như form: xanh dương (vật tư lắp đặt), xanh lá (van
@@ -85,19 +89,97 @@ class PoSection {
   final bool numbered;
 }
 
-/// Nội dung phiếu: dòng "Tên dự án", ngày, thiết bị chính (dòng nền vàng
-/// không đánh số), các mục vật tư.
+/// Thông tin người đề nghị ở đầu phiếu (nhập khi xuất file).
+class PoRequester {
+  const PoRequester({
+    this.requester = '',
+    this.employeeId = '',
+    this.position = '',
+    this.department = '',
+    this.projectCode = '',
+    this.requestNo = '',
+  });
+
+  /// Người đề nghị, mã nhân viên, chức vụ, bộ phận.
+  final String requester;
+  final String employeeId;
+  final String position;
+  final String department;
+
+  /// Mã dự án ("DTC-…"), số lần đề nghị / dự án ("001").
+  final String projectCode;
+  final String requestNo;
+}
+
+/// Nội dung phiếu: thông tin người đề nghị, dòng "Tên dự án", ngày, thiết bị
+/// chính (dòng nền vàng không đánh số), các mục vật tư.
 class PoDocument {
   const PoDocument({
     required this.projectTitle,
     required this.date,
     required this.equipment,
     required this.sections,
+    this.requester = const PoRequester(),
   });
   final String projectTitle;
   final String date;
   final List<PoLine> equipment;
   final List<PoSection> sections;
+  final PoRequester requester;
+
+  PoDocument withRequester(PoRequester info) => PoDocument(
+    projectTitle: projectTitle,
+    date: date,
+    equipment: equipment,
+    sections: sections,
+    requester: info,
+  );
+
+  /// Kiểu gộp mã: giữ thiết bị chính, mọi vật tư gộp vào một mục, mỗi vật tư
+  /// một dòng (cộng số lượng). Cùng mã (và ĐVT) là một vật tư; không có mã
+  /// thì theo tên + quy cách + ĐVT. Giữ thứ tự xuất hiện đầu tiên, vật tư
+  /// tiêu hao xuống cuối. Dòng chỉ là thông báo (không số lượng) bỏ qua.
+  PoDocument merged({String title = 'VẬT TƯ LẮP ĐẶT'}) {
+    String norm(String? v) =>
+        (v ?? '').trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
+    final byKey = <String, PoLine>{};
+    for (final section in sections) {
+      for (final l in section.lines) {
+        final qty = l.qty;
+        if (qty == null) continue;
+        final code = l.code?.trim() ?? '';
+        final key = code.isNotEmpty
+            ? 'c:${norm(code)}|${norm(l.unit)}'
+            : 'n:${norm(l.name)}|${norm(l.spec)}|${norm(l.unit)}';
+        final old = byKey[key];
+        byKey[key] = old == null
+            ? l
+            : PoLine(
+                code: old.code,
+                name: old.name,
+                unit: old.unit,
+                qty: old.qty! + qty,
+                spec: old.spec ?? l.spec,
+                note: old.note ?? l.note,
+              );
+      }
+    }
+    const consumable = 'VT tiêu hao';
+    final lines = [
+      ...byKey.values.where((l) => l.note != consumable),
+      ...byKey.values.where((l) => l.note == consumable),
+    ];
+    return PoDocument(
+      projectTitle: projectTitle,
+      date: date,
+      equipment: equipment,
+      requester: requester,
+      sections: [
+        if (lines.isNotEmpty)
+          PoSection(title: title, band: PoBand.blue, lines: lines),
+      ],
+    );
+  }
 }
 
 /// Ghép file xlsx theo form "Đề nghị vật tư".
@@ -115,7 +197,13 @@ Uint8List buildPoWorkbook(PoTemplate t, PoDocument doc) {
   final quoted = "'${sheetName.replaceAll("'", "''")}'";
   final head = (t.head['rows'] as String)
       .replaceAll('{{DATE}}', _esc(doc.date))
-      .replaceAll('{{PROJECT}}', _esc(doc.projectTitle));
+      .replaceAll('{{PROJECT}}', _esc(doc.projectTitle))
+      .replaceAll('{{REQUESTER}}', _esc(doc.requester.requester))
+      .replaceAll('{{EMPLOYEE_ID}}', _esc(doc.requester.employeeId))
+      .replaceAll('{{POSITION}}', _esc(doc.requester.position))
+      .replaceAll('{{DEPARTMENT}}', _esc(doc.requester.department))
+      .replaceAll('{{PROJECT_CODE}}', _esc(doc.requester.projectCode))
+      .replaceAll('{{REQUEST_NO}}', _esc(doc.requester.requestNo));
   final last = sheet.row - 1;
   final merges = [
     ...(t.head['merges'] as List).cast<String>(),
@@ -236,9 +324,9 @@ const _equipmentStyles = [
 ];
 const _itemStyles = [46, 46, 0, 0, 0, 0, 45, 45, 45, 46, 62, 62, 135, 135, 135];
 const _bandStyles = {
-  PoBand.blue: (43, 153, 154, 155, 108),
-  PoBand.green: (79, 176, 177, 178, 120),
-  PoBand.yellow: (94, 187, 188, 189, 72),
+  PoBand.blue: (43, 153, 154, 155),
+  PoBand.green: (79, 176, 177, 178),
+  PoBand.yellow: (94, 187, 188, 189),
 };
 
 /// Ô quy cách gộp dọc (đầu, giữa, cuối) × (M, N).
@@ -328,11 +416,12 @@ class _PoSheet {
   }
 
   void section(PoSection s) {
-    final (a, b, mid, n, o) = _bandStyles[s.band]!;
-    merges.add('B$row:N$row');
+    // Dải màu từ cột B tới hết cột Ghi chú (O).
+    final (a, b, mid, end) = _bandStyles[s.band]!;
+    merges.add('B$row:O$row');
     _row(
       _minHeight,
-      {0: a, 1: b, for (var c = 2; c <= 12; c++) c: mid, 13: n, 14: o},
+      {0: a, 1: b, for (var c = 2; c <= 13; c++) c: mid, 14: end},
       {1: s.title},
     );
 

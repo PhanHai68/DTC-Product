@@ -1,5 +1,4 @@
 import '../l10n/air_strings.dart';
-import 'install_kit.dart';
 import 'pipe_engine.dart';
 
 /// Chữ của tab "Vật tư lắp đặt", VI/EN. Tên vật tư lắp đặt cụm máy lấy
@@ -12,10 +11,6 @@ extension PipeStrings on AirStrings {
   // ── Vật tư lắp đặt cụm máy ───────────────────────────────────────────────
   String get kitTitle =>
       _r('Vật tư lắp đặt cụm máy', 'Compressor package installation');
-  String kitFor(InstallKit kit, String? model) => _r(
-    'Máy nén khí ${kit.hp}HP (${n0(kit.kw)} kW)${model == null ? '' : ' · $model'} — tiêu chuẩn theo sơ đồ',
-    '${kit.hp}HP air compressor (${n0(kit.kw)} kW)${model == null ? '' : ' · $model'} — standard per diagram',
-  );
   String get kitNotUpdated => _r('Chưa cập nhật', 'Not updated yet');
   String kitNotUpdatedDetail(double? kw, List<int> hps) {
     final list = hps.map((hp) => '${hp}HP').join(', ');
@@ -43,31 +38,44 @@ extension PipeStrings on AirStrings {
   String kitQty(num qty) =>
       qty == qty.roundToDouble() ? '${qty.round()}' : n1(qty);
 
-  String get exportPo => _r('Excel đề nghị vật tư', 'Material request (Excel)');
+  String get exportPo =>
+      _r('Đề nghị vật tư (Excel / PDF)', 'Material request (Excel / PDF)');
+  String get poDialogTitle =>
+      _r('Xuất đề nghị vật tư', 'Export material request');
+  String get poFormat => _r('Định dạng', 'Format');
+  String get poStyle => _r('Kiểu', 'Layout');
+  String get poGrouped => _r('Theo hạng mục', 'By section');
+  String get poMerged => _r('Gộp mã', 'Merged codes');
+  String get poGroupedHint => _r(
+    'Vật tư chia theo từng hạng mục lắp đặt.',
+    'Materials listed per installation section.',
+  );
+  String get poMergedHint => _r(
+    'Gộp chung, mỗi vật tư một dòng (cộng số lượng các hạng mục).',
+    'All sections combined, one line per item (quantities added).',
+  );
+  String get poExport => _r('Xuất file', 'Export');
+  String get poRequester => _r('Người đề nghị', 'Requested by');
+  String get poEmployeeId => _r('Mã NV', 'Employee ID');
+  String get poPosition => _r('Chức vụ', 'Position');
+  String get poDepartment => _r('Bộ phận', 'Department');
+  String get poProjectCode => _r('Mã dự án', 'Project code');
+  String get poRequestNo => _r('Số lần đề nghị/DA', 'Request no. / project');
+  String get poClear => _r('Xoá', 'Clear');
+  String get poRememberHint => _r(
+    'Thông tin trên (trừ số lần đề nghị) được lưu lại cho lần xuất sau.',
+    'These details (except the request no.) are remembered for next time.',
+  );
 
   // ── Vật tư từ cụm máy đến thiết bị sử dụng khí nén ───────────────────────
   String get pipeInputTitle => _r(
     'Vật tư từ cụm máy đến thiết bị sử dụng khí nén',
     'Materials from the compressor package to the air consumers',
   );
-  String pipeInputHint(PipeResult r) => _r(
-    'Định mức vật tư cho mỗi ${n0(r.stepM)} m tuyến ống; số lượng nhân theo số bước ${n0(r.stepM)} m (lấy bằng hoặc lớn hơn gần nhất tổng chiều dài).',
-    'Quantities per ${n0(r.stepM)} m of pipe run, multiplied by the number of ${n0(r.stepM)} m steps (total length rounded up).',
-  );
   String get pipeLength =>
       _r('Tổng chiều dài đường ống (m)', 'Total pipe length (m)');
 
-  /// Dòng ghi dưới bảng: chiều dài tính vật tư, cỡ ống, cách làm tròn.
-  String pipeNote(PipeResult r) => _r(
-    'Tính cho ${n0(r.coveredM)} m (${r.steps} bước × ${n0(r.stepM)} m)${r.dn == null ? '' : ', ống DN${r.dn}'} · ống kẽm làm tròn lên nguyên cây 6 m, số lẻ làm tròn lên.',
-    'Calculated for ${n0(r.coveredM)} m (${r.steps} steps × ${n0(r.stepM)} m)${r.dn == null ? '' : ', DN${r.dn} pipe'} · galvanised pipe rounded up to whole 6 m lengths, fractions rounded up.',
-  );
-
   // ── Sửa tay danh sách vật tư ─────────────────────────────────────────────
-  String get matEditHint => _r(
-    'Muốn sửa: tick "Cho phép sửa" của bảng rồi chạm vào dòng để sửa hoặc xoá; dòng tô vàng là dòng đã sửa / thêm tay.',
-    'To edit: tick "Allow editing" on a table, then tap a row to edit or delete it; yellow rows are edited / added by hand.',
-  );
   String get matEditMode => _r('Cho phép sửa', 'Allow editing');
   String get matEdit => _r('Sửa vật tư', 'Edit item');
   String get matAdd => _r('Thêm vật tư', 'Add item');
@@ -78,6 +86,10 @@ extension PipeStrings on AirStrings {
   String get matCancel => _r('Huỷ', 'Cancel');
   String get matSave => _r('Lưu', 'Save');
   String get matQty => _r('Số lượng', 'Quantity');
+  String get matCode => _r('Mã vật tư', 'Item code');
+  String get matPick => _r('Chọn từ danh mục', 'Pick from catalog');
+  String get matPickSearch =>
+      _r('Tìm theo tên hoặc mã', 'Search by name or code');
   String get matEmpty => _r('Chưa có vật tư.', 'No items yet.');
   String get matNameRequired => _r('Nhập tên vật tư', 'Enter the item name');
   String get matQtyInvalid =>
