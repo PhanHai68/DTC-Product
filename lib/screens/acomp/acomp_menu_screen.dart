@@ -51,7 +51,7 @@ class AcompMenuScreen extends StatelessWidget {
         ),
         TechnologyMenuEntry(
           id: 'pipe_survey_btn',
-          title: 'Khảo sát tuyến ống',
+          title: 'Khảo sát vật tư ngoại tuyến',
           icon: Icons.route_outlined,
           // Vẽ tuyến ống tại công trình, bóc vật tư theo thực tế.
           onTap: () => context.push('/pipe_survey'),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../models/pipe_survey.dart';
 import '../providers/pipe_survey_controller.dart';
 import 'survey_sheets.dart';
 
@@ -20,6 +21,7 @@ class _SurveyInfoFormState extends State<SurveyInfoForm> {
   late final _customer = TextEditingController(text: s.customer);
   late final _address = TextEditingController(text: s.address);
   late final _surveyor = TextEditingController(text: s.surveyor);
+  late final _title = TextEditingController(text: s.drawingTitle);
   late final _length = TextEditingController(
     text: formatSurveyNumber(s.buildingLengthM),
   );
@@ -37,6 +39,7 @@ class _SurveyInfoFormState extends State<SurveyInfoForm> {
       _customer,
       _address,
       _surveyor,
+      _title,
       _length,
       _width,
       _hang,
@@ -93,6 +96,13 @@ class _SurveyInfoFormState extends State<SurveyInfoForm> {
           _surveyor,
           'Người khảo sát',
           (v) => survey.surveyor = v.trim(),
+        ),
+        field(
+          'title',
+          _title,
+          'Tên bản vẽ (khung tên trên sơ đồ)',
+          (v) => survey.drawingTitle = v.trim(),
+          hint: PipeSurvey.defaultDrawingTitle,
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 12),

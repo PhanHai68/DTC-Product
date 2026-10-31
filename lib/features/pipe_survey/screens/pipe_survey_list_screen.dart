@@ -82,7 +82,7 @@ class _PipeSurveyListScreenState extends State<PipeSurveyListScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Khảo sát tuyến ống')),
+      appBar: AppBar(title: const Text('Khảo sát vật tư ngoại tuyến')),
       floatingActionButton: FloatingActionButton.extended(
         key: const Key('survey_new'),
         onPressed: () => _open(),

@@ -131,6 +131,39 @@ void main() {
     );
   });
 
+  test('cao độ riêng tại điểm: ống đứng đổi cao độ + 2 co mỗi chỗ', () {
+    final s = _sample();
+    // J1 treo 6 m, hai điểm kề (P1, J2) theo công trình 4,5 m.
+    s.nodes.firstWhere((n) => n.id == 'J1').hangHeightM = 6;
+    final bom = computeSurveyBom(s, pipeSurveyConstants);
+    final risers = bom.runs.where((r) => r.vertical).toList();
+    expect(risers, hasLength(2));
+    expect(risers.first.lengthM, 1.5);
+    expect(risers.first.label, contains('đổi cao độ 4,5 → 6 m'));
+    expect(bom.lengthByDn[50], 34 + 3);
+    // Co DN50: 3 + 2 × 2 = 7 → +15% = 9.
+    expect(_qty(bom)['elbow50'], 9);
+    expect(_qty(bom)['pipe50'], 42);
+  });
+
+  test('vượt chướng ngại: mỗi lần 2 × chênh cao + 4 co', () {
+    final s = _sample();
+    s.segments.first
+      ..obstacles = 2
+      ..obstacleRiseM = -0.5;
+    final bom = computeSurveyBom(s, pipeSurveyConstants);
+    final run = bom.runs.singleWhere((r) => r.vertical);
+    expect(run.lengthM, 2);
+    expect(run.label, contains('vượt chướng ngại ×2, xuống 0,5 m'));
+    expect(bom.lengthByDn[50], 36);
+    // Co DN50: 3 + 4 × 2 = 11 → 13.
+    expect(_qty(bom)['elbow50'], 13);
+    // Lưu / đọc giữ thông tin vượt chướng ngại.
+    final back = PipeSurvey.fromJson(s.toJson());
+    expect(back.segments.first.obstacles, 2);
+    expect(back.segments.first.obstacleRiseM, -0.5);
+  });
+
   test('lưu / đọc JSON giữ nguyên sơ đồ', () {
     final s = _sample()..nodes.first.photos.add('a.jpg');
     final back = PipeSurvey.fromJson(s.toJson());

@@ -1,6 +1,6 @@
 import 'package:uuid/uuid.dart';
 
-import '../../air_system_config/models/air_config.dart' show MaterialListEdit;
+import '../../air_system_config/models/air_config.dart';
 
 /// Khảo sát tuyến ống khí nén tại công trình: thông tin chung, sơ đồ (điểm +
 /// đoạn ống, toạ độ mét trên lưới), phần sửa tay danh sách vật tư. Lớp
@@ -17,8 +17,10 @@ class PipeSurvey {
     this.buildingWidthM,
     this.hangHeightM,
     this.defaultDn = 50,
+    this.drawingTitle = '',
     List<SurveyNode>? nodes,
     List<SurveySegment>? segments,
+    List<SurveyShape>? shapes,
     Map<String, MaterialListEdit>? edits,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -26,6 +28,7 @@ class PipeSurvey {
        surveyDate = surveyDate ?? DateTime.now(),
        nodes = nodes ?? [],
        segments = segments ?? [],
+       shapes = shapes ?? [],
        edits = edits ?? {},
        createdAt = createdAt ?? DateTime.now(),
        updatedAt = updatedAt ?? DateTime.now();
@@ -47,8 +50,18 @@ class PipeSurvey {
   /// Cỡ ống mặc định cho đoạn mới (DN).
   int defaultDn;
 
+  /// Tên bản vẽ trong khung tên; trống = [defaultDrawingTitle].
+  String drawingTitle;
+  static const defaultDrawingTitle = 'SƠ ĐỒ TUYẾN ỐNG KHÍ NÉN';
+  String get drawingTitleOrDefault =>
+      drawingTitle.trim().isEmpty ? defaultDrawingTitle : drawingTitle.trim();
+
   final List<SurveyNode> nodes;
   final List<SurveySegment> segments;
+
+  /// Hình nền (tường, cột, chướng ngại, ghi chú) — chỉ để thể hiện hiện
+  /// trạng, không tính vật tư.
+  final List<SurveyShape> shapes;
 
   /// Sửa tay danh sách vật tư (khóa `survey`), cùng kiểu Cấu hình khí nén.
   final Map<String, MaterialListEdit> edits;
@@ -77,8 +90,10 @@ class PipeSurvey {
     'buildingWidthM': buildingWidthM,
     'hangHeightM': hangHeightM,
     'defaultDn': defaultDn,
+    'drawingTitle': drawingTitle,
     'nodes': [for (final n in nodes) n.toJson()],
     'segments': [for (final s in segments) s.toJson()],
+    'shapes': [for (final s in shapes) s.toJson()],
     'edits': {
       for (final e in edits.entries)
         if (!e.value.isEmpty) e.key: e.value.toJson(),
@@ -98,9 +113,14 @@ class PipeSurvey {
     buildingWidthM: (j['buildingWidthM'] as num?)?.toDouble(),
     hangHeightM: (j['hangHeightM'] as num?)?.toDouble(),
     defaultDn: (j['defaultDn'] as num?)?.toInt() ?? 50,
+    drawingTitle: j['drawingTitle'] as String? ?? '',
     nodes: [
       for (final n in j['nodes'] as List? ?? const [])
         SurveyNode.fromJson(n as Map<String, dynamic>),
+    ],
+    shapes: [
+      for (final s in j['shapes'] as List? ?? const [])
+        SurveyShape.fromJson(s as Map<String, dynamic>),
     ],
     segments: [
       for (final s in j['segments'] as List? ?? const [])
@@ -142,6 +162,7 @@ class SurveyNode {
     this.dropDn,
     List<String>? photos,
     this.note = '',
+    this.plant,
   }) : id = id ?? const Uuid().v4(),
        photos = photos ?? [];
 
@@ -151,7 +172,8 @@ class SurveyNode {
   SurveyNodeKind kind;
   String name;
 
-  /// Độ cao treo ống tại điểm này (m); `null` = theo công trình.
+  /// Cao độ ống tại điểm này (m); `null` = độ cao treo ống của công trình.
+  /// Hai điểm liền nhau khác cao độ: có ống đứng đổi cao độ.
   double? hangHeightM;
 
   /// Cao độ đầu nối ở máy (m); `null` = mặc định (2,5 m).
@@ -164,6 +186,10 @@ class SurveyNode {
   final List<String> photos;
   String note;
 
+  /// Cụm máy vẽ theo kích thước thật (như mặt bằng phòng lắp đặt); `null` =
+  /// ký hiệu MN.
+  SurveyPlant? plant;
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'x': x,
@@ -175,6 +201,7 @@ class SurveyNode {
     'dropDn': dropDn,
     'photos': photos,
     'note': note,
+    if (plant != null) 'plant': plant!.toJson(),
   };
 
   factory SurveyNode.fromJson(Map<String, dynamic> j) => SurveyNode(
@@ -190,7 +217,126 @@ class SurveyNode {
     dropDn: (j['dropDn'] as num?)?.toInt(),
     photos: [for (final p in j['photos'] as List? ?? const []) p as String],
     note: j['note'] as String? ?? '',
+    plant: j['plant'] is Map<String, dynamic>
+        ? SurveyPlant.fromJson(j['plant'] as Map<String, dynamic>)
+        : null,
   );
+}
+
+/// Nguồn thiết bị của cụm máy: chọn nhanh model, hoặc lấy từ một cấu hình hệ
+/// thống khí nén đã lưu.
+enum SurveyPlantSource { quick, config }
+
+/// Hướng ống ra khỏi cụm máy trên sơ đồ; `auto` = theo đoạn ống nối vào.
+enum SurveyPlantDir { auto, right, down, left, up }
+
+/// Cụm máy theo kích thước thật: thiết bị (máy nén, bình, máy sấy, lọc) xếp
+/// như phòng lắp đặt tối thiểu theo một trong 3 phương án.
+class SurveyPlant {
+  SurveyPlant({
+    this.source = SurveyPlantSource.quick,
+    this.type = CompressorType.pmVsd,
+    this.modelCode,
+    this.pressure = 8,
+    this.configId,
+    this.configName = '',
+    this.configJson,
+    this.style = RoomStyle.option1,
+    this.dir = SurveyPlantDir.auto,
+    this.flip = false,
+  });
+
+  SurveyPlantSource source;
+
+  /// Chọn nhanh: loại máy, model, áp suất làm việc (bar).
+  CompressorType type;
+  String? modelCode;
+  double pressure;
+
+  /// Cấu hình đã lưu: id, tên và bản chụp lúc chọn (vẫn vẽ được khi cấu hình
+  /// gốc bị xoá).
+  String? configId;
+  String configName;
+  Map<String, dynamic>? configJson;
+
+  RoomStyle style;
+  SurveyPlantDir dir;
+
+  /// Đặt thiết bị sang phía bên kia đường ống.
+  bool flip;
+
+  /// Đủ dữ liệu để tính.
+  bool get ready => switch (source) {
+    SurveyPlantSource.quick => modelCode != null,
+    SurveyPlantSource.config => configJson != null,
+  };
+
+  /// Cấu hình dùng để tính thiết bị và phòng tối thiểu theo [style] (bỏ phòng
+  /// thực tế, vị trí kéo tay); `null` khi chưa đủ dữ liệu.
+  AirConfig? airConfig() {
+    final AirConfig config;
+    switch (source) {
+      case SurveyPlantSource.quick:
+        if (modelCode == null) return null;
+        config = AirConfig(
+          compressor: CompressorConfig(
+            type: type,
+            pressure: pressure,
+            source: CompressorSource.catalog,
+            modelCode: modelCode,
+          ),
+        );
+      case SurveyPlantSource.config:
+        final j = configJson;
+        if (j == null) return null;
+        config = AirConfig.fromJson(j);
+    }
+    config.room
+      ..lengthM = null
+      ..widthM = null
+      ..heightM = null
+      ..style = style
+      ..positions.clear()
+      ..turned.clear();
+    return config;
+  }
+
+  Map<String, dynamic> toJson() => {
+    'source': source.name,
+    'type': type.name,
+    'modelCode': modelCode,
+    'pressure': pressure,
+    'configId': configId,
+    'configName': configName,
+    'configJson': configJson,
+    'style': style.name,
+    'dir': dir.name,
+    'flip': flip,
+  };
+
+  factory SurveyPlant.fromJson(Map<String, dynamic> j) => SurveyPlant(
+    source:
+        SurveyPlantSource.values
+            .where((v) => v.name == j['source'])
+            .firstOrNull ??
+        SurveyPlantSource.quick,
+    type: CompressorType.fromJson(j['type'], null),
+    modelCode: j['modelCode'] as String?,
+    pressure: (j['pressure'] as num?)?.toDouble() ?? 8,
+    configId: j['configId'] as String?,
+    configName: j['configName'] as String? ?? '',
+    configJson: j['configJson'] as Map<String, dynamic>?,
+    style:
+        RoomStyle.values.where((v) => v.name == j['style']).firstOrNull ??
+        RoomStyle.option1,
+    dir:
+        SurveyPlantDir.values.where((v) => v.name == j['dir']).firstOrNull ??
+        SurveyPlantDir.auto,
+    flip: j['flip'] as bool? ?? false,
+  );
+
+  /// Bản sao (bản chụp cấu hình dùng chung, không sửa tại chỗ).
+  SurveyPlant copy() => SurveyPlant.fromJson(toJson());
 }
 
 /// Một đoạn ống thẳng giữa hai điểm.
@@ -202,6 +348,8 @@ class SurveySegment {
     this.dn,
     this.measuredM,
     this.note = '',
+    this.obstacles = 0,
+    this.obstacleRiseM,
   }) : id = id ?? const Uuid().v4();
 
   final String id;
@@ -215,6 +363,15 @@ class SurveySegment {
   double? measuredM;
   String note;
 
+  /// Số lần vượt chướng ngại trên đoạn (lên / xuống rồi trở lại cao độ cũ).
+  int obstacles;
+
+  /// Chênh cao mỗi lần vượt (m): dương = vượt lên, âm = vượt xuống.
+  double? obstacleRiseM;
+
+  /// Có vượt chướng ngại tính được vật tư.
+  bool get hasObstacles => obstacles > 0 && (obstacleRiseM ?? 0).abs() > 1e-9;
+
   String other(String nodeId) => nodeId == a ? b : a;
 
   Map<String, dynamic> toJson() => {
@@ -224,6 +381,8 @@ class SurveySegment {
     'dn': dn,
     'measuredM': measuredM,
     'note': note,
+    'obstacles': obstacles,
+    'obstacleRiseM': obstacleRiseM,
   };
 
   factory SurveySegment.fromJson(Map<String, dynamic> j) => SurveySegment(
@@ -233,5 +392,87 @@ class SurveySegment {
     dn: (j['dn'] as num?)?.toInt(),
     measuredM: (j['measuredM'] as num?)?.toDouble(),
     note: j['note'] as String? ?? '',
+    obstacles: (j['obstacles'] as num?)?.toInt() ?? 0,
+    obstacleRiseM: (j['obstacleRiseM'] as num?)?.toDouble(),
+  );
+}
+
+enum SurveyShapeKind {
+  /// Tường: đoạn thẳng (x1, y1) – (x2, y2), dày [SurveyShape.sizeM].
+  wall,
+
+  /// Cột: hình chữ nhật tâm (x1, y1), rộng [SurveyShape.sizeM] × sâu
+  /// [SurveyShape.size2M].
+  column,
+
+  /// Chướng ngại: hình chữ nhật góc (x1, y1) – (x2, y2), có tên.
+  obstacle,
+
+  /// Ghi chú: chữ [SurveyShape.label] tại (x1, y1).
+  note,
+
+  /// Chú thích mũi tên: mũi tên chỉ vào (x1, y1), chữ tại (x2, y2).
+  leader,
+
+  /// Tên vùng / khu vực: chữ lớn căn giữa tại (x1, y1), cao
+  /// [SurveyShape.sizeM] m.
+  area,
+}
+
+/// Một hình nền trên sơ đồ (toạ độ m).
+class SurveyShape {
+  SurveyShape({
+    String? id,
+    required this.kind,
+    required this.x1,
+    required this.y1,
+    double? x2,
+    double? y2,
+    this.label = '',
+    this.sizeM,
+    this.size2M,
+  }) : id = id ?? const Uuid().v4(),
+       x2 = x2 ?? x1,
+       y2 = y2 ?? y1;
+
+  final String id;
+  final SurveyShapeKind kind;
+  double x1;
+  double y1;
+  double x2;
+  double y2;
+  String label;
+
+  /// Tường: độ dày; cột: chiều rộng; tên vùng: chiều cao chữ (m).
+  /// `null` = mặc định.
+  double? sizeM;
+
+  /// Cột: chiều sâu (m). `null` = bằng chiều rộng.
+  double? size2M;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'kind': kind.name,
+    'x1': x1,
+    'y1': y1,
+    'x2': x2,
+    'y2': y2,
+    'label': label,
+    'sizeM': sizeM,
+    'size2M': size2M,
+  };
+
+  factory SurveyShape.fromJson(Map<String, dynamic> j) => SurveyShape(
+    id: j['id'] as String?,
+    kind:
+        SurveyShapeKind.values.where((k) => k.name == j['kind']).firstOrNull ??
+        SurveyShapeKind.note,
+    x1: (j['x1'] as num).toDouble(),
+    y1: (j['y1'] as num).toDouble(),
+    x2: (j['x2'] as num?)?.toDouble(),
+    y2: (j['y2'] as num?)?.toDouble(),
+    label: j['label'] as String? ?? '',
+    sizeM: (j['sizeM'] as num?)?.toDouble(),
+    size2M: (j['size2M'] as num?)?.toDouble(),
   );
 }

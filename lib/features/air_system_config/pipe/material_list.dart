@@ -146,7 +146,7 @@ List<MaterialRow> buildMaterialRows(
 );
 
 /// Sửa tay các danh sách vật tư theo khóa danh sách — dùng chung cho Cấu
-/// hình hệ thống khí nén (`PipeConfig.edits`) và Khảo sát tuyến ống.
+/// hình hệ thống khí nén (`PipeConfig.edits`) và Khảo sát vật tư ngoại tuyến.
 extension MaterialEdits on Map<String, MaterialListEdit> {
   MaterialListEdit _list(String list) =>
       putIfAbsent(list, MaterialListEdit.new);

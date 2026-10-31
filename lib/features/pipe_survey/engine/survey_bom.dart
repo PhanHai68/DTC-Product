@@ -145,6 +145,7 @@ class SurveyRun {
     required this.lengthM,
     this.measured = false,
     this.drop = false,
+    this.vertical = false,
   });
   final String label;
   final int dn;
@@ -155,6 +156,9 @@ class SurveyRun {
 
   /// Ống đứng xuống máy tại điểm sử dụng.
   final bool drop;
+
+  /// Ống đứng đổi cao độ hoặc vượt chướng ngại.
+  final bool vertical;
 }
 
 enum SurveyWarningCode {
@@ -252,6 +256,39 @@ SurveyBom computeSurveyBom(PipeSurvey s, SurveyConstants c) {
     add(SurveyRole.coupling, dn, cpl);
     addJoints(dn, 2 * cpl);
     add(SurveyRole.clamp, dn, clampsFor(len, dn));
+
+    // Ống đứng: đổi cao độ giữa hai điểm (2 co) và vượt chướng ngại (mỗi
+    // lần 2 × chênh cao, 4 co).
+    void vertical(String label, double rise, int elbows) {
+      runs.add(SurveyRun(label: label, dn: dn, lengthM: rise, vertical: true));
+      length.update(dn, (v) => v + rise, ifAbsent: () => rise);
+      add(SurveyRole.elbow, dn, elbows);
+      final joins = couplingsFor(rise);
+      add(SurveyRole.coupling, dn, joins);
+      addJoints(dn, 2 * elbows + 2 * joins);
+      add(SurveyRole.clamp, dn, clampsFor(rise, dn));
+    }
+
+    final ea = a.hangHeightM ?? s.hangHeightM;
+    final eb = b.hangHeightM ?? s.hangHeightM;
+    if (ea != null && eb != null && (ea - eb).abs() > 1e-6) {
+      vertical(
+        '${_nodeLabel(s, a)} → ${_nodeLabel(s, b)} (đổi cao độ '
+        '${_fmt(ea)} → ${_fmt(eb)} m)',
+        (ea - eb).abs(),
+        2,
+      );
+    }
+    if (seg.hasObstacles) {
+      final rise = seg.obstacleRiseM!.abs();
+      vertical(
+        '${_nodeLabel(s, a)} → ${_nodeLabel(s, b)} (vượt chướng ngại '
+        '×${seg.obstacles}, ${seg.obstacleRiseM! > 0 ? 'lên' : 'xuống'} '
+        '${_fmt(rise)} m)',
+        2 * rise * seg.obstacles,
+        4 * seg.obstacles,
+      );
+    }
   }
 
   // Phụ kiện tại từng điểm.
@@ -414,6 +451,13 @@ bool _collinear(
   final bx = b.x - node.x, by = b.y - node.y;
   final cross = ax * by - ay * bx;
   return cross.abs() < 1e-6 && ax * bx + ay * by < 0;
+}
+
+String _fmt(double v) {
+  final r = (v * 100).round() / 100;
+  return r == r.roundToDouble()
+      ? '${r.round()}'
+      : r.toString().replaceAll('.', ',');
 }
 
 String _nodeLabel(PipeSurvey s, SurveyNode n) {
