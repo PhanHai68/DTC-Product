@@ -209,7 +209,7 @@ class _SeriesCard extends StatelessWidget {
   });
 
   /// Dòng máy đã có tên tiếng Anh chính thức — dòng phụ hiện tên tiếng Anh
-  /// thay cho "Dòng <mã>". Thêm mã dòng vào đây khi cập nhật tên cho dòng
+  /// thay cho "Dòng `<mã>`". Thêm mã dòng vào đây khi cập nhật tên cho dòng
   /// khác.
   static const _englishSubtitleSeries = {
     'ASU_UNIVERSAL',

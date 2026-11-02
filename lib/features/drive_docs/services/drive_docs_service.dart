@@ -25,11 +25,10 @@ class DriveDocsService {
   DriveDocsService({
     http.Client? client,
     DriveDocCache? cache,
-    String apiKey = driveDocsApiKey,
+    this._apiKey = driveDocsApiKey,
     this.rootFolderId = driveDocsRootFolderId,
   }) : _client = client ?? http.Client(),
-       _cache = cache ?? DriveDocCache(),
-       _apiKey = apiKey;
+       _cache = cache ?? DriveDocCache();
 
   static final DriveDocsService instance = DriveDocsService();
 

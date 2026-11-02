@@ -224,10 +224,8 @@ void main() {
         final catalog = _parse(config);
         final paths = {
           config.menuImage,
-          for (final s in catalog.series)
-            if (s.image case final p?) p,
-          for (final m in catalog.machines)
-            if (m.image case final p?) p,
+          for (final s in catalog.series) ?s.image,
+          for (final m in catalog.machines) ?m.image,
         };
         for (final path in paths) {
           final bytes = await rootBundle.load(path);

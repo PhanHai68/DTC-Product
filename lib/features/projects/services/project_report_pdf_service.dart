@@ -715,35 +715,6 @@ abstract final class ProjectReportPdfService {
     );
   }
 
-  static void _drawImageCover(
-    PdfGraphics graphics,
-    PdfBitmap image,
-    ui.Rect bounds,
-  ) {
-    graphics.save();
-    graphics.setClip(bounds: bounds);
-    final boundsAspect = bounds.width / bounds.height;
-    final imageAspect = image.width / image.height;
-    double width, height;
-    if (imageAspect > boundsAspect) {
-      height = bounds.height;
-      width = height * imageAspect;
-    } else {
-      width = bounds.width;
-      height = width / imageAspect;
-    }
-    graphics.drawImage(
-      image,
-      ui.Rect.fromLTWH(
-        bounds.left + (bounds.width - width) / 2,
-        bounds.top + (bounds.height - height) / 2,
-        width,
-        height,
-      ),
-    );
-    graphics.restore();
-  }
-
   static String _date(DateTime value) =>
       '${value.day.toString().padLeft(2, '0')}/${value.month.toString().padLeft(2, '0')}/${value.year}';
 
@@ -751,12 +722,6 @@ abstract final class ProjectReportPdfService {
       ? '—'
       : '${_date(value)} ${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
 
-  static String _duration(Duration value) {
-    final days = value.inDays;
-    final hours = value.inHours.remainder(24);
-    final minutes = value.inMinutes.remainder(60);
-    return '${days > 0 ? '$days ngày ' : ''}${hours}g ${minutes}p';
-  }
 }
 
 class _ProjectPdfFonts {
