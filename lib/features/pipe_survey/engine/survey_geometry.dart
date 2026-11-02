@@ -90,6 +90,7 @@ SurveyNode surveySplitSegment(
           ? null
           : measured * first / total,
       note: seg.note,
+      heightM: seg.heightM,
     ),
     SurveySegment(
       a: mid.id,
@@ -98,6 +99,7 @@ SurveyNode surveySplitSegment(
       measuredM: measured == null || total == 0
           ? null
           : measured * (total - first) / total,
+      heightM: seg.heightM,
     ),
   ]);
   return mid;
@@ -229,6 +231,16 @@ SurveyShape? surveyShapeAt(PipeSurvey s, double x, double y) {
                 0.4) {
           return shape;
         }
+      case SurveyShapeKind.measure:
+        final mid = Offset(
+          (shape.x1 + shape.x2) / 2,
+          (shape.y1 + shape.y2) / 2,
+        );
+        if (_distToSegment(x, y, shape.x1, shape.y1, shape.x2, shape.y2) <=
+                0.4 ||
+            (Offset(x, y) - mid).distance <= 0.8) {
+          return shape;
+        }
       case SurveyShapeKind.area:
         final h = shape.sizeM ?? surveyAreaTextM;
         final w = math.max(h, shape.label.length * 0.62 * h);
@@ -356,6 +368,7 @@ void surveyEraseNode(PipeSurvey s, SurveyNode n) {
               note: g1.note.isNotEmpty ? g1.note : g2.note,
               obstacles: g1.obstacles + g2.obstacles,
               obstacleRiseM: g1.obstacleRiseM ?? g2.obstacleRiseM,
+              heightM: g1.heightM == g2.heightM ? g1.heightM : null,
             ),
           );
         s.nodes.remove(n);
@@ -380,6 +393,7 @@ Rect surveyShapeBounds(SurveyShape h) {
   switch (h.kind) {
     case SurveyShapeKind.wall:
     case SurveyShapeKind.obstacle:
+    case SurveyShapeKind.measure:
       return Rect.fromPoints(Offset(h.x1, h.y1), Offset(h.x2, h.y2));
     case SurveyShapeKind.column:
       return Rect.fromCenter(
@@ -409,4 +423,42 @@ Rect surveyShapeBounds(SurveyShape h) {
         height: t,
       );
   }
+}
+
+/// Điểm đo: bắt vào điểm trên tuyến ống, đầu tường, góc chướng ngại / cột,
+/// góc [rects] (phòng cụm máy, tường bao) trong [tolerance] m; không có thì
+/// làm tròn 0,1 m.
+Offset surveyMeasureSnap(
+  PipeSurvey s,
+  double x,
+  double y, {
+  Iterable<Rect> rects = const [],
+  double tolerance = 0.6,
+}) {
+  final candidates = <Offset>[
+    for (final n in s.nodes) Offset(n.x, n.y),
+    for (final h in s.shapes)
+      ...switch (h.kind) {
+        SurveyShapeKind.wall ||
+        SurveyShapeKind.measure => [Offset(h.x1, h.y1), Offset(h.x2, h.y2)],
+        SurveyShapeKind.obstacle || SurveyShapeKind.column => [
+          for (final (a, _) in _edges(surveyShapeBounds(h))) a,
+        ],
+        _ => const <Offset>[],
+      },
+    for (final r in rects)
+      for (final (a, _) in _edges(r)) a,
+  ];
+  final tap = Offset(x, y);
+  Offset? best;
+  var bestD = tolerance;
+  for (final c in candidates) {
+    final d = (c - tap).distance;
+    if (d <= bestD) {
+      best = c;
+      bestD = d;
+    }
+  }
+  double r(double v) => (v * 10).round() / 10;
+  return best ?? Offset(r(x), r(y));
 }

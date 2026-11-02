@@ -278,6 +278,7 @@ class _AirConfigEditorScreenState extends State<AirConfigEditorScreen> {
           kits: ctrl.installKits,
           merged: po.merged,
           requester: po.requester,
+          custom: ctrl.customEquipment,
         ),
         _ExportKind.po => AirConfigExportService.po(
           await template(),
@@ -288,6 +289,7 @@ class _AirConfigEditorScreenState extends State<AirConfigEditorScreen> {
           kits: ctrl.installKits,
           merged: po!.merged,
           requester: po.requester,
+          custom: ctrl.customEquipment,
         ),
         _ExportKind.png => await AirConfigExportService.png(ctrl.diagram, base),
       };

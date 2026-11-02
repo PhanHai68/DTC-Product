@@ -139,8 +139,8 @@ class AirEngine {
     }
 
     // ── Xử lý khí chung: máy sấy theo điểm sương, lọc sau máy sấy ───────
-    // Lọc đường ống: tách thô 1 µm + tách tinh 0,01 µm sau máy sấy; than
-    // hoạt tính / vô trùng theo lựa chọn chung.
+    // Lọc đường ống: tách thô 1 µm + tách tinh 0,01 µm sau máy sấy; siêu
+    // tinh 0,001 µm (kiểu "sterile") và than hoạt tính theo mục Nâng cao.
     final drop =
         switch (kind) {
           DryerKind.desiccant => c.drop('desiccantDryer'),
@@ -148,7 +148,9 @@ class AirEngine {
           DryerKind.none => 0.0,
         } +
         (pre.hasCoarse ? c.drop('coarseFilter') : 0) +
-        (pre.hasFine ? c.drop('fineFilter') : 0);
+        (pre.hasFine ? c.drop('fineFilter') : 0) +
+        (pre.ultraFineFilter ? c.drop('sterileFilter') : 0) +
+        (pre.carbonFilter ? c.drop('carbonFilter') : 0);
     final groups = [
       AirGroup(
         kind: kind,
@@ -158,8 +160,8 @@ class AirEngine {
         pdp: treat.pdp.celsius,
         coarse: pre.hasCoarse,
         fine: pre.hasFine,
-        carbon: false,
-        sterile: false,
+        carbon: pre.carbonFilter,
+        sterile: pre.ultraFineFilter,
         pressureDrop: drop,
       ),
     ];
@@ -646,8 +648,9 @@ class AirEngine {
       for (final (on, kind, prefix) in [
         (g.coarse, EquipmentKind.coarseFilter, 'coarse'),
         (g.fine, EquipmentKind.fineFilter, 'fine'),
-        (g.carbon, EquipmentKind.carbonFilter, 'carbon'),
+        // Siêu tinh 0,001 µm trước, than hoạt tính sau cùng.
         (g.sterile, EquipmentKind.sterileFilter, 'sterile'),
+        (g.carbon, EquipmentKind.carbonFilter, 'carbon'),
       ]) {
         if (!on) continue;
         items.add(
@@ -668,6 +671,8 @@ class AirEngine {
         'waterSeparator': pre.hasWaterSeparator ? 1 : 0,
         'coarseFilter': groups.where((g) => g.coarse).length,
         'fineFilter': groups.where((g) => g.fine).length,
+        // Lọc than hoạt tính không có nước ngưng: không xả.
+        'sterileFilter': groups.where((g) => g.sterile).length,
         'refrigeratedDryer': groups
             .where((g) => g.kind == DryerKind.refrigerated)
             .length,

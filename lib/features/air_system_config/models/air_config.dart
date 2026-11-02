@@ -1,5 +1,9 @@
 import 'package:uuid/uuid.dart';
 
+import 'custom_layout.dart';
+
+export 'custom_layout.dart';
+
 /// Cấu hình hệ thống khí nén do người dùng nhập. Cấu trúc JSON:
 /// `project, compressor, tank, pretreat, desiccant, lines[]`, thêm
 /// `overrides`/`extraItems` cho phần sửa tay danh mục thiết bị.
@@ -172,6 +176,8 @@ class PretreatConfig {
     this.fineFilter = true,
     this.afterCooler = AfterCoolerType.none,
     this.autoDrain = true,
+    this.ultraFineFilter = false,
+    this.carbonFilter = false,
   });
 
   /// Theo tiêu chuẩn lọc đường ống: đủ 3 lọc (số lượng tối thiểu).
@@ -181,6 +187,11 @@ class PretreatConfig {
   bool fineFilter;
   AfterCoolerType afterCooler;
   bool autoDrain;
+
+  /// Nâng cao: lọc siêu tinh 0,001 µm và lọc than hoạt tính (khử hơi dầu,
+  /// mùi), lắp sau lọc tách tinh 0,01 µm theo thứ tự đó.
+  bool ultraFineFilter;
+  bool carbonFilter;
 
   bool get hasWaterSeparator => standard || waterSeparator;
   bool get hasCoarse => standard || coarseFilter;
@@ -193,6 +204,8 @@ class PretreatConfig {
     'fineFilter': fineFilter,
     'afterCooler': afterCooler.name,
     'autoDrain': autoDrain,
+    'ultraFineFilter': ultraFineFilter,
+    'carbonFilter': carbonFilter,
   };
 
   /// Cấu hình cũ (lọc bụi / lọc tách dầu) đọc thành hệ tiêu chuẩn.
@@ -207,6 +220,8 @@ class PretreatConfig {
       AfterCoolerType.none,
     ),
     autoDrain: j['autoDrain'] as bool? ?? true,
+    ultraFineFilter: j['ultraFineFilter'] as bool? ?? false,
+    carbonFilter: j['carbonFilter'] as bool? ?? false,
   );
 }
 
@@ -592,6 +607,7 @@ class AirConfig {
     List<AirLine>? lines,
     Map<String, EquipmentOverride>? overrides,
     List<ExtraEquipment>? extraItems,
+    CustomLayout? custom,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : id = id ?? const Uuid().v4(),
@@ -607,6 +623,7 @@ class AirConfig {
        lines = lines ?? [AirLine()],
        overrides = overrides ?? {},
        extraItems = extraItems ?? [],
+       custom = custom ?? CustomLayout(),
        createdAt = createdAt ?? DateTime.now(),
        updatedAt = updatedAt ?? DateTime.now();
 
@@ -625,6 +642,9 @@ class AirConfig {
   final List<AirLine> lines;
   final Map<String, EquipmentOverride> overrides;
   final List<ExtraEquipment> extraItems;
+
+  /// Sơ đồ tuỳ chỉnh (thêm máy, đổi thứ tự thiết bị).
+  final CustomLayout custom;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -646,6 +666,7 @@ class AirConfig {
         if (!e.value.isEmpty) e.key: e.value.toJson(),
     },
     'extraItems': [for (final x in extraItems) x.toJson()],
+    'custom': custom.toJson(),
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
   };
@@ -698,6 +719,9 @@ class AirConfig {
         for (final x in (j['extraItems'] as List?) ?? const [])
           ExtraEquipment.fromJson((x as Map).cast<String, dynamic>()),
       ],
+      custom: j['custom'] is Map
+          ? CustomLayout.fromJson(map('custom'))
+          : CustomLayout(),
       createdAt: DateTime.tryParse(j['createdAt'] as String? ?? ''),
       updatedAt: DateTime.tryParse(j['updatedAt'] as String? ?? ''),
     );

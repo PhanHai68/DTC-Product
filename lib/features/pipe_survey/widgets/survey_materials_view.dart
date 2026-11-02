@@ -83,6 +83,26 @@ class SurveyMaterialsView extends StatelessWidget {
             Text(
               'Ống DN$dn: ${formatSurveyNumber(_round1(bom.lengthByDn[dn]!))} m',
             ),
+          if (dns.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              [
+                'Tổng: ${formatSurveyNumber(_round1(bom.totalLengthM))} m',
+                for (final (label, pick) in [
+                  ('ống ngang', (SurveyRun r) => !r.vertical && !r.drop),
+                  (
+                    'đổi cao độ / vượt chướng ngại',
+                    (SurveyRun r) => r.vertical,
+                  ),
+                  ('ống xuống máy', (SurveyRun r) => r.drop),
+                ])
+                  if (bom.runs.where(pick).fold(0.0, (t, r) => t + r.lengthM)
+                      case final m when m > 0)
+                    '$label ${formatSurveyNumber(_round1(m))} m',
+              ].join(' · '),
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ],
           Text('Điểm sử dụng: ${s.usePoints.length}'),
           if (dns.isNotEmpty)
             Padding(

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../engine/survey_bom.dart';
@@ -61,7 +63,9 @@ class _SaveSegment extends _Result {
     this.note,
     this.obstacles,
     this.obstacleRiseM,
+    this.heightM,
   );
+  final double? heightM;
   final double? measuredM;
   final int? dn;
   final String note;
@@ -112,7 +116,8 @@ Future<void> showSurveySegmentSheet(
           ..dn = r.dn
           ..note = r.note
           ..obstacles = r.obstacles
-          ..obstacleRiseM = r.obstacleRiseM;
+          ..obstacleRiseM = r.obstacleRiseM
+          ..heightM = r.heightM;
       });
     case _SaveNode():
       return;
@@ -133,6 +138,9 @@ class _SegmentDialogState extends State<_SegmentDialog> {
     text: formatSurveyNumber(widget.segment.measuredM),
   );
   late final _note = TextEditingController(text: widget.segment.note);
+  late final _height = TextEditingController(
+    text: formatSurveyNumber(widget.segment.heightM),
+  );
   late int? _dn = widget.segment.dn;
   late final _obstacles = TextEditingController(
     text: widget.segment.obstacles == 0 ? '' : '${widget.segment.obstacles}',
@@ -144,7 +152,7 @@ class _SegmentDialogState extends State<_SegmentDialog> {
 
   @override
   void dispose() {
-    for (final c in [_measured, _note, _obstacles, _rise]) {
+    for (final c in [_measured, _note, _obstacles, _rise, _height]) {
       c.dispose();
     }
     super.dispose();
@@ -190,6 +198,21 @@ class _SegmentDialogState extends State<_SegmentDialog> {
                   DropdownMenuItem(value: size, child: Text('DN$size')),
               ],
               onChanged: (v) => setState(() => _dn = v),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              key: const Key('survey_segment_height'),
+              controller: _height,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: _decoration(
+                'Cao độ đoạn ống',
+                hint: s.hangHeightM == null
+                    ? 'Trống = theo cao độ tại điểm'
+                    : 'Trống = ${formatSurveyNumber(s.hangHeightM)} m (công trình)',
+                suffix: 'm',
+              ),
             ),
             const SizedBox(height: 14),
             const Text(
@@ -255,6 +278,10 @@ class _SegmentDialogState extends State<_SegmentDialog> {
               _note.text.trim(),
               hasObstacle ? count : 0,
               hasObstacle ? (_up ? rise : -rise) : null,
+              () {
+                final h = parseSurveyNumber(_height.text);
+                return h != null && h > 0 ? h : null;
+              }(),
             ),
           );
         },
@@ -338,9 +365,6 @@ class _NodeDialogState extends State<_NodeDialog> {
   late int? _dropDn = widget.node.dropDn;
   late SurveyPlant? _plant = widget.node.plant;
   late final _name = TextEditingController(text: widget.node.name);
-  late final _hang = TextEditingController(
-    text: formatSurveyNumber(widget.node.hangHeightM),
-  );
   late final _conn = TextEditingController(
     text: formatSurveyNumber(widget.node.connectionHeightM),
   );
@@ -348,7 +372,7 @@ class _NodeDialogState extends State<_NodeDialog> {
 
   @override
   void dispose() {
-    for (final t in [_name, _hang, _conn, _note]) {
+    for (final t in [_name, _conn, _note]) {
       t.dispose();
     }
     super.dispose();
@@ -356,7 +380,6 @@ class _NodeDialogState extends State<_NodeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final s = widget.ctrl.survey;
     final c = widget.ctrl.constants;
     final usePoint = _kind == SurveyNodeKind.usePoint;
     final plantEngine = widget.ctrl.plantEngine;
@@ -394,21 +417,6 @@ class _NodeDialogState extends State<_NodeDialog> {
               decoration: _decoration(
                 'Tên',
                 hint: usePoint ? 'Vd: Máy tách màu 1' : null,
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              key: const Key('survey_node_hang'),
-              controller: _hang,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: _decoration(
-                'Cao độ ống tại điểm',
-                hint: s.hangHeightM == null
-                    ? 'Trống = độ cao treo của công trình'
-                    : 'Trống = ${formatSurveyNumber(s.hangHeightM)} m',
-                suffix: 'm',
               ),
             ),
             if (usePoint) ...[
@@ -477,7 +485,8 @@ class _NodeDialogState extends State<_NodeDialog> {
             kind: _kind,
             name: _name.text.trim(),
             note: _note.text.trim(),
-            hangHeightM: parseSurveyNumber(_hang.text),
+            // Cao độ nhập theo đoạn ống; bỏ cao độ theo điểm (bản cũ).
+            hangHeightM: null,
             connectionHeightM: usePoint ? parseSurveyNumber(_conn.text) : null,
             dropDn: usePoint ? _dropDn : null,
             plant: _kind == SurveyNodeKind.compressor ? _plant : null,
@@ -496,6 +505,7 @@ String surveyShapeKindLabel(SurveyShapeKind k) => switch (k) {
   SurveyShapeKind.note => 'Ghi chú',
   SurveyShapeKind.leader => 'Chú thích mũi tên',
   SurveyShapeKind.area => 'Tên vùng / khu vực',
+  SurveyShapeKind.measure => 'Đo kích thước',
 };
 
 /// Loại hình nền chỉ là chữ: để trống chữ thì xoá.
@@ -609,8 +619,20 @@ Future<void> showSurveyShapeSheet(
       s.shapes.remove(h);
       return;
     }
+    h.label = result.label;
+    if (h.kind == SurveyShapeKind.obstacle) {
+      // Chướng ngại: nhập dài × rộng thì đổi kích thước (giữ góc trên trái).
+      final l = math.min(h.x1, h.x2), t = math.min(h.y1, h.y2);
+      final w = result.sizeM ?? (h.x2 - h.x1).abs();
+      final d = result.size2M ?? (h.y2 - h.y1).abs();
+      h
+        ..x1 = l
+        ..y1 = t
+        ..x2 = l + w
+        ..y2 = t + d;
+      return;
+    }
     h
-      ..label = result.label
       ..sizeM = result.sizeM
       ..size2M = result.size2M;
   });
@@ -639,12 +661,24 @@ class _ShapeDialog extends StatefulWidget {
 
 class _ShapeDialogState extends State<_ShapeDialog> {
   late final _label = TextEditingController(text: widget.shape.label);
+  // Chướng ngại: dài × rộng theo hình đã vẽ.
+  late final _obstacle = widget.shape.kind == SurveyShapeKind.obstacle;
   late final _size = TextEditingController(
-    text: formatSurveyNumber(widget.shape.sizeM),
+    text: formatSurveyNumber(
+      _obstacle
+          ? _round((widget.shape.x2 - widget.shape.x1).abs())
+          : widget.shape.sizeM,
+    ),
   );
   late final _size2 = TextEditingController(
-    text: formatSurveyNumber(widget.shape.size2M),
+    text: formatSurveyNumber(
+      _obstacle
+          ? _round((widget.shape.y2 - widget.shape.y1).abs())
+          : widget.shape.size2M,
+    ),
   );
+
+  static double _round(double v) => (v * 100).round() / 100;
 
   @override
   void dispose() {
@@ -675,10 +709,12 @@ class _ShapeDialogState extends State<_ShapeDialog> {
                   SurveyShapeKind.note => 'Nội dung ghi chú',
                   SurveyShapeKind.leader => 'Nội dung chú thích',
                   SurveyShapeKind.area => 'Tên khu vực',
+                  SurveyShapeKind.measure => 'Ghi chú',
                   _ => 'Tên',
                 },
                 hint: switch (kind) {
-                  SurveyShapeKind.obstacle => 'Vd: Bồn nước, Dầm, Ống gió',
+                  SurveyShapeKind.obstacle => 'Vd: Silo, Cân, Bồn nước',
+                  SurveyShapeKind.measure => 'Tuỳ chọn',
                   SurveyShapeKind.column => 'Vd: C3',
                   SurveyShapeKind.leader => 'Vd: Lỗ xuyên tường Ø90',
                   SurveyShapeKind.area => 'Vd: Xưởng sấy, Kho thành phẩm',
@@ -697,6 +733,30 @@ class _ShapeDialogState extends State<_ShapeDialog> {
                   hint: 'Trống = ${formatSurveyNumber(surveyAreaTextM)}',
                   suffix: 'm',
                 ),
+              ),
+            ],
+            if (kind == SurveyShapeKind.obstacle) ...[
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      key: const Key('survey_obstacle_length'),
+                      controller: _size,
+                      keyboardType: number,
+                      decoration: _decoration('Dài', suffix: 'm'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      key: const Key('survey_obstacle_width'),
+                      controller: _size2,
+                      keyboardType: number,
+                      decoration: _decoration('Rộng', suffix: 'm'),
+                    ),
+                  ),
+                ],
               ),
             ],
             if (kind == SurveyShapeKind.wall) ...[

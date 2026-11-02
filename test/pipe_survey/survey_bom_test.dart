@@ -146,6 +146,39 @@ void main() {
     expect(_qty(bom)['pipe50'], 42);
   });
 
+  test('cao độ riêng từng đoạn: ống đứng tại điểm nối, 2 co thay co góc', () {
+    // Cụm máy (0,0) → 10 m cao 3 → góc → 6 m cao 4 → góc → 6 m cao 3,5 →
+    // điểm sử dụng (đầu nối 2,5 m).
+    final s = PipeSurvey();
+    final mn = SurveyNode(x: 0, y: 0, kind: SurveyNodeKind.compressor);
+    final j1 = SurveyNode(x: 10, y: 0);
+    final j2 = SurveyNode(x: 10, y: 6);
+    final u = SurveyNode(x: 16, y: 6, kind: SurveyNodeKind.usePoint);
+    s.nodes.addAll([mn, j1, j2, u]);
+    s.segments.addAll([
+      SurveySegment(a: mn.id, b: j1.id, heightM: 3),
+      SurveySegment(a: j1.id, b: j2.id, heightM: 4),
+      SurveySegment(a: j2.id, b: u.id, heightM: 3.5),
+    ]);
+    final bom = computeSurveyBom(s, pipeSurveyConstants);
+    expect(bom.warnings, isEmpty);
+    final risers = bom.runs.where((r) => r.vertical).toList();
+    expect([for (final r in risers) r.lengthM], [1, 0.5]);
+    expect(risers.first.label, contains('đổi cao độ 3 ↔ 4 m'));
+    // Ống đứng xuống máy theo cao độ đoạn cuối: 3,5 − 2,5 = 1 m.
+    final drop = bom.runs.singleWhere((r) => r.drop);
+    expect(drop.lengthM, 1);
+    // 22 m ngang + 1,5 m đổi cao độ + 1 m xuống máy.
+    expect(bom.lengthByDn[50], 24.5);
+    // Co: 2 góc đổi cao độ × 2 + 1 co ống xuống máy = 5 → +15% = 6.
+    expect(_qty(bom)['elbow50'], 6);
+    expect(surveyNodeElevation(s, u), 3.5);
+    expect(surveyNodeRiser(s, j1), (3.0, 4.0, 2));
+    // Lưu / đọc giữ cao độ đoạn.
+    final back = PipeSurvey.fromJson(s.toJson());
+    expect([for (final g in back.segments) g.heightM], [3, 4, 3.5]);
+  });
+
   test('vượt chướng ngại: mỗi lần 2 × chênh cao + 4 co', () {
     final s = _sample();
     s.segments.first

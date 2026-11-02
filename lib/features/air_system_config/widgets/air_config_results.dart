@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../diagram/air_diagram_render.dart';
 import '../l10n/air_strings.dart';
+import '../models/air_config.dart';
 import '../models/air_result.dart';
 import '../providers/air_config_editor_controller.dart';
+import 'air_custom_layout_screen.dart';
 import 'air_diagram_view.dart';
 
 /// Tab "Kết quả": cảnh báo (lỗi trên cùng), ô thông số tổng, sơ đồ lắp đặt
@@ -22,6 +24,7 @@ class AirConfigResults extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
       children: [
         _Warnings(result: r, strings: s),
+        if (ctrl.config.custom.active) _CustomCard(ctrl: ctrl),
         _SummaryCards(result: r, strings: s),
         const SizedBox(height: 12),
         _ElectricalCard(result: r, strings: s),
@@ -126,7 +129,17 @@ class _DiagramCardState extends State<_DiagramCard> {
         builder: (_) => ChangeNotifierProvider.value(
           value: ctrl,
           child: Scaffold(
-            appBar: AppBar(title: Text(ctrl.strings.tabDiagram)),
+            appBar: AppBar(
+              title: Text(ctrl.strings.tabDiagram),
+              actions: [
+                IconButton(
+                  key: const Key('air_custom_open_full'),
+                  tooltip: ctrl.strings.customTitle,
+                  icon: const Icon(Icons.tune_rounded),
+                  onPressed: () => openAirCustomLayout(context, ctrl),
+                ),
+              ],
+            ),
             body: const AirDiagramView(),
           ),
         ),
@@ -149,11 +162,30 @@ class _DiagramCardState extends State<_DiagramCard> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    s.tabDiagram,
-                    style: Theme.of(context).textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        s.tabDiagram,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      if (widget.ctrl.config.custom.active)
+                        Text(
+                          s.customActive,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                    ],
                   ),
+                ),
+                TextButton.icon(
+                  key: const Key('air_custom_open'),
+                  onPressed: () => openAirCustomLayout(context, widget.ctrl),
+                  icon: const Icon(Icons.tune_rounded, size: 18),
+                  label: Text(s.customTitle),
                 ),
                 IconButton(
                   key: const Key('air_diagram_fullscreen'),
@@ -395,6 +427,82 @@ class _Card extends StatelessWidget {
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12.5),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Thiết bị theo sơ đồ tuỳ chỉnh: từng tầng (số máy, model) và tổng lưu
+/// lượng, công suất các máy nén đã chọn.
+class _CustomCard extends StatelessWidget {
+  const _CustomCard({required this.ctrl});
+  final AirConfigEditorController ctrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = ctrl.strings;
+    final eq = ctrl.customEquipment;
+    final scheme = Theme.of(context).colorScheme;
+    var flow = 0.0, kw = 0.0;
+    for (final st in ctrl.config.custom.stages) {
+      if (st.kind != CustomKind.compressor) continue;
+      for (final u in st.units) {
+        final model = eq.modelOf(st, u);
+        flow += eq.compressorFlow(model) ?? 0;
+        kw += eq.compressorKw(model) ?? 0;
+      }
+    }
+    return Card(
+      key: const Key('air_custom_card'),
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: scheme.primary, width: 1.5),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.tune_rounded, size: 20, color: scheme.primary),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    s.customActive,
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => openAirCustomLayout(context, ctrl),
+                  child: Text(s.customTitle),
+                ),
+              ],
+            ),
+            for (final st in ctrl.config.custom.stages)
+              if (st.qty > 0)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3),
+                  child: Text(
+                    '${eq.kindName(st.kind)} ×${st.qty}: '
+                    '${{for (final u in st.units) eq.modelOf(st, u) ?? '—'}.join(', ')}',
+                  ),
+                ),
+            if (kw > 0) ...[
+              const SizedBox(height: 6),
+              Text(
+                '${s.customCompressor}: ${s.flow(flow)} · ${s.n2(kw)} kW',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFC2410C),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

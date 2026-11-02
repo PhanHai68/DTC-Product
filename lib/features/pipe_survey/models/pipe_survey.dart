@@ -102,7 +102,24 @@ class PipeSurvey {
     'updatedAt': updatedAt.toIso8601String(),
   };
 
-  factory PipeSurvey.fromJson(Map<String, dynamic> j) => PipeSurvey(
+  factory PipeSurvey.fromJson(Map<String, dynamic> j) =>
+      _fromJson(j).._migrateNodeHeights();
+
+  /// Bản cũ nhập cao độ theo điểm ("cao độ ống tại điểm"): chuyển thành cao
+  /// độ đoạn ống — đoạn lấy cao độ điểm đầu (điểm vẽ trước), không có thì
+  /// điểm cuối; đổi cao độ nằm ở điểm nối giữa hai đoạn.
+  void _migrateNodeHeights() {
+    if (nodes.every((n) => n.hangHeightM == null)) return;
+    for (final seg in segments) {
+      if (seg.heightM != null) continue;
+      seg.heightM = node(seg.a)?.hangHeightM ?? node(seg.b)?.hangHeightM;
+    }
+    for (final n in nodes) {
+      n.hangHeightM = null;
+    }
+  }
+
+  static PipeSurvey _fromJson(Map<String, dynamic> j) => PipeSurvey(
     id: j['id'] as String?,
     name: j['name'] as String? ?? '',
     customer: j['customer'] as String? ?? '',
@@ -350,6 +367,7 @@ class SurveySegment {
     this.note = '',
     this.obstacles = 0,
     this.obstacleRiseM,
+    this.heightM,
   }) : id = id ?? const Uuid().v4();
 
   final String id;
@@ -369,6 +387,11 @@ class SurveySegment {
   /// Chênh cao mỗi lần vượt (m): dương = vượt lên, âm = vượt xuống.
   double? obstacleRiseM;
 
+  /// Cao độ riêng của đoạn ống (m); `null` = theo cao độ tại hai điểm / độ
+  /// cao treo công trình. Hai đoạn liền nhau khác cao độ: ống đứng tại điểm
+  /// nối.
+  double? heightM;
+
   /// Có vượt chướng ngại tính được vật tư.
   bool get hasObstacles => obstacles > 0 && (obstacleRiseM ?? 0).abs() > 1e-9;
 
@@ -383,6 +406,7 @@ class SurveySegment {
     'note': note,
     'obstacles': obstacles,
     'obstacleRiseM': obstacleRiseM,
+    'heightM': heightM,
   };
 
   factory SurveySegment.fromJson(Map<String, dynamic> j) => SurveySegment(
@@ -394,6 +418,7 @@ class SurveySegment {
     note: j['note'] as String? ?? '',
     obstacles: (j['obstacles'] as num?)?.toInt() ?? 0,
     obstacleRiseM: (j['obstacleRiseM'] as num?)?.toDouble(),
+    heightM: (j['heightM'] as num?)?.toDouble(),
   );
 }
 
@@ -417,6 +442,9 @@ enum SurveyShapeKind {
   /// Tên vùng / khu vực: chữ lớn căn giữa tại (x1, y1), cao
   /// [SurveyShape.sizeM] m.
   area,
+
+  /// Đo kích thước: đường kích thước (x1, y1) – (x2, y2), ghi khoảng cách.
+  measure,
 }
 
 /// Một hình nền trên sơ đồ (toạ độ m).

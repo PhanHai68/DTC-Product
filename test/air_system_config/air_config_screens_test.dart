@@ -213,14 +213,30 @@ void main() {
     expect(find.text('Tìm theo tên dự án'), findsNothing);
     // Cấu hình mới: mặc định "Chọn model".
     expect(AirConfig().compressor.source, CompressorSource.catalog);
+    // Thẻ "Chọn model" đang chọn (dấu tích); chưa có model thì nhắc chọn.
     expect(
-      tester
-          .widget<SegmentedButton<CompressorSource>>(
-            find.byType(SegmentedButton<CompressorSource>),
-          )
-          .selected,
-      {CompressorSource.catalog},
+      find.descendant(
+        of: find.byKey(const ValueKey('source_catalog')),
+        matching: find.byIcon(Icons.check_circle_rounded),
+      ),
+      findsOneWidget,
     );
+    expect(find.text('Chạm để chọn model'), findsOneWidget);
+    // Chạm thẻ model: danh sách model, chọn ACP-100PV.
+    await tester.tap(find.byKey(const ValueKey('compressor_model')));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('model_option_ACP-100PV')),
+      200,
+      scrollable: find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('model_option_ACP-100PV')));
+    await tester.pumpAndSettle();
+    expect(find.text('ACP-100PV'), findsWidgets);
+    expect(find.text('Chạm để chọn model'), findsNothing);
     await tester.tap(find.byKey(const Key('air_config_save')));
     await tester.pumpAndSettle();
     expect(await repository.list(), hasLength(1));

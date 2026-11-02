@@ -126,11 +126,13 @@ class _PipeSurveyEditorScreenState extends State<PipeSurveyEditorScreen> {
           survey,
           ctrl.plants,
           base,
+          bom: ctrl.bom,
         ),
         _ExportKind.png => await SurveyExportService.png(
           survey,
           ctrl.plants,
           base,
+          bom: ctrl.bom,
         ),
         _ExportKind.po when po!.pdf => await SurveyExportService.poPdf(
           await template(),

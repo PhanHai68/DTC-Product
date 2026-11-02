@@ -181,6 +181,56 @@ void main() {
       expect(g.coarse && g.fine && !g.carbon && !g.sterile, isTrue);
       expect(_iso(r).single, '[1:X:2]');
     });
+
+    test('Nâng cao: lọc siêu tinh 0,001 µm + than hoạt tính sau lọc số 3', () {
+      final config = _config(pdp: LinePdp.none, usePressure: 6);
+      config.pretreat
+        ..ultraFineFilter = true
+        ..carbonFilter = true;
+      final r = _run(config);
+      // + siêu tinh 0,10 + than 0,10 → 6,85 → 6,9.
+      expect(r.pressureNeed, 6.9);
+      final g = r.groups.single;
+      expect(g.sterile && g.carbon, isTrue);
+      // Thứ tự lắp: tách thô, tách tinh, siêu tinh, than hoạt tính.
+      final filters = [
+        for (final e in r.equipment)
+          if (const {
+            EquipmentKind.coarseFilter,
+            EquipmentKind.fineFilter,
+            EquipmentKind.sterileFilter,
+            EquipmentKind.carbonFilter,
+          }.contains(e.kind))
+            e.kind,
+      ];
+      expect(filters, [
+        EquipmentKind.coarseFilter,
+        EquipmentKind.fineFilter,
+        EquipmentKind.sterileFilter,
+        EquipmentKind.carbonFilter,
+      ]);
+      // Sơ đồ: lọc tách nước là số 1 → sau máy sấy 2, 3, 4, 5.
+      final s = AirStrings(AirLang.vi);
+      expect(s.diagramPostFilters(g, start: 2).skip(1).toList(), [
+        '2. Tách thô 1 micron',
+        '3. Tách tinh 0,01 micron',
+        '4. Siêu tinh 0,001 micron',
+        '5. Than hoạt tính (khử hơi dầu, mùi)',
+      ]);
+      // Xả tự động thêm 1 cho lọc siêu tinh, lọc than không xả.
+      final drain = r.equipment.singleWhere(
+        (e) => e.kind == EquipmentKind.autoDrain,
+      );
+      expect((drain.params['sources'] as Map)['sterileFilter'], 1);
+      // Máy có dầu + than hoạt tính: dầu lớp 1.
+      expect(_iso(r).single, '[1:X:1]');
+      // Lưu / đọc cấu hình giữ 2 tuỳ chọn.
+      final back = AirConfig.fromJson(config.toJson());
+      expect(
+        back.pretreat.ultraFineFilter && back.pretreat.carbonFilter,
+        isTrue,
+      );
+    });
   });
 
   group('Máy nén theo nhu cầu / chọn model / nhập tay', () {

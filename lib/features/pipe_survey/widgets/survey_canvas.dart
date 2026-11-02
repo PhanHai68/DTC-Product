@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../engine/survey_bom.dart';
+import 'survey_labels.dart';
 import '../../air_system_config/diagram/air_diagram.dart' show AirDiagramColors;
 import '../../air_system_config/room/room_drawing.dart' show RoomColors;
 import '../../air_system_config/room/room_engine.dart' show RoomItemKind;
@@ -17,7 +18,7 @@ import 'survey_sheets.dart';
 enum SurveyTool {
   select('Chọn', Icons.touch_app_outlined),
   pipe('Vẽ ống', Icons.timeline_rounded),
-  usePoint('Điểm sử dụng', Icons.precision_manufacturing_outlined),
+  usePoint('Điểm sử dụng', Icons.adjust_rounded),
   point('Điểm trên sơ đồ', Icons.add_location_alt_outlined),
   wall('Tường', Icons.horizontal_rule_rounded),
   column('Cột', Icons.crop_square_rounded),
@@ -25,6 +26,7 @@ enum SurveyTool {
   move('Di chuyển', Icons.open_with_rounded),
   trim('Cắt', Icons.content_cut_rounded),
   erase('Xoá', Icons.delete_outline_rounded),
+  measure('Đo kích thước', Icons.straighten_rounded),
   note('Ghi chú', Icons.text_fields_rounded),
   leader('Mũi tên', Icons.north_east_rounded),
   area('Tên vùng', Icons.title_rounded);
@@ -44,8 +46,8 @@ enum SurveyTool {
     SurveyTool.erase => 'Chạm vật cần xoá (điểm, đoạn ống, cụm máy, tường, cột, chữ…). Xoá nhầm: bấm Undo.',
     SurveyTool.wall => 'Chạm điểm đầu rồi các điểm tiếp theo để vẽ tường (ngang / dọc); chạm lại điểm cuối hoặc bấm End để dừng.',
     SurveyTool.column => 'Chạm để đặt cột (mặc định 0,4 × 0,4 m).',
-    SurveyTool.obstacle =>
-      'Chạm 2 góc đối diện để vẽ vùng chướng ngại (bồn, dầm, ống gió…).',
+    SurveyTool.obstacle => 'Vẽ như ống: chạm góc đầu, chạm hết cạnh thứ nhất, rồi chạm hết cạnh thứ hai — tự thành hình chữ nhật; sau đó nhập tên (Silo, Cân…).',
+    SurveyTool.measure => 'Chạm 2 điểm bất kỳ để đo khoảng cách (bắt vào điểm, góc tường, góc chướng ngại gần đó).',
     SurveyTool.note => 'Chạm chỗ cần ghi chú rồi nhập nội dung.',
     SurveyTool.leader =>
       'Chạm điểm mũi tên chỉ vào, rồi chạm chỗ đặt chữ và nhập nội dung.',
@@ -60,7 +62,8 @@ enum SurveyTool {
   bool get isModify =>
       this == SurveyTool.move ||
       this == SurveyTool.trim ||
-      this == SurveyTool.erase;
+      this == SurveyTool.erase ||
+      this == SurveyTool.measure;
 }
 
 /// Sơ đồ tuyến ống trên lưới 1 m (bắt điểm 0,5 m): phóng to / kéo bằng hai
@@ -83,8 +86,11 @@ class _SurveyCanvasState extends State<SurveyCanvas> {
   /// Đoạn vừa vẽ: hiện thanh nhập chiều dài đo thực tế.
   String? _lastSeg;
 
-  /// Điểm đang vẽ tường tiếp / góc thứ nhất của chướng ngại (m).
+  /// Điểm đang vẽ tường tiếp / góc thứ nhất của chướng ngại / điểm đo đầu (m).
   Offset? _shapeFrom;
+
+  /// Chướng ngại: đầu kia của cạnh thứ nhất (m).
+  Offset? _shapeSide;
 
   /// Vật đang kéo rê (công cụ Di chuyển): vị trí gốc của các điểm / hình.
   SurveyPick? _moving;
@@ -97,6 +103,7 @@ class _SurveyCanvasState extends State<SurveyCanvas> {
   void _stopDrawing() => setState(() {
     _drawFrom = null;
     _shapeFrom = null;
+    _shapeSide = null;
   });
 
   /// Kích thước vùng vẽ (px) — vị trí khung tên.
@@ -112,6 +119,7 @@ class _SurveyCanvasState extends State<SurveyCanvas> {
     _tool = t;
     _drawFrom = null;
     _shapeFrom = null;
+    _shapeSide = null;
     _moving = null;
     _lastSeg = null;
   });
@@ -161,17 +169,8 @@ class _SurveyCanvasState extends State<SurveyCanvas> {
   /// Đoạn có nhãn chiều dài ở vị trí chạm (nhãn vẽ cạnh giữa đoạn, xem
   /// [SurveyPainter]).
   String? _labelAt(Offset local) {
-    for (final seg in s.segments) {
-      final a = s.node(seg.a), b = s.node(seg.b);
-      if (a == null || b == null) continue;
-      final mid = Offset((a.x + b.x) / 2, (a.y + b.y) / 2) * _ppm;
-      final vertical = (a.x - b.x).abs() < 1e-6;
-      final center =
-          mid + (vertical ? const Offset(26, 0) : const Offset(6, -10));
-      final d = local - center;
-      // Chỉ phần chữ, không trùm lên đường ống (chạm ống vẫn để vẽ / đặt điểm).
-      final (rx, ry) = vertical ? (20.0, 9.0) : (24.0, 7.0);
-      if (d.dx.abs() <= rx && d.dy.abs() <= ry) return seg.id;
+    for (final e in surveyLayoutLabels(s, _ppm).segments.entries) {
+      if (e.value.rect.inflate(2).contains(local)) return e.key;
     }
     return null;
   }
@@ -316,19 +315,65 @@ class _SurveyCanvasState extends State<SurveyCanvas> {
           setState(() => _shapeFrom = p);
           return;
         }
-        if ((p.dx - from.dx).abs() < 1e-6 || (p.dy - from.dy).abs() < 1e-6) {
+        final side = _shapeSide;
+        if (side == null) {
+          // Cạnh thứ nhất: ngang hoặc dọc như vẽ ống.
+          final end = (p.dx - from.dx).abs() >= (p.dy - from.dy).abs()
+              ? Offset(p.dx, from.dy)
+              : Offset(from.dx, p.dy);
+          if ((end - from).distance < 1e-6) return;
+          setState(() => _shapeSide = end);
           return;
         }
+        // Cạnh thứ hai vuông góc cạnh thứ nhất: khép thành hình chữ nhật.
+        final horizontal = (side.dy - from.dy).abs() < 1e-6;
+        final corner = horizontal
+            ? Offset(side.dx, p.dy)
+            : Offset(p.dx, side.dy);
+        if ((corner - side).distance < 1e-6) return;
         final shape = SurveyShape(
           kind: SurveyShapeKind.obstacle,
-          x1: math.min(from.dx, p.dx),
-          y1: math.min(from.dy, p.dy),
-          x2: math.max(from.dx, p.dx),
-          y2: math.max(from.dy, p.dy),
+          x1: math.min(from.dx, corner.dx),
+          y1: math.min(from.dy, corner.dy),
+          x2: math.max(from.dx, corner.dx),
+          y2: math.max(from.dy, corner.dy),
         );
         ctrl.edit((s) => s.shapes.add(shape));
-        setState(() => _shapeFrom = null);
+        setState(() {
+          _shapeFrom = null;
+          _shapeSide = null;
+        });
         if (mounted) await showSurveyShapeSheet(context, ctrl, shape.id);
+      case SurveyTool.measure:
+        final bl = s.buildingLengthM, bw = s.buildingWidthM;
+        final p = surveyMeasureSnap(
+          s,
+          x,
+          y,
+          rects: [
+            for (final pl in ctrl.plants.values) pl.room,
+            if (bl != null && bw != null && bl > 0 && bw > 0)
+              Rect.fromLTWH(0, 0, bl, bw),
+          ],
+        );
+        final from = _shapeFrom;
+        if (from == null) {
+          setState(() => _shapeFrom = p);
+          return;
+        }
+        if ((p - from).distance < 1e-6) return;
+        ctrl.edit(
+          (s) => s.shapes.add(
+            SurveyShape(
+              kind: SurveyShapeKind.measure,
+              x1: from.dx,
+              y1: from.dy,
+              x2: p.dx,
+              y2: p.dy,
+            ),
+          ),
+        );
+        setState(() => _shapeFrom = null);
       case SurveyTool.note:
         await _placeText(SurveyShape(kind: SurveyShapeKind.note, x1: x, y1: y));
       case SurveyTool.leader:
@@ -476,6 +521,7 @@ class _SurveyCanvasState extends State<SurveyCanvas> {
   void _clearTransient() => setState(() {
     _drawFrom = null;
     _shapeFrom = null;
+    _shapeSide = null;
     _moving = null;
     _lastSeg = null;
   });
@@ -655,9 +701,11 @@ class _SurveyCanvasState extends State<SurveyCanvas> {
                             heightM: h,
                             drawFrom: _drawFrom,
                             pendingPoint: _shapeFrom,
+                            pendingSide: _shapeSide,
                             plants: plants,
                             originM: _origin,
                             selected: _moving,
+                            bom: ctrl.bom,
                           ),
                         ),
                       ),
@@ -789,11 +837,13 @@ class SurveyPainter extends CustomPainter {
     required this.heightM,
     this.drawFrom,
     this.pendingPoint,
+    this.pendingSide,
     this.plants = const {},
     this.originM = Offset.zero,
     this.selected,
     this.showGrid = true,
     this.showTitle = true,
+    this.bom,
   });
 
   final PipeSurvey survey;
@@ -804,6 +854,9 @@ class SurveyPainter extends CustomPainter {
 
   /// Điểm đang vẽ tường / góc chướng ngại thứ nhất (m).
   final Offset? pendingPoint;
+
+  /// Chướng ngại đang vẽ: đầu kia cạnh thứ nhất (m).
+  final Offset? pendingSide;
 
   /// Cụm máy theo kích thước thật (theo id điểm Cụm máy).
   final Map<String, SurveyPlantLayout> plants;
@@ -818,7 +871,10 @@ class SurveyPainter extends CustomPainter {
   /// Vẽ khung tên bản vẽ ở góc dưới phải.
   final bool showTitle;
 
-  static const _titleW = 300.0, _titleH = 92.0;
+  /// Vật tư bóc từ sơ đồ — tổng chiều dài ống trong khung tên.
+  final SurveyBom? bom;
+
+  static const _titleW = 300.0, _titleH = 111.0;
 
   /// Khung tên bản vẽ (px) trong vùng vẽ [size].
   static Rect titleBlockRect(Size size) => Rect.fromLTWH(
@@ -910,25 +966,9 @@ class SurveyPainter extends CustomPainter {
           ..strokeWidth = (2 + dn / 20).clamp(2.5, 6.0)
           ..strokeCap = StrokeCap.round,
       );
-      final len = seg.measuredM ?? surveySegmentDrawnLength(a, b);
-      final label = [
-        '${_num(len)} m${seg.measuredM != null ? '*' : ''}',
-        if (seg.dn != null && seg.dn != s.defaultDn) 'DN${seg.dn}',
-      ].join(' · ');
       final mid = (pa + pb) / 2;
       final vertical = (a.x - b.x).abs() < 1e-6;
-      _text(
-        canvas,
-        label,
-        vertical ? mid.translate(6, -7) : mid.translate(-14, -17),
-        10,
-        _pipe,
-        bold: true,
-        background: true,
-      );
-      // Đổi cao độ giữa hai điểm: vòng tròn ống đứng giữa đoạn + chênh cao.
-      final ea = a.hangHeightM ?? s.hangHeightM;
-      final eb = b.hangHeightM ?? s.hangHeightM;
+      final (ea, eb) = surveySegmentEnds(s, seg);
       if (ea != null && eb != null && (ea - eb).abs() > 1e-6) {
         canvas.drawCircle(mid, 6, Paint()..color = Colors.white);
         canvas.drawCircle(
@@ -1065,16 +1105,15 @@ class SurveyPainter extends CustomPainter {
             _text(canvas, '📷', p.translate(-7, -24), 11, _point);
           }
       }
-      // Cao độ riêng tại điểm.
-      if (n.hangHeightM != null && n.hangHeightM != s.hangHeightM) {
-        _text(
-          canvas,
-          '▲${_num(n.hangHeightM!)} m',
-          p.translate(6, -22),
-          10,
-          _riser,
-          bold: true,
-          background: true,
+      // Đoạn nối vào khác cao độ: ống đứng tại điểm.
+      if (surveyNodeRiser(s, n) != null) {
+        canvas.drawCircle(
+          p,
+          8,
+          Paint()
+            ..color = _riser
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2.2,
         );
       }
       if (n.id == drawFrom) {
@@ -1088,10 +1127,83 @@ class SurveyPainter extends CustomPainter {
         );
       }
     }
+    // Nhãn chiều dài + cao độ, ống đứng: xếp tránh chồng nhau.
+    final labels = surveyLayoutLabels(s, ppm);
+    for (final l in [...labels.segments.values, ...labels.risers.values]) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(l.rect, const Radius.circular(3)),
+        Paint()..color = Colors.white.withValues(alpha: 0.88),
+      );
+      l.text.paint(canvas, l.rect.topLeft + const Offset(2, 1));
+    }
     _notes(canvas, s);
     _highlight(canvas, s);
     canvas.restore();
     if (showTitle) _titleBlock(canvas, size, s);
+  }
+
+  /// Đường kích thước: màu tím, vạch chặn hai đầu, nhãn khoảng cách (kèm
+  /// ΔX × ΔY khi đo xiên) trên nền trắng.
+  void _measure(Canvas canvas, SurveyShape h) {
+    final a = Offset(h.x1 * ppm, h.y1 * ppm);
+    final b = Offset(h.x2 * ppm, h.y2 * ppm);
+    final d = b - a;
+    if (d.distance < 1) return;
+    final color = RoomColors.measure;
+    final u = d / d.distance;
+    final n = Offset(-u.dy, u.dx);
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.6;
+    canvas.drawLine(a, b, paint);
+    for (final q in [a, b]) {
+      canvas
+        ..drawLine(q - n * 6, q + n * 6, paint)
+        ..drawCircle(q, 2.5, Paint()..color = color);
+    }
+    final dx = (h.x2 - h.x1).abs(), dy = (h.y2 - h.y1).abs();
+    final dist = math.sqrt(dx * dx + dy * dy);
+    final diagonal = dx > 1e-6 && dy > 1e-6;
+    final text = [
+      '${_num(dist)} m',
+      if (diagonal) '(${_num(dx)} × ${_num(dy)})',
+      if (h.label.isNotEmpty) h.label,
+    ].join(' ');
+    final tp = _layout(text, 11, color, bold: true);
+    // Nhãn phía trên đường (bên trái khi đo dọc).
+    final side = n.dy > 0 ? -n : n;
+    final c = (a + b) / 2 + side * 12;
+    final box = Rect.fromCenter(
+      center: c,
+      width: tp.width + 8,
+      height: tp.height + 2,
+    );
+    canvas
+      ..drawRRect(
+        RRect.fromRectAndRadius(box, const Radius.circular(3)),
+        Paint()..color = Colors.white,
+      )
+      ..drawRRect(
+        RRect.fromRectAndRadius(box, const Radius.circular(3)),
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.8,
+      );
+    tp.paint(canvas, c - Offset(tp.width / 2, tp.height / 2));
+  }
+
+  /// Tổng chiều dài ống (gồm ống đứng đổi cao độ / xuống máy) theo [bom].
+  String _pipeTotal() {
+    final b = bom;
+    if (b == null || b.totalLengthM <= 0) return '';
+    final rise = b.runs
+        .where((r) => r.vertical || r.drop)
+        .fold(0.0, (t, r) => t + r.lengthM);
+    return [
+      '${_num(b.totalLengthM)} m',
+      if (rise > 0) '(gồm ${_num(rise)} m ống đứng)',
+    ].join(' ');
   }
 
   /// Tô sáng vật đang chọn để dời.
@@ -1189,6 +1301,7 @@ class SurveyPainter extends CustomPainter {
       ('Công trình', s.name),
       ('Khách hàng', s.customer),
       ('Khảo sát', [s.surveyor, date].where((t) => t.isNotEmpty).join(' · ')),
+      ('Tổng ống', _pipeTotal()),
     ];
     for (final (k, (label, value)) in rows.indexed) {
       final y = r.top + headH + 6 + k * 19.0;
@@ -1426,16 +1539,41 @@ class SurveyPainter extends CustomPainter {
               ..style = PaintingStyle.stroke
               ..strokeWidth = 1.5,
           );
-          if (h.label.isNotEmpty) {
-            _text(
-              canvas,
-              h.label,
-              r.topLeft + const Offset(4, 3),
-              10,
-              _obstacle,
-              bold: true,
-              background: true,
+          // Tên + kích thước, diện tích căn giữa ô (thu nhỏ cho vừa).
+          final w = (h.x2 - h.x1).abs(), d = (h.y2 - h.y1).abs();
+          final lines = [
+            if (h.label.isNotEmpty) (h.label, 11.0, true),
+            ('${_num(w)} × ${_num(d)} m · ${_num(w * d)} m²', 9.0, false),
+          ];
+          final tps = [
+            for (final (t, size, bold) in lines)
+              _layout(t, size, _obstacle, bold: bold),
+          ];
+          final textW = tps.fold(0.0, (m, t) => math.max(m, t.width));
+          final textH = tps.fold(0.0, (m, t) => m + t.height);
+          final k = math.min(
+            1.0,
+            math.min((r.width - 6) / textW, (r.height - 4) / textH),
+          );
+          if (k > 0.3) {
+            canvas.save();
+            canvas.translate(r.center.dx, r.center.dy);
+            canvas.scale(k);
+            final bg = Rect.fromCenter(
+              center: Offset.zero,
+              width: textW + 8,
+              height: textH + 4,
             );
+            canvas.drawRRect(
+              RRect.fromRectAndRadius(bg, const Radius.circular(3)),
+              Paint()..color = Colors.white.withValues(alpha: 0.85),
+            );
+            var y = -textH / 2;
+            for (final t in tps) {
+              t.paint(canvas, Offset(-t.width / 2, y));
+              y += t.height;
+            }
+            canvas.restore();
           }
         case SurveyShapeKind.area:
           final t = (h.sizeM ?? surveyAreaTextM) * ppm;
@@ -1455,8 +1593,32 @@ class SurveyPainter extends CustomPainter {
           tp.paint(canvas, p(h.x1, h.y1) - Offset(tp.width / 2, tp.height / 2));
         case SurveyShapeKind.note:
         case SurveyShapeKind.leader:
+        case SurveyShapeKind.measure:
           break;
       }
+    }
+    // Cạnh thứ nhất của chướng ngại đang vẽ (nét đứt, ghi chiều dài).
+    final a = pendingPoint, b = pendingSide;
+    if (a != null && b != null) {
+      final pa = p(a.dx, a.dy), pb = p(b.dx, b.dy);
+      final dash = Paint()
+        ..color = _obstacle
+        ..strokeWidth = 2;
+      final len = (pb - pa).distance;
+      final u = (pb - pa) / len;
+      for (var t = 0.0; t < len; t += 10) {
+        canvas.drawLine(pa + u * t, pa + u * math.min(len, t + 6), dash);
+      }
+      canvas.drawCircle(pb, 4, Paint()..color = _obstacle);
+      _text(
+        canvas,
+        '${_num((b - a).distance)} m',
+        (pa + pb) / 2 + const Offset(6, -16),
+        11,
+        _obstacle,
+        bold: true,
+        background: true,
+      );
     }
     final pending = pendingPoint;
     if (pending != null) {
@@ -1476,6 +1638,10 @@ class SurveyPainter extends CustomPainter {
   void _notes(Canvas canvas, PipeSurvey s) {
     const ink = Color(0xFF0F172A);
     for (final h in s.shapes) {
+      if (h.kind == SurveyShapeKind.measure) {
+        _measure(canvas, h);
+        continue;
+      }
       if (h.kind == SurveyShapeKind.leader && h.label.isNotEmpty) {
         final tip = Offset(h.x1 * ppm, h.y1 * ppm);
         final at = Offset(h.x2 * ppm, h.y2 * ppm);

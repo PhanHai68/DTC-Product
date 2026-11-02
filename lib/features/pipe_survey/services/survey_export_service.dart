@@ -10,6 +10,7 @@ import '../../air_system_config/services/air_config_export_service.dart'
     show AirConfigExportService, AirExportFile;
 import '../../air_system_config/services/air_po_excel.dart';
 import '../../air_system_config/services/air_po_pdf.dart';
+import '../engine/survey_bom.dart';
 import '../engine/survey_plant.dart';
 import '../models/pipe_survey.dart';
 import '../widgets/survey_canvas.dart';
@@ -57,6 +58,7 @@ abstract final class SurveyExportService {
     Map<String, SurveyPlantLayout> plants, {
     double ppm = 40,
     double maxSide = 7000,
+    SurveyBom? bom,
   }) async {
     final b = contentBounds(s, plants);
     // Gốc nguyên mét để lưới khớp; lề 2 m (chữ, nhãn), dưới chừa khung tên.
@@ -65,9 +67,9 @@ abstract final class SurveyExportService {
     var widthM = (b.right + 2).ceilToDouble() - left;
     var heightM = (b.bottom + 2).ceilToDouble() - top;
     final scale = math.min(ppm, maxSide / math.max(widthM, heightM));
-    // Khung tên 300 × 92 px + lề: không đè lên nội dung.
+    // Khung tên 300 × 111 px + lề: không đè lên nội dung.
     widthM = math.max(widthM, 340 / scale);
-    heightM += 120 / scale;
+    heightM += 140 / scale;
     final size = ui.Size(widthM * scale, heightM * scale);
     final recorder = ui.PictureRecorder();
     SurveyPainter(
@@ -77,6 +79,7 @@ abstract final class SurveyExportService {
       heightM: heightM,
       plants: plants,
       originM: ui.Offset(-left, -top),
+      bom: bom,
     ).paint(ui.Canvas(recorder), size);
     final image = await recorder.endRecording().toImage(
       size.width.ceil(),
@@ -90,11 +93,12 @@ abstract final class SurveyExportService {
   static Future<AirExportFile> png(
     PipeSurvey s,
     Map<String, SurveyPlantLayout> plants,
-    String base,
-  ) async => AirExportFile(
+    String base, {
+    SurveyBom? bom,
+  }) async => AirExportFile(
     '${base}_SoDo.png',
     'image/png',
-    await diagramPng(s, plants),
+    await diagramPng(s, plants, bom: bom),
   );
 
   /// Sơ đồ trên một trang PDF A3 ngang: logo, tên bản vẽ, công trình, ngày;
@@ -102,11 +106,12 @@ abstract final class SurveyExportService {
   static Future<AirExportFile> pdf(
     PipeSurvey s,
     Map<String, SurveyPlantLayout> plants,
-    String base,
-  ) async {
+    String base, {
+    SurveyBom? bom,
+  }) async {
     Future<Uint8List> asset(String path) async =>
         Uint8List.sublistView(await rootBundle.load(path));
-    final png = await diagramPng(s, plants, ppm: 60);
+    final png = await diagramPng(s, plants, ppm: 60, bom: bom);
     final regular = await asset('assets/fonts/Roboto-Regular.ttf');
     final boldBytes = await asset('assets/fonts/Roboto-Bold.ttf');
     final logo = await asset('assets/images/DTCGroup-Slogan.png');

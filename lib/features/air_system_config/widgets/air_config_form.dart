@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/input/localized_number.dart';
 import '../l10n/air_strings.dart';
 import '../models/air_config.dart';
+import '../models/catalog_compressor.dart';
 import '../providers/air_config_editor_controller.dart';
 
 /// Tab "Nhập liệu": mọi trường trên một form, đổi là tính lại ngay.
@@ -73,35 +74,42 @@ class AirConfigForm extends StatelessWidget {
               value: comp.pressure,
               onChanged: (v) => ctrl.edit((c) => c.compressor.pressure = v),
             ),
-            const SizedBox(height: 4),
-            Text(s.modelSource, style: Theme.of(context).textTheme.labelLarge),
             const SizedBox(height: 6),
-            // Loại có dữ liệu: Theo nhu cầu | Chọn model. Loại chưa có dữ liệu
-            // (2-STAGE): Theo nhu cầu | Nhập tay.
-            SegmentedButton<CompressorSource>(
+            Text(
+              s.modelSource,
+              style: Theme.of(context).textTheme.titleSmall
+                  ?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+            // Hai thẻ lựa chọn lớn: Theo nhu cầu | Chọn model (loại chưa có dữ
+            // liệu: Nhập tay). Thẻ đang chọn viền đậm, nền màu, dấu tích.
+            Row(
               key: const ValueKey('compressor_source'),
-              showSelectedIcon: false,
-              emptySelectionAllowed: true,
-              segments: [
-                for (final v in [
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final (k, v) in [
                   CompressorSource.demand,
                   comp.type.hasCatalog
                       ? CompressorSource.catalog
                       : CompressorSource.manual,
-                ])
-                  ButtonSegment(value: v, label: Text(s.source(v))),
+                ].indexed) ...[
+                  if (k > 0) const SizedBox(width: 10),
+                  Expanded(
+                    child: _SourceCard(
+                      key: ValueKey('source_${v.name}'),
+                      icon: switch (v) {
+                        CompressorSource.demand => Icons.insights_rounded,
+                        CompressorSource.catalog => Icons.view_list_rounded,
+                        CompressorSource.manual => Icons.edit_note_rounded,
+                      },
+                      title: s.source(v),
+                      subtitle: s.sourceHint(v),
+                      selected: comp.source == v,
+                      onTap: () => ctrl.edit((c) => c.compressor.source = v),
+                    ),
+                  ),
+                ],
               ],
-              selected: {
-                if (comp.source == CompressorSource.demand ||
-                    (comp.source == CompressorSource.catalog) ==
-                        comp.type.hasCatalog)
-                  comp.source,
-              },
-              onSelectionChanged: (v) {
-                if (v.isNotEmpty) {
-                  ctrl.edit((c) => c.compressor.source = v.first);
-                }
-              },
             ),
             const SizedBox(height: 12),
             if (comp.source == CompressorSource.demand) ...[
@@ -125,21 +133,16 @@ class AirConfigForm extends StatelessWidget {
             if (comp.source == CompressorSource.catalog)
               catalog.isEmpty
                   ? _Hint(s.noCatalogFor(comp.type))
-                  : _Dropdown<String>(
-                      key: ValueKey(
-                        'model_${comp.type.name}_${comp.modelCode}',
-                      ),
-                      label: s.modelLabel,
-                      value: catalog.any((m) => m.modelCode == comp.modelCode)
-                          ? comp.modelCode
-                          : null,
-                      items: {
-                        for (final m in catalog)
-                          m.modelCode:
-                              '${m.modelCode} · ${s.n2(m.powerKW)} kW · ${s.flow(m.flowAt(8)!)} @8 bar',
-                      },
-                      onChanged: (v) =>
-                          ctrl.edit((c) => c.compressor.modelCode = v),
+                  : _ModelPicker(
+                      key: const ValueKey('compressor_model'),
+                      strings: s,
+                      models: catalog,
+                      selected: catalog
+                          .where((m) => m.modelCode == comp.modelCode)
+                          .firstOrNull,
+                      pressure: comp.pressure,
+                      onPicked: (code) =>
+                          ctrl.edit((c) => c.compressor.modelCode = code),
                     ),
             if (comp.source == CompressorSource.manual) ...[
               _TextField(
@@ -170,7 +173,7 @@ class AirConfigForm extends StatelessWidget {
               ),
             ],
             // Chọn model / nhập tay: nhắc lại máy và lưu lượng đang dùng.
-            if (comp.source != CompressorSource.demand && result.flowFromModel)
+            if (comp.source == CompressorSource.manual && result.flowFromModel)
               _Hint(
                 s.suggested(result, byDemand: false),
                 icon: Icons.check_circle_outline,
@@ -269,7 +272,9 @@ class AirConfigForm extends StatelessWidget {
                 tilePadding: EdgeInsets.zero,
                 childrenPadding: const EdgeInsets.only(top: 4),
                 initiallyExpanded:
-                    c.pretreat.afterCooler != AfterCoolerType.none,
+                    c.pretreat.afterCooler != AfterCoolerType.none ||
+                    c.pretreat.ultraFineFilter ||
+                    c.pretreat.carbonFilter,
                 title: Text(
                   s.advanced,
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -291,6 +296,24 @@ class AirConfigForm extends StatelessWidget {
                     },
                     onChanged: (v) =>
                         ctrl.edit((c) => c.pretreat.afterCooler = v),
+                  ),
+                  // Lọc thêm sau lọc tách tinh 0,01 µm.
+                  SwitchListTile(
+                    key: const ValueKey('ultra_fine_filter'),
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(s.sterile),
+                    value: c.pretreat.ultraFineFilter,
+                    onChanged: (v) =>
+                        ctrl.edit((c) => c.pretreat.ultraFineFilter = v),
+                  ),
+                  SwitchListTile(
+                    key: const ValueKey('carbon_filter'),
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(s.carbon),
+                    subtitle: Text(s.carbonHint),
+                    value: c.pretreat.carbonFilter,
+                    onChanged: (v) =>
+                        ctrl.edit((c) => c.pretreat.carbonFilter = v),
                   ),
                 ],
               ),
@@ -746,6 +769,265 @@ class _MarginFieldState extends State<_MarginField> {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Thẻ lựa chọn cách chọn máy nén: biểu tượng, tên, mô tả ngắn; thẻ đang
+/// chọn viền màu chính, nền nhạt, dấu tích góc phải.
+class _SourceCard extends StatelessWidget {
+  const _SourceCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final color = selected ? scheme.primary : scheme.onSurfaceVariant;
+    return Material(
+      color: selected
+          ? scheme.primaryContainer.withValues(alpha: 0.55)
+          : scheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: selected ? scheme.primary : scheme.outlineVariant,
+          width: selected ? 2 : 1,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 10, 10, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, color: color, size: 24),
+                  const Spacer(),
+                  Icon(
+                    selected
+                        ? Icons.check_circle_rounded
+                        : Icons.radio_button_unchecked_rounded,
+                    color: selected ? scheme.primary : scheme.outline,
+                    size: 22,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: selected ? scheme.onSurface : scheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 12,
+                  height: 1.25,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Model máy nén đang chọn hiện to (model, công suất, lưu lượng); chưa chọn
+/// thì nhắc "Chạm để chọn model". Chạm mở danh sách model của loại máy.
+class _ModelPicker extends StatelessWidget {
+  const _ModelPicker({
+    super.key,
+    required this.strings,
+    required this.models,
+    required this.selected,
+    required this.pressure,
+    required this.onPicked,
+  });
+
+  final AirStrings strings;
+  final List<CatalogCompressor> models;
+  final CatalogCompressor? selected;
+  final double? pressure;
+  final ValueChanged<String> onPicked;
+
+  double get _bar => pressure ?? 8;
+
+  String _flow(CatalogCompressor m) {
+    final at = m.flowAt(_bar);
+    return at == null
+        ? '${strings.flow(m.flowAt(8)!)}${strings.flowAtBar(8)}'
+        : '${strings.flow(at)}${strings.flowAtBar(_bar)}';
+  }
+
+  Future<void> _pick(BuildContext context) async {
+    final code = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.75,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                child: Text(
+                  strings.pickModelTitle,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final m in models)
+                      ListTile(
+                        key: ValueKey('model_option_${m.modelCode}'),
+                        selected: m.modelCode == selected?.modelCode,
+                        leading: Icon(
+                          m.modelCode == selected?.modelCode
+                              ? Icons.check_circle_rounded
+                              : Icons.radio_button_unchecked_rounded,
+                        ),
+                        title: Text(
+                          m.modelCode,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        subtitle: Text(
+                          '${strings.n2(m.powerKW)} kW · ${_flow(m)}',
+                        ),
+                        onTap: () => Navigator.pop(context, m.modelCode),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (code != null) onPicked(code);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final m = selected;
+    return Material(
+      color: m == null
+          ? const Color(0xFFFFF7ED)
+          : scheme.secondaryContainer.withValues(alpha: 0.6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: m == null ? const Color(0xFFF59E0B) : scheme.primary,
+          width: 1.5,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => _pick(context),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+          child: Row(
+            children: [
+              Icon(
+                m == null ? Icons.touch_app_rounded : Icons.air_rounded,
+                size: 30,
+                color: m == null ? const Color(0xFFB45309) : scheme.primary,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: m == null
+                    ? Text(
+                        strings.pickModelPrompt,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFFB45309),
+                        ),
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            m.modelCode,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: scheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
+                            children: [
+                              for (final t in [
+                                '${strings.n2(m.powerKW)} kW',
+                                _flow(m),
+                              ])
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: scheme.surface,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    t,
+                                    style: const TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+              ),
+              if (m == null)
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: Color(0xFFB45309),
+                )
+              else
+                TextButton(
+                  onPressed: () => _pick(context),
+                  child: Text(strings.changeModel),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

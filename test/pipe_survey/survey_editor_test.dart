@@ -250,6 +250,7 @@ void main() {
           'Ghi chú': 'note',
           'Mũi tên': 'leader',
           'Tên vùng': 'area',
+          'Đo kích thước': 'measure',
         };
         if (edit[label] case final name?) {
           await tester.tap(find.byKey(const Key('survey_edit')));
@@ -279,13 +280,24 @@ void main() {
       );
 
       // Chướng ngại: 2 góc rồi đặt tên.
+      // Chướng ngại vẽ như ống: góc đầu, hết cạnh 1, hết cạnh 2 → chữ nhật.
       await tool('Chướng ngại');
       await tapM(4, 4);
-      await tapM(8, 7);
+      await tapM(8, 4.2);
+      expect(
+        survey.shapes.where((h) => h.kind == SurveyShapeKind.obstacle),
+        isEmpty,
+      );
+      await tapM(8.3, 6);
       expect(find.text('Chướng ngại vật'), findsOneWidget);
       await tester.enterText(
         find.byKey(const Key('survey_shape_label')),
         'Bồn nước',
+      );
+      // Sửa rộng 2 → 3 m.
+      await tester.enterText(
+        find.byKey(const Key('survey_obstacle_width')),
+        '3',
       );
       await tester.tap(find.byKey(const Key('survey_shape_save')));
       await tester.pumpAndSettle();

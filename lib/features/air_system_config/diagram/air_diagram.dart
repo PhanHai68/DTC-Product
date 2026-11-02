@@ -5,6 +5,9 @@ import '../engine/air_engine.dart';
 import '../l10n/air_strings.dart';
 import '../models/air_config.dart';
 import '../models/air_result.dart';
+import 'custom_equipment.dart';
+
+part 'air_diagram_custom.dart';
 
 /// Sơ đồ lắp đặt dựng thành danh sách hình cơ bản. Màn hình (Canvas), SVG,
 /// PNG và PDF đều vẽ lại từ cùng một [AirDiagram] nên luôn giống nhau.
@@ -400,11 +403,23 @@ class _AirDiagramBuilder {
       ], AirDiagramColors.main);
       _pipe([Offset(supplyX, pipeY), Offset(busX, pipeY)], supply);
       if (g.hasPostFilters) {
-        // Thứ tự: tách thô (gần máy sấy), tách tinh, than, vô trùng. Số đánh
-        // tiếp sau lọc tuyến chính, khớp danh sách cấp lọc bên dưới.
+        // Thứ tự: tách thô (gần máy sấy), tách tinh, siêu tinh, than hoạt
+        // tính. Số đánh tiếp sau lọc tuyến chính, khớp danh sách cấp lọc bên
+        // dưới. Lọc than không có nước ngưng: không vẽ van xả.
         final start = _mainFilters.length + 1;
+        final drains = [
+          if (g.coarse) true,
+          if (g.fine) true,
+          if (g.sterile) true,
+          if (g.carbon) false,
+        ];
         for (var k = 0; k < g.postFilterCount; k++) {
-          _numberedFilter(filtersX + 18 + k * _filterStep, pipeY, start + k);
+          _numberedFilter(
+            filtersX + 18 + k * _filterStep,
+            pipeY,
+            start + k,
+            drain: drains[k],
+          );
         }
         bottom = math.max(
           bottom,
@@ -618,7 +633,12 @@ class _AirDiagramBuilder {
   }
 
   /// Lọc treo trên ống kèm số thứ tự trên đầu và van xả tự động bên dưới.
-  void _numberedFilter(double cx, double pipeY, int number) {
+  void _numberedFilter(
+    double cx,
+    double pipeY,
+    int number, {
+    bool drain = true,
+  }) {
     final rect = _filterAt(cx, pipeY);
     _filter(rect);
     _text(
@@ -629,7 +649,7 @@ class _AirDiagramBuilder {
       color: AirDiagramColors.muted,
       anchor: DAnchor.middle,
     );
-    if (_drain) _drainIcon(Offset(cx, rect.bottom));
+    if (_drain && drain) _drainIcon(Offset(cx, rect.bottom));
   }
 
   String _name(String key, String Function() fallback) {

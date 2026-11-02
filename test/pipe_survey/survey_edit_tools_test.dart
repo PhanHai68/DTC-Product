@@ -151,6 +151,7 @@ void main() {
           'Ghi chú': 'note',
           'Mũi tên': 'leader',
           'Tên vùng': 'area',
+          'Đo kích thước': 'measure',
         };
         if (edit[label] case final name?) {
           await tester.tap(find.byKey(const Key('survey_edit')));
@@ -239,6 +240,15 @@ void main() {
         (h) => h.kind == SurveyShapeKind.area,
       );
       expect([area.label, area.sizeM], ['Xưởng sấy', 1.5]);
+
+      // Đo kích thước: bắt vào điểm dùng (12, 5) và đầu tường (2, 8).
+      await tool('Đo kích thước');
+      await tapM(12.3, 5.2);
+      await tapM(2.2, 7.9);
+      final m = survey.shapes.singleWhere(
+        (h) => h.kind == SurveyShapeKind.measure,
+      );
+      expect([m.x1, m.y1, m.x2, m.y2], [12.0, 5.0, 2.0, 8.0]);
 
       // Khung tên góc dưới phải vùng vẽ: sửa tên bản vẽ.
       await tool('Chọn');

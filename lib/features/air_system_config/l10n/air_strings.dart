@@ -145,6 +145,64 @@ class AirStrings {
 
   String get modelSource => _t('Model máy nén', 'Compressor model');
   String get modelLabel => _t('Model', 'Model');
+  String get customCompressor => _t('Máy nén khí', 'Air compressor');
+  String get customTank => _t('Bình chứa khí', 'Air receiver');
+  String get customTitle => _t('Tuỳ chỉnh cấu hình', 'Custom layout');
+  String get customUse => _t('Dùng sơ đồ tuỳ chỉnh', 'Use the custom layout');
+  String get customUseHint => _t(
+    'Sơ đồ, file xuất và danh mục thiết bị trong phiếu đề nghị vật tư theo sơ đồ này.',
+    'Diagram, exports and the equipment list in the material request follow this layout.',
+  );
+  String get customReset =>
+      _t('Tạo lại từ cấu hình tự động', 'Rebuild from automatic configuration');
+  String get customAdd => _t('Thêm thiết bị', 'Add equipment');
+  String get customQty => _t('Số lượng', 'Quantity');
+  String get customConnTitle =>
+      _t('Đường ống nối từ tầng trước', 'Pipes from the previous stage');
+  String customConn(CustomConnection c) => switch (c) {
+    CustomConnection.merged => _t('Gộp chung', 'Merged'),
+    CustomConnection.paired => _t('Nối riêng', 'One-to-one'),
+    CustomConnection.custom => _t('Tuỳ chỉnh', 'Custom'),
+  };
+  String get customConnHint =>
+      _t('Chạm để thêm / bỏ từng đường ống.', 'Tap to add / remove each pipe.');
+  String customNoInlet(List<int> units) => _t(
+    'Máy ${units.map((i) => i + 1).join(', ')} chưa có ống vào',
+    'Unit ${units.map((i) => i + 1).join(', ')} has no inlet pipe',
+  );
+  String customNoOutlet(List<int> units) => _t(
+    'Máy ${units.map((i) => i + 1).join(', ')} chưa có ống ra',
+    'Unit ${units.map((i) => i + 1).join(', ')} has no outlet pipe',
+  );
+  String get customDefaultModel => _t('Theo cấu hình tự động', 'Automatic');
+  String get customNoData => _t('Chưa có dữ liệu model', 'No model data yet');
+  String customUnit(int i) => _t('Máy ${i + 1}', 'Unit ${i + 1}');
+  String get customEmpty => _t(
+    'Chưa có thiết bị. Bấm "Thêm thiết bị" hoặc tạo lại từ cấu hình tự động.',
+    'No equipment. Tap "Add equipment" or rebuild from the automatic configuration.',
+  );
+  String get customActive =>
+      _t('Đang dùng sơ đồ tuỳ chỉnh', 'Using the custom layout');
+  String sourceHint(CompressorSource v) => switch (v) {
+    CompressorSource.demand => _t(
+      'Nhập lưu lượng cần, app đề xuất model',
+      'Enter the demand, the app suggests a model',
+    ),
+    CompressorSource.catalog => _t(
+      'Chọn trực tiếp model trong danh mục',
+      'Pick a model from the catalog',
+    ),
+    CompressorSource.manual => _t(
+      'Nhập tên, công suất, lưu lượng máy',
+      'Enter name, power and flow',
+    ),
+  };
+  String get pickModelPrompt => _t('Chạm để chọn model', 'Tap to pick a model');
+  String get pickModelTitle =>
+      _t('Chọn model máy nén', 'Pick a compressor model');
+  String get changeModel => _t('Đổi', 'Change');
+  /// Hậu tố áp suất của lưu lượng: "/8 bar" (vd 12,6 m³/phút/8 bar).
+  String flowAtBar(double bar) => '/${n2(bar)} bar';
   String get manualModelName => _t('Tên / model máy', 'Name / model');
   String get manualPower => _t('Công suất', 'Power');
   String get manualFad => _t('Lưu lượng máy (FAD)', 'Unit flow (FAD)');
@@ -202,7 +260,12 @@ class AirStrings {
       _t('Thiết bị sử dụng (vd máy tách màu)', 'Equipment (e.g. color sorter)');
   String get pdpLabel => _t('Điểm sương PDP', 'Pressure dew point');
   String get carbon => _t('Lọc than hoạt tính', 'Activated carbon filter');
-  String get sterile => _t('Lọc vô trùng', 'Sterile filter');
+  String get carbonHint =>
+      _t('Khử hơi dầu và mùi', 'Removes oil vapour and odour');
+
+  /// Lọc siêu tinh 0,001 µm (trong code: kiểu "sterile").
+  String get sterile =>
+      _t('Lọc siêu tinh 0,001 µm', 'Ultra-fine filter 0.001 µm');
   String get addLine => _t('Thêm line', 'Add line');
   String get deleteLine => _t('Xóa line', 'Delete line');
   String maxLines(int max) => _t('Tối đa $max line.', 'Up to $max lines.');
@@ -369,8 +432,8 @@ class AirStrings {
     final parts = [
       if (g.coarse) _t('Tách thô', 'Coarse'),
       if (g.fine) _t('Tách tinh', 'Fine'),
+      if (g.sterile) _t('Siêu tinh', 'Ultra-fine'),
       if (g.carbon) _t('Than hoạt tính', 'Activated carbon'),
-      if (g.sterile) _t('Vô trùng', 'Sterile'),
     ];
     return parts.isEmpty ? '—' : parts.join(' + ');
   }
@@ -454,8 +517,8 @@ class AirStrings {
         final pick = p['pick'] as CompressorPick?;
         final parts = [
           _t(
-            'Cần ${flow(p['flow'] as double)} @ ${bar(p['pressure'] as double)}',
-            'Required ${flow(p['flow'] as double)} @ ${bar(p['pressure'] as double)}',
+            'Cần ${flow(p['flow'] as double)}/${bar(p['pressure'] as double)}',
+            'Required ${flow(p['flow'] as double)}/${bar(p['pressure'] as double)}',
           ),
           _t(
             'ước tính ~${n0(p['power'] as double)} kW',
@@ -569,6 +632,7 @@ class AirStrings {
           'waterSeparator' => _t('lọc tách nước', 'water separator'),
           'coarseFilter' => _t('$n lọc tách thô', '$n coarse filter(s)'),
           'fineFilter' => _t('$n lọc tách tinh', '$n fine filter(s)'),
+          'sterileFilter' => _t('$n lọc siêu tinh', '$n ultra-fine filter(s)'),
           'refrigeratedDryer' => _t(
             '$n máy sấy lạnh',
             '$n refrigerated dryer(s)',
@@ -750,6 +814,10 @@ class AirStrings {
       _t('Tách nước 3 micron', 'Water separator 3 micron');
   String get diagramCoarse => _t('Tách thô 1 micron', 'Coarse 1 micron');
   String get diagramFine => _t('Tách tinh 0,01 micron', 'Fine 0.01 micron');
+  String get diagramUltraFine =>
+      _t('Siêu tinh 0,001 micron', 'Ultra-fine 0.001 micron');
+  String get diagramCarbon =>
+      _t('Than hoạt tính (khử hơi dầu, mùi)', 'Activated carbon (oil vapour)');
 
   /// Tiêu đề + từng lọc, đánh số liên tục trên toàn hệ thống (lọc tuyến chính
   /// trước, [start] là số của lọc sau máy sấy đầu tiên), khớp số vẽ trên đầu
@@ -762,8 +830,8 @@ class AirStrings {
     final grades = [
       if (g.coarse) diagramCoarse,
       if (g.fine) diagramFine,
-      if (g.carbon) _t('Than hoạt tính', 'Activated carbon'),
-      if (g.sterile) _t('Vô trùng', 'Sterile'),
+      if (g.sterile) diagramUltraFine,
+      if (g.carbon) diagramCarbon,
     ];
     return [
       diagramFilterTitle,

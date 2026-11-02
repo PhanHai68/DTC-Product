@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../diagram/air_diagram.dart';
+import '../diagram/custom_equipment.dart';
 import '../engine/air_engine.dart';
 import '../l10n/air_strings.dart';
 import '../models/air_config.dart';
@@ -59,8 +60,29 @@ class AirConfigEditorController extends ChangeNotifier {
   bool get dirty => _dirty;
   int get maxLines => engine.constants.maxLines;
 
-  AirDiagram get diagram =>
-      _diagram ??= buildAirDiagram(_config, _result, _strings);
+  /// Sơ đồ lắp đặt: sơ đồ tuỳ chỉnh khi đang bật, không thì sơ đồ tự động.
+  AirDiagram get diagram => _diagram ??= _config.custom.active
+      ? buildCustomAirDiagram(_config, _result, _strings, customEquipment)
+      : buildAirDiagram(_config, _result, _strings);
+
+  /// Model, thông số thiết bị cho sơ đồ tuỳ chỉnh.
+  CustomEquipment get customEquipment =>
+      CustomEquipment(engine, _config, _result, _strings);
+
+  /// Bật sơ đồ tuỳ chỉnh; chưa có tầng nào thì dựng từ cấu hình tự động.
+  void enableCustom(bool on) => edit((c) {
+    if (on && c.custom.stages.isEmpty) {
+      c.custom.stages.addAll(customLayoutFromResult(c, _result).stages);
+    }
+    c.custom.enabled = on;
+  });
+
+  /// Dựng lại sơ đồ tuỳ chỉnh từ cấu hình tự động (bỏ phần đã sửa).
+  void resetCustom() => edit((c) {
+    c.custom.stages
+      ..clear()
+      ..addAll(customLayoutFromResult(c, _result).stages);
+  });
 
   RoomResult? get room => _room ??= roomEngine?.compute(_config, _result);
 

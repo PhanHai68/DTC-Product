@@ -182,7 +182,7 @@ extension RoomStrings on AirStrings {
     RoomFilterGrade.coarse => diagramCoarse,
     RoomFilterGrade.fine => diagramFine,
     RoomFilterGrade.carbon => _r('Than hoạt tính', 'Activated carbon'),
-    RoomFilterGrade.sterile => _r('Vô trùng', 'Sterile'),
+    RoomFilterGrade.sterile => _r('Siêu tinh 0,001 µm', 'Ultra-fine 0.001 µm'),
   };
 
   /// "Model 013 · 160 × 160 × 500 mm *" — model lọc đường ống và kích thước

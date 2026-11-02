@@ -508,8 +508,8 @@ class RoomEngine {
     return [
       if (g.coarse) RoomFilterGrade.coarse,
       if (g.fine) RoomFilterGrade.fine,
-      if (g.carbon) RoomFilterGrade.carbon,
       if (g.sterile) RoomFilterGrade.sterile,
+      if (g.carbon) RoomFilterGrade.carbon,
     ];
   }
 

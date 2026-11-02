@@ -231,4 +231,18 @@ void main() {
       d.shapes.whereType<DImage>().length,
     );
   });
+
+  test('thêm lọc siêu tinh + than hoạt tính: 5 lọc, không chồng chữ', () {
+    for (final template in AirConfigTemplate.values) {
+      for (final lang in AirLang.values) {
+        final config = template.build();
+        config.pretreat
+          ..ultraFineFilter = true
+          ..carbonFilter = true;
+        final d = _diagram(config, lang);
+        expect(_overlaps(d), isEmpty, reason: '${template.title} $lang');
+        expect(_inside(d), isTrue);
+      }
+    }
+  });
 }

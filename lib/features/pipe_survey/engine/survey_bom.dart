@@ -201,11 +201,48 @@ class SurveyBom {
   double get totalLengthM => lengthByDn.values.fold(0.0, (a, b) => a + b);
 }
 
+/// Cao độ hai đầu đoạn ống (m): cao độ riêng của đoạn, không có thì cao độ
+/// tại từng điểm, rồi độ cao treo của công trình.
+(double?, double?) surveySegmentEnds(PipeSurvey s, SurveySegment seg) {
+  final h = seg.heightM;
+  return (
+    h ?? s.node(seg.a)?.hangHeightM ?? s.hangHeightM,
+    h ?? s.node(seg.b)?.hangHeightM ?? s.hangHeightM,
+  );
+}
+
+/// Cao độ các đầu đoạn ống nối vào điểm [n].
+List<double> _endsAt(PipeSurvey s, SurveyNode n) => [
+  for (final seg in s.segmentsAt(n.id))
+    ?(seg.a == n.id
+        ? surveySegmentEnds(s, seg).$1
+        : surveySegmentEnds(s, seg).$2),
+];
+
+/// Cao độ ống tại điểm: cao nhất trong các đầu đoạn nối vào; điểm chưa nối
+/// ống thì cao độ riêng của điểm / độ cao treo công trình.
+double? surveyNodeElevation(PipeSurvey s, SurveyNode n) {
+  final ends = _endsAt(s, n);
+  return ends.isEmpty ? n.hangHeightM ?? s.hangHeightM : ends.reduce(math.max);
+}
+
+/// Đổi cao độ tại điểm (các đoạn nối vào khác cao độ): (thấp nhất, cao nhất,
+/// số mức cao độ); `null` khi cùng một cao độ.
+(double, double, int)? surveyNodeRiser(PipeSurvey s, SurveyNode n) {
+  final levels = <double>[];
+  for (final e in _endsAt(s, n)) {
+    if (!levels.any((l) => (l - e).abs() < 1e-6)) levels.add(e);
+  }
+  if (levels.length < 2) return null;
+  return (levels.reduce(math.min), levels.reduce(math.max), levels.length);
+}
+
 /// Bóc vật tư từ sơ đồ khảo sát. Hàm thuần.
 ///
 /// - Ống: tổng chiều dài từng cỡ (đoạn ngang + ống đứng xuống máy = độ cao
 ///   treo − cao độ đầu nối), làm tròn lên nguyên cây.
-/// - Co: mỗi góc rẽ 1 cái, mỗi ống đứng 1 cái ở đầu trên.
+/// - Co: mỗi góc rẽ 1 cái, mỗi ống đứng 1 cái ở đầu trên; đổi cao độ 2 cái
+///   (tại điểm nối: thay co góc rẽ).
 /// - Tê: chỗ 3 nhánh 1 cái, chỗ 4 nhánh 2 cái, mỗi điểm sử dụng nằm giữa
 ///   tuyến thêm 1 cái lấy khí.
 /// - Côn giảm: mỗi đoạn nhỏ hơn cỡ lớn nhất tại điểm nối.
@@ -230,6 +267,17 @@ SurveyBom computeSurveyBom(PipeSurvey s, SurveyConstants c) {
       math.max(0, (len / c.barLengthM - 1e-9).ceil() - 1);
   int clampsFor(double len, int dn) =>
       math.max(1, (len / c.clampSpacingFor(dn) - 1e-9).ceil());
+
+  // Ống đứng (đổi cao độ, vượt chướng ngại): ống, co, nối, cùm.
+  void vertical(String label, int dn, double rise, int elbows) {
+    runs.add(SurveyRun(label: label, dn: dn, lengthM: rise, vertical: true));
+    length.update(dn, (v) => v + rise, ifAbsent: () => rise);
+    add(SurveyRole.elbow, dn, elbows);
+    final joins = couplingsFor(rise);
+    add(SurveyRole.coupling, dn, joins);
+    addJoints(dn, 2 * elbows + 2 * joins);
+    add(SurveyRole.clamp, dn, clampsFor(rise, dn));
+  }
 
   if (s.segments.isEmpty) {
     warnings.add(const SurveyWarning(SurveyWarningCode.empty));
@@ -257,24 +305,14 @@ SurveyBom computeSurveyBom(PipeSurvey s, SurveyConstants c) {
     addJoints(dn, 2 * cpl);
     add(SurveyRole.clamp, dn, clampsFor(len, dn));
 
-    // Ống đứng: đổi cao độ giữa hai điểm (2 co) và vượt chướng ngại (mỗi
-    // lần 2 × chênh cao, 4 co).
-    void vertical(String label, double rise, int elbows) {
-      runs.add(SurveyRun(label: label, dn: dn, lengthM: rise, vertical: true));
-      length.update(dn, (v) => v + rise, ifAbsent: () => rise);
-      add(SurveyRole.elbow, dn, elbows);
-      final joins = couplingsFor(rise);
-      add(SurveyRole.coupling, dn, joins);
-      addJoints(dn, 2 * elbows + 2 * joins);
-      add(SurveyRole.clamp, dn, clampsFor(rise, dn));
-    }
-
-    final ea = a.hangHeightM ?? s.hangHeightM;
-    final eb = b.hangHeightM ?? s.hangHeightM;
+    // Đoạn không có cao độ riêng, hai điểm khác cao độ: ống đứng giữa đoạn
+    // (2 co); vượt chướng ngại: mỗi lần 2 × chênh cao, 4 co.
+    final (ea, eb) = surveySegmentEnds(s, seg);
     if (ea != null && eb != null && (ea - eb).abs() > 1e-6) {
       vertical(
         '${_nodeLabel(s, a)} → ${_nodeLabel(s, b)} (đổi cao độ '
         '${_fmt(ea)} → ${_fmt(eb)} m)',
+        dn,
         (ea - eb).abs(),
         2,
       );
@@ -285,6 +323,7 @@ SurveyBom computeSurveyBom(PipeSurvey s, SurveyConstants c) {
         '${_nodeLabel(s, a)} → ${_nodeLabel(s, b)} (vượt chướng ngại '
         '×${seg.obstacles}, ${seg.obstacleRiseM! > 0 ? 'lên' : 'xuống'} '
         '${_fmt(rise)} m)',
+        dn,
         2 * rise * seg.obstacles,
         4 * seg.obstacles,
       );
@@ -297,7 +336,19 @@ SurveyBom computeSurveyBom(PipeSurvey s, SurveyConstants c) {
     final d = segs.length;
     final dns = [for (final seg in segs) seg.dn ?? s.defaultDn];
     final maxDn = dns.isEmpty ? s.defaultDn : dns.reduce(math.max);
-    if (d == 2 && !_collinear(s, node, segs[0], segs[1])) {
+    // Đoạn nối vào khác cao độ: ống đứng tại điểm, 2 co mỗi lần đổi mức (góc
+    // rẽ đổi cao độ: 2 co này thay co góc).
+    final riser = surveyNodeRiser(s, node);
+    if (riser != null) {
+      final (low, high, levels) = riser;
+      vertical(
+        '${_nodeLabel(s, node)} (đổi cao độ ${_fmt(low)} ↔ ${_fmt(high)} m)',
+        maxDn,
+        high - low,
+        2 * (levels - 1),
+      );
+    }
+    if (d == 2 && riser == null && !_collinear(s, node, segs[0], segs[1])) {
       add(SurveyRole.elbow, maxDn, 1);
       addJoints(maxDn, 2);
     } else if (d == 3) {
@@ -331,7 +382,7 @@ SurveyBom computeSurveyBom(PipeSurvey s, SurveyConstants c) {
           node.dropDn ?? (dns.isEmpty ? s.defaultDn : dns.reduce(math.min));
       add(SurveyRole.ballValve, dropDn, 1);
       addJoints(dropDn, 2);
-      final hang = node.hangHeightM ?? s.hangHeightM;
+      final hang = surveyNodeElevation(s, node);
       final conn = node.connectionHeightM ?? c.defaultConnectionHeightM;
       if (hang == null) continue;
       final drop = hang - conn;
@@ -364,7 +415,7 @@ SurveyBom computeSurveyBom(PipeSurvey s, SurveyConstants c) {
       addJoints(maxDn, 1);
     }
   }
-  if (s.hangHeightM == null && s.usePoints.any((n) => n.hangHeightM == null)) {
+  if (s.usePoints.any((n) => surveyNodeElevation(s, n) == null)) {
     warnings.add(const SurveyWarning(SurveyWarningCode.noHangHeight));
   }
 

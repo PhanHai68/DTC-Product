@@ -9,6 +9,7 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 import '../diagram/air_diagram.dart';
 import '../diagram/air_diagram_render.dart';
 import '../diagram/air_diagram_svg.dart';
+import '../diagram/custom_equipment.dart';
 import '../l10n/air_strings.dart';
 import '../models/air_config.dart';
 import '../models/air_result.dart';
@@ -174,6 +175,7 @@ abstract final class AirConfigExportService {
     DateTime? now,
     bool merged = false,
     PoRequester requester = const PoRequester(),
+    CustomEquipment? custom,
   }) {
     final doc = poDocument(
       config,
@@ -181,6 +183,7 @@ abstract final class AirConfigExportService {
       pipe: pipe,
       kits: kits,
       now: now,
+      custom: custom,
     ).withRequester(requester);
     return AirExportFile(
       '${base}_DeNghiVatTu${merged ? '_GopMa' : ''}.xlsx',
@@ -200,6 +203,7 @@ abstract final class AirConfigExportService {
     DateTime? now,
     bool merged = false,
     PoRequester requester = const PoRequester(),
+    CustomEquipment? custom,
   }) async {
     Future<Uint8List> asset(String path) async =>
         Uint8List.sublistView(await rootBundle.load(path));
@@ -209,6 +213,7 @@ abstract final class AirConfigExportService {
       pipe: pipe,
       kits: kits,
       now: now,
+      custom: custom,
     ).withRequester(requester);
     return AirExportFile(
       '${base}_DeNghiVatTu${merged ? '_GopMa' : ''}.pdf',
@@ -229,6 +234,7 @@ abstract final class AirConfigExportService {
     PipeResult? pipe,
     InstallKits? kits,
     DateTime? now,
+    CustomEquipment? custom,
   }) {
     final s = AirStrings(AirLang.vi);
     final kw = result.compressor?.powerKw;
@@ -325,6 +331,14 @@ abstract final class AirConfigExportService {
           spec: old.spec,
         );
       }
+    }
+
+    // Sơ đồ tuỳ chỉnh đang bật: thiết bị chính theo các tầng (gộp cùng loại +
+    // model, cộng số lượng).
+    if (custom != null && config.custom.active) {
+      equipment
+        ..clear()
+        ..addAll(customPoEquipment(config.custom, custom));
     }
 
     // Danh sách đã áp phần sửa tay (thêm / xoá / sửa) như trên app.
@@ -579,4 +593,37 @@ abstract final class AirConfigExportService {
     document.dispose();
     return bytes;
   }
+}
+
+/// Thiết bị chính của phiếu đề nghị vật tư theo sơ đồ tuỳ chỉnh: mỗi loại +
+/// model một dòng, theo thứ tự tầng.
+List<PoLine> customPoEquipment(CustomLayout layout, CustomEquipment eq) {
+  final lines = <(CustomKind, String?), int>{};
+  for (final st in layout.stages) {
+    for (final u in st.units) {
+      final key = (st.kind, eq.modelOf(st, u));
+      lines.update(key, (v) => v + 1, ifAbsent: () => 1);
+    }
+  }
+  String name(CustomKind k) {
+    final n = eq.kindName(k);
+    // Lọc ghi "Bộ lọc …" như phiếu tự động.
+    return k.isFilter ? 'Bộ ${n[0].toLowerCase()}${n.substring(1)}' : n;
+  }
+
+  return [
+    for (final e in lines.entries)
+      PoLine(
+        name: name(e.key.$1),
+        unit: switch (e.key.$1) {
+          CustomKind.compressor ||
+          CustomKind.refrigeratedDryer ||
+          CustomKind.desiccantDryer => 'Máy',
+          CustomKind.tank || CustomKind.afterCooler => 'Bộ',
+          _ => 'Cái',
+        },
+        qty: e.value,
+        spec: [?e.key.$2, ?eq.detail(e.key.$1, e.key.$2)].join(' – '),
+      ),
+  ];
 }
