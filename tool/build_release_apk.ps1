@@ -4,22 +4,21 @@
 #     powershell -ExecutionPolicy Bypass -File tool\build_release_apk.ps1 -Label ten-ban
 #   Bản build thử (không chép lên Google Drive, không dọn APK cũ):
 #     powershell -ExecutionPolicy Bypass -File tool\build_release_apk.ps1 -Label thu -SkipBackup
-#   Bỏ bớt phần không cần: -SkipWeb (không build web), -SkipUniversal (chỉ
-#   build APK arm64).
+#   Không build web: -SkipWeb.
 #
 # Kết quả ở thư mục gốc dự án:
 # - DTCProduct-<phiên bản>-<commit>-<Label>-arm64.apk: GỬI BẢN NÀY cho người
 #   dùng (điện thoại Android 64-bit, gần như mọi máy từ 2017), nhẹ hơn nhiều.
-# - DTCProduct-<phiên bản>-<commit>-<Label>.apk: bản đầy đủ mọi loại chip, cho
-#   máy 32-bit đời cũ. Cùng số phiên bản với bản arm64 nên cài đè qua lại được.
+# - DTCProduct-<phiên bản>-<commit>-<Label>-arm32.apk: cho máy 32-bit đời cũ
+#   (máy nào báo không cài được bản arm64). Hai bản cùng số phiên bản
+#   (versionCode) nên cài đè qua lại được.
 # - DTCProduct-web-<phiên bản>.zip: kéo thả lên Cloudflare (worker "test" →
 #   New deployment).
 #
 # - Tên hàm/lớp Dart trong APK bị đổi thành ký tự vô nghĩa, khó đọc ngược logic.
-# - File giải mã ("sổ giải mã") lưu ở symbols\android\<phiên bản>\ (bản đầy
-#   đủ) và ...\<phiên bản>\arm64\ (bản arm64), không đưa lên Git. Thiếu nó thì
-#   không đọc được chi tiết lỗi trong Cài đặt → Nhật ký lỗi của bản đó, và
-#   không tạo lại được. Giải mã:
+# - File giải mã ("sổ giải mã") lưu ở symbols\android\<phiên bản>\, không
+#   đưa lên Git. Thiếu nó thì không đọc được chi tiết lỗi trong Cài đặt → Nhật
+#   ký lỗi của bản đó, và không tạo lại được. Giải mã:
 #     flutter symbolize -i loi.txt -d <thư mục symbols>\app.android-arm64.symbols
 # - Sao lưu: chép APK + web + symbols vào $ReleaseDir\<phiên bản>\ (Google
 #   Drive cho máy tính tự đồng bộ lên mạng). Thư mục này KHÔNG được chia sẻ
@@ -29,8 +28,7 @@ param(
     [string]$Label = 'release',
     [string]$ReleaseDir = 'G:\My Drive\DTC Product - Phát hành',
     [switch]$SkipBackup,
-    [switch]$SkipWeb,
-    [switch]$SkipUniversal
+    [switch]$SkipWeb
 )
 
 $ErrorActionPreference = 'Stop'
@@ -47,27 +45,23 @@ if (-not (Test-Path android\key.properties)) {
     throw 'Thiếu android\key.properties — APK phải ký bằng upload-keystore.jks như các bản trước.'
 }
 
-function Build-Apk([string[]]$extra, [string]$symbolDir) {
-    flutter build apk --release --obfuscate "--split-debug-info=$symbolDir" @extra
-    if ($LASTEXITCODE -ne 0) { throw "flutter build apk lỗi ($LASTEXITCODE)" }
+Write-Host "Build APK $version ($commit), symbols -> $symbols"
+# Tách APK theo loại chip nhưng giữ nguyên versionCode của pubspec (mặc định
+# Flutter cộng thêm 1000 × mã chip, làm bản sau không cài đè được bản trước).
+flutter build apk --release --obfuscate "--split-debug-info=$symbols" --split-per-abi -P force-version-code-ignoring-abi=true
+if ($LASTEXITCODE -ne 0) { throw "flutter build apk lỗi ($LASTEXITCODE)" }
+# Flutter dùng lại bản dịch cũ khi mã không đổi và khi đó không ghi lại
+# symbols: thiếu thì chạy `flutter clean` rồi build lại.
+if (-not (Test-Path (Join-Path $symbols 'app.android-arm64.symbols'))) {
+    throw "Không thấy symbols ở $symbols — chạy 'flutter clean' rồi build lại."
 }
 
 $outputs = @()
-$apkSource = 'build\app\outputs\flutter-apk\app-release.apk'
-
-if (-not $SkipUniversal) {
-    Write-Host "Build APK đầy đủ $version ($commit), symbols -> $symbols"
-    Build-Apk @() $symbols
-    $apk = Join-Path $root "DTCProduct-$version-$commit-$Label.apk"
-    Copy-Item $apkSource $apk -Force
+foreach ($abi in @(@('arm64-v8a', 'arm64'), @('armeabi-v7a', 'arm32'))) {
+    $apk = Join-Path $root "DTCProduct-$version-$commit-$Label-$($abi[1]).apk"
+    Copy-Item "build\app\outputs\flutter-apk\app-$($abi[0])-release.apk" $apk -Force
     $outputs += $apk
 }
-
-Write-Host "Build APK arm64 $version ($commit)"
-Build-Apk @('--target-platform', 'android-arm64') (Join-Path $symbols 'arm64')
-$apk = Join-Path $root "DTCProduct-$version-$commit-$Label-arm64.apk"
-Copy-Item $apkSource $apk -Force
-$outputs += $apk
 
 if (-not $SkipWeb) {
     Write-Host 'Build web'
