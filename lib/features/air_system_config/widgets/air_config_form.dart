@@ -20,7 +20,7 @@ class AirConfigForm extends StatelessWidget {
     final comp = c.compressor;
 
     final catalog = ctrl.engine.catalogModels(comp.type);
-    final result = ctrl.result;
+    final result = ctrl.autoResult;
 
     return ListView(
       key: const PageStorageKey('air_config_form'),
@@ -209,9 +209,9 @@ class AirConfigForm extends StatelessWidget {
                 label: s.tankManual,
                 suffix: 'm³',
                 value: c.tank.manualVolumeM3,
-                helper: ctrl.result.tank == null
+                helper: ctrl.autoResult.tank == null
                     ? s.tankManualHint
-                    : '${s.tankManualHint} · ${s.tankCard(ctrl.result.tank)} ${ctrl.result.tank!.spec?.model ?? ''}',
+                    : '${s.tankManualHint} · ${s.tankCard(ctrl.autoResult.tank)} ${ctrl.autoResult.tank!.spec?.model ?? ''}',
                 onChanged: (v) => ctrl.edit((c) => c.tank.manualVolumeM3 = v),
               ),
           ],

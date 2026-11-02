@@ -147,6 +147,20 @@ class AirStrings {
   String get modelLabel => _t('Model', 'Model');
   String get customCompressor => _t('Máy nén khí', 'Air compressor');
   String get customTank => _t('Bình chứa khí', 'Air receiver');
+
+  /// Tên loại thiết bị trong sơ đồ tuỳ chỉnh.
+  String customKindName(CustomKind k) => switch (k) {
+    CustomKind.compressor => customCompressor,
+    CustomKind.afterCooler => afterCoolerTitle,
+    CustomKind.tank => customTank,
+    CustomKind.waterSeparator => waterSeparator,
+    CustomKind.refrigeratedDryer => dryerTitle(DryerKind.refrigerated),
+    CustomKind.desiccantDryer => dryerTitle(DryerKind.desiccant),
+    CustomKind.coarseFilter => coarseFilter,
+    CustomKind.fineFilter => fineFilter,
+    CustomKind.ultraFineFilter => sterile,
+    CustomKind.carbonFilter => carbon,
+  };
   String get customTitle => _t('Tuỳ chỉnh cấu hình', 'Custom layout');
   String get customUse => _t('Dùng sơ đồ tuỳ chỉnh', 'Use the custom layout');
   String get customUseHint => _t(
@@ -201,6 +215,7 @@ class AirStrings {
   String get pickModelTitle =>
       _t('Chọn model máy nén', 'Pick a compressor model');
   String get changeModel => _t('Đổi', 'Change');
+
   /// Hậu tố áp suất của lưu lượng: "/8 bar" (vd 12,6 m³/phút/8 bar).
   String flowAtBar(double bar) => '/${n2(bar)} bar';
   String get manualModelName => _t('Tên / model máy', 'Name / model');
@@ -288,8 +303,14 @@ class AirStrings {
           'Demand ${flow(r.required)} · ${_pickName(r)} · ${margin(r.margin!)}',
         );
 
-  /// "2 × ACP-100PV" / "ACP-100PV" / tên nhập tay.
+  /// "2 × ACP-100PV" / "ACP-100PV" / tên nhập tay; sơ đồ tuỳ chỉnh:
+  /// "2 × ACP-100PV + ACP-50PV".
   String _pickName(AirResult r) {
+    if (r.custom case final custom?) {
+      return _countJoin([
+        for (final u in custom.of(CustomKind.compressor)) u.model ?? '—',
+      ]);
+    }
     final pick = r.compressor!;
     final name = pick.model?.modelCode ?? pick.manualName ?? '';
     return pick.units > 1 ? '${pick.units} × $name' : name;
@@ -300,6 +321,17 @@ class AirStrings {
   /// Ô công suất: máy đã chọn có công suất thì hiện công suất thật, không
   /// thì ước tính theo hệ số riêng.
   (String, String, String) powerCard(AirResult r) {
+    if (r.custom case final custom? when custom.kw > 0) {
+      final kws = [
+        for (final u in custom.of(CustomKind.compressor))
+          if (u.compressor != null) '${n2(u.compressor!.powerKW)} kW',
+      ];
+      return (
+        _t('Công suất máy nén', 'Compressor power'),
+        '${n2(custom.kw)} kW',
+        kws.length > 1 ? _countJoin(kws) : _pickName(r),
+      );
+    }
     final pick = r.compressor;
     final kw = pick?.powerKw;
     if (pick == null || kw == null) {
@@ -323,7 +355,11 @@ class AirStrings {
       _t('Lưu lượng: ${flow(r.flow)}', 'Flow: ${flow(r.flow)}'),
       flowBreakdown(r),
       // Chỉ tên model thì đã có trong dòng nguồn.
-      if (pick == null || pick.powerKw == null || pick.units > 1) extra,
+      if (pick == null ||
+          pick.powerKw == null ||
+          pick.units > 1 ||
+          (r.custom?.of(CustomKind.compressor).length ?? 0) > 1)
+        extra,
     ].join('\n');
   }
 
@@ -350,8 +386,21 @@ class AirStrings {
   /// (nhãn, giá trị); bỏ ô trống hoặc "-". Dòng máy sấy chỉ khi có máy sấy
   /// lạnh (bảng tính MCB/cáp cho máy sấy lạnh đi kèm).
   List<(String, String)> electricalRows(AirResult r) {
+    // Sơ đồ tuỳ chỉnh nhiều model máy nén: mỗi model một nhóm dòng.
+    final byModel = r.custom?.electrical ?? const [];
+    if (byModel.length > 1) {
+      return [
+        for (final (model, row) in byModel)
+          for (final (label, value) in _electricalRows(r, row))
+            ('$label – $model', value),
+      ];
+    }
     final e = r.electrical;
     if (e == null) return const [];
+    return _electricalRows(r, e);
+  }
+
+  List<(String, String)> _electricalRows(AirResult r, Map<String, String> e) {
     bool has(String key) => (e[key] ?? '').isNotEmpty && e[key] != '-';
     final dryer = r.groups.any((g) => g.kind == DryerKind.refrigerated);
     return [
@@ -384,6 +433,18 @@ class AirStrings {
     );
   }
 
+  /// Gom tên trùng: [A, A, B] → "2 × A + B".
+  String _countJoin(List<String> names) {
+    final counts = <String, int>{};
+    for (final n in names) {
+      counts[n] = (counts[n] ?? 0) + 1;
+    }
+    return [
+      for (final MapEntry(:key, :value) in counts.entries)
+        value > 1 ? '$value × $key' : key,
+    ].join(' + ');
+  }
+
   String motor(double? kw) => kw == null
       ? _t('Vượt dãy động cơ chuẩn', 'Beyond standard motor sizes')
       : _t('Động cơ chuẩn ${n2(kw)} kW', 'Standard motor ${n2(kw)} kW');
@@ -393,9 +454,19 @@ class AirStrings {
     return '${n2(t.volumeM3)} m³';
   }
 
-  String tankCardSub(TankPick? t) {
+  /// Dòng phụ ô bình; sơ đồ tuỳ chỉnh nhiều bình: "2 × V-1000 · …".
+  String tankCardSub(TankPick? t, [AirResult? r]) {
     if (t == null) return '';
-    final model = t.spec == null ? '' : '${t.spec!.model} · ';
+    final tanks = [
+      for (final u
+          in r?.custom?.of(CustomKind.tank) ?? const <CustomUnitCalc>[])
+        u.model ?? '—',
+    ];
+    final model = tanks.length > 1
+        ? '${_countJoin(tanks)} · '
+        : t.spec == null
+        ? ''
+        : '${t.spec!.model} · ';
     return _t(
       '$model thiết kế ${n2(t.designPressure)} bar',
       '$model design ${n2(t.designPressure)} bar',
@@ -672,6 +743,31 @@ class AirStrings {
   String get autoValueHint => _t('Trống = tự tính', 'Empty = calculated');
 
   // ── Cảnh báo ─────────────────────────────────────────────────────────────
+  /// "Máy sấy khí lạnh 2 (ACD-30): công suất 25 m³/phút, khí đi qua 30
+  /// m³/phút" — bình thì so dung tích với dung tích cần theo khí đi qua.
+  String _customUnitLow(Map<String, Object?> p) {
+    final count = p['count'] as int;
+    final model = p['model'] as String;
+    final name = [
+      customKindName(p['kind'] as CustomKind),
+      if (count > 1) '${p['unit']}',
+      if (model.isNotEmpty) '($model)',
+    ].join(' ');
+    final through = flow(p['flow'] as double);
+    if (p['volume'] case final double volume) {
+      final need = n2(p['needVolume'] as double);
+      return _t(
+        '$name: dung tích ${n2(volume)} m³ nhỏ hơn mức cần $need m³ cho $through khí đi qua.',
+        '$name: ${n2(volume)} m³ is below the $need m³ needed for $through passing through.',
+      );
+    }
+    final cap = flow(p['capacity'] as double);
+    return _t(
+      '$name: công suất $cap nhỏ hơn $through khí đi qua — chọn model lớn hơn hoặc thêm máy song song.',
+      '$name: capacity $cap is below the $through passing through — pick a larger model or add one in parallel.',
+    );
+  }
+
   String warning(AirWarning w) {
     final p = w.params;
     String num1(String key) => n1(p[key] as num);
@@ -736,6 +832,7 @@ class AirStrings {
         'Dữ liệu chưa có máy sấy lạnh phù hợp: thông số máy sấy ghi theo nhu cầu.',
         'No suitable refrigerated dryer in the catalog: dryer data follows the demand.',
       ),
+      AirWarningCode.customUnitLow => _customUnitLow(p),
       AirWarningCode.modelFlowLow => _t(
         'Máy nén ${p['model']} cho ${num1('flow')} $flowUnit, nhỏ hơn lưu lượng cần ${num1('need')} $flowUnit.',
         'Compressor ${p['model']} delivers ${num1('flow')} $flowUnit, below the required ${num1('need')} $flowUnit.',

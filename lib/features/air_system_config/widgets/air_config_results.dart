@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../diagram/air_diagram_render.dart';
 import '../l10n/air_strings.dart';
-import '../models/air_config.dart';
 import '../models/air_result.dart';
 import '../providers/air_config_editor_controller.dart';
 import 'air_custom_layout_screen.dart';
@@ -324,7 +323,7 @@ class _SummaryCards extends StatelessWidget {
         icon: Icons.propane_tank_outlined,
         label: s.cardTank,
         value: s.tankCard(r.tank),
-        sub: s.tankCardSub(r.tank),
+        sub: s.tankCardSub(r.tank, r),
       ),
       _Card(
         icon: Icons.ac_unit_rounded,
@@ -443,15 +442,8 @@ class _CustomCard extends StatelessWidget {
     final s = ctrl.strings;
     final eq = ctrl.customEquipment;
     final scheme = Theme.of(context).colorScheme;
-    var flow = 0.0, kw = 0.0;
-    for (final st in ctrl.config.custom.stages) {
-      if (st.kind != CustomKind.compressor) continue;
-      for (final u in st.units) {
-        final model = eq.modelOf(st, u);
-        flow += eq.compressorFlow(model) ?? 0;
-        kw += eq.compressorKw(model) ?? 0;
-      }
-    }
+    final flow = ctrl.result.custom?.flow ?? 0;
+    final kw = ctrl.result.custom?.kw ?? 0;
     return Card(
       key: const Key('air_custom_card'),
       margin: const EdgeInsets.only(bottom: 12),

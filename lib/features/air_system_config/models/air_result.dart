@@ -97,6 +97,9 @@ enum AirWarningCode {
   tankTooLarge,
   tankDesignHigh,
   tankManualNotInCatalog,
+
+  /// Sơ đồ tuỳ chỉnh: một máy (bình, máy sấy, lọc) nhỏ hơn lượng khí đi qua.
+  customUnitLow,
 }
 
 class AirWarning {
@@ -256,7 +259,53 @@ class AirResult {
     required this.quality,
     required this.equipment,
     required this.warnings,
+    this.custom,
   });
+
+  /// Kết quả theo sơ đồ tuỳ chỉnh: thay các trường tính theo thiết bị
+  /// (máy nén, bình, máy sấy, lọc, áp suất cần, cảnh báo), giữ phần còn lại.
+  AirResult withCustom({
+    required CustomCalc custom,
+    required double flow,
+    required double powerEstimate,
+    required CompressorPick? compressor,
+    required int compressorQty,
+    required TankPick? tank,
+    required Map<DryerKind, DryerPick> dryerPicks,
+    required LineFilterPick? lineFilter,
+    required Map<String, String>? electrical,
+    required double pressureNeed,
+    required List<AirGroup> groups,
+    required List<LineQuality> quality,
+    required List<AirWarning> warnings,
+  }) => AirResult(
+    lines: lines,
+    validLines: validLines,
+    demand: demand,
+    purge: purge,
+    purgeRate: purgeRate,
+    customerDemand: customerDemand,
+    required: required,
+    flow: flow,
+    flowFromModel: flowFromModel || custom.flow > 0,
+    demandBased: demandBased,
+    pressure: pressure,
+    pressureNeed: pressureNeed,
+    pretreatDrop: pretreatDrop,
+    powerEstimate: powerEstimate,
+    motorKw: motorKw,
+    compressor: compressor,
+    compressorQty: compressorQty,
+    tank: tank,
+    dryerPicks: dryerPicks,
+    lineFilter: lineFilter,
+    electrical: electrical,
+    groups: groups,
+    quality: quality,
+    equipment: equipment,
+    warnings: warnings,
+    custom: custom,
+  );
 
   /// Các line của cấu hình (giữ thứ tự nhập).
   final List<AirLine> lines;
@@ -320,6 +369,9 @@ class AirResult {
   /// Đã xếp: lỗi → lưu ý → ghi chú.
   final List<AirWarning> warnings;
 
+  /// Tính theo sơ đồ tuỳ chỉnh (đang bật); `null` = cấu hình tự động.
+  final CustomCalc? custom;
+
   bool get hasErrors => warnings.any((w) => w.level == WarningLevel.error);
 
   AirGroup? groupOf(int lineIndex) =>
@@ -327,4 +379,64 @@ class AirResult {
 
   LineQuality? qualityOf(int lineIndex) =>
       quality.where((q) => q.lineIndex == lineIndex).firstOrNull;
+}
+
+/// Một máy trong sơ đồ tuỳ chỉnh: model, dữ liệu catalog và lượng khí đi qua
+/// (chia đều đầu ra của máy trước theo các ống nối).
+class CustomUnitCalc {
+  const CustomUnitCalc({
+    required this.stage,
+    required this.index,
+    required this.kind,
+    required this.model,
+    required this.inflow,
+    this.compressor,
+    this.tank,
+    this.dryer,
+    this.filter,
+  });
+
+  /// Chỉ số tầng và chỉ số máy trong tầng (từ 0).
+  final int stage;
+  final int index;
+  final CustomKind kind;
+
+  /// Model đang dùng (chọn riêng hoặc model app đã tính); `null` = chưa có.
+  final String? model;
+
+  /// Khí đi vào máy (m³/phút); máy nén là lưu lượng của chính máy.
+  final double inflow;
+
+  final CatalogCompressor? compressor;
+  final AirTankSpec? tank;
+  final RefrigeratedDryerSpec? dryer;
+  final LineFilterSpec? filter;
+
+  /// Lưu lượng định mức (máy sấy lạnh, lọc); `null` khi không áp dụng.
+  double? get capacity => dryer?.capacityM3min ?? filter?.capacityM3min;
+}
+
+/// Tổng hợp sơ đồ tuỳ chỉnh dùng cho kết quả, phòng lắp đặt và vật tư.
+class CustomCalc {
+  const CustomCalc({
+    required this.units,
+    required this.flow,
+    required this.kw,
+    required this.electrical,
+  });
+
+  /// Mọi máy theo thứ tự tầng.
+  final List<CustomUnitCalc> units;
+
+  /// Tổng lưu lượng các máy nén (m³/phút), tổng công suất (kW).
+  final double flow;
+  final double kw;
+
+  /// MCCB / cáp theo từng model máy nén (không trùng model).
+  final List<(String, Map<String, String>)> electrical;
+
+  Iterable<CustomUnitCalc> of(CustomKind kind) =>
+      units.where((u) => u.kind == kind);
+
+  bool has(CustomKind kind) => units.any((u) => u.kind == kind);
 }

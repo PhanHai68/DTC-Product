@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui' show Offset, Rect;
 
 import '../../air_system_config/engine/air_engine.dart';
+import '../../air_system_config/engine/custom_calc.dart';
 import '../../air_system_config/models/air_config.dart' show RoomStyle;
 import '../../air_system_config/room/room_engine.dart';
 import '../models/pipe_survey.dart';
@@ -121,7 +122,7 @@ class SurveyPlantEngine {
     return _cache.putIfAbsent(key, () {
       final config = plant.airConfig();
       if (config == null) return null;
-      final r = air.compute(config);
+      final r = applyCustomLayout(air, config, air.compute(config));
       if (r.compressor == null) return null;
       return room.compute(config, r);
     });

@@ -1,4 +1,5 @@
 import '../engine/air_engine.dart';
+import '../engine/custom_calc.dart';
 import '../l10n/air_strings.dart';
 import '../models/air_config.dart';
 import '../models/air_result.dart';
@@ -17,33 +18,11 @@ class CustomEquipment {
   double get _bar => config.compressor.pressure ?? 8;
 
   /// Tên loại thiết bị.
-  String kindName(CustomKind k) => switch (k) {
-    CustomKind.compressor => s.customCompressor,
-    CustomKind.afterCooler => s.afterCoolerTitle,
-    CustomKind.tank => s.customTank,
-    CustomKind.waterSeparator => s.waterSeparator,
-    CustomKind.refrigeratedDryer => s.dryerTitle(DryerKind.refrigerated),
-    CustomKind.desiccantDryer => s.dryerTitle(DryerKind.desiccant),
-    CustomKind.coarseFilter => s.coarseFilter,
-    CustomKind.fineFilter => s.fineFilter,
-    CustomKind.ultraFineFilter => s.sterile,
-    CustomKind.carbonFilter => s.carbon,
-  };
+  String kindName(CustomKind k) => s.customKindName(k);
 
-  /// Model app đã tính cho loại thiết bị ([CustomUnit.model] `null`).
-  String? defaultModel(CustomKind k) => switch (k) {
-    CustomKind.compressor =>
-      result.compressor?.model?.modelCode ?? result.compressor?.manualName,
-    CustomKind.tank => result.tank?.spec?.model,
-    CustomKind.refrigeratedDryer =>
-      result.dryerPicks[DryerKind.refrigerated]?.spec.model,
-    CustomKind.waterSeparator ||
-    CustomKind.coarseFilter ||
-    CustomKind.fineFilter ||
-    CustomKind.ultraFineFilter ||
-    CustomKind.carbonFilter => result.lineFilter?.spec.model,
-    CustomKind.afterCooler || CustomKind.desiccantDryer => null,
-  };
+  /// Model app đã tính cho loại thiết bị ([CustomUnit.model] `null`);
+  /// [result] là kết quả của cấu hình tự động.
+  String? defaultModel(CustomKind k) => customDefaultModel(k, result);
 
   String? modelOf(CustomStage stage, CustomUnit unit) =>
       unit.model ?? defaultModel(stage.kind);

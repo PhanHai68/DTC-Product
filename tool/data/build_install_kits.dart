@@ -228,10 +228,10 @@ void _writeTemplate(_Book book) {
         ..setAttribute('t', 'inlineStr')
         ..children.clear()
         ..children.add(
-          XmlElement(XmlName('is'), [], [
+          XmlElement(XmlName.qualified('is'), [], [
             XmlElement(
-              XmlName('t'),
-              [XmlAttribute(XmlName('space', 'xml'), 'preserve')],
+              XmlName.qualified('t'),
+              [XmlAttribute(XmlName.parts('space', prefix: 'xml'), 'preserve')],
               [XmlText(value)],
             ),
           ]),

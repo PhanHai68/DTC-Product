@@ -2,9 +2,12 @@ import 'package:dtc_product/features/air_system_config/data/air_config_database.
 import 'package:dtc_product/features/air_system_config/data/air_config_templates.dart';
 import 'package:dtc_product/features/air_system_config/diagram/air_diagram.dart';
 import 'package:dtc_product/features/air_system_config/diagram/custom_equipment.dart';
+import 'package:dtc_product/features/air_system_config/engine/custom_calc.dart';
 import 'package:dtc_product/features/air_system_config/l10n/air_strings.dart';
 import 'package:dtc_product/features/air_system_config/models/air_config.dart';
+import 'package:dtc_product/features/air_system_config/models/air_result.dart';
 import 'package:dtc_product/features/air_system_config/repositories/air_config_repository.dart';
+import 'package:dtc_product/features/air_system_config/room/room_engine.dart';
 import 'package:dtc_product/features/air_system_config/screens/air_config_editor_screen.dart';
 import 'package:dtc_product/features/air_system_config/services/air_config_export_service.dart';
 import 'package:flutter/material.dart';
@@ -129,6 +132,110 @@ void main() {
     final back = AirConfig.fromJson(config.toJson());
     expect(back.custom.linksFor(k), [(0, 0), (0, 1), (1, 1)]);
     expect(back.custom.unlinked(k).$1, isEmpty);
+  });
+
+  group('tính theo sơ đồ tuỳ chỉnh', () {
+    test('tổng lưu lượng, công suất từng máy; tắt thì như tự động', () {
+      final (config, eq) = _custom();
+      final engine = eq.engine;
+      final auto = eq.result;
+      final r = applyCustomLayout(engine, config, auto);
+      double flowOf(String code) => engine.compressors
+          .firstWhere((m) => m.modelCode == code)
+          .flowAt(r.pressure)!;
+      double kwOf(String code) =>
+          engine.compressors.firstWhere((m) => m.modelCode == code).powerKW;
+      final flow = flowOf('ACP-100PV') + flowOf('ACP-50PV');
+      expect(r.custom!.flow, closeTo(flow, 1e-9));
+      expect(r.flow, closeTo(flow, 1e-9));
+      expect(r.compressorQty, 2);
+      // Máy lớn nhất làm đại diện (bộ vật tư cụm máy, cỡ ống).
+      expect(r.compressor!.model!.modelCode, 'ACP-100PV');
+      final s = AirStrings(AirLang.vi);
+      expect(
+        s.powerCard(r).$2,
+        '${s.n2(kwOf('ACP-100PV') + kwOf('ACP-50PV'))} kW',
+      );
+      expect(s.compressorCardSub(r), contains('ACP-100PV + ACP-50PV'));
+      expect(s.tankCardSub(r.tank, r), startsWith('2 × '));
+      config.custom.enabled = false;
+      expect(identical(applyCustomLayout(engine, config, auto), auto), isTrue);
+    });
+
+    test('khí chia theo ống nối; máy sấy nhỏ → cảnh báo', () {
+      final (config, eq) = _custom();
+      final engine = eq.engine;
+      final dryer = config.custom.stages.firstWhere(
+        (st) => st.kind == CustomKind.refrigeratedDryer,
+      );
+      dryer.units.single.model = engine.refrigeratedDryers.first.model;
+      final r = applyCustomLayout(engine, config, eq.result);
+      final tanks = r.custom!.of(CustomKind.tank).toList();
+      final comps = r.custom!.of(CustomKind.compressor).toList();
+      // Nối riêng: bình k nhận khí của máy nén k.
+      expect(tanks[0].inflow, closeTo(comps[0].inflow, 1e-9));
+      expect(tanks[1].inflow, closeTo(comps[1].inflow, 1e-9));
+      // Máy sấy nhận toàn bộ khí.
+      expect(
+        r.custom!.of(CustomKind.refrigeratedDryer).single.inflow,
+        closeTo(r.custom!.flow, 1e-9),
+      );
+      final low = r.warnings.where(
+        (w) => w.code == AirWarningCode.customUnitLow,
+      );
+      expect(
+        low.map((w) => w.params['kind']),
+        contains(CustomKind.refrigeratedDryer),
+      );
+      expect(
+        AirStrings(AirLang.vi).warning(
+          low.firstWhere(
+            (w) => w.params['kind'] == CustomKind.refrigeratedDryer,
+          ),
+        ),
+        contains('nhỏ hơn'),
+      );
+    });
+
+    test('tổn áp theo tầng: bỏ lọc tách tinh thì giảm, có cảnh báo dầu', () {
+      final (config, eq) = _custom();
+      final engine = eq.engine;
+      final before = applyCustomLayout(engine, config, eq.result);
+      expect(before.pressureNeed, closeTo(eq.result.pressureNeed, 1e-9));
+      config.custom.stages.removeWhere(
+        (st) => st.kind == CustomKind.fineFilter,
+      );
+      config.custom.prune();
+      final after = applyCustomLayout(engine, config, eq.result);
+      expect(
+        after.pressureNeed,
+        closeTo(
+          before.pressureNeed - engine.constants.drop('fineFilter'),
+          0.051,
+        ),
+      );
+      expect(
+        after.warnings.map((w) => w.code),
+        contains(AirWarningCode.oilNoOilFilter),
+      );
+      expect(after.groups.single.fine, isFalse);
+    });
+
+    test('phòng lắp đặt: mỗi máy một ô, đúng model, lọc theo tầng', () {
+      final (config, eq) = _custom();
+      final r = applyCustomLayout(eq.engine, config, eq.result);
+      final room = appRoomEngine().compute(config, r);
+      expect(room.of(RoomItemKind.compressor).map((i) => i.model), [
+        'ACP-100PV',
+        'ACP-50PV',
+      ]);
+      expect(room.of(RoomItemKind.tank), hasLength(2));
+      final filterUnits = config.custom.stages
+          .where((st) => st.kind.isFilter)
+          .fold(0, (n, st) => n + st.qty);
+      expect(room.filters, hasLength(filterUnits));
+      expect(room.ventilation.compressorKw, closeTo(r.custom!.kw, 1e-9));
+    });
   });
 
   test('lưu / đọc JSON giữ sơ đồ tuỳ chỉnh', () {

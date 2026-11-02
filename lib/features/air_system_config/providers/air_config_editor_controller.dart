@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../diagram/air_diagram.dart';
 import '../diagram/custom_equipment.dart';
 import '../engine/air_engine.dart';
+import '../engine/custom_calc.dart';
 import '../l10n/air_strings.dart';
 import '../models/air_config.dart';
 import '../models/air_result.dart';
@@ -26,7 +27,7 @@ class AirConfigEditorController extends ChangeNotifier {
     AirLang lang = AirLang.vi,
   }) : _lang = lang,
        _strings = AirStrings(lang) {
-    _result = engine.compute(_config);
+    _compute();
   }
 
   final AirEngine engine;
@@ -42,6 +43,9 @@ class AirConfigEditorController extends ChangeNotifier {
   final AirConfigRepository? _repository;
   final AirConfig _config;
   late AirResult _result;
+
+  /// Kết quả của cấu hình tự động (model mặc định cho sơ đồ tuỳ chỉnh).
+  late AirResult _auto;
   AirLang _lang;
   AirStrings _strings;
   AirDiagram? _diagram;
@@ -55,6 +59,9 @@ class AirConfigEditorController extends ChangeNotifier {
 
   AirConfig get config => _config;
   AirResult get result => _result;
+
+  /// Kết quả của cấu hình tự động (bỏ qua sơ đồ tuỳ chỉnh) — cho ô nhập.
+  AirResult get autoResult => _auto;
   AirLang get lang => _lang;
   AirStrings get strings => _strings;
   bool get dirty => _dirty;
@@ -67,12 +74,12 @@ class AirConfigEditorController extends ChangeNotifier {
 
   /// Model, thông số thiết bị cho sơ đồ tuỳ chỉnh.
   CustomEquipment get customEquipment =>
-      CustomEquipment(engine, _config, _result, _strings);
+      CustomEquipment(engine, _config, _auto, _strings);
 
   /// Bật sơ đồ tuỳ chỉnh; chưa có tầng nào thì dựng từ cấu hình tự động.
   void enableCustom(bool on) => edit((c) {
     if (on && c.custom.stages.isEmpty) {
-      c.custom.stages.addAll(customLayoutFromResult(c, _result).stages);
+      c.custom.stages.addAll(customLayoutFromResult(c, _auto).stages);
     }
     c.custom.enabled = on;
   });
@@ -81,7 +88,7 @@ class AirConfigEditorController extends ChangeNotifier {
   void resetCustom() => edit((c) {
     c.custom.stages
       ..clear()
-      ..addAll(customLayoutFromResult(c, _result).stages);
+      ..addAll(customLayoutFromResult(c, _auto).stages);
   });
 
   RoomResult? get room => _room ??= roomEngine?.compute(_config, _result);
@@ -174,8 +181,15 @@ class AirConfigEditorController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Kết quả tự động; sơ đồ tuỳ chỉnh đang bật thì tính lại máy nén, bình,
+  /// máy sấy, lọc, tổn áp, cảnh báo theo sơ đồ.
+  void _compute() {
+    _auto = engine.compute(_config);
+    _result = applyCustomLayout(engine, _config, _auto);
+  }
+
   void _recompute() {
-    _result = engine.compute(_config);
+    _compute();
     _diagram = null;
     _room = null;
     _pipe = null;

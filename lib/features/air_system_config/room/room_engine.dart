@@ -260,7 +260,9 @@ class RoomEngine {
   RoomResult compute(AirConfig config, AirResult r) {
     final c = constants;
     final room = config.room;
-    final specs = _specs(config, r);
+    // Sơ đồ tuỳ chỉnh: thiết bị và lọc theo đúng thứ tự tầng, model từng máy.
+    final custom = r.custom == null ? null : _customSpecs(r, r.custom!);
+    final specs = custom?.$1 ?? _specs(config, r);
     final mainFilters = _mainFilters(config, r);
     final postFilters = _postFilters(r);
     final estimated = <String>{
@@ -280,6 +282,7 @@ class RoomEngine {
           mainFilters,
           postFilters,
           filter,
+          pattern: custom?.$2,
         ),
     };
 
@@ -447,19 +450,11 @@ class RoomEngine {
     }
     final tank = r.tank;
     if (tank != null) {
-      // Bình đứng: lấy đường kính catalog (không có thì ước theo H/D = 2,5),
-      // chiều cao ước tính từ thể tích.
-      final volumeMm3 = tank.volumeM3 * 1e9;
-      final d =
-          tank.spec?.diameterMm ??
-          math.pow(4 * volumeMm3 / (math.pi * 2.5), 1 / 3).toDouble();
-      final body = volumeMm3 / (math.pi * d * d / 4);
-      final h = body + c.tankHeadFactor * d + c.tankLegsMm;
       out.add(
         spec(
           RoomItemKind.tank,
           tank.spec?.model,
-          (d, d, h),
+          _tankSize(tank.volumeM3, tank.spec?.diameterMm),
           sizeEstimated: tank.spec == null,
           heightEstimated: true,
         ),
@@ -495,6 +490,113 @@ class RoomEngine {
       }
     }
     return out;
+  }
+
+  /// Bình đứng: đường kính catalog (không có thì ước theo H/D = 2,5), chiều
+  /// cao ước tính từ thể tích.
+  (double, double, double) _tankSize(double volumeM3, double? diameterMm) {
+    final volumeMm3 = volumeM3 * 1e9;
+    final d =
+        diameterMm ??
+        math.pow(4 * volumeMm3 / (math.pi * 2.5), 1 / 3).toDouble();
+    final body = volumeMm3 / (math.pi * d * d / 4);
+    return (d, d, body + constants.tankHeadFactor * d + constants.tankLegsMm);
+  }
+
+  /// Thiết bị theo sơ đồ tuỳ chỉnh (mỗi máy một ô, đúng model) và thứ tự xếp
+  /// dãy: `null` = thiết bị kế tiếp trong danh sách, còn lại là lọc treo
+  /// trên ống ngay sau thiết bị trước đó.
+  (List<_Spec>, List<RoomFilterGrade?>) _customSpecs(
+    AirResult r,
+    CustomCalc custom,
+  ) {
+    final c = constants;
+    final specs = <_Spec>[];
+    final pattern = <RoomFilterGrade?>[];
+    void add(
+      RoomItemKind kind,
+      String? model,
+      (double, double, double) size, {
+      bool sizeEstimated = false,
+      bool heightEstimated = false,
+    }) {
+      specs.add(
+        _Spec(
+          kind: kind,
+          model: model,
+          w: size.$1,
+          d: size.$2,
+          h: size.$3,
+          c: c.clearance(kind.name),
+          sizeEstimated: sizeEstimated,
+          heightEstimated: heightEstimated,
+        ),
+      );
+      pattern.add(null);
+    }
+
+    add(RoomItemKind.panel, null, c.standardSize('panel'));
+    for (final u in custom.units) {
+      switch (u.kind) {
+        case CustomKind.compressor:
+          final dims = u.compressor?.dimensionsMm;
+          add(
+            RoomItemKind.compressor,
+            u.model,
+            dims ?? c.standardSize('unknownCompressor'),
+            sizeEstimated: dims == null,
+          );
+        case CustomKind.afterCooler:
+          add(
+            RoomItemKind.afterCooler,
+            null,
+            c.standardSize('afterCooler'),
+            sizeEstimated: true,
+          );
+        case CustomKind.tank:
+          final t = u.tank;
+          add(
+            RoomItemKind.tank,
+            u.model,
+            _tankSize(
+              t != null
+                  ? t.volumeLiters / 1000
+                  : (r.tank?.requiredM3 ?? 1).clamp(0.1, 100).toDouble(),
+              t?.diameterMm,
+            ),
+            sizeEstimated: t == null,
+            heightEstimated: true,
+          );
+        case CustomKind.refrigeratedDryer:
+          final d = u.dryer;
+          add(
+            RoomItemKind.dryer,
+            u.model,
+            d != null
+                ? (d.lengthMm, d.widthMm, d.heightMm)
+                : c.standardSize('unknownDryer'),
+            sizeEstimated: d == null,
+          );
+        case CustomKind.desiccantDryer:
+          add(
+            RoomItemKind.dryer,
+            null,
+            c.standardSize('desiccantDryer'),
+            sizeEstimated: true,
+          );
+        case CustomKind.waterSeparator:
+          pattern.add(RoomFilterGrade.water);
+        case CustomKind.coarseFilter:
+          pattern.add(RoomFilterGrade.coarse);
+        case CustomKind.fineFilter:
+          pattern.add(RoomFilterGrade.fine);
+        case CustomKind.ultraFineFilter:
+          pattern.add(RoomFilterGrade.sterile);
+        case CustomKind.carbonFilter:
+          pattern.add(RoomFilterGrade.carbon);
+      }
+    }
+    return (specs, pattern);
   }
 
   /// Lọc tuyến chính theo dòng khí: tách nước.
@@ -632,10 +734,21 @@ class RoomEngine {
     List<_Spec> specs,
     List<RoomFilterGrade> mainFilters,
     List<RoomFilterGrade> postFilters,
-    (double, double, double, bool) filter,
-  ) {
+    (double, double, double, bool) filter, {
+    List<RoomFilterGrade?>? pattern,
+  }) {
     final run = _run(
-      _entries(specs, afterTank: mainFilters, afterDryer: postFilters),
+      pattern != null
+          ? [
+              for (final (k, grade) in pattern.indexed)
+                if (grade != null)
+                  _Entry.filter(grade)
+                else
+                  _Entry.spec(
+                    specs[pattern.take(k).where((g) => g == null).length],
+                  ),
+            ]
+          : _entries(specs, afterTank: mainFilters, afterDryer: postFilters),
       filter.$1,
     );
     final minL = run.span;
@@ -903,11 +1016,20 @@ class RoomEngine {
   RoomVentilation _ventilation(AirResult r, RoomConfig room) {
     final c = constants;
     final pick = r.compressor;
-    final kw = pick?.powerKw != null
+    final custom = r.custom;
+    final kw = custom != null && custom.kw > 0
+        ? custom.kw
+        : pick?.powerKw != null
         ? pick!.powerKw! * pick.units
         : (r.motorKw ?? r.powerEstimate);
     final dryer = r.dryerPicks.values.firstOrNull;
-    final dryerKw = dryer == null
+    final dryerKw = custom != null
+        ? custom
+              .of(CustomKind.refrigeratedDryer)
+              .map((u) => u.dryer)
+              .nonNulls
+              .fold(0.0, (s, d) => s + d.compressorKw + d.fanW / 1000)
+        : dryer == null
         ? 0.0
         : dryer.units * (dryer.spec.compressorKw + dryer.spec.fanW / 1000);
     final t1 = room.outsideTempC ?? c.outsideTempC;

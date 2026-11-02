@@ -96,8 +96,8 @@ abstract final class GrindingExcelParser {
       }
       cell.setAttribute('t', 'inlineStr');
       cell.children.add(
-        XmlElement(XmlName('is'), [], [
-          XmlElement(XmlName('t'), [], [XmlText(text)]),
+        XmlElement(XmlName.qualified('is'), [], [
+          XmlElement(XmlName.qualified('t'), [], [XmlText(text)]),
         ]),
       );
     }

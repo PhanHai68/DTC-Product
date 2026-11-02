@@ -60,6 +60,7 @@ app.*.map.json
 
 # Bản APK build thủ công và file nháp/tạm cục bộ
 /*.apk
+/DTCProduct-web-*.zip
 # File giải mã của bản build obfuscate (tool/build_release_apk.ps1) — sao lưu riêng
 /symbols/
 /.codex_tmp/
